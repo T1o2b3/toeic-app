@@ -102,6 +102,19 @@ button.grade.easy { color: var(--easy); border-color: var(--easy); }
 .badge { background: #fbeae6; color: var(--again); border-radius: 999px; padding: 0 0.5rem; font-size: 0.75rem; }
 .weak-meaning { color: var(--muted); font-size: 0.9rem; }
 
+/* Thẻ có thể dài hơn màn hình điện thoại, nên nút chấm luôn dính đáy để khỏi phải cuộn.
+   Đệm thêm dưới #app để nội dung cuối không bị thanh nút che. */
+.actions.four {
+  position: sticky;
+  bottom: 0;
+  background: linear-gradient(to bottom, transparent, var(--bg) 25%);
+  padding: 0.75rem 0 calc(0.5rem + env(safe-area-inset-bottom));
+  margin-top: 1.25rem;
+}
+
+#app:has(.actions.four) { padding-bottom: 1rem; }
+
 @media (max-width: 380px) {
-  .actions.four { grid-template-columns: repeat(2, 1fr); }
+  .card.big { padding: 1.25rem 1rem; }
+  .word { font-size: 1.75rem; }
 }
