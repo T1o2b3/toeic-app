@@ -34,7 +34,12 @@ export function createGeminiProvider({ apiKey, model = 'gemini-3.5-flash', fetch
         headers: { 'content-type': 'application/json', 'x-goog-api-key': apiKey },
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.4, responseMimeType: 'application/json' },
+          generationConfig: {
+            temperature: 0.4,
+            responseMimeType: 'application/json',
+            // Lô lớn cần nhiều token đầu ra; thiếu trần này là kết quả bị cắt giữa chừng.
+            maxOutputTokens: 32768,
+          },
         }),
       });
 

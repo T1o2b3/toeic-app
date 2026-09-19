@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
-  buildVocabPrompt, parseVocabResponse, matchVocabResponse, VOCAB_PROMPT_VERSION,
+  buildVocabPrompt, parseVocabResponse, matchVocabResponse, salvageObjects, VOCAB_PROMPT_VERSION,
 } from '../pipeline/lib/prompt-vocab.js';
 
 const WORDS = [{ word: 'client', rank: 3 }, { word: 'invoice', rank: 12 }];
@@ -36,10 +36,19 @@ describe('parseVocabResponse', () => {
     expect(parseVocabResponse('Kết quả: [{"word":"a"}] xong')).toEqual([{ word: 'a' }]);
   });
 
-  it('báo lỗi khi rỗng, không có mảng, hoặc JSON hỏng', () => {
+  it('báo lỗi khi rỗng hoặc không có JSON nào', () => {
     expect(() => parseVocabResponse('')).toThrow(/rỗng/);
     expect(() => parseVocabResponse('không có gì')).toThrow(/Không tìm thấy mảng/);
-    expect(() => parseVocabResponse('[{"word":]')).toThrow(/hỏng/);
+    expect(() => parseVocabResponse('[{"word":]')).toThrow(/không vớt được/);
+  });
+
+  it('VỚT được các mục nguyên vẹn khi kết quả bị cắt giữa chừng', () => {
+    // Trường hợp thật: lô lớn chạm trần token, mảng chưa đóng, mục cuối đứt ngang.
+    const truncated = '[{"word":"a","vi":"x"},{"word":"b","vi":"y"},{"word":"c","vi":';
+    expect(parseVocabResponse(truncated)).toEqual([
+      { word: 'a', vi: 'x' },
+      { word: 'b', vi: 'y' },
+    ]);
   });
 });
 
@@ -64,5 +73,29 @@ describe('matchVocabResponse', () => {
     const { matched, missing } = matchVocabResponse(WORDS, [{ word: 'banana' }]);
     expect(matched).toEqual([]);
     expect(missing).toEqual(['client', 'invoice']);
+  });
+});
+
+describe('salvageObjects', () => {
+  it('không nhầm dấu ngoặc nằm trong chuỗi', () => {
+    const text = '[{"word":"a","vi":"dấu } trong câu"},{"word":"b","vi":"ok"}]';
+    expect(salvageObjects(text)).toEqual([
+      { word: 'a', vi: 'dấu } trong câu' },
+      { word: 'b', vi: 'ok' },
+    ]);
+  });
+
+  it('xử lý được dấu nháy có ký tự thoát', () => {
+    const text = '[{"word":"a","vi":"chữ \\" trong câu"}]';
+    expect(salvageObjects(text)).toEqual([{ word: 'a', vi: 'chữ " trong câu' }]);
+  });
+
+  it('giữ object lồng nhau nguyên vẹn', () => {
+    const text = '[{"word":"a","examples":[{"en":"x","vi":"y"}]}]';
+    expect(salvageObjects(text)).toEqual([{ word: 'a', examples: [{ en: 'x', vi: 'y' }] }]);
+  });
+
+  it('không có object nào thì trả mảng rỗng', () => {
+    expect(salvageObjects('chỉ là chữ')).toEqual([]);
   });
 });

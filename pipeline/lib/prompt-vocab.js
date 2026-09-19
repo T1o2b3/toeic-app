@@ -52,18 +52,67 @@ export function parseVocabResponse(text) {
 
   const start = body.indexOf('[');
   const end = body.lastIndexOf(']');
-  if (start === -1 || end === -1 || end < start) {
+  if (start === -1 && !body.includes('{')) {
     throw new Error('Không tìm thấy mảng JSON trong kết quả AI');
   }
 
-  let parsed;
-  try {
-    parsed = JSON.parse(body.slice(start, end + 1));
-  } catch (error) {
-    throw new Error(`JSON từ AI hỏng: ${error.message}`);
+  if (start !== -1 && end > start) {
+    try {
+      const parsed = JSON.parse(body.slice(start, end + 1));
+      if (Array.isArray(parsed)) return parsed;
+    } catch {
+      // Rơi xuống cách đọc từng phần bên dưới.
+    }
   }
-  if (!Array.isArray(parsed)) throw new Error('Kết quả AI không phải mảng');
-  return parsed;
+
+  // Lô lớn dễ bị cắt giữa chừng khi chạm trần token. Vớt lấy các object còn nguyên vẹn
+  // thay vì vứt cả lô — mỗi request là một phần hạn mức ngày, không được phí.
+  const salvaged = salvageObjects(body.slice(start === -1 ? 0 : start));
+  if (salvaged.length === 0) throw new Error('JSON từ AI hỏng, không vớt được mục nào');
+  return salvaged;
+}
+
+/**
+ * Quét một chuỗi JSON (có thể cụt) và trả về mọi object ở cấp ngoài cùng còn đọc được.
+ * Bỏ qua dấu ngoặc nằm trong chuỗi và ký tự thoát.
+ * @param {string} text
+ * @returns {object[]}
+ */
+export function salvageObjects(text) {
+  const out = [];
+  let depth = 0;
+  let startIndex = -1;
+  let inString = false;
+  let escaped = false;
+
+  for (let i = 0; i < text.length; i += 1) {
+    const char = text[i];
+
+    if (inString) {
+      if (escaped) escaped = false;
+      else if (char === '\\') escaped = true;
+      else if (char === '"') inString = false;
+      continue;
+    }
+
+    if (char === '"') inString = true;
+    else if (char === '{') {
+      if (depth === 0) startIndex = i;
+      depth += 1;
+    } else if (char === '}') {
+      depth -= 1;
+      if (depth === 0 && startIndex !== -1) {
+        try {
+          out.push(JSON.parse(text.slice(startIndex, i + 1)));
+        } catch {
+          // Object hỏng thì bỏ, các object khác vẫn dùng được.
+        }
+        startIndex = -1;
+      }
+      if (depth < 0) depth = 0;
+    }
+  }
+  return out;
 }
 
 /**

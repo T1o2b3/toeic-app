@@ -33,7 +33,7 @@ function parseArgs(argv) {
   const batchFlag = argv.indexOf('--batch-size');
   return {
     limit: limitFlag === -1 ? Infinity : Number.parseInt(argv[limitFlag + 1], 10),
-    batchSize: batchFlag === -1 ? 25 : Number.parseInt(argv[batchFlag + 1], 10),
+    batchSize: batchFlag === -1 ? 50 : Number.parseInt(argv[batchFlag + 1], 10),
     withIpa: !argv.includes('--no-ipa'),
   };
 }

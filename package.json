@@ -10,7 +10,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "build:vocab": "node --env-file=.env pipeline/build-vocab.js",
-    "validate:content": "node pipeline/validate-content.js"
+    "validate:content": "node pipeline/validate-content.js",
+    "audit:vocab": "node pipeline/audit-vocab.js"
   },
   "devDependencies": {
     "ajv": "^8.20.0",
