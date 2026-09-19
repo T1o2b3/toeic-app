@@ -4,16 +4,18 @@
  * Dùng trước khi commit nội dung mới, và bất cứ khi nào nghi ngờ file bị sửa tay.
  */
 import { readFileSync, existsSync } from 'node:fs';
-import { createDeckValidator, findDuplicateIds } from './lib/validate-deck.js';
+import { createValidator, findDuplicateIds } from './lib/validate-deck.js';
 
 const ROOT = new URL('..', import.meta.url);
-const DECKS = ['public/content/vocab-toeic-tsl.json'];
-
-const validate = createDeckValidator();
+const FILES = [
+  { file: 'public/content/vocab-toeic-tsl.json', schema: 'schemas/vocab.schema.json', label: 'từ vựng' },
+  { file: 'public/content/questions-part5.json', schema: 'schemas/question.schema.json', label: 'câu hỏi Part 5' },
+];
 let failed = false;
 let checked = 0;
 
-for (const relative of DECKS) {
+for (const { file: relative, schema, label } of FILES) {
+  const validate = createValidator(new URL(schema, ROOT));
   const filePath = new URL(relative, ROOT).pathname;
   if (!existsSync(filePath)) {
     console.log(`- ${relative}: chưa có (bỏ qua)`);
@@ -34,7 +36,8 @@ for (const relative of DECKS) {
   const duplicates = findDuplicateIds(deck);
 
   if (valid && duplicates.length === 0) {
-    console.log(`✓ ${relative}: ${deck.entries.length} mục, hợp lệ (${deck.attribution.license})`);
+    const extra = deck.attribution ? ` (${deck.attribution.license})` : '';
+    console.log(`✓ ${relative}: ${deck.entries.length} mục ${label}, hợp lệ${extra}`);
   } else {
     failed = true;
     console.error(`✗ ${relative}: KHÔNG hợp lệ`);

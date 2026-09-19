@@ -59,6 +59,23 @@ export async function createStore({ factory, fetchImpl } = {}) {
       return event;
     },
 
+    /**
+     * Nhận sự kiện từ nơi khác (đồng bộ Supabase, hoặc nhập lại file sao lưu).
+     * Sự kiện trùng id bị bỏ qua ở lớp IndexedDB nên gọi lại nhiều lần vẫn an toàn.
+     * @param {Array<object>} incoming
+     * @returns {Promise<number>} số sự kiện thực sự thêm mới
+     */
+    async importEvents(incoming) {
+      const added = await appendEvents(db, incoming);
+      if (added > 0) {
+        events = await readAllEvents(db);
+        states = reduceVocabState(events);
+        quizStates = reduceQuizState(events);
+        notify();
+      }
+      return added;
+    },
+
     /** Toàn bộ nhật ký, dùng cho nút xuất dữ liệu (M6). */
     exportEvents() {
       return events.map((event) => ({ ...event }));

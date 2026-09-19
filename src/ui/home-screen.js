@@ -7,6 +7,7 @@ import { estimateSessionTime, summarizeQueue } from '../logic/format.js';
 import { quizQueue, accuracyByErrorType } from '../logic/quiz.js';
 import { planToday, describePlan } from '../logic/today.js';
 import { buildExport, exportFileName } from '../logic/export.js';
+import { isSupabaseConfigured } from '../data/supabase.js';
 
 /**
  * @param {object} store
@@ -105,6 +106,10 @@ export function renderHome(store) {
   }
 
   sections.push(
+    el('button', { class: 'secondary', onClick: () => goTo('/sync') }, [
+      el('span', { text: 'Đồng bộ giữa các máy' }),
+      el('small', { text: isSupabaseConfigured() ? 'Mac ↔ iPhone' : 'chưa cấu hình — dữ liệu chỉ ở máy này' }),
+    ]),
     el('div', { class: 'actions' }, [
       el('button', {
         class: 'link',

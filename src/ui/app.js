@@ -8,6 +8,7 @@ import { renderTriage, handleTriageKey } from './triage-screen.js';
 import { renderReview, handleReviewKey, resetReview } from './review-screen.js';
 import { renderWeak } from './weak-screen.js';
 import { renderQuiz, handleQuizKey, resetQuiz } from './quiz-screen.js';
+import { renderSync, resetSync } from './sync-screen.js';
 
 const SCREENS = {
   home: renderHome,
@@ -15,6 +16,7 @@ const SCREENS = {
   review: renderReview,
   weak: renderWeak,
   quiz: renderQuiz,
+  sync: renderSync,
 };
 
 const KEY_HANDLERS = {
@@ -41,7 +43,7 @@ export function mountApp(root, store) {
   };
 
   startRouter((route) => {
-    if (route.name !== current.name) { resetReview(); resetQuiz(); }
+    if (route.name !== current.name) { resetReview(); resetQuiz(); resetSync(); }
     current = route;
     draw();
   });

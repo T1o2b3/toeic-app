@@ -143,3 +143,10 @@ button.option.wrong .letter { color: var(--again); }
 .gaps-title { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.4rem; }
 .gap-row { display: flex; justify-content: space-between; font-size: 0.9rem; padding: 0.15rem 0; }
 .gap-value { color: var(--again); font-weight: 600; }
+
+/* Ô nhập của màn đồng bộ */
+.field {
+  display: block; width: 100%; font: inherit; padding: 0.7rem 0.8rem; margin-bottom: 0.6rem;
+  border: 1px solid var(--border); border-radius: 0.75rem; background: var(--surface); color: var(--fg);
+}
+.field:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
