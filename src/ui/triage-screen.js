@@ -9,7 +9,8 @@ import { el, goTo } from './dom.js';
 import { triageQueue, countUntriaged } from '../logic/vocab-state.js';
 import { roundProgress } from '../logic/round.js';
 import { LEVEL_ORDER, LEVEL_INFO, payloadForLevel } from '../logic/vocab-levels.js';
-import { getShowMeaning, setShowMeaning } from '../data/prefs.js';
+import { getShowMeaning, setShowMeaning, getTier } from '../data/prefs.js';
+import { TIER_ORDER, TIER_INFO, ALL_TIERS, filterByTier } from '../logic/deck-tiers.js';
 
 /** Số từ mỗi lượt phân loại — đủ ngắn để làm xong trong một lần ngồi. */
 const ROUND_SIZE = 20;
@@ -27,7 +28,12 @@ let doneThisRound = new Set();
 function roundQueue(store) {
   const left = Math.max(0, ROUND_SIZE - doneThisRound.size);
   if (left === 0) return [];
-  return triageQueue(store.entries, store.states, left);
+  return triageQueue(tieredEntries(store), store.states, left);
+}
+
+/** Deck đã lọc theo tầng Huy chọn ở màn chính. */
+function tieredEntries(store) {
+  return filterByTier(store.entries, getTier(TIER_ORDER));
 }
 
 /**
@@ -35,7 +41,8 @@ function roundQueue(store) {
  * @returns {HTMLElement}
  */
 export function renderTriage(store) {
-  const untriaged = countUntriaged(store.entries, store.states);
+  const entries = tieredEntries(store);
+  const untriaged = countUntriaged(entries, store.states);
   const queue = roundQueue(store);
   const { remaining, finished } = roundProgress({
     roundSize: ROUND_SIZE,
@@ -51,7 +58,7 @@ export function renderTriage(store) {
   return el('div', {}, [
     el('div', { class: 'topbar' }, [
       el('button', { class: 'link', text: '← Về màn chính', onClick: () => goTo('/') }),
-      el('span', { class: 'progress', text: `còn ${remaining} từ trong lượt · ${untriaged} từ chưa phân loại` }),
+      el('span', { class: 'progress', text: `còn ${remaining} từ trong lượt · ${untriaged} từ ${tierNote()}` }),
     ]),
     el('div', { class: 'card big' }, [
       el('div', { class: 'word', text: entry.word }),
@@ -80,6 +87,12 @@ export function renderTriage(store) {
     ]),
     el('p', { class: 'footnote', text: 'Phím tắt: 1–4 chọn mức · Space bật/tắt hiện nghĩa' }),
   ]);
+}
+
+/** Ghi rõ đang phân loại trong tầng nào, để không tưởng deck chỉ còn bấy nhiêu từ. */
+function tierNote() {
+  const tier = getTier(TIER_ORDER);
+  return tier === ALL_TIERS ? 'chưa phân loại' : `chưa phân loại ở tầng ${TIER_INFO[tier].label.toLowerCase()}`;
 }
 
 /** Nghĩa tiếng Việt + một ví dụ, đủ để tự chấm đúng mà không rối mắt. */

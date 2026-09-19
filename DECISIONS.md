@@ -119,7 +119,7 @@ Link thật: https://toeic-app.huybndc-451.workers.dev. Vẫn miễn phí, vẫn
   để máy còn chạy bản app cũ trong bộ nhớ đệm service worker không xếp nhầm từ. Không sửa nhật ký cũ.
 - **Hiện nghĩa khi phân loại:** mặc định BẬT, tắt được (lưu trong localStorage từng máy).
 
-**D30. Thêm deck cao cấp BSL + NAWL, cân đối theo đúng trình độ Part 5.** (Huy giao toàn quyền quyết định 2026-09-19)
+**D30. Thêm deck cao cấp BSL (chỉ BSL, KHÔNG lấy NAWL), cân đối theo đúng trình độ Part 5.** (Huy giao toàn quyền quyết định 2026-09-19)
 - **Số liệu dẫn tới quyết định:** đo trên chính ngân hàng 200 câu Part 5 đã sinh, các phương án của
   câu `errorType: vocabulary` chỉ có **32% nằm trong deck TSL** hiện tại. Những từ đề đang hỏi —
   `amend`, `abolish`, `enforce`, `inadequate`, `thereby`, `erratic` — không có từ nào trong deck,
@@ -127,11 +127,17 @@ Link thật: https://toeic-app.huybndc-451.workers.dev. Vẫn miễn phí, vẫn
 - **Nguyên nhân:** TSL 1.2 là danh sách **bổ sung cho NGSL**, gồm 1250 từ đặc thù TOEIC ở tầng nền —
   đúng cho người 500–700 điểm. Kiểm chứng: `interview`, `raise`, `frequent`, `suspend`, `meanwhile`
   đều KHÔNG có trong TSL vì chúng thuộc NGSL. Tầng nền này Huy đã biết gần hết.
-- **Quyết định:** thêm **BSL 1.20** (Business Service List, 1744 từ) và **NAWL 1.2** (New Academic
-  Word List, 957 từ), lọc bỏ phần trùng TSL → **1561 từ mới** thuộc tầng trên. Cùng nguồn
-  newgeneralservicelist.com, cùng license CC BY-SA 4.0 đã duyệt ở D18 → không phát sinh ràng buộc mới.
-  Sau khi thêm, phủ sóng từ vựng Part 5 tăng từ 32% lên 56%; phần còn thiếu chủ yếu là từ NGSL
-  (Huy đã biết) và dạng phái sinh (`inaccessible`, `reconfigure`).
+- **Quyết định:** thêm **BSL 1.20** (Business Service List, 1744 từ), lọc bỏ phần trùng TSL →
+  **1169 từ mới** thuộc tầng trên (`equity`, `depreciation`, `hedge`, `amend`, `abolish`, `encompass`).
+  Cùng nguồn newgeneralservicelist.com, cùng license CC BY-SA 4.0 đã duyệt ở D18 → không phát sinh
+  ràng buộc mới. Phủ sóng từ vựng Part 5 tăng từ **32% lên 53%**; phần còn thiếu chủ yếu là từ NGSL
+  (Huy đã biết ở mức 850) và dạng phái sinh (`inaccessible`, `reconfigure`).
+- **ĐÃ LOẠI NAWL sau khi đo lại** (ban đầu định lấy, xem D30b): New Academic Word List là từ vựng
+  HỌC THUẬT, phần lớn là khoa học — `electron`, `membrane`, `chemotherapy`, `capillary`, `consonant`,
+  `archaeology`. TOEIC là tiếng Anh công sở. Đo cụ thể: NAWL chỉ thêm đúng **1 từ** vào phủ sóng
+  Part 5 (53% → 56%) trong khi kéo theo 392 từ gần như không bao giờ gặp trong đề.
+- **Kiểm chứng kèm theo:** TSL và NGSL **không giao nhau một từ nào** (0/1250) — xác nhận TSL đúng là
+  danh sách bổ sung cho NGSL, nên không dùng NGSL để phân tầng trong TSL được.
 - **Kèm theo:** gắn `level` (cơ bản / trung cấp / cao cấp) cho mọi từ để Huy bỏ qua tầng dễ ngay,
   không phải chờ pipeline sinh xong.
 - **Phương án đã loại:** (a) chỉ phân tầng deck hiện có — không giải quyết gốc, 77% từ Part 5 vẫn
@@ -139,6 +145,22 @@ Link thật: https://toeic-app.huybndc-451.workers.dev. Vẫn miễn phí, vẫn
   dễ bịa từ hiếm vô dụng, trái tinh thần D18.
 - **Chi phí:** 0 đồng. Tốn hạn mức AI free tier (~20 request/ngày/model, gộp 50 từ mỗi request)
   nên pipeline chạy nền nhiều ngày.
+
+**D30b. Vì sao D30 bị sửa ngay trong ngày.** Bản đầu của D30 chọn "BSL + NAWL" khi mới chỉ đếm số từ
+hai danh sách bổ sung được (1561 từ), CHƯA nhìn vào nội dung của NAWL. Đo lại theo đúng thứ cần đo —
+phủ sóng từ vựng Part 5 — mới thấy NAWL đóng góp 1 từ. Ghi lại đây để lần sau đo giá trị thật
+(phủ được bao nhiêu thứ đang cần) trước, đừng lấy số lượng làm bằng chứng.
+
+**D31. Phân tầng từ vựng (cơ bản / trung cấp / cao cấp), suy ra lúc chạy chứ không ghi vào file nội dung.**
+- **Vấn đề:** deck TSL xếp theo tần suất nên màn phân loại luôn bắt đầu từ từ phổ biến nhất —
+  đúng 400 từ Huy đã biết hết. Phải lướt hết chúng mới chạm tới từ đáng học.
+- **Cách chia:** TSL rank ≤ 400 = cơ bản · TSL rank > 400 = trung cấp · deck khác TSL (BSL) = cao cấp.
+- **Suy ra từ `rank` + `deck` có sẵn trong mỗi mục, KHÔNG thêm trường vào file đã phát hành** (D16).
+  Đổi ngưỡng sau này chỉ sửa `src/logic/deck-tiers.js`, không phải sinh lại deck, không đụng nhật ký.
+- **Thành thật về giới hạn:** trong TSL, rank chỉ là proxy — `apple` và `culinary` cùng ở rank 620-630
+  vì SFI bằng nhau (phần đuôi danh sách xếp theo alphabet trong các nhóm SFI trùng). Tầng chỉ quyết định
+  THỨ TỰ gặp từ; việc tách "đã biết / chưa biết" vẫn do Huy tự chấm 4 mức (D29).
+- **Mặc định KHÔNG lọc** (ràng buộc #9: không âm thầm đổi hành vi). Huy tự chọn tầng ở màn chính.
 
 ## Câu hỏi còn mở
 - Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng? Quyết khi ước lượng được dung lượng thực.

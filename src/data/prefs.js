@@ -5,6 +5,7 @@
 import {
   normalizeRoundSize, DEFAULT_ROUND_SIZE,
   normalizeShowMeaning, DEFAULT_SHOW_MEANING,
+  normalizeTier, DEFAULT_TIER,
 } from '../logic/prefs.js';
 
 const ROUND_SIZE_KEY = 'toeic-app.quizRoundSize';
@@ -54,6 +55,34 @@ export function getShowMeaning() {
 export function setShowMeaning(show) {
   try {
     localStorage.setItem(SHOW_MEANING_KEY, show ? '1' : '0');
+  } catch {
+    // Không lưu được thì thôi, lần sau dùng mặc định.
+  }
+}
+
+const TIER_KEY = 'toeic-app.vocabTier';
+
+/**
+ * Tầng từ vựng đang chọn để phân loại / ôn.
+ * @param {string[]} allowed - TIER_ORDER, truyền vào để lớp data không phụ thuộc lớp logic tầng
+ * @returns {string}
+ */
+export function getTier(allowed) {
+  try {
+    return normalizeTier(localStorage.getItem(TIER_KEY), allowed);
+  } catch {
+    return DEFAULT_TIER;
+  }
+}
+
+/**
+ * Đổi tầng từ vựng.
+ * @param {string} tier
+ * @param {string[]} allowed
+ */
+export function setTier(tier, allowed) {
+  try {
+    localStorage.setItem(TIER_KEY, normalizeTier(tier, allowed));
   } catch {
     // Không lưu được thì thôi, lần sau dùng mặc định.
   }

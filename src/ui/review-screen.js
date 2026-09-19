@@ -5,6 +5,8 @@
 import { el, goTo } from './dom.js';
 import { reviewQueue, reviewCounts } from '../logic/vocab-state.js';
 import { reviewProgress } from '../logic/round.js';
+import { TIER_ORDER, filterByTier } from '../logic/deck-tiers.js';
+import { getTier } from '../data/prefs.js';
 import { previewIntervals, GRADES } from '../logic/scheduler.js';
 import { formatDuration } from '../logic/format.js';
 
@@ -33,9 +35,14 @@ function newLeft() {
   return Math.max(0, NEW_PER_ROUND - newThisRound.size);
 }
 
+/** Deck đã lọc theo tầng Huy chọn ở màn chính. */
+function tieredEntries(store) {
+  return filterByTier(store.entries, getTier(TIER_ORDER));
+}
+
 /** Hàng đợi của lượt hiện tại: hết hạn mức từ mới thì chỉ còn thẻ đến hạn. */
 function roundQueue(store) {
-  return reviewQueue(store.entries, store.states, { maxNew: newLeft() });
+  return reviewQueue(tieredEntries(store), store.states, { maxNew: newLeft() });
 }
 
 /** Lấy thẻ đang ôn, hoặc null nếu hết. */
@@ -48,7 +55,7 @@ function currentItem(store) {
  * @returns {HTMLElement}
  */
 export function renderReview(store) {
-  const counts = reviewCounts(store.entries, store.states);
+  const counts = reviewCounts(tieredEntries(store), store.states);
   const { remaining } = reviewProgress({
     dueCount: counts.due,
     newAvailable: counts.fresh,

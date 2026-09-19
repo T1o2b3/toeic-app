@@ -34,3 +34,16 @@ export function normalizeShowMeaning(value) {
   if (value === '1' || value === true) return true;
   return DEFAULT_SHOW_MEANING;
 }
+
+/** Mặc định KHÔNG lọc tầng — không âm thầm giấu bớt từ của Huy (ràng buộc #9). */
+export const DEFAULT_TIER = 'all';
+
+/**
+ * Lọc lựa chọn tầng đọc từ localStorage về một giá trị hợp lệ.
+ * @param {unknown} value
+ * @param {string[]} allowed - các tầng hợp lệ (TIER_ORDER)
+ * @returns {string}
+ */
+export function normalizeTier(value, allowed) {
+  return allowed.includes(value) || value === DEFAULT_TIER ? value : DEFAULT_TIER;
+}

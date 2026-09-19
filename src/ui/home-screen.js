@@ -9,7 +9,8 @@ import { quizQueue, accuracyByErrorType } from '../logic/quiz.js';
 import { planToday, describePlan } from '../logic/today.js';
 import { buildExport, exportFileName } from '../logic/export.js';
 import { isSupabaseConfigured } from '../data/supabase.js';
-import { getRoundSize, setRoundSize } from '../data/prefs.js';
+import { getRoundSize, setRoundSize, getTier, setTier } from '../data/prefs.js';
+import { TIER_ORDER, TIER_INFO, ALL_TIERS, filterByTier, untriagedByTier } from '../logic/deck-tiers.js';
 import { ROUND_SIZES } from '../logic/prefs.js';
 
 /** Thời điểm build, do Vite nhúng vào (xem vite.config.js). */
@@ -21,9 +22,12 @@ const BUILD_TIME = typeof __BUILD_TIME__ === 'string' ? __BUILD_TIME__ : 'dev';
  */
 export function renderHome(store) {
   const states = store.states;
-  const queue = reviewQueue(store.entries, states, {});
+  const tier = getTier(TIER_ORDER);
+  // Mọi con số ở màn này tính theo tầng đang chọn, để khớp với thứ màn học sẽ đưa ra.
+  const entries = filterByTier(store.entries, tier);
+  const queue = reviewQueue(entries, states, {});
   const { total, fresh, due } = summarizeQueue(queue);
-  const untriaged = countUntriaged(store.entries, states);
+  const untriaged = countUntriaged(entries, states);
   const weak = weakWords(states);
   const learning = [...states.values()].filter((s) => s.triaged && !s.known).length;
 
@@ -35,7 +39,10 @@ export function renderHome(store) {
 
   const sections = [
     el('h1', { text: 'Hôm nay học gì' }),
-    el('p', { class: 'subtitle', text: `Deck ${store.deck.deck} · ${store.entries.length} từ` }),
+    el('p', { class: 'subtitle', text: tier === ALL_TIERS
+      ? `Deck ${store.deck.deck} · ${store.entries.length} từ`
+      : `Deck ${store.deck.deck} · tầng ${TIER_INFO[tier].label.toLowerCase()} · ${entries.length}/${store.entries.length} từ` }),
+    renderTierChooser(store, tier),
     el('div', { class: 'stats' }, [
       stat(due, 'đến hạn ôn'),
       stat(fresh, 'từ mới'),
@@ -44,7 +51,7 @@ export function renderHome(store) {
   ];
 
   const plan = planToday({
-    entries: store.entries, states, questions: store.questions, quizStates: store.quizStates,
+    entries, states, questions: store.questions, quizStates: store.quizStates,
   });
 
   if (!plan.empty) {
@@ -148,6 +155,30 @@ export function renderHome(store) {
   );
 
   return el('div', {}, sections);
+}
+
+/**
+ * Chọn tầng từ vựng. Deck xếp theo tần suất nên mặc định màn phân loại bắt đầu từ từ dễ nhất;
+ * ai đã ở mức 850 thì chọn thẳng tầng trên để khỏi cày lại 400 từ đã biết (xem deck-tiers.js).
+ */
+function renderTierChooser(store, current) {
+  const counts = untriagedByTier(store.entries, store.states);
+  const option = (value, label, note) => el('button', {
+    class: value === current ? 'chip-btn active' : 'chip-btn',
+    title: note,
+    text: label,
+    onClick: () => { setTier(value, TIER_ORDER); store.refresh(); },
+  });
+
+  return el('div', { class: 'chooser' }, [
+    el('span', { class: 'chooser-label', text: 'Tầng từ' }),
+    option(ALL_TIERS, 'Tất cả', 'không lọc gì'),
+    ...TIER_ORDER.map((value) => option(
+      value,
+      `${TIER_INFO[value].label} (${counts[value]})`,
+      `${TIER_INFO[value].hint} — còn ${counts[value]} từ chưa phân loại`,
+    )),
+  ]);
 }
 
 /** Tải nhật ký sự kiện về máy dưới dạng JSON (D25: tự sao lưu vì free tier không có backup). */
