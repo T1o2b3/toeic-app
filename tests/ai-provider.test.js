@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { createGeminiProvider, withRetry, isDailyQuotaError, DEFAULT_GEMINI_MODELS } from '../pipeline/lib/ai-provider.js';
-import { pickIpa, fetchIpa } from '../pipeline/lib/ipa.js';
+import { pickIpa, fetchIpa, fetchIpaMany } from '../pipeline/lib/ipa.js';
 
 /** Giả lập một Response tối thiểu để không cần gọi mạng thật. */
 const fakeResponse = (body, { ok = true, status = 200 } = {}) => ({
@@ -176,5 +176,58 @@ describe('isDailyQuotaError', () => {
 
   it('danh sách model mặc định không rỗng', () => {
     expect(DEFAULT_GEMINI_MODELS.length).toBeGreaterThan(1);
+  });
+});
+
+describe('fetchIpaMany', () => {
+  const makeFetch = (map) => vi.fn(async (url) => {
+    const word = decodeURIComponent(url.split('/').pop());
+    const value = map[word];
+    if (value === 'treo') throw new Error('timeout');
+    if (value === undefined) return { ok: false, status: 404 };
+    return { ok: true, status: 200, json: async () => [{ phonetic: value }] };
+  });
+
+  it('tra được nhiều từ và giữ đúng kết quả từng từ', async () => {
+    const fetchImpl = makeFetch({ client: '/klaɪənt/', invoice: '/ɪnvɔɪs/' });
+    const results = await fetchIpaMany(['client', 'invoice', 'khongco'], { fetchImpl, concurrency: 2 });
+    expect(results.get('client')).toBe('/klaɪənt/');
+    expect(results.get('invoice')).toBe('/ɪnvɔɪs/');
+    expect(results.get('khongco')).toBeNull();
+    expect(fetchImpl).toHaveBeenCalledTimes(3);
+  });
+
+  it('một từ lỗi không kéo theo các từ khác', async () => {
+    const fetchImpl = makeFetch({ client: '/klaɪənt/', invoice: 'treo' });
+    const results = await fetchIpaMany(['client', 'invoice'], { fetchImpl });
+    expect(results.get('client')).toBe('/klaɪənt/');
+    expect(results.get('invoice')).toBeUndefined();
+  });
+
+  it('không chạy quá số luồng cho phép cùng lúc', async () => {
+    let running = 0;
+    let peak = 0;
+    const fetchImpl = vi.fn(async () => {
+      running += 1;
+      peak = Math.max(peak, running);
+      await new Promise((r) => setTimeout(r, 5));
+      running -= 1;
+      return { ok: true, status: 200, json: async () => [{ phonetic: '/x/' }] };
+    });
+    await fetchIpaMany(['a', 'b', 'c', 'd', 'e', 'f'], { fetchImpl, concurrency: 3 });
+    expect(peak).toBeLessThanOrEqual(3);
+  });
+
+  it('báo tiến độ theo từng từ đã xong', async () => {
+    const onProgress = vi.fn();
+    await fetchIpaMany(['a', 'b'], { fetchImpl: makeFetch({ a: '/a/', b: '/b/' }), onProgress });
+    expect(onProgress).toHaveBeenCalledTimes(2);
+    expect(onProgress).toHaveBeenLastCalledWith(2, 2);
+  });
+
+  it('danh sách rỗng không gọi mạng lần nào', async () => {
+    const fetchImpl = vi.fn();
+    expect((await fetchIpaMany([], { fetchImpl })).size).toBe(0);
+    expect(fetchImpl).not.toHaveBeenCalled();
   });
 });

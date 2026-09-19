@@ -13,7 +13,7 @@ import { parseTslCsv, TSL_ATTRIBUTION } from './lib/tsl.js';
 import { buildEntry } from './lib/vocab-entry.js';
 import { buildVocabPrompt, parseVocabResponse, matchVocabResponse, VOCAB_PROMPT_VERSION } from './lib/prompt-vocab.js';
 import { createGeminiProvider, withRetry, sleep, isDailyQuotaError, DEFAULT_GEMINI_MODELS } from './lib/ai-provider.js';
-import { fetchIpa } from './lib/ipa.js';
+import { fetchIpaMany } from './lib/ipa.js';
 import { openCache, chunk, readCachedAi } from './lib/cache.js';
 import { createDeckValidator, findDuplicateIds } from './lib/validate-deck.js';
 
@@ -105,15 +105,15 @@ async function main() {
     const need = words.filter((w) => aiCache.has(w.word) && !ipaCache.has(w.word));
     console.log(`Tra IPA cho ${need.length} từ...`);
     let transient = 0;
-    for (const [index, { word }] of need.entries()) {
-      const ipa = await fetchIpa(word);
+    const results = await fetchIpaMany(need.map((w) => w.word), {
+      onProgress: (count, total) => {
+        if (count % 100 === 0) console.log(`  ...${count}/${total}`);
+      },
+    });
+    for (const [word, ipa] of results) {
       // undefined = lỗi tạm thời: KHÔNG cache, để lần chạy sau tra lại.
       if (ipa === undefined) transient += 1;
       else ipaCache.set(word, ipa);
-      if (index % 25 === 24) {
-        ipaCache.save();
-        console.log(`  ...${index + 1}/${need.length}`);
-      }
     }
     ipaCache.save();
     if (transient > 0) {
