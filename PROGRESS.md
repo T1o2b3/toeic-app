@@ -3,7 +3,7 @@
 > Claude cập nhật file này sau MỖI bước con. Phiên mới đọc file này trước tiên.
 
 ## Trạng thái hiện tại
-- Giai đoạn: 1 — MVP. **M0, M1, M2, M3, M6 xong; M4 gần xong** (2026-09-19).
+- Giai đoạn: 1 — MVP. **M0–M4 và M6 XONG. M5 code xong, chờ Huy cấu hình Supabase.**
 - **App đã dùng học thật được**: https://toeic-app.huybndc-451.workers.dev
 - Repo private: https://github.com/huybndc/toeic-app — 133 test pass.
 
@@ -16,10 +16,23 @@
 5. **Lưu ý quan trọng:** dữ liệu hiện lưu RIÊNG trên từng máy (IndexedDB), chưa đồng bộ.
    Đồng bộ Mac ↔ iPhone là M5. Học trên một máy trước để tránh lệch dữ liệu.
 
-## Mục tiêu phiên này: 3 milestone (M4, M6, M5)
-- ✅ **M6 xong**: PWA cài được, offline được, phiên "15 phút hôm nay", xuất dữ liệu.
-- 🔄 **M4 gần xong**: pipeline + màn luyện Part 5 đã chạy; đang sinh nốt cho đủ 200 câu.
-- ⏳ **M5**: sẽ viết xong toàn bộ code + SQL, chờ Huy tạo project Supabase để kích hoạt.
+## Mục tiêu phiên này: 3 milestone — ĐÃ ĐẠT
+- ✅ **M4**: 200 câu Part 5 (phủ đều 12 loại kiến thức, 100% qua kiểm định 2 bước) + màn luyện.
+- ✅ **M6**: PWA cài được, học offline được, phiên "15 phút hôm nay", nút xuất dữ liệu.
+- ✅ **M5 (code)**: schema SQL + RLS, đăng nhập OTP, đồng bộ hai chiều. Chờ Huy cấu hình để chạy thật.
+
+## VIỆC CỦA HUY — kích hoạt đồng bộ (M5), khoảng 15 phút
+1. Vào supabase.com → tạo project mới (gói Free), chọn region gần Việt Nam (Singapore).
+2. Vào **SQL Editor** → New query → dán toàn bộ nội dung `supabase/schema.sql` → **Run**.
+   Câu lệnh cuối file phải trả về `rowsecurity = true` cho cả hai bảng. Nếu không, DỪNG LẠI.
+3. Vào **Project Settings → API**, lấy **Project URL** và **anon public** key.
+   TUYỆT ĐỐI không lấy `service_role` key (ràng buộc #3).
+4. Thêm vào `.env` (xem mẫu trong `.env.example`):
+   `VITE_SUPABASE_URL=...` và `VITE_SUPABASE_ANON_KEY=...`
+5. Vào Cloudflare → project toeic-app → Settings → Variables: thêm đúng 2 biến đó rồi deploy lại.
+6. Mở app → **Đồng bộ giữa các máy** → nhập email → nhận mã 6 số → xác nhận → bấm **Đồng bộ ngay**.
+7. Kiểm tra: làm vài thẻ trên Mac, bấm Đồng bộ; sang iPhone đăng nhập cùng email, bấm Đồng bộ →
+   phải thấy đúng tiến độ đó.
 
 ## Đã xong trong phiên 2026-09-19
 - **M1**: Vite + Vitest, git, GitHub private, Cloudflare Workers tự deploy mỗi lần push.

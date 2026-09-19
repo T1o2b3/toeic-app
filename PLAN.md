@@ -46,11 +46,16 @@ toeic-app/
 - [x] **M3. Nhật ký sự kiện + màn hình từ vựng (ngày 3, ~2h).** IndexedDB, reducer, FSRS; màn triage (biết/chưa biết), ôn thẻ, highlight từ hay sai, bookmark.
   Học: IndexedDB, hàm thuần + test. Xong khi: ôn được từ, tải lại trang không mất tiến độ; test reducer/FSRS pass.
   ✅ Xong 2026-09-19: 133 test pass; đã thử thật trên bản deploy, tải lại trang giữ nguyên tiến độ.
-- [ ] **M4. Pipeline Part 5 + màn luyện Part 5 (ngày 4, ~2h).** Schema question; sinh ~200 câu có kiểm định 2 bước; màn luyện, giải thích tiếng Việt, gắn loại lỗi, nút báo câu lỗi.
+- [x] **M4. Pipeline Part 5 + màn luyện Part 5 (ngày 4, ~2h).** Schema question; sinh ~200 câu có kiểm định 2 bước; màn luyện, giải thích tiếng Việt, gắn loại lỗi, nút báo câu lỗi.
   Xong khi: làm được 1 lượt 20 câu, sự kiện ghi đúng.
-- [ ] **M5. Supabase + đồng bộ (ngày 5, ~2,5h).** Bảng events + settings, **bật RLS**, đăng nhập OTP, đồng bộ 2 chiều theo sự kiện.
+  ✅ Xong 2026-09-19: 200 câu phủ đều 12 loại kiến thức, 100% qua kiểm định 2 bước bằng 2 model
+  khác nhau; màn luyện chấm ngay + giải thích tiếng Việt + nút báo câu lỗi đã thử chạy thật.
+- [~] **M5. Supabase + đồng bộ (ngày 5, ~2,5h).** Bảng events + settings, **bật RLS**, đăng nhập OTP, đồng bộ 2 chiều theo sự kiện.
   Học: database, RLS, auth. Xong khi: làm bài trên Mac → thấy trên iPhone và ngược lại; user khác không đọc được dữ liệu.
   Phương án lùi nếu trễ: đồng bộ thủ công bằng nút "Đồng bộ" thay vì tự động.
+  🔄 2026-09-19: CODE ĐÃ XONG (schema SQL + RLS, đăng nhập OTP, đồng bộ hai chiều, 10 test).
+  Đã chọn phương án nút "Đồng bộ" thủ công cho MVP. Chờ Huy tạo project Supabase và điền
+  2 biến vào `.env` là chạy — xem hướng dẫn trong PROGRESS.md.
 - [x] **M6. PWA + "15 phút hôm nay" + xuất dữ liệu (ngày 6, ~2h).** vite-plugin-pwa, cài lên màn hình iPhone, phiên học trộn từ đến hạn + câu từng sai + câu mới, nút xuất JSON.
   Học: manifest, service worker, cache. Xong khi: app cài được trên iPhone, mở offline vẫn học được.
   ✅ Xong 2026-09-19: manifest + service worker chạy trên bản deploy; đã kiểm tra bộ nhớ offline có
