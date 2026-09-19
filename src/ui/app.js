@@ -9,6 +9,8 @@ import { renderReview, handleReviewKey, resetReview } from './review-screen.js';
 import { renderWeak } from './weak-screen.js';
 import { renderQuiz, handleQuizKey, resetQuiz } from './quiz-screen.js';
 import { renderSync, resetSync } from './sync-screen.js';
+import { renderWords, resetWords } from './words-screen.js';
+import { renderPractice, handlePracticeKey, resetPractice } from './practice-screen.js';
 
 const SCREENS = {
   home: renderHome,
@@ -17,12 +19,15 @@ const SCREENS = {
   weak: renderWeak,
   quiz: renderQuiz,
   sync: renderSync,
+  words: renderWords,
+  practice: renderPractice,
 };
 
 const KEY_HANDLERS = {
   triage: handleTriageKey,
   review: handleReviewKey,
   quiz: handleQuizKey,
+  practice: handlePracticeKey,
 };
 
 /**
@@ -36,14 +41,14 @@ export function mountApp(root, store) {
   const draw = () => {
     const render = SCREENS[current.name] ?? renderHome;
     try {
-      replace(root, render(store));
+      replace(root, render(store, current.params));
     } catch (error) {
       replace(root, renderError(error));
     }
   };
 
   startRouter((route) => {
-    if (route.name !== current.name) { resetTriage(); resetReview(); resetQuiz(); resetSync(); }
+    if (route.name !== current.name) { resetTriage(); resetReview(); resetQuiz(); resetSync(); resetWords(); resetPractice(); }
     current = route;
     draw();
   });

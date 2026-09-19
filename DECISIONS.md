@@ -162,6 +162,41 @@ phủ sóng từ vựng Part 5 — mới thấy NAWL đóng góp 1 từ. Ghi l�
   THỨ TỰ gặp từ; việc tách "đã biết / chưa biết" vẫn do Huy tự chấm 4 mức (D29).
 - **Mặc định KHÔNG lọc** (ràng buộc #9: không âm thầm đổi hành vi). Huy tự chọn tầng ở màn chính.
 
+**D32. Xem lại từ đã phân loại, sửa mức, và ôn chủ động (Kho từ vựng + Ôn chủ động + lối thoát ở màn phân loại).**
+- **Vấn đề Huy báo:** màn phân loại buộc chọn đúng 1 trong 4 mức, chấm xong là qua từ khác — không có
+  cách nhìn lại từ đã chấm, không sửa được khi lỡ tay, và những từ chấm "thành thạo" bị loại hẳn khỏi hàng
+  đợi nên không bao giờ hiện lại ở đâu để kiểm tra. Ngoài ra không có cách tự chủ động ôn ngoài lịch.
+- **Chẩn đoán:** "1 trong 4" bản thân là thang chấm đúng (D29); cái thiếu là **lối thoát** và **chỗ nhìn lại**.
+  Tự chấm hay sai theo hướng *tưởng mình biết* — và từ "thành thạo" là mức duy nhất không có cơ chế tự sửa.
+- **Phương án đã cân nhắc:**
+  (a) cho chọn nhiều mức cùng lúc / thêm nhãn — **loại**: mức là thang thứ tự, chọn nhiều thì vô nghĩa và
+      làm chậm đúng màn cần lướt nhanh;
+  (b) nhét thêm nút vào màn chính — **loại**: màn chính đã 9 nút;
+  (c) thanh tab dưới đáy, tách app thành 4 khu — **hoãn**: tái cấu trúc cả điều hướng, ngoài phạm vi, để
+      dành nếu số màn còn tăng;
+  (d) **chọn:** sửa nhỏ màn phân loại + hai màn mới, mỗi màn một việc.
+- **Đã làm:**
+  1. **Màn phân loại:** thêm *Để sau* (ẩn tạm, không tính vào lượt, không ghi nhật ký) và *Từ trước*
+     (lùi để chấm lại). Nhật ký append-only (ràng buộc #5) nên KHÔNG có "hoàn tác" thật: chấm lại là ghi
+     thêm một sự kiện `vocab.triaged` mới, sự kiện sau thắng, sự kiện cũ còn nguyên. Không thêm loại sự
+     kiện mới → bản app cũ trong cache vẫn đọc đúng.
+  2. **Kho từ vựng** (`#/words`): lọc theo Tất cả / Chưa phân loại / 4 mức / Đánh dấu, tìm theo từ hoặc nghĩa
+     (gõ không dấu vẫn ra), bấm một từ để xem đủ nội dung và đổi mức. Là nơi duy nhất thấy được từ "thành thạo".
+     Không lọc theo tầng: kho là nơi xem toàn bộ, tầng chỉ quyết định thứ tự gặp từ khi học (D31).
+  3. **Ôn chủ động** (`#/practice`): tự chọn nhóm (thành thạo / hay sai / đánh dấu / đang học), mỗi lượt 10 từ.
+- **Quyết định then chốt — ôn chủ động KHÔNG đụng lịch FSRS.** Chấm sớm một thẻ chưa đến hạn làm thuật toán
+  tính sai độ bền trí nhớ, và với nhịp 1–2 giờ/tuần (D03) không được để nó làm hàng đợi phình. Ngoại lệ duy
+  nhất, và cũng là giá trị thật của màn này: **quên một từ đã chấm "thành thạo" → hạ xuống "đoán được"**
+  (ghi `vocab.triaged` như bình thường) để từ đó vào lại hàng đợi học. Chọn "đoán được" thay vì "không biết"
+  vì Huy từng biết từ đó: nó vào giữa thứ tự ưu tiên chứ không lên đầu.
+- **Chỉ có 2 nút chấm (Vẫn nhớ / Quên rồi), không dùng 4 mức Quên/Khó/Tốt/Dễ:** vì kết quả không đưa vào
+  FSRS nên 4 mức không có tác dụng gì; nút thừa chỉ làm chậm. Phím Space chỉ lật thẻ, KHÔNG chấm "nhớ"
+  (khác màn ôn thẻ) — gõ nhầm thành "nhớ" là cách duy nhất làm hỏng kết quả tự kiểm tra.
+- **Danh sách từ của lượt chốt một lần lúc bắt đầu** (không tính lại mỗi lần vẽ) vì hạ mức một từ làm nó rời
+  nhóm "thành thạo" giữa chừng — cùng họ với lỗi cửa sổ trượt (quy tắc số 7).
+- **Chưa làm (cố ý, ràng buộc #8):** ghi thống kê ôn chủ động vào nhật ký (cần loại sự kiện mới + sửa đồng
+  bộ) — chưa có nhu cầu; sửa hàng loạt nhiều từ một lúc trong kho.
+
 ## Câu hỏi còn mở
 - Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng? Quyết khi ước lượng được dung lượng thực.
 - ~~Q2 (trước M2): xác nhận license của TSL 1.2 và NGSL.~~ → **Đã giải quyết, xem D18.**

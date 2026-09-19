@@ -20,8 +20,25 @@
 4. Về màn chính bấm **Ôn tập từ vựng**. Xem từ → `Space` lật thẻ → tự chấm Quên/Khó/Tốt/Dễ (`1`–`4`).
    Mỗi nút ghi sẵn lần ôn kế tiếp là bao lâu nữa. Mỗi lượt tối đa 10 từ mới, ôn hết thì bấm
    "Học thêm 10 từ mới" nếu còn sức.
-5. **Lưu ý quan trọng:** dữ liệu hiện lưu RIÊNG trên từng máy (IndexedDB), chưa đồng bộ.
+5. **Xem lại / tự ôn:** `Kho từ vựng` để xem các từ đã chấm và đổi mức; `Ôn chủ động` để tự kiểm tra
+   một nhóm từ (nhất là nhóm "thành thạo" — quên thì từ tự quay lại danh sách học). Ở màn phân loại,
+   `Backspace` lùi về từ trước, `S` để sau.
+6. **Lưu ý quan trọng:** dữ liệu hiện lưu RIÊNG trên từng máy (IndexedDB), chưa đồng bộ.
    Đồng bộ Mac ↔ iPhone là M5. Học trên một máy trước để tránh lệch dữ liệu.
+
+## Phiên 2026-09-19 (đêm) — Xem lại từ đã biết + ôn chủ động (D32) — XONG, chưa push
+Huy báo: phân loại chỉ chọn được 1 trong 4, không xem lại được từ đã biết, không tự ôn được. Xem **D32**.
+- **Màn phân loại:** thêm `Để sau` (phím `S`) và `← Từ trước` (phím `Backspace`) để chấm lại từ lỡ tay.
+  Chấm lại = ghi thêm sự kiện mới (nhật ký append-only), không sửa sự kiện cũ.
+- **Kho từ vựng** (`#/words`, nút ở màn chính): lọc theo mức, tìm (không cần gõ dấu), mở từ để xem đủ
+  nội dung và đổi mức. Các dòng "Đã phân loại tới đâu" ở màn chính bấm được, nhảy thẳng vào kho.
+- **Ôn chủ động** (`#/practice`): chọn nhóm (thành thạo / hay sai / đánh dấu / đang học), 10 từ mỗi lượt,
+  KHÔNG đụng lịch FSRS. Riêng quên một từ "thành thạo" thì hạ xuống "đoán được" để vào lại hàng đợi học.
+- Code mới: `src/logic/{word-library,practice,triage-history}.js` + 38 test; UI `src/ui/{words,practice}-screen.js`,
+  `word-detail.js` (dùng chung với màn ôn thẻ). **303 test pass.**
+- Đã chạy thử toàn bộ luồng bằng jsdom + dữ liệu deck thật (35 kiểm tra: đếm, để sau, lùi, bấm đôi, lọc, tìm,
+  đổi mức, ôn chủ động, reset khi rời màn). CHƯA nhìn bằng mắt trên trình duyệt thật — Huy mở app kiểm giúp
+  phần bố cục trên iPhone (hàng lọc, hàng nút dính đáy).
 
 ## Mục tiêu phiên này: 3 milestone — ĐÃ ĐẠT
 - ✅ **M4**: 200 câu Part 5 (phủ đều 12 loại kiến thức, 100% qua kiểm định 2 bước) + màn luyện.

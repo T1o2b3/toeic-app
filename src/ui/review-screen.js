@@ -9,6 +9,7 @@ import { TIER_ORDER, filterByTier } from '../logic/deck-tiers.js';
 import { getTier } from '../data/prefs.js';
 import { previewIntervals, GRADES } from '../logic/scheduler.js';
 import { formatDuration } from '../logic/format.js';
+import { renderWordBack } from './word-detail.js';
 
 /** Hạn mức từ MỚI mỗi lượt — không nhồi quá nhiều thứ mới một lúc (D03). */
 const NEW_PER_ROUND = 10;
@@ -96,7 +97,7 @@ export function renderReview(store) {
       ]),
     );
   } else {
-    children.push(renderBack(entry), renderGradeButtons(store, item));
+    children.push(renderWordBack(entry), renderGradeButtons(store, item));
   }
 
   children.push(renderBookmark(store, entry, state));
@@ -125,24 +126,6 @@ function renderDone(store, counts) {
       : '',
     el('button', { class: 'secondary', onClick: () => goTo('/') }, [el('span', { text: 'Về màn chính' })]),
   ]);
-}
-
-/** Mặt sau của thẻ: nghĩa, ví dụ, collocation, bẫy hay gặp. */
-function renderBack(entry) {
-  const parts = [el('div', { class: 'meaning', text: entry.vi })];
-
-  for (const example of entry.examples ?? []) {
-    parts.push(el('div', { class: 'example' }, [
-      el('div', { class: 'en', text: example.en }),
-      el('div', { class: 'vi', text: example.vi }),
-    ]));
-  }
-  if (entry.collocations?.length) {
-    parts.push(el('div', { class: 'chips' }, entry.collocations.map((c) => el('span', { class: 'chip', text: c }))));
-  }
-  if (entry.note) parts.push(el('div', { class: 'note', text: entry.note }));
-
-  return el('div', { class: 'card back' }, parts);
 }
 
 /** Bốn nút chấm, mỗi nút kèm khoảng cách tới lần ôn kế tiếp. */

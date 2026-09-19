@@ -87,12 +87,36 @@ export function renderHome(store) {
   }
 
   const byLevel = countByLevel(states);
-  if (Object.values(byLevel).some((count) => count > 0)) {
+  const triagedCount = Object.values(byLevel).reduce((sum, count) => sum + count, 0);
+
+  // Kho từ vựng + ôn chủ động (D32): chỗ nhìn lại và tự kiểm tra, tách khỏi luồng lướt một chiều.
+  sections.push(
+    el('button', { class: 'secondary', onClick: () => goTo('/words') }, [
+      el('span', { text: 'Kho từ vựng' }),
+      el('small', { text: triagedCount > 0
+        ? `${triagedCount} từ đã phân loại · xem lại, tìm kiếm, đổi mức`
+        : 'xem, tìm kiếm và đổi mức từng từ' }),
+    ]),
+  );
+  if (triagedCount > 0) {
+    sections.push(
+      el('button', { class: 'secondary', onClick: () => goTo('/practice') }, [
+        el('span', { text: 'Ôn chủ động' }),
+        el('small', { text: 'tự chọn nhóm từ để kiểm tra lại trí nhớ' }),
+      ]),
+    );
+  }
+
+  if (triagedCount > 0) {
+    // Mỗi dòng bấm được: nhảy thẳng tới danh sách từ ở mức đó trong kho.
     sections.push(el('div', { class: 'gaps' }, [
       el('div', { class: 'gaps-title', text: 'Đã phân loại tới đâu' }),
-      ...LEVEL_ORDER.map((level) => el('div', { class: 'gap-row' }, [
+      ...LEVEL_ORDER.map((level) => el('button', {
+        class: 'gap-row gap-link',
+        onClick: () => goTo(`/words?f=${level}`),
+      }, [
         el('span', { text: LEVEL_INFO[level].label }),
-        el('span', { class: 'gap-value', text: `${byLevel[level]} từ` }),
+        el('span', { class: 'gap-value', text: `${byLevel[level]} từ ›` }),
       ])),
     ]));
   }

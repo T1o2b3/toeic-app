@@ -4,11 +4,16 @@
  *
  * Có hiện sẵn nghĩa: tự chấm 4 mức mà không thấy nghĩa thì rất dễ nhầm
  * "quen mặt chữ" thành "biết nghĩa". Tắt được nếu muốn lướt nhanh.
+ *
+ * Bốn nút là thang chấm bắt buộc, nên màn này có hai lối thoát (D32): "Để sau" cho từ chưa
+ * quyết được, và "Từ trước" để chấm lại từ vừa lỡ tay. Muốn xem lại cả kho thì có màn riêng
+ * (words-screen.js).
  */
 import { el, goTo } from './dom.js';
 import { triageQueue, countUntriaged } from '../logic/vocab-state.js';
 import { roundProgress } from '../logic/round.js';
 import { LEVEL_ORDER, LEVEL_INFO, payloadForLevel } from '../logic/vocab-levels.js';
+import { stepBack, stepForward, canStepBack } from '../logic/triage-history.js';
 import { getShowMeaning, setShowMeaning, getTier } from '../data/prefs.js';
 import { TIER_ORDER, TIER_INFO, ALL_TIERS, filterByTier } from '../logic/deck-tiers.js';
 
@@ -21,6 +26,18 @@ const LEVEL_CLASS = { unknown: 'again', context: 'hard', spelling: 'good', fluen
 /** Từ đã phân loại trong lượt này. Nguồn duy nhất để đếm ngược (xem src/logic/round.js). */
 let doneThisRound = new Set();
 
+/** Từ bấm "Để sau" — không tính là đã làm, chỉ tạm ẩn tới hết lần ghé màn này. */
+let skipped = new Set();
+
+/** Các từ đã chấm trong lượt theo thứ tự chấm, để "Từ trước" đi lùi được. */
+let history = [];
+
+/** null = đang ở từ mới nhất; số = đang xem lại từ thứ n trong `history` (xem triage-history.js). */
+let revisitIndex = null;
+
+/** Đang ghi một câu trả lời. Chặn bấm phím hai lần thật nhanh chấm nhầm sang từ kế tiếp. */
+let busy = false;
+
 /**
  * Hàng đợi của lượt hiện tại: chỉ lấy đúng số từ CÒN LẠI của lượt,
  * nhờ vậy lượt kết thúc sau đủ ROUND_SIZE từ thay vì kéo dài mãi.
@@ -28,12 +45,24 @@ let doneThisRound = new Set();
 function roundQueue(store) {
   const left = Math.max(0, ROUND_SIZE - doneThisRound.size);
   if (left === 0) return [];
-  return triageQueue(tieredEntries(store), store.states, left);
+  const pool = tieredEntries(store).filter((entry) => !skipped.has(entry.id));
+  return triageQueue(pool, store.states, left);
 }
 
 /** Deck đã lọc theo tầng Huy chọn ở màn chính. */
 function tieredEntries(store) {
   return filterByTier(store.entries, getTier(TIER_ORDER));
+}
+
+/** Từ đang hiện trên màn: từ đang xem lại nếu đi lùi, không thì đầu hàng đợi. */
+function currentEntry(store) {
+  if (revisitIndex !== null) {
+    const id = history[revisitIndex];
+    const found = store.entries.find((entry) => entry.id === id);
+    if (found) return found;
+    revisitIndex = null; // lịch sử trỏ vào từ không còn trong deck: quay về từ mới nhất
+  }
+  return roundQueue(store)[0] ?? null;
 }
 
 /**
@@ -50,27 +79,33 @@ export function renderTriage(store) {
     availableCount: queue.length,
   });
 
-  if (remaining === 0) return renderDone(store, { finished, untriaged });
+  const entry = currentEntry(store);
+  const reviewing = revisitIndex !== null;
+  if (!entry || (remaining === 0 && !reviewing)) return renderDone(store, { finished, untriaged });
 
-  const entry = queue[0];
   const showMeaning = getShowMeaning();
+  const previous = reviewing ? store.states.get(entry.id)?.level : null;
 
   return el('div', {}, [
     el('div', { class: 'topbar' }, [
       el('button', { class: 'link', text: '← Về màn chính', onClick: () => goTo('/') }),
-      el('span', { class: 'progress', text: `còn ${remaining} từ trong lượt · ${untriaged} từ ${tierNote()}` }),
+      el('span', { class: 'progress', text: reviewing
+        ? `xem lại từ đã chấm (${revisitIndex + 1}/${history.length})`
+        : `còn ${remaining} từ trong lượt · ${untriaged} từ ${tierNote()}` }),
     ]),
     el('div', { class: 'card big' }, [
       el('div', { class: 'word', text: entry.word }),
       entry.ipa ? el('div', { class: 'ipa', text: entry.ipa }) : '',
       el('div', { class: 'pos', text: (entry.pos ?? []).join(' · ') }),
-      el('div', { class: 'hint', text: 'Bạn dùng được từ này tới mức nào?' }),
+      el('div', { class: 'hint', text: reviewing
+        ? `Trước đó bạn chấm: ${LEVEL_INFO[previous]?.label ?? '—'}. Chấm lại nếu cần.`
+        : 'Bạn dùng được từ này tới mức nào?' }),
     ]),
     showMeaning ? renderMeaning(entry) : '',
     el('div', { class: 'actions four' }, LEVEL_ORDER.map((level) => {
       const info = LEVEL_INFO[level];
       return el('button', {
-        class: `grade ${LEVEL_CLASS[level]}`,
+        class: `grade ${LEVEL_CLASS[level]}${level === previous ? ' chosen' : ''}`,
         onClick: () => answer(store, entry, level),
       }, [
         el('span', { text: info.label }),
@@ -78,14 +113,20 @@ export function renderTriage(store) {
         el('kbd', { text: info.key }),
       ]);
     })),
-    el('div', { class: 'actions' }, [
+    el('div', { class: 'tools' }, [
+      canStepBack(history.length, revisitIndex)
+        ? el('button', { class: 'link', text: '← Từ trước', onClick: () => goBack(store) })
+        : '',
+      reviewing
+        ? ''
+        : el('button', { class: 'link', text: 'Để sau →', onClick: () => skip(store, entry) }),
       el('button', {
         class: showMeaning ? 'link active' : 'link',
-        text: showMeaning ? '👁 Đang hiện nghĩa — ẩn đi' : '👁 Hiện nghĩa khi phân loại',
+        text: showMeaning ? '👁 Đang hiện nghĩa' : '👁 Hiện nghĩa',
         onClick: () => { setShowMeaning(!showMeaning); store.refresh(); },
       }),
     ]),
-    el('p', { class: 'footnote', text: 'Phím tắt: 1–4 chọn mức · Space bật/tắt hiện nghĩa' }),
+    el('p', { class: 'footnote', text: 'Phím tắt: 1–4 chọn mức · Backspace từ trước · S để sau · Space bật/tắt nghĩa' }),
   ]);
 }
 
@@ -109,39 +150,81 @@ function renderMeaning(entry) {
   ]);
 }
 
-/** Ghi mức vừa chấm. Sự kiện mang cả `level` mới lẫn `known` cũ (xem vocab-levels.js). */
+/**
+ * Ghi mức vừa chấm. Sự kiện mang cả `level` mới lẫn `known` cũ (xem vocab-levels.js).
+ * Chấm lại một từ cũ chỉ là ghi thêm một sự kiện nữa: sự kiện sau thắng, nhật ký không bị sửa.
+ */
 async function answer(store, entry, level) {
   // Bấm phím hai lần thật nhanh: lần sau vẫn thấy từ cũ vì màn chưa kịp vẽ lại.
   // Không chặn thì ghi hai sự kiện cho cùng một từ, và nhìn ra ngoài đúng như bộ đếm bị kẹt.
-  if (doneThisRound.has(entry.id)) return;
-  doneThisRound.add(entry.id);
-  await store.record('vocab.triaged', payloadForLevel(entry.id, level));
+  if (busy) return;
+  busy = true;
+  try {
+    if (revisitIndex !== null) {
+      revisitIndex = stepForward(history.length, revisitIndex);
+    } else {
+      if (doneThisRound.has(entry.id)) return;
+      doneThisRound.add(entry.id);
+      history.push(entry.id);
+    }
+    await store.record('vocab.triaged', payloadForLevel(entry.id, level));
+  } finally {
+    busy = false;
+  }
+}
+
+/** Tạm ẩn từ này tới lần sau. Không ghi gì vào nhật ký, không tính vào lượt. */
+function skip(store, entry) {
+  if (revisitIndex !== null) return;
+  skipped.add(entry.id);
+  store.refresh();
+}
+
+/** Lùi về từ đã chấm trước đó để chấm lại. */
+function goBack(store) {
+  revisitIndex = stepBack(history.length, revisitIndex);
+  store.refresh();
 }
 
 /** Màn kết thúc: hết lượt (còn từ để làm tiếp) hoặc hết sạch deck. */
 function renderDone(store, { finished, untriaged }) {
   const doneCount = doneThisRound.size;
+  const fixLast = history.length > 0
+    ? el('button', { class: 'link', text: '← Sửa lại từ vừa chấm', onClick: () => {
+        revisitIndex = history.length - 1;
+        store.refresh();
+      } })
+    : '';
+  const library = el('button', { class: 'secondary', onClick: () => goTo('/words') }, [
+    el('span', { text: 'Kho từ vựng' }),
+    el('small', { text: 'xem lại các từ đã chấm, đổi mức' }),
+  ]);
 
   if (untriaged === 0) {
     return el('div', {}, [
       el('h1', { text: 'Phân loại xong' }),
       el('p', { class: 'empty', text: 'Mọi từ trong deck đã được phân loại.' }),
+      library,
       el('button', { class: 'secondary', onClick: () => goTo('/') }, [el('span', { text: 'Về màn chính' })]),
+      fixLast,
     ]);
   }
 
+  const later = skipped.size > 0 ? ` ${skipped.size} từ để sau.` : '';
   return el('div', {}, [
     el('h1', { text: finished ? 'Xong lượt này' : 'Hết từ rồi' }),
-    el('p', { class: 'empty', text: `Đã phân loại ${doneCount} từ. Còn ${untriaged} từ chưa phân loại.` }),
+    el('p', { class: 'empty', text: `Đã phân loại ${doneCount} từ.${later} Còn ${untriaged} từ chưa phân loại.` }),
     el('button', { class: 'primary', onClick: () => { resetTriage(); store.refresh(); } }, [
       el('span', { text: `Làm tiếp ${Math.min(ROUND_SIZE, untriaged)} từ nữa` }),
     ]),
+    library,
     el('button', { class: 'secondary', onClick: () => goTo('/') }, [el('span', { text: 'Về màn chính' })]),
+    fixLast,
   ]);
 }
 
 /**
- * Phím tắt: 1–4 chọn mức, Space bật/tắt hiện nghĩa.
+ * Phím tắt: 1–4 chọn mức, Backspace lùi, S để sau, Space bật/tắt hiện nghĩa.
  * @param {object} store
  * @param {KeyboardEvent} event
  */
@@ -152,14 +235,27 @@ export function handleTriageKey(store, event) {
     store.refresh();
     return;
   }
+  if (event.key === 'Backspace') {
+    event.preventDefault();
+    if (canStepBack(history.length, revisitIndex)) goBack(store);
+    return;
+  }
+
+  const entry = currentEntry(store);
+  if (!entry) return;
+  if (event.key === 's' || event.key === 'S') {
+    skip(store, entry);
+    return;
+  }
 
   const level = LEVEL_ORDER.find((name) => LEVEL_INFO[name].key === event.key);
-  if (!level) return;
-  const entry = roundQueue(store)[0];
-  if (entry) answer(store, entry, level);
+  if (level) answer(store, entry, level);
 }
 
 /** Đặt lại khi rời màn hoặc khi bắt đầu lượt mới. */
 export function resetTriage() {
   doneThisRound = new Set();
+  skipped = new Set();
+  history = [];
+  revisitIndex = null;
 }
