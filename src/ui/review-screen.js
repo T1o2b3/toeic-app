@@ -33,8 +33,14 @@ export function renderReview(store) {
     revealed = false;
     return el('div', {}, [
       el('h1', { text: 'Xong phiên này' }),
-      el('p', { class: 'empty', text: 'Không còn thẻ nào đến hạn. Nghỉ thôi — ôn dồn không giúp nhớ lâu hơn.' }),
-      el('button', { class: 'primary', onClick: () => goTo('/') }, [el('span', { text: 'Về màn chính' })]),
+      el('p', { class: 'empty', text: 'Không còn thẻ nào đến hạn. Ôn dồn không giúp nhớ lâu hơn.' }),
+      store.questions.length > 0
+        ? el('button', { class: 'primary', onClick: () => goTo('/quiz') }, [
+            el('span', { text: 'Làm tiếp Part 5' }),
+            el('small', { text: 'phần còn lại của phiên hôm nay' }),
+          ])
+        : '',
+      el('button', { class: 'secondary', onClick: () => goTo('/') }, [el('span', { text: 'Về màn chính' })]),
     ]);
   }
 

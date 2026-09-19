@@ -5,6 +5,8 @@ import { el, goTo } from './dom.js';
 import { triageQueue, reviewQueue, weakWords } from '../logic/vocab-state.js';
 import { estimateSessionTime, summarizeQueue } from '../logic/format.js';
 import { quizQueue, accuracyByErrorType } from '../logic/quiz.js';
+import { planToday, describePlan } from '../logic/today.js';
+import { buildExport, exportFileName } from '../logic/export.js';
 
 /**
  * @param {object} store
@@ -34,10 +36,23 @@ export function renderHome(store) {
     ]),
   ];
 
-  if (total > 0) {
+  const plan = planToday({
+    entries: store.entries, states, questions: store.questions, quizStates: store.quizStates,
+  });
+
+  if (!plan.empty) {
     sections.push(
       el('button', { class: 'primary', onClick: () => goTo('/review') }, [
-        el('span', { text: 'Ôn tập ngay' }),
+        el('span', { text: '15 phút hôm nay' }),
+        el('small', { text: describePlan(plan) }),
+      ]),
+    );
+  }
+
+  if (total > 0) {
+    sections.push(
+      el('button', { class: 'secondary', onClick: () => goTo('/review') }, [
+        el('span', { text: 'Ôn tập từ vựng' }),
         el('small', { text: `${total} thẻ · ${estimateSessionTime(due, fresh)}` }),
       ]),
     );
@@ -90,8 +105,27 @@ export function renderHome(store) {
   }
 
   sections.push(
+    el('div', { class: 'actions' }, [
+      el('button', {
+        class: 'link',
+        text: '⬇ Xuất dữ liệu ra file',
+        onClick: () => downloadBackup(store),
+      }),
+    ]),
     el('p', { class: 'footnote', text: `${store.eventCount} sự kiện đã ghi trên máy này` }),
   );
 
   return el('div', {}, sections);
+}
+
+/** Tải nhật ký sự kiện về máy dưới dạng JSON (D25: tự sao lưu vì free tier không có backup). */
+function downloadBackup(store) {
+  const data = buildExport({ events: store.exportEvents(), deviceId: store.deviceId });
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = exportFileName();
+  link.click();
+  URL.revokeObjectURL(url);
 }

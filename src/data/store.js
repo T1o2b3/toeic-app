@@ -39,6 +39,7 @@ export async function createStore({ factory, fetchImpl } = {}) {
     deck: deckData,
     entries: deckData.entries,
     questions: questionBank.entries,
+    deviceId,
     get states() { return states; },
     get quizStates() { return quizStates; },
     get eventCount() { return events.length; },
