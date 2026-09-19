@@ -21,6 +21,12 @@
 - ✅ **M6**: PWA cài được, học offline được, phiên "15 phút hôm nay", nút xuất dữ liệu.
 - ✅ **M5 (code)**: schema SQL + RLS, đăng nhập OTP, đồng bộ hai chiều. Chờ Huy cấu hình để chạy thật.
 
+## LƯU Ý KHI KIỂM TRA LỖI SAU KHI DEPLOY
+Màn chính hiện số hiệu bản build ở dòng cuối (`bản 2026-09-19 12:19`). Trước khi kết luận
+"lỗi chưa sửa", hãy đối chiếu số này. Nếu cũ hơn lần build mới nhất thì đang xem bản cũ trong
+bộ nhớ đệm của service worker → tải lại trang (Mac: Cmd+Shift+R; iPhone: đóng hẳn app rồi mở lại).
+App đã có cơ chế tự tải lại khi thấy bản mới, nhưng lần đầu ngay sau khi deploy vẫn có thể lệch.
+
 ## VIỆC CỦA HUY — kích hoạt đồng bộ (M5), khoảng 15 phút
 
 Đăng nhập bằng **email + mật khẩu** (D25c — đã đổi từ OTP vì Supabase chặn sửa mẫu email
@@ -30,8 +36,9 @@ khi chưa có SMTP riêng).
    Lưu lại Database Password nó sinh ra.
 2. **SQL Editor** → New query → dán toàn bộ `supabase/schema.sql` → **Run**.
    Kết quả cuối phải là `rowsecurity = true` cho CẢ HAI bảng. Nếu không, DỪNG LẠI.
-3. **Authentication → Sign In / Providers → Email**: tắt **Confirm email**, bấm Save.
-   (Không tắt thì tạo tài khoản xong phải chờ email xác nhận — thừa với app cá nhân.)
+3. **Authentication → Sign In / Providers → Email**:
+   - Công tắc **Email** (provider) phải **BẬT**. Tắt nó thì API trả `Email logins are disabled`.
+   - Chỉ tắt riêng **Confirm email** bên trong. Bấm Save.
 4. **Project Settings → API**: copy **Project URL** và **anon public** key.
    KHÔNG dùng `service_role` key (ràng buộc #3).
 5. Thêm vào `.env`: `VITE_SUPABASE_URL=...` và `VITE_SUPABASE_ANON_KEY=...`

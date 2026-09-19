@@ -56,6 +56,16 @@ Mỗi quy tắc dưới đây sinh ra từ một lỗi đã thực sự xảy ra
 6. **Việc chạy dài phải lưu tiến độ sau mỗi lô.** Dừng giữa chừng phải chạy lại tiếp đúng chỗ dở,
    không làm lại từ đầu (hạn mức API là tài nguyên không hoàn lại).
 
+## Sau mỗi lần deploy
+
+1. **Luôn tải lại trang trước khi kết luận lỗi còn hay hết.** Service worker phục vụ bản đã lưu
+   trong máy; app tự tải lại khi phát hiện bản mới (`src/data/sw-update.js`), nhưng lần đầu sau khi
+   deploy vẫn có thể thấy bản cũ. Trên Mac: `Cmd+Shift+R`. Trên iPhone: đóng hẳn app (vuốt lên) rồi mở lại.
+2. **Đối chiếu số hiệu bản build** ở cuối màn chính (`bản 2026-09-19 12:19`) với lần build mới nhất.
+   Khác nhau nghĩa là đang xem bản cũ, không phải lỗi chưa sửa.
+3. Khi Huy báo "lỗi vẫn còn", việc ĐẦU TIÊN phải làm là kiểm tra bản đang chạy —
+   đã mất thời gian vì bỏ qua bước này một lần.
+
 ## Làm song song khi an toàn
 
 Việc nào chạy song song được mà không ảnh hưởng tiến độ và chất lượng của nhau thì làm cùng lúc,
