@@ -3,8 +3,15 @@
  * File nằm trong public/ nên được phục vụ ở đường dẫn /content/...
  */
 
-/** Deck mặc định của MVP. Sau này thêm ngsl, daily, my-words (D04). */
+/** Deck nền, bắt buộc phải có. Thiếu nó thì app không chạy được. */
 export const DEFAULT_DECK = 'toeic-tsl';
+
+/**
+ * Deck phụ: thiếu file thì BỎ QUA chứ không làm sập app.
+ * `toeic-bsl` là tầng cao cấp (D30), sinh dần bằng pipeline nên có thể chưa tồn tại.
+ * Sau này thêm ngsl, daily, my-words vào đây (D04).
+ */
+export const OPTIONAL_DECKS = Object.freeze(['toeic-bsl']);
 
 /**
  * Tải một deck từ vựng.
@@ -39,5 +46,38 @@ export async function loadQuestionBank(set = 'part5', fetchImpl = fetch) {
     return Array.isArray(data?.entries) ? data : { set, part: 5, entries: [] };
   } catch {
     return { set, part: 5, entries: [] };
+  }
+}
+
+/**
+ * Tải toàn bộ deck từ vựng: deck nền (bắt buộc) + các deck phụ có mặt.
+ *
+ * Tách file theo deck và tải song song, không gộp thành một file khổng lồ —
+ * deck nền đã 1,37 MB, thêm tầng cao cấp vào cùng file thì lần mở đầu quá nặng.
+ *
+ * @param {typeof fetch} [fetchImpl]
+ * @returns {Promise<{primary: object, decks: object[], entries: object[]}>}
+ */
+export async function loadAllVocabDecks(fetchImpl = fetch) {
+  const [primary, ...optional] = await Promise.all([
+    loadVocabDeck(DEFAULT_DECK, fetchImpl),
+    ...OPTIONAL_DECKS.map((name) => loadOptionalDeck(name, fetchImpl)),
+  ]);
+
+  const decks = [primary, ...optional.filter(Boolean)];
+  return { primary, decks, entries: decks.flatMap((deck) => deck.entries) };
+}
+
+/**
+ * Tải một deck phụ. Thiếu file hoặc file hỏng thì trả null — app vẫn học bằng deck nền.
+ * @param {string} deck
+ * @param {typeof fetch} [fetchImpl]
+ * @returns {Promise<object|null>}
+ */
+export async function loadOptionalDeck(deck, fetchImpl = fetch) {
+  try {
+    return await loadVocabDeck(deck, fetchImpl);
+  } catch {
+    return null;
   }
 }

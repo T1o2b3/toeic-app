@@ -2,7 +2,7 @@
  * Chuẩn hoá dữ liệu AI trả về thành một mục từ vựng đúng schema.
  * Toàn bộ là hàm thuần (không gọi mạng, không đọc file) để test được.
  */
-import { makeVocabId } from './tsl.js';
+import { makeVocabId } from './wordlists.js';
 
 const ALLOWED_POS = new Set([
   'noun', 'verb', 'adjective', 'adverb', 'preposition',
@@ -79,9 +79,11 @@ export function normalizeExamples(value) {
  * @param {object} input.ai - JSON do AI trả về cho từ này
  * @param {string} [input.ipa]
  * @param {{model: string, promptVersion: string, batch: string, date: string}} input.gen
+ * @param {string} [input.deck] - tên deck, quyết định luôn tiền tố id
+ * @param {string} [input.idPrefix]
  * @returns {object} mục từ vựng đúng schemas/vocab.schema.json
  */
-export function buildEntry({ word, rank, ai, ipa, gen }) {
+export function buildEntry({ word, rank, ai, ipa, gen, deck = 'toeic-tsl', idPrefix = 'tsl' }) {
   const vi = typeof ai?.vi === 'string' ? ai.vi.trim() : '';
   if (!vi) throw new Error(`"${word}": AI không trả về nghĩa tiếng Việt`);
 
@@ -89,8 +91,8 @@ export function buildEntry({ word, rank, ai, ipa, gen }) {
   if (examples.length === 0) throw new Error(`"${word}": AI không trả về ví dụ hợp lệ`);
 
   const entry = {
-    id: makeVocabId(rank),
-    deck: 'toeic-tsl',
+    id: makeVocabId(rank, idPrefix),
+    deck,
     status: 'active',
     word,
     rank,

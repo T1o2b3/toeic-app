@@ -40,8 +40,8 @@ export function renderHome(store) {
   const sections = [
     el('h1', { text: 'Hôm nay học gì' }),
     el('p', { class: 'subtitle', text: tier === ALL_TIERS
-      ? `Deck ${store.deck.deck} · ${store.entries.length} từ`
-      : `Deck ${store.deck.deck} · tầng ${TIER_INFO[tier].label.toLowerCase()} · ${entries.length}/${store.entries.length} từ` }),
+      ? `${store.entries.length} từ · ${(store.decks ?? [store.deck]).map((d) => d.deck).join(' + ')}`
+      : `Tầng ${TIER_INFO[tier].label.toLowerCase()} · ${entries.length}/${store.entries.length} từ` }),
     renderTierChooser(store, tier),
     el('div', { class: 'stats' }, [
       stat(due, 'đến hạn ôn'),

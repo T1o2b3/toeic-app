@@ -31,7 +31,7 @@
       "required": ["id", "deck", "status", "word", "rank", "pos", "vi", "examples", "gen"],
       "additionalProperties": false,
       "properties": {
-        "id": { "type": "string", "pattern": "^tsl-[0-9]{4}$" },
+        "id": { "type": "string", "pattern": "^[a-z]{2,5}-[0-9]{4}$", "description": "Tiền tố là danh sách gốc: tsl-, bsl-. Vĩnh viễn, không đổi (D16)." },
         "deck": { "type": "string", "pattern": "^[a-z0-9-]+$" },
         "status": { "enum": ["active", "retired"] },
         "word": { "type": "string", "minLength": 1 },

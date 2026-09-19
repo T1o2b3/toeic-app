@@ -9,7 +9,7 @@ import { reduceVocabState } from '../logic/vocab-state.js';
 import { reduceQuizState } from '../logic/quiz.js';
 import { openDb, appendEvents, readAllEvents } from './db.js';
 import { getDeviceId } from './device.js';
-import { loadVocabDeck, loadQuestionBank } from './content.js';
+import { loadAllVocabDecks, loadQuestionBank } from './content.js';
 
 /**
  * Tạo store và nạp dữ liệu ban đầu.
@@ -20,8 +20,8 @@ import { loadVocabDeck, loadQuestionBank } from './content.js';
  */
 export async function createStore({ factory, fetchImpl } = {}) {
   const db = await openDb(factory);
-  const [deckData, questionBank] = await Promise.all([
-    loadVocabDeck(undefined, fetchImpl),
+  const [vocab, questionBank] = await Promise.all([
+    loadAllVocabDecks(fetchImpl),
     loadQuestionBank(undefined, fetchImpl),
   ]);
   const deviceId = getDeviceId();
@@ -36,8 +36,9 @@ export async function createStore({ factory, fetchImpl } = {}) {
   };
 
   return {
-    deck: deckData,
-    entries: deckData.entries,
+    deck: vocab.primary,
+    decks: vocab.decks,
+    entries: vocab.entries,
     questions: questionBank.entries,
     deviceId,
     get states() { return states; },

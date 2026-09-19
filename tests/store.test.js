@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { IDBFactory } from 'fake-indexeddb';
 import { createStore } from '../src/data/store.js';
-import { loadVocabDeck } from '../src/data/content.js';
+import { loadVocabDeck, loadAllVocabDecks } from '../src/data/content.js';
 
 const DECK = {
   deck: 'toeic-tsl',
@@ -13,7 +13,25 @@ const DECK = {
   ],
 };
 
-const okFetch = () => vi.fn().mockResolvedValue({ ok: true, status: 200, json: async () => DECK });
+const BSL_DECK = {
+  deck: 'toeic-bsl',
+  version: 1,
+  attribution: { source: 'BSL 1.20', authors: 'B&C', license: 'CC BY-SA 4.0', url: 'https://x.test' },
+  entries: [{ id: 'bsl-0003', word: 'equity', rank: 3 }],
+};
+
+/**
+ * Giả lập fetch theo TỪNG đường dẫn. Trả chung một deck cho mọi URL thì deck phụ
+ * cũng nhận được deck nền và số từ bị nhân đôi — lỗi này đã suýt lọt.
+ * @param {Record<string, object>} byUrl - mảnh đường dẫn -> dữ liệu JSON
+ */
+const fetchByUrl = (byUrl) => vi.fn(async (url) => {
+  const hit = Object.entries(byUrl).find(([part]) => String(url).includes(part));
+  if (!hit) return { ok: false, status: 404 };
+  return { ok: true, status: 200, json: async () => hit[1] };
+});
+
+const okFetch = () => fetchByUrl({ 'vocab-toeic-tsl': DECK });
 
 beforeEach(() => {
   // getDeviceId dùng localStorage; jsdom không bật mặc định nên tự giả lập.
@@ -38,6 +56,29 @@ describe('loadVocabDeck', () => {
   it('báo lỗi khi deck rỗng hoặc sai định dạng', async () => {
     const fetchImpl = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ entries: [] }) });
     await expect(loadVocabDeck('toeic-tsl', fetchImpl)).rejects.toThrow(/rỗng hoặc sai định dạng/);
+  });
+});
+
+describe('loadAllVocabDecks', () => {
+  it('chưa sinh deck cao cấp thì vẫn chạy bằng deck nền', async () => {
+    const vocab = await loadAllVocabDecks(okFetch());
+    expect(vocab.decks.map((d) => d.deck)).toEqual(['toeic-tsl']);
+    expect(vocab.entries).toHaveLength(2);
+    expect(vocab.primary.deck).toBe('toeic-tsl');
+  });
+
+  it('có deck cao cấp thì gộp cả hai, deck nền đứng trước', async () => {
+    const vocab = await loadAllVocabDecks(fetchByUrl({
+      'vocab-toeic-tsl': DECK,
+      'vocab-toeic-bsl': BSL_DECK,
+    }));
+    expect(vocab.decks.map((d) => d.deck)).toEqual(['toeic-tsl', 'toeic-bsl']);
+    expect(vocab.entries.map((e) => e.id)).toEqual(['tsl-0001', 'tsl-0002', 'bsl-0003']);
+  });
+
+  it('deck NỀN hỏng thì phải ném lỗi, không âm thầm chạy với deck rỗng', async () => {
+    await expect(loadAllVocabDecks(fetchByUrl({ 'vocab-toeic-bsl': BSL_DECK })))
+      .rejects.toThrow(/HTTP 404/);
   });
 });
 

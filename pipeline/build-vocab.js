@@ -2,14 +2,17 @@
  * Sinh deck từ vựng TOEIC từ danh sách TSL 1.2 (D10: chạy trên máy, không gọi AI lúc dùng app).
  *
  * Chạy:
- *   node --env-file=.env pipeline/build-vocab.js            # làm toàn bộ 1250 từ
- *   node --env-file=.env pipeline/build-vocab.js --limit 20 # thử 20 từ đầu
- *   node --env-file=.env pipeline/build-vocab.js --no-ipa   # bỏ bước tra IPA cho nhanh
+ *   node --env-file=.env pipeline/build-vocab.js                 # deck nền TSL (1250 từ)
+ *   node --env-file=.env pipeline/build-vocab.js --list bsl      # deck cao cấp BSL (D30)
+ *   node --env-file=.env pipeline/build-vocab.js --limit 20      # thử 20 từ đầu
+ *   node --env-file=.env pipeline/build-vocab.js --no-ipa        # bỏ bước tra IPA cho nhanh
+ *
+ * KHÔNG chạy hai danh sách cùng lúc nếu chúng dùng chung file cache (xem WORDLISTS).
  *
  * Chạy lại nhiều lần được: từ nào đã có trong pipeline/.cache/ thì không gọi AI lại.
  */
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
-import { parseTslCsv, TSL_ATTRIBUTION } from './lib/tsl.js';
+import { parseTslCsv, WORDLISTS } from './lib/wordlists.js';
 import { buildEntry } from './lib/vocab-entry.js';
 import { buildVocabPrompt, parseVocabResponse, matchVocabResponse, VOCAB_PROMPT_VERSION } from './lib/prompt-vocab.js';
 import { createGeminiProvider, withRetry, sleep, isDailyQuotaError, DEFAULT_GEMINI_MODELS } from './lib/ai-provider.js';
@@ -20,10 +23,6 @@ import { createDeckValidator, findDuplicateIds } from './lib/validate-deck.js';
 const ROOT = new URL('..', import.meta.url);
 const path = (relative) => new URL(relative, ROOT).pathname;
 
-const OUTPUT = path('public/content/vocab-toeic-tsl.json');
-const AI_CACHE = path('pipeline/.cache/vocab-ai.json');
-const IPA_CACHE = path('pipeline/.cache/ipa.json');
-
 /**
  * Đọc tham số dòng lệnh.
  * @param {string[]} argv
@@ -31,23 +30,48 @@ const IPA_CACHE = path('pipeline/.cache/ipa.json');
 function parseArgs(argv) {
   const limitFlag = argv.indexOf('--limit');
   const batchFlag = argv.indexOf('--batch-size');
+  const listFlag = argv.indexOf('--list');
+  const name = listFlag === -1 ? 'tsl' : argv[listFlag + 1];
+  const list = WORDLISTS[name];
+  if (!list) {
+    throw new Error(`--list không hợp lệ: "${name}". Chọn một trong: ${Object.keys(WORDLISTS).join(', ')}`);
+  }
   return {
+    list,
     limit: limitFlag === -1 ? Infinity : Number.parseInt(argv[limitFlag + 1], 10),
     batchSize: batchFlag === -1 ? 50 : Number.parseInt(argv[batchFlag + 1], 10),
     withIpa: !argv.includes('--no-ipa'),
   };
 }
 
+/**
+ * Đọc danh sách từ của một wordlist, đã bỏ phần trùng với danh sách nền.
+ * @param {object} list - một mục trong WORDLISTS
+ * @returns {Array<{word: string, rank: number}>}
+ */
+function readWords(list) {
+  const words = parseTslCsv(readFileSync(path(list.csv), 'utf8'), { rankColumn: list.rankColumn });
+  if (!list.excludeFrom) return words;
+
+  const base = WORDLISTS[list.excludeFrom];
+  const seen = new Set(
+    parseTslCsv(readFileSync(path(base.csv), 'utf8'), { rankColumn: base.rankColumn })
+      .map((w) => w.word),
+  );
+  const kept = words.filter((w) => !seen.has(w.word));
+  console.log(`Bỏ ${words.length - kept.length} từ đã có trong deck ${base.deck}.`);
+  return kept;
+}
+
 async function main() {
-  const { limit, batchSize, withIpa } = parseArgs(process.argv.slice(2));
+  const { list, limit, batchSize, withIpa } = parseArgs(process.argv.slice(2));
 
-  const csv = readFileSync(path('pipeline/data/TSL_12_stats.csv'), 'utf8');
-  const allWords = parseTslCsv(csv);
+  const allWords = readWords(list);
   const words = Number.isFinite(limit) ? allWords.slice(0, limit) : allWords;
-  console.log(`Danh sách TSL 1.2: ${allWords.length} từ, phiên này xử lý ${words.length} từ.`);
+  console.log(`${list.attribution.source}: ${allWords.length} từ cần sinh, phiên này xử lý ${words.length} từ.`);
 
-  const aiCache = openCache(AI_CACHE);
-  const ipaCache = openCache(IPA_CACHE);
+  const aiCache = openCache(path(list.aiCache));
+  const ipaCache = openCache(path(list.ipaCache));
   const todo = words.filter((w) => !aiCache.has(w.word));
   console.log(`Đã có sẵn trong cache: ${words.length - todo.length} từ. Cần gọi AI: ${todo.length} từ.`);
 
@@ -136,7 +160,10 @@ async function main() {
       date: cached.date,
     };
     try {
-      entries.push(buildEntry({ word, rank, ai: cached.ai, ipa: ipaCache.get(word) ?? undefined, gen }));
+      entries.push(buildEntry({
+        word, rank, ai: cached.ai, ipa: ipaCache.get(word) ?? undefined, gen,
+        deck: list.deck, idPrefix: list.idPrefix,
+      }));
     } catch (error) {
       skipped.push(`${word}: ${error.message}`);
     }
@@ -148,7 +175,7 @@ async function main() {
     return;
   }
 
-  const deck = { deck: 'toeic-tsl', version: 1, attribution: { ...TSL_ATTRIBUTION }, entries };
+  const deck = { deck: list.deck, version: 1, attribution: { ...list.attribution }, entries };
 
   const validate = createDeckValidator();
   const { valid, errors } = validate(deck);
@@ -162,8 +189,8 @@ async function main() {
   }
 
   mkdirSync(path('public/content'), { recursive: true });
-  writeFileSync(OUTPUT, `${JSON.stringify(deck, null, 2)}\n`);
-  console.log(`\nĐã ghi ${entries.length} từ vào public/content/vocab-toeic-tsl.json`);
+  writeFileSync(path(list.output), `${JSON.stringify(deck, null, 2)}\n`);
+  console.log(`\nĐã ghi ${entries.length} từ vào ${list.output}`);
   if (skipped.length) {
     console.log(`Bỏ qua ${skipped.length} từ do dữ liệu AI thiếu:`);
     for (const line of skipped.slice(0, 10)) console.log('  -', line);
