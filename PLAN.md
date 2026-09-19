@@ -78,4 +78,5 @@ toeic-app/
 ~44 giờ làm việc, **khoảng 10 tuần** theo nhịp trên. MVP dùng được từ ngày 7.
 
 ## Backlog (ý tưởng chưa lên lịch)
-- (trống)
+- Ước lượng "mức sẵn sàng thi" (điểm hiện tại → mục tiêu) — cần mô hình quy đổi điểm, chờ đủ dữ liệu làm bài. (RESEARCH.md)
+- Kế hoạch hôm nay dạng nhiều nhiệm vụ nhỏ có tiến độ `3/5 xong` — cân nhắc khi làm M6. (RESEARCH.md)
