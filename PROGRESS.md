@@ -6,14 +6,20 @@
 ## Trạng thái hiện tại
 - Giai đoạn: 1 — MVP. **M0–M4 và M6 XONG. M5 code xong, chờ Huy cấu hình Supabase.**
 - **App đã dùng học thật được**: https://toeic-app.huybndc-451.workers.dev
-- Repo private: https://github.com/huybndc/toeic-app — **219 test pass**.
+- Repo private: https://github.com/huybndc/toeic-app — **265 test pass**.
 
 ## Dùng app thế nào (cho Huy)
 1. Mở link trên (máy Mac hoặc iPhone).
-2. Bấm **Phân loại từ đã biết / chưa biết** — lướt 20 từ một lượt, bấm "Đã biết" để loại bớt.
-3. Về màn chính bấm **Ôn tập ngay**. Xem từ → bấm "Hiện nghĩa" → tự chấm Quên/Khó/Tốt/Dễ.
-   Mỗi nút ghi sẵn lần ôn kế tiếp là bao lâu nữa.
-4. Bàn phím: `Space` lật thẻ, `1`–`4` chấm điểm. Màn phân loại: `1` chưa biết, `2` đã biết.
+2. **Chọn tầng từ trước đã** — màn chính có hàng nút `Tầng từ: Tất cả · Cơ bản · Trung cấp · Cao cấp`.
+   Ở mức 850 thì **bỏ qua "Cơ bản"** (400 từ hay gặp nhất, Huy đã biết hết) — chọn **Trung cấp**
+   hoặc **Cao cấp**. Không chọn thì mặc định là Tất cả và sẽ bắt đầu từ `mister`, `vacation`.
+3. Bấm **Phân loại từ vựng** — lướt 20 từ một lượt, tự chấm **4 mức**:
+   `1` không biết · `2` đoán được theo ngữ cảnh · `3` hiểu nghĩa nhưng quên chính tả · `4` thành thạo.
+   Nghĩa hiện sẵn để đối chiếu; bấm `Space` để ẩn/hiện nếu muốn lướt nhanh.
+   Chỉ mức 4 mới bị loại khỏi danh sách học.
+4. Về màn chính bấm **Ôn tập từ vựng**. Xem từ → `Space` lật thẻ → tự chấm Quên/Khó/Tốt/Dễ (`1`–`4`).
+   Mỗi nút ghi sẵn lần ôn kế tiếp là bao lâu nữa. Mỗi lượt tối đa 10 từ mới, ôn hết thì bấm
+   "Học thêm 10 từ mới" nếu còn sức.
 5. **Lưu ý quan trọng:** dữ liệu hiện lưu RIÊNG trên từng máy (IndexedDB), chưa đồng bộ.
    Đồng bộ Mac ↔ iPhone là M5. Học trên một máy trước để tránh lệch dữ liệu.
 
@@ -60,30 +66,53 @@ khi chưa có SMTP riêng).
 
 ## Phiên 2026-09-19 (buổi tối) — 3 việc Huy giao
 
-**Việc 1 — lỗi bộ đếm (XONG).** Huy phát hiện đúng: đây là lỗi *universal*, có ở cả 3 màn.
+**Việc 1 — lỗi bộ đếm (XONG, commit d6a3b1d).** Huy phát hiện đúng: lỗi *universal*, có ở cả 3 màn.
 - Gốc chung: lấy `queue.length` làm "số việc còn lại". Mọi hàng đợi đều là **cửa sổ trượt** —
   cắt N mục từ kho lớn hơn, làm xong một mục thì mục kế lấp vào ngay → con số không bao giờ giảm.
-- Đã sửa: `src/logic/round.js` (module dùng chung) + `countUntriaged`/`reviewCounts` (đếm không bị cắt).
+  Phân loại kẹt ở 20 (deck còn 1243 từ), ôn thẻ kẹt ở 10 (maxNew luôn được lấp đầy).
+- Sửa: `src/logic/round.js` dùng chung + `countUntriaged`/`reviewCounts` (đếm không bị cắt).
   Màn phân loại và màn ôn thẻ nay có khái niệm "lượt" rõ ràng như màn Part 5.
-- Đã ghi thành **quy tắc bắt buộc số 7** trong CLAUDE.md để không tái phạm.
+- Đã ghi thành **quy tắc bắt buộc số 7** trong CLAUDE.md. Đã kiểm tra thật trên trình duyệt:
+  20→19→18→17 và 1243→1240; màn ôn 2→1.
 
-**Việc 2 — phân loại 4 mức + hiện nghĩa (ĐANG LÀM).** Thay 2 nút biết/chưa biết bằng 4 mức:
-không biết hoàn toàn / đoán được trong ngữ cảnh / biết nghĩa nhưng quên chính tả / dùng thành thạo.
-Phải giữ tương thích ngược với sự kiện `vocab.triaged {known}` cũ (ràng buộc #5: nhật ký append-only).
+**Việc 2 — phân loại 4 mức + hiện nghĩa (XONG, commit cc11b37).** Xem **D29**.
+- 4 mức: không biết / đoán được theo ngữ cảnh / quên chính tả / thành thạo. Chỉ mức cuối bị loại
+  khỏi hàng đợi; từ chưa biết gì được học trước (`studyPriority`).
+- Nghĩa + 1 ví dụ hiện sẵn khi phân loại, tắt được, lưu theo từng máy.
+- Phần khó nhất là **tương thích ngược**: nhật ký append-only (ràng buộc #5) nên sự kiện cũ
+  `{known}` phải đọc đúng mãi mãi, và sự kiện mới vẫn ghi kèm `known` để máy còn chạy bản app cũ
+  trong cache service worker không xếp nhầm từ. Có 8 test canh riêng chỗ này.
 
-**Việc 3 — cân đối từ vựng theo Part 5 (CHƯA LÀM).** Đã đo và xác nhận Huy đúng, xem D29.
+**Việc 3 — cân đối từ vựng theo Part 5 (2/3, xem D30, D30b, D31).**
+- **Đo được gì:** trên 200 câu Part 5 đã sinh, phương án của câu `errorType=vocabulary` chỉ có
+  **32% nằm trong deck**. `amend`, `abolish`, `enforce`, `inadequate`, `erratic` — không có từ nào.
+  Nguyên nhân: TSL 1.2 là danh sách **bổ sung cho NGSL**, 1250 từ tầng nền cho mức 500–700 điểm.
+  Kiểm chứng: TSL ∩ NGSL = 0 từ; `interview`, `raise`, `frequent` không nằm trong TSL.
+- **Xong (commit 2c4f3d0):** phân tầng cơ bản/trung cấp/cao cấp, suy ra từ `rank`+`deck` lúc chạy
+  nên không đụng file nội dung đã phát hành (D16). Huy chọn tầng ở màn chính.
+- **Xong (commit b3c0078):** pipeline sinh được deck thứ hai; app tải nhiều deck, thiếu deck phụ
+  thì bỏ qua chứ không sập.
+- **ĐANG CHẠY NỀN:** `npm run build:vocab:bsl` sinh **1161 từ BSL** (24 lô × 50 từ).
+  Log: `pipeline/.cache/build-bsl.log`. Tiến độ lưu trong `pipeline/.cache/vocab-ai-bsl.json`
+  sau MỖI lô, nên hết hạn mức giữa chừng thì chạy lại đúng lệnh cũ là tiếp tục đúng chỗ dở.
+- **Đã sửa quyết định giữa chừng:** bản đầu của D30 định lấy cả NAWL. Đo lại thì NAWL là từ vựng
+  học thuật (`electron`, `membrane`, `chemotherapy`) và chỉ thêm đúng **1 từ** vào phủ sóng Part 5
+  → bỏ NAWL. Lý do ghi ở **D30b** để lần sau đo giá trị thật trước, đừng lấy số lượng làm bằng chứng.
 
 ## Bước tiếp theo (cụ thể)
-1. Việc 2: thêm 4 mức vào `vocab-state.js` (reducer đọc được cả `known` cũ lẫn `level` mới),
-   sửa `triage-screen.js` hiện nghĩa + 4 nút, phím tắt 1–4.
-2. Việc 3: thêm `pipeline/data/BSL_120_stats.csv` + `NAWL_12_stats.csv`, gắn `level` cho mọi từ,
-   chạy `npm run build:vocab` sinh nghĩa cho ~1561 từ mới (chạy nền nhiều ngày vì hạn mức AI).
-3. Chạy lại `npm run build:vocab` để lấy nốt IPA (mới có 35/1243 từ).
+1. **Kiểm tra pipeline BSL đã xong chưa:** `tail -5 pipeline/.cache/build-bsl.log`.
+   - Xong → `npm run validate:content`, `npm test`, commit `public/content/vocab-toeic-bsl.json`,
+     push để Cloudflare deploy. Màn chính sẽ hiện `Cao cấp (1161)`.
+   - Hết hạn mức giữa chừng → chạy lại `npm run build:vocab:bsl` vào hôm sau, nó tiếp tục đúng chỗ dở.
+2. Đo lại phủ sóng Part 5 sau khi có deck BSL để xác nhận con số 53% trên thực tế.
+3. Chạy lại `npm run build:vocab` để lấy nốt IPA cho deck TSL (mới có 35/1243 từ).
+4. M5: Huy cấu hình Supabase (hướng dẫn ở trên) để bật đồng bộ Mac ↔ iPhone.
 
 ## Vướng mắc / câu hỏi mở
 - Q1 (Giai đoạn 2): audio để chung repo hay bucket riêng — chưa tới lúc quyết.
-- File deck 1,37 MB (gzip 308 KB). Chấp nhận được với 1243 từ, nhưng khi thêm Part 5/6/7 nên tách
-  file theo deck và tải theo nhu cầu. Ghi nhớ khi làm M6 (PWA cache).
+- File deck 1,37 MB (gzip 308 KB). Deck BSL sẽ thêm ~1,3 MB nữa. Đã tách thành file riêng theo deck
+  và tải song song (`loadAllVocabDecks`), nhưng vẫn tải CẢ HAI ngay lúc mở app. Nếu thấy chậm trên
+  iPhone thì bước sau là chỉ tải deck của tầng đang chọn.
 - API từ điển (dictionaryapi.dev) chập chờn, chỉ lấy được 35/1243 IPA. Nếu lần chạy sau vẫn hỏng,
   cân nhắc đổi nguồn sang Wiktionary.
 
@@ -96,6 +125,9 @@ Phải giữ tương thích ngược với sự kiện `vocab.triaged {known}` c
 | M3 | ~2h | ~1h | Làm song song lúc pipeline chạy nền |
 
 ## Nhật ký phiên (mới nhất ở trên)
+- 2026-09-19 (tối) — Huy báo 3 việc. Lỗi bộ đếm hoá ra có ở cả 3 màn → thành quy tắc bắt buộc #7.
+  Phân loại 4 mức (D29). Đo ra deck TSL lệch hẳn so với Part 5 → thêm deck BSL (D30) + phân tầng (D31).
+  265 test pass.
 - 2026-09-19 — **MVP học được rồi**: M2 + M3 xong, deploy chạy thật, 133 test pass.
   Rút 6 quy tắc kỹ thuật từ sự cố thật vào CLAUDE.md. Khảo sát đối thủ → RESEARCH.md.
 - 2026-09-19 — M1 xong: deploy Cloudflare, repo private, 7 test.
