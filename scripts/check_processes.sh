@@ -16,9 +16,18 @@ report() {
   fi
 }
 
-report "Máy chủ dev / tiến trình Vite" "$(pgrep -fl vite 2>/dev/null | grep -v grep)"
-report "Pipeline đang chạy" "$(pgrep -fl 'pipeline/' 2>/dev/null | grep -v grep)"
-report "Cổng 5173 (dev server)" "$(lsof -nP -iTCP:5173 -sTCP:LISTEN 2>/dev/null | tail -n +2)"
+# Chỉ soi tiến trình CỦA PROJECT NÀY. Máy Huy còn chạy vite của các project khác
+# (project_kmap, project_linalg...) — báo nhầm chúng sẽ dẫn tới tắt nhầm.
+PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+
+report "Máy chủ dev / tiến trình Vite của project này" \
+  "$(pgrep -fl vite 2>/dev/null | grep -v grep | grep -F "$PROJECT_DIR")"
+report "Pipeline đang chạy" \
+  "$(pgrep -fl 'pipeline/' 2>/dev/null | grep -v grep | grep -F "$PROJECT_DIR")"
+
+echo "— Tiến trình vite của project KHÁC (chỉ để biết, ĐỪNG tắt):"
+OTHER="$(pgrep -fl vite 2>/dev/null | grep -v grep | grep -vF "$PROJECT_DIR")"
+if [ -n "$OTHER" ]; then echo "$OTHER" | sed 's/^/  /'; else echo "  (không có)"; fi
 
 echo
 if [ "$FOUND" -eq 1 ]; then
