@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "build:vocab": "node --env-file=.env pipeline/build-vocab.js"
   },
   "devDependencies": {
     "ajv": "^8.20.0",
