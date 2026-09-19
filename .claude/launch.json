@@ -4,8 +4,12 @@
     {
       "name": "toeic-app dev",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
-      "port": 5173
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
+      "port": 5180,
+      "autoPort": true
     }
   ]
 }

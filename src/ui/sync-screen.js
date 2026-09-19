@@ -3,7 +3,7 @@
  * Không dùng mã OTP qua email vì Supabase chặn việc sửa mẫu email khi chưa có SMTP riêng (D25c).
  */
 import { el, goTo } from './dom.js';
-import { signUp, signIn, getCurrentUser, signOut, syncEvents, isSupabaseConfigured, MIN_PASSWORD_LENGTH } from '../data/sync.js';
+import { signUp, signIn, getCurrentUser, signOut, syncEvents, isSupabaseConfigured, getConfigError, MIN_PASSWORD_LENGTH } from '../data/sync.js';
 import { describeSync } from '../logic/sync.js';
 
 /** Trạng thái riêng của màn. */
@@ -45,6 +45,16 @@ export function renderSync(store) {
         el('div', { text: '3. Tắt "Confirm email" ở Authentication → Sign In / Providers → Email.' }),
         el('div', { text: '4. Thêm VITE_SUPABASE_URL và VITE_SUPABASE_ANON_KEY vào .env rồi build lại.' }),
       ]),
+      el('button', { class: 'secondary', onClick: () => goTo('/') }, [el('span', { text: 'Về màn chính' })]),
+    ]);
+  }
+
+  const configError = getConfigError();
+  if (configError) {
+    return el('div', {}, [
+      el('h1', { text: 'Cấu hình Supabase đang sai' }),
+      el('div', { class: 'note', text: configError }),
+      el('p', { class: 'empty', text: 'Sửa biến môi trường rồi build/deploy lại. Dữ liệu trên máy không bị ảnh hưởng.' }),
       el('button', { class: 'secondary', onClick: () => goTo('/') }, [el('span', { text: 'Về màn chính' })]),
     ]);
   }

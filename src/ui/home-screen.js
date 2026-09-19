@@ -8,6 +8,8 @@ import { quizQueue, accuracyByErrorType } from '../logic/quiz.js';
 import { planToday, describePlan } from '../logic/today.js';
 import { buildExport, exportFileName } from '../logic/export.js';
 import { isSupabaseConfigured } from '../data/supabase.js';
+import { getRoundSize, setRoundSize } from '../data/prefs.js';
+import { ROUND_SIZES } from '../logic/prefs.js';
 
 /**
  * @param {object} store
@@ -83,11 +85,21 @@ export function renderHome(store) {
   }
 
   if (store.questions.length > 0) {
-    const quiz = quizQueue(store.questions, store.quizStates, { size: 20 });
+    const size = getRoundSize();
+    const quiz = quizQueue(store.questions, store.quizStates, { size });
     sections.push(
       el('button', { class: 'secondary', onClick: () => goTo('/quiz') }, [
         el('span', { text: 'Luyện Part 5' }),
         el('small', { text: `${quiz.length} câu · ~${Math.max(1, Math.round(quiz.length * 25 / 60))} phút` }),
+      ]),
+      el('div', { class: 'chooser' }, [
+        el('span', { class: 'chooser-label', text: 'Mỗi lượt' }),
+        ...ROUND_SIZES.map((option) => el('button', {
+          class: option === size ? 'chip-btn active' : 'chip-btn',
+          text: String(option),
+          onClick: () => { setRoundSize(option); store.refresh(); },
+        })),
+        el('span', { class: 'chooser-label', text: 'câu' }),
       ]),
     );
 

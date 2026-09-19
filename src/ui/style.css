@@ -150,3 +150,12 @@ button.option.wrong .letter { color: var(--again); }
   border: 1px solid var(--border); border-radius: 0.75rem; background: var(--surface); color: var(--fg);
 }
 .field:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+/* Bộ chọn số câu mỗi lượt */
+.chooser { display: flex; align-items: center; gap: 0.4rem; margin: -0.25rem 0 0.75rem; }
+.chooser-label { font-size: 0.8rem; color: var(--muted); }
+button.chip-btn {
+  padding: 0.25rem 0.7rem; background: var(--surface); color: var(--fg);
+  font-size: 0.85rem; border-radius: 999px;
+}
+button.chip-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }

@@ -2,7 +2,7 @@
  * Đồng bộ nhật ký sự kiện với Supabase (D23, D24: ghi máy trước, đồng bộ sau).
  * Đăng nhập bằng OTP 6 số qua email (D25: magic link mở nhầm Safari thay vì PWA trên iPhone).
  */
-import { getSupabase, isSupabaseConfigured } from './supabase.js';
+import { getSupabase, isSupabaseConfigured, getConfigError } from './supabase.js';
 import { diffEvents, toRows, fromRows } from '../logic/sync.js';
 
 const TABLE = 'events';
@@ -110,4 +110,4 @@ export async function syncEvents({ localEvents, saveLocal }) {
   return { pushed: toPush.length, pulled: toPull.length };
 }
 
-export { isSupabaseConfigured };
+export { isSupabaseConfigured, getConfigError };

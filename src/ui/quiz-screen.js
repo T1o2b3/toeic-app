@@ -5,8 +5,14 @@
 import { el, goTo } from './dom.js';
 import { quizQueue, gradeAnswer, roundProgress } from '../logic/quiz.js';
 
+import { getRoundSize } from '../data/prefs.js';
+
 const LETTERS = ['A', 'B', 'C', 'D'];
-const QUIZ_SIZE = 20;
+
+/** Số câu mỗi lượt do Huy chọn ở màn chính (10/15/20). */
+function roundSize() {
+  return getRoundSize();
+}
 
 /** Trạng thái riêng của màn: phương án vừa chọn (null = chưa trả lời). */
 let picked = null;
@@ -32,7 +38,7 @@ function currentQuestion(store) {
  * nhờ vậy lượt kết thúc sau đủ 20 câu thay vì kéo dài mãi.
  */
 function roundQueue(store) {
-  const left = Math.max(0, QUIZ_SIZE - doneThisRound.size);
+  const left = Math.max(0, roundSize() - doneThisRound.size);
   if (left === 0) return [];
   return quizQueue(store.questions, store.quizStates, { size: left, exclude: doneThisRound });
 }
@@ -65,7 +71,7 @@ export function renderQuiz(store) {
   }
 
   const { remaining } = roundProgress({
-    roundSize: QUIZ_SIZE,
+    roundSize: roundSize(),
     doneCount: doneThisRound.size,
     availableCount: roundQueue(store).length,
     locked: Boolean(locked),
