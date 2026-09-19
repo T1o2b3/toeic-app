@@ -40,6 +40,21 @@ Huy báo: phân loại chỉ chọn được 1 trong 4, không xem lại đượ
   đổi mức, ôn chủ động, reset khi rời màn). CHƯA nhìn bằng mắt trên trình duyệt thật — Huy mở app kiểm giúp
   phần bố cục trên iPhone (hàng lọc, hàng nút dính đáy).
 
+## Phiên 2026-09-19 (đêm, tiếp) — deck BSL đủ, IPA, test giao diện — XONG
+- **Deck BSL đủ 1161/1161 từ**, hợp lệ theo schema. 958 từ do `gemini-flash-lite-latest` sinh (hết hạn mức ngày
+  của model chính) — mẫu 10 từ đọc lên chất lượng tốt. Màn chính giờ hiện `Cao cấp (1161)`.
+- **IPA: 35 → 1176/1247 (TSL) và 1080/1161 (BSL)** nhờ đổi sang Wiktionary theo lô (D33). dictionaryapi.dev đã chết.
+  Hai lỗi lúc làm (header tiếng Việt, HTTP 429) đều đã có test canh.
+- **Đo lại phủ sóng Part 5** (`npm run audit:coverage`): TSL+BSL phủ **37%** phương án câu `vocabulary`
+  (đáp án đúng 41%), thấp hơn dự đoán 53% ở D30. Không phải deck kém: 68 phương án chỉ từ 17 câu, và phần thiếu
+  chủ yếu là từ chức năng (`so`, `for`, `but`, `although`) cùng biến thể động từ (`raised`, `rising`) — loại
+  không đáng học thành thẻ. Từ nội dung thật sự còn thiếu: `erratic`, `suspend`, `reconstruct`, `reconfigure`,
+  `incompatible`, `inaccessible`, `inconclusive`, `interview`, `consecutively`, `frequently`.
+  Bài học: nhãn `errorType=vocabulary` của AI lẫn cả câu liên từ; đo phủ sóng theo khớp chính xác từ.
+- **`tests/ui-flow.test.js`** (16 test, jsdom): chạy thật các màn phân loại / kho từ / ôn chủ động — bắt được
+  loại lỗi giữa logic và màn hình mà test logic thuần không thấy. **`validate:content` giờ kiểm cả BSL.**
+  `audit:vocab -- --deck bsl` soi deck BSL. **343 test pass.**
+
 ## Mục tiêu phiên này: 3 milestone — ĐÃ ĐẠT
 - ✅ **M4**: 200 câu Part 5 (phủ đều 12 loại kiến thức, 100% qua kiểm định 2 bước) + màn luyện.
 - ✅ **M6**: PWA cài được, học offline được, phiên "15 phút hôm nay", nút xuất dữ liệu.
@@ -109,67 +124,27 @@ khi chưa có SMTP riêng).
   nên không đụng file nội dung đã phát hành (D16). Huy chọn tầng ở màn chính.
 - **Xong (commit b3c0078):** pipeline sinh được deck thứ hai; app tải nhiều deck, thiếu deck phụ
   thì bỏ qua chứ không sập.
-- **ĐANG CHẠY NỀN:** `npm run build:vocab:bsl` sinh **1161 từ BSL** (24 lô × 50 từ).
-  Log: `pipeline/.cache/build-bsl.log`. Tiến độ lưu trong `pipeline/.cache/vocab-ai-bsl.json`
-  sau MỖI lô, nên hết hạn mức giữa chừng thì chạy lại đúng lệnh cũ là tiếp tục đúng chỗ dở.
+- **XONG:** pipeline sinh đủ **1161 từ BSL** (xem mục phiên đêm bên dưới).
 - **Đã sửa quyết định giữa chừng:** bản đầu của D30 định lấy cả NAWL. Đo lại thì NAWL là từ vựng
   học thuật (`electron`, `membrane`, `chemotherapy`) và chỉ thêm đúng **1 từ** vào phủ sóng Part 5
   → bỏ NAWL. Lý do ghi ở **D30b** để lần sau đo giá trị thật trước, đừng lấy số lượng làm bằng chứng.
 
-## ⚠️ ĐANG CHẠY NỀN KHI DỪNG PHIÊN — đọc trước tiên
-
-`npm run build:vocab:bsl` **vẫn đang chạy** khi phiên này dừng (PID 43346 lúc đó).
-Nó sinh 1161 từ BSL, chia 24 lô × 50 từ, **lưu cache sau MỖI lô** nên dừng giữa chừng không mất gì.
-
-**Việc đầu tiên của phiên mới — kiểm tra nó:**
-
-```bash
-bash scripts/check_processes.sh
-```
-
-- **Còn chạy** → để yên, đừng sửa `public/content/vocab-toeic-bsl.json` (nó ghi file đó lúc kết thúc).
-- **Đã dừng** → xem đã làm tới đâu rồi chạy tiếp đúng lệnh cũ:
-
-```bash
-tail -5 pipeline/.cache/build-bsl.log
-```
-
-```bash
-node -e "console.log(Object.keys(require('./pipeline/.cache/vocab-ai-bsl.json')).length + '/1161 từ')"
-```
-
-```bash
-npm run build:vocab:bsl
-```
-
-Lúc dừng phiên: **53/1161 từ** (lô 1/24 xong). Hạn mức free tier đặt lại nửa đêm giờ Thái Bình Dương;
-hết hạn mức thì hôm sau chạy lại lệnh trên, nó tiếp đúng chỗ dở (D19).
+## Không còn tiến trình nền nào (đã kiểm tra bằng `scripts/check_processes.sh`)
 
 ## Bước tiếp theo (cụ thể)
 
-1. **Chạy nốt pipeline BSL** (xem mục trên). Xong thì:
-   ```bash
-   npm run validate:content && npm test
-   ```
-   rồi commit `public/content/vocab-toeic-bsl.json` và push — Cloudflare tự deploy.
-   Màn chính sẽ hiện `Cao cấp (1161)` thay vì `Cao cấp (3)`.
-2. **Push 5 commit đang chờ** (`git push`) — phiên này CHƯA push lần nào.
-   App bản deploy vẫn là bản cũ; mọi thứ làm hôm nay chỉ mới có trên máy.
-3. Đo lại phủ sóng từ vựng Part 5 sau khi có deck BSL, đối chiếu với con số dự đoán 53% ở D30.
-4. Chạy lại `npm run build:vocab` để lấy nốt IPA cho deck TSL (mới có 35/1243 từ).
-5. M5: Huy cấu hình Supabase (hướng dẫn ở mục trên) để bật đồng bộ Mac ↔ iPhone.
-
-## File chưa commit khi dừng phiên
-- `public/content/vocab-toeic-bsl.json` — **cố ý chưa commit**, mới có 3 từ do chạy thử.
-  Pipeline sẽ ghi đè bằng bản đầy đủ. Commit sau khi pipeline xong.
+1. **Tính năng mới Huy đề xuất — "gạt từ lạ vào danh sách cần học" khi làm Part 5** (kéo thả / chạm một từ
+   trong câu, không hiện nghĩa). Đang thiết kế, xem D34.
+2. Chạy lại `npm run build:vocab` khi hạn mức AI đặt lại (nửa đêm giờ Thái Bình Dương) để bù 3 từ TSL còn
+   thiếu (3/1250) và ~70 từ chưa có IPA. Nhớ: chạy các deck **nối tiếp**, không song song (D33).
+3. M5: Huy cấu hình Supabase (hướng dẫn ở mục "VIỆC CỦA HUY") để bật đồng bộ Mac ↔ iPhone.
 
 ## Vướng mắc / câu hỏi mở
 - Q1 (Giai đoạn 2): audio để chung repo hay bucket riêng — chưa tới lúc quyết.
-- File deck 1,37 MB (gzip 308 KB). Deck BSL sẽ thêm ~1,3 MB nữa. Đã tách thành file riêng theo deck
+- File deck 1,4 MB (gzip ~310 KB); deck BSL thêm ~1,6 MB nữa (đã có IPA). Đã tách thành file riêng theo deck
   và tải song song (`loadAllVocabDecks`), nhưng vẫn tải CẢ HAI ngay lúc mở app. Nếu thấy chậm trên
   iPhone thì bước sau là chỉ tải deck của tầng đang chọn.
-- API từ điển (dictionaryapi.dev) chập chờn, chỉ lấy được 35/1243 IPA. Nếu lần chạy sau vẫn hỏng,
-  cân nhắc đổi nguồn sang Wiktionary.
+- ~~API từ điển chập chờn~~ → đã đổi sang Wiktionary (D33).
 
 ## Giờ thực tế so với ước tính
 | Milestone | Ước tính | Thực tế | Ghi chú |

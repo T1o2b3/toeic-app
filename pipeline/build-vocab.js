@@ -16,7 +16,7 @@ import { parseTslCsv, WORDLISTS } from './lib/wordlists.js';
 import { buildEntry } from './lib/vocab-entry.js';
 import { buildVocabPrompt, parseVocabResponse, matchVocabResponse, VOCAB_PROMPT_VERSION } from './lib/prompt-vocab.js';
 import { createGeminiProvider, withRetry, sleep, isDailyQuotaError, DEFAULT_GEMINI_MODELS } from './lib/ai-provider.js';
-import { fetchIpaMany } from './lib/ipa.js';
+import { fetchIpaManyWiktionary } from './lib/ipa-wiktionary.js';
 import { openCache, chunk, readCachedAi } from './lib/cache.js';
 import { createDeckValidator, findDuplicateIds } from './lib/validate-deck.js';
 
@@ -129,10 +129,9 @@ async function main() {
     const need = words.filter((w) => aiCache.has(w.word) && !ipaCache.has(w.word));
     console.log(`Tra IPA cho ${need.length} từ...`);
     let transient = 0;
-    const results = await fetchIpaMany(need.map((w) => w.word), {
-      onProgress: (count, total) => {
-        if (count % 100 === 0) console.log(`  ...${count}/${total}`);
-      },
+    // Wiktionary tra theo lô 20 từ/request; dictionaryapi.dev (lib/ipa.js) hay chết nên không dùng nữa.
+    const results = await fetchIpaManyWiktionary(need.map((w) => w.word), {
+      onProgress: (count, total) => console.log(`  ...${count}/${total}`),
     });
     for (const [word, ipa] of results) {
       // undefined = lỗi tạm thời: KHÔNG cache, để lần chạy sau tra lại.

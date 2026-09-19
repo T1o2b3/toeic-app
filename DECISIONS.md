@@ -197,6 +197,23 @@ phủ sóng từ vựng Part 5 — mới thấy NAWL đóng góp 1 từ. Ghi l�
 - **Chưa làm (cố ý, ràng buộc #8):** ghi thống kê ôn chủ động vào nhật ký (cần loại sự kiện mới + sửa đồng
   bộ) — chưa có nhu cầu; sửa hàng loạt nhiều từ một lúc trong kho.
 
+**D33. IPA lấy từ Wiktionary theo lô, thay dictionaryapi.dev (thực thi D11, không đổi nguồn đã duyệt).**
+- **Vấn đề:** dictionaryapi.dev chập chờn rồi chết hẳn ngày 2026-09-19 (timeout 4/4 lần thử) — deck chỉ có
+  35/1243 từ TSL có IPA, và tra tuần tự từng từ nên 2400 từ cũng không xong nổi.
+- **Cách làm:** hỏi Wiktionary theo lô 20 trang/request (`pipeline/lib/ipa-wiktionary.js`), đọc mục English,
+  lấy mẫu `{{IPA|en|/…/|a=US}}`. Ưu tiên giọng Mỹ (a=US/GA/GenAm) → mẫu không gắn giọng → mẫu đầu tiên.
+- **Bài học từ hai lỗi lúc triển khai (đều đã có test canh):**
+  1. `User-Agent` viết tiếng Việt có dấu → `fetch` ném TypeError *trước khi gửi*, lỗi bị nuốt thành "lỗi tạm
+     thời" → 2400 từ báo lỗi dù mạng tốt. Fetch giả trong test không kiểm tra header nên lọt qua. Nay có test
+     dùng chính `Headers` của Node.
+  2. Chạy hai deck song song, mỗi deck 3 luồng → HTTP 429. Nay: 1 luồng, nghỉ 1s giữa lô, đọc `Retry-After`
+     rồi thử lại (tối đa 4 lần), và **chạy các deck NỐI TIẾP**, không song song. Wikimedia là dịch vụ miễn phí
+     dùng chung — không ép nó.
+- **Ghi nguồn:** IPA là dữ kiện phát âm, không phải văn bản của Wiktionary; vẫn ghi nguồn ở đây cho rõ.
+  Wiktionary: CC BY-SA 4.0. Nếu sau này đưa vào app chuỗi văn bản (nghĩa, ví dụ) lấy từ Wiktionary thì phải
+  thêm attribution vào deck (D18).
+- `pipeline/lib/ipa.js` (dictionaryapi.dev) không còn được gọi; giữ lại chưa xoá, dọn khi chắc chắn không quay lại.
+
 ## Câu hỏi còn mở
 - Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng? Quyết khi ước lượng được dung lượng thực.
 - ~~Q2 (trước M2): xác nhận license của TSL 1.2 và NGSL.~~ → **Đã giải quyết, xem D18.**

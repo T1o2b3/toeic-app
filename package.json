@@ -13,12 +13,14 @@
     "build:vocab:bsl": "node --env-file=.env pipeline/build-vocab.js --list bsl",
     "validate:content": "node pipeline/validate-content.js",
     "audit:vocab": "node pipeline/audit-vocab.js",
-    "build:questions": "node --env-file=.env pipeline/build-questions.js"
+    "build:questions": "node --env-file=.env pipeline/build-questions.js",
+    "audit:coverage": "node pipeline/coverage-part5.js"
   },
   "devDependencies": {
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
     "fake-indexeddb": "^6.2.5",
+    "jsdom": "^30.1.0",
     "vite": "^7.1.0",
     "vite-plugin-pwa": "^1.3.0",
     "vitest": "^3.2.0"

@@ -9,6 +9,7 @@ import { createValidator, findDuplicateIds } from './lib/validate-deck.js';
 const ROOT = new URL('..', import.meta.url);
 const FILES = [
   { file: 'public/content/vocab-toeic-tsl.json', schema: 'schemas/vocab.schema.json', label: 'từ vựng' },
+  { file: 'public/content/vocab-toeic-bsl.json', schema: 'schemas/vocab.schema.json', label: 'từ vựng' },
   { file: 'public/content/questions-part5.json', schema: 'schemas/question.schema.json', label: 'câu hỏi Part 5' },
 ];
 let failed = false;

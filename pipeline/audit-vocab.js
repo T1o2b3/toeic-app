@@ -1,14 +1,18 @@
 /**
  * Soi chất lượng deck từ vựng trước khi Huy duyệt.
- * Chạy: npm run audit:vocab          -> báo cáo + 30 từ ngẫu nhiên để duyệt
- *       npm run audit:vocab -- 10    -> lấy 10 từ ngẫu nhiên
+ * Chạy: npm run audit:vocab                  -> báo cáo deck TSL + 30 từ ngẫu nhiên để duyệt
+ *       npm run audit:vocab -- 10            -> lấy 10 từ ngẫu nhiên
+ *       npm run audit:vocab -- --deck bsl    -> soi deck BSL (mặc định tsl)
  *
  * Không sửa gì, chỉ đọc và báo cáo. Mục đích: phát hiện lô kém để gỡ theo gen.model (D13).
  */
 import { readFileSync } from 'node:fs';
 
-const DECK = new URL('../public/content/vocab-toeic-tsl.json', import.meta.url).pathname;
-const sampleSize = Number.parseInt(process.argv[2], 10) || 30;
+const args = process.argv.slice(2);
+const deckFlag = args.indexOf('--deck');
+const deckName = deckFlag === -1 ? 'tsl' : args[deckFlag + 1];
+const DECK = new URL(`../public/content/vocab-toeic-${deckName}.json`, import.meta.url).pathname;
+const sampleSize = Number.parseInt(args.find((a) => /^\d+$/.test(a)), 10) || 30;
 
 const deck = JSON.parse(readFileSync(DECK, 'utf8'));
 const entries = deck.entries;
