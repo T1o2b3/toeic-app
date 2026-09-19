@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://toeic-app.local/schemas/vocab.schema.json",
+  "title": "Deck từ vựng",
+  "type": "object",
+  "required": ["deck", "version", "attribution", "entries"],
+  "additionalProperties": false,
+  "properties": {
+    "deck": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "version": { "type": "integer", "minimum": 1 },
+    "attribution": {
+      "type": "object",
+      "required": ["source", "authors", "license", "url"],
+      "additionalProperties": false,
+      "properties": {
+        "source": { "type": "string", "minLength": 1 },
+        "authors": { "type": "string", "minLength": 1 },
+        "license": { "type": "string", "minLength": 1 },
+        "url": { "type": "string", "format": "uri" }
+      }
+    },
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/entry" }
+    }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "required": ["id", "deck", "status", "word", "rank", "pos", "vi", "examples", "gen"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^tsl-[0-9]{4}$" },
+        "deck": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "status": { "enum": ["active", "retired"] },
+        "word": { "type": "string", "minLength": 1 },
+        "rank": { "type": "integer", "minimum": 1 },
+        "pos": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "enum": ["noun", "verb", "adjective", "adverb", "preposition", "conjunction", "pronoun", "determiner", "interjection", "phrase"]
+          }
+        },
+        "ipa": { "type": "string" },
+        "vi": { "type": "string", "minLength": 1, "description": "Nghĩa tiếng Việt ngắn gọn" },
+        "note": { "type": "string", "description": "Lưu ý dùng từ, bẫy hay gặp trong TOEIC" },
+        "examples": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "required": ["en", "vi"],
+            "additionalProperties": false,
+            "properties": {
+              "en": { "type": "string", "minLength": 1 },
+              "vi": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "collocations": { "type": "array", "items": { "type": "string", "minLength": 1 }, "maxItems": 6 },
+        "synonyms": { "type": "array", "items": { "type": "string", "minLength": 1 }, "maxItems": 6 },
+        "antonyms": { "type": "array", "items": { "type": "string", "minLength": 1 }, "maxItems": 6 },
+        "gen": {
+          "type": "object",
+          "required": ["model", "promptVersion", "batch", "date"],
+          "additionalProperties": false,
+          "properties": {
+            "model": { "type": "string", "minLength": 1 },
+            "promptVersion": { "type": "string", "minLength": 1 },
+            "batch": { "type": "string", "minLength": 1 },
+            "date": { "type": "string", "format": "date" }
+          }
+        }
+      }
+    }
+  }
+}

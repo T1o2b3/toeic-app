@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://toeic-app.local/schemas/event.schema.json",
+  "title": "Sự kiện học (append-only, D23)",
+  "type": "object",
+  "required": ["id", "deviceId", "ts", "type", "payload"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "deviceId": { "type": "string", "minLength": 1 },
+    "ts": { "type": "integer", "minimum": 0, "description": "Mốc thời gian ms (Date.now)" },
+    "type": {
+      "enum": [
+        "vocab.triaged",
+        "vocab.reviewed",
+        "vocab.bookmarked",
+        "question.answered",
+        "question.reported",
+        "session.started",
+        "session.ended"
+      ]
+    },
+    "payload": { "type": "object" }
+  }
+}
