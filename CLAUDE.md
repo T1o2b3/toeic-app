@@ -31,9 +31,42 @@ Claude Code tự đọc file này ở đầu mọi phiên. Mọi quy tắc ở �
 ## Quy trình code
 - Tuân theo skill `.claude/skills/mini-project-setup/SKILL.md` (logic tách UI, file < 300 dòng, test trước khi nối UI, commit nhỏ).
   - Kiểm tra độ dài file: `bash scripts/check_file_sizes.sh .` (script nằm trong repo, không dùng đường dẫn trong skill).
+  - Kiểm tra tiến trình nền còn sót: `bash scripts/check_processes.sh`.
   - Thư mục `assets/templates` mà skill nhắc tới không tồn tại; các file PLAN/README/CLAUDE đã được tạo sẵn.
 - Code và tên biến bằng tiếng Anh; tài liệu `.md` bằng tiếng Việt.
 - Commit theo dạng `type: mô tả ngắn` với type ∈ feat, fix, test, docs, chore, refactor, content.
+
+## Quy tắc kỹ thuật bắt buộc (rút ra từ sự cố thật, ngày 2026-09-19)
+
+Mỗi quy tắc dưới đây sinh ra từ một lỗi đã thực sự xảy ra trong project này. Không bỏ qua.
+
+1. **Mọi lệnh gọi mạng phải có timeout.** `fetch` không timeout mặc định — một request treo làm đứng cả
+   pipeline vô thời hạn (đã xảy ra: kết nối `ESTABLISHED`, không dữ liệu, đứng 3,5 phút, phải kill tay).
+   Dùng `AbortSignal.timeout(ms)`. Gọi AI: 180s. Gọi API phụ (từ điển…): 8s.
+2. **Lặp lệnh gọi mạng trên danh sách dài thì phải chạy song song có giới hạn.** Tra tuần tự 1200 từ mất
+   hơn 7 tiếng; 8 luồng song song còn vài phút. Giới hạn số luồng để không ép máy chủ miễn phí.
+3. **Không cắt ngắn thông báo lỗi mà logic dựa vào nội dung đó.** Đã cắt lỗi API ở 300 ký tự, mất đúng
+   trường `quotaId`, khiến hàm phân biệt "hết hạn mức ngày" với "gửi quá nhanh" luôn sai → pipeline đập
+   mãi vào model đã cạn. Hãy đọc JSON lỗi và lấy đúng trường cần, đừng so khớp chuỗi đã bị cắt.
+4. **Cache phải phân biệt "không có" với "chưa lấy được".** Cache nhầm lỗi tạm thời thành "không có" là
+   mất dữ liệu vĩnh viễn mà pipeline vẫn báo thành công. Quy ước: giá trị thật / `null` = chắc chắn không
+   có / `undefined` = lỗi tạm thời, KHÔNG cache, lần sau lấy lại.
+5. **Việc chạy dài phải ghi log ra file trực tiếp, không qua `| tail`.** `tail` giữ toàn bộ output tới khi
+   tiến trình kết thúc → không theo dõi được tiến độ, không biết job đang treo. Dùng `> file.log 2>&1`.
+6. **Việc chạy dài phải lưu tiến độ sau mỗi lô.** Dừng giữa chừng phải chạy lại tiếp đúng chỗ dở,
+   không làm lại từ đầu (hạn mức API là tài nguyên không hoàn lại).
+
+## Checklist cuối MỖI bước con (làm đủ, không bỏ bước)
+
+1. `npm test` pass.
+2. `bash scripts/check_file_sizes.sh .` — không file nào > 300 dòng.
+3. **`bash scripts/check_processes.sh` — tắt mọi tiến trình nền không còn cần** (máy chủ dev bật để xem
+   thử rồi quên tắt là lỗi đã xảy ra; nó chạy tới khi bị tắt, không tự dừng).
+4. Cập nhật `PROGRESS.md`: vừa xong gì, bước tiếp theo cụ thể, vướng mắc.
+5. Commit.
+
+Riêng việc chạy dài (pipeline nhiều phút trở lên) thì được phép còn sống qua bước con — nhưng phải nói rõ
+với Huy là nó đang chạy và đang ở đâu, không để Huy tự phát hiện.
 
 ## Ràng buộc không được vi phạm (xem DECISIONS.md)
 1. **100% miễn phí.** Không thêm dịch vụ trả phí. Nếu một thứ có free tier, ghi rõ giới hạn vào DECISIONS.md.

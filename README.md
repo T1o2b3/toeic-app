@@ -18,6 +18,14 @@ npm run build    # build ra dist/
 npm run build:vocab -- --limit 20   # thử 20 từ đầu trước cho chắc
 npm run build:vocab                 # làm toàn bộ 1250 từ TSL
 npm run validate:content            # kiểm tra file nội dung theo schema
+npm run audit:vocab                 # soi chất lượng + bốc 30 từ ngẫu nhiên để duyệt
+```
+
+Việc chạy dài nên ghi log ra file để theo dõi được tiến độ, và nhớ dọn tiến trình nền khi xong:
+
+```bash
+npm run build:vocab > /tmp/vocab-run.log 2>&1 &   # chạy nền, theo dõi bằng: tail -f /tmp/vocab-run.log
+bash scripts/check_processes.sh                   # xem còn tiến trình nền nào không
 ```
 
 Cần `GEMINI_API_KEY` trong `.env` (xem `.env.example`). Pipeline **chạy lại được nhiều lần**:
