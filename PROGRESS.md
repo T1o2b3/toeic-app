@@ -99,14 +99,52 @@ khi chưa có SMTP riêng).
   học thuật (`electron`, `membrane`, `chemotherapy`) và chỉ thêm đúng **1 từ** vào phủ sóng Part 5
   → bỏ NAWL. Lý do ghi ở **D30b** để lần sau đo giá trị thật trước, đừng lấy số lượng làm bằng chứng.
 
+## ⚠️ ĐANG CHẠY NỀN KHI DỪNG PHIÊN — đọc trước tiên
+
+`npm run build:vocab:bsl` **vẫn đang chạy** khi phiên này dừng (PID 43346 lúc đó).
+Nó sinh 1161 từ BSL, chia 24 lô × 50 từ, **lưu cache sau MỖI lô** nên dừng giữa chừng không mất gì.
+
+**Việc đầu tiên của phiên mới — kiểm tra nó:**
+
+```bash
+bash scripts/check_processes.sh
+```
+
+- **Còn chạy** → để yên, đừng sửa `public/content/vocab-toeic-bsl.json` (nó ghi file đó lúc kết thúc).
+- **Đã dừng** → xem đã làm tới đâu rồi chạy tiếp đúng lệnh cũ:
+
+```bash
+tail -5 pipeline/.cache/build-bsl.log
+```
+
+```bash
+node -e "console.log(Object.keys(require('./pipeline/.cache/vocab-ai-bsl.json')).length + '/1161 từ')"
+```
+
+```bash
+npm run build:vocab:bsl
+```
+
+Lúc dừng phiên: **53/1161 từ** (lô 1/24 xong). Hạn mức free tier đặt lại nửa đêm giờ Thái Bình Dương;
+hết hạn mức thì hôm sau chạy lại lệnh trên, nó tiếp đúng chỗ dở (D19).
+
 ## Bước tiếp theo (cụ thể)
-1. **Kiểm tra pipeline BSL đã xong chưa:** `tail -5 pipeline/.cache/build-bsl.log`.
-   - Xong → `npm run validate:content`, `npm test`, commit `public/content/vocab-toeic-bsl.json`,
-     push để Cloudflare deploy. Màn chính sẽ hiện `Cao cấp (1161)`.
-   - Hết hạn mức giữa chừng → chạy lại `npm run build:vocab:bsl` vào hôm sau, nó tiếp tục đúng chỗ dở.
-2. Đo lại phủ sóng Part 5 sau khi có deck BSL để xác nhận con số 53% trên thực tế.
-3. Chạy lại `npm run build:vocab` để lấy nốt IPA cho deck TSL (mới có 35/1243 từ).
-4. M5: Huy cấu hình Supabase (hướng dẫn ở trên) để bật đồng bộ Mac ↔ iPhone.
+
+1. **Chạy nốt pipeline BSL** (xem mục trên). Xong thì:
+   ```bash
+   npm run validate:content && npm test
+   ```
+   rồi commit `public/content/vocab-toeic-bsl.json` và push — Cloudflare tự deploy.
+   Màn chính sẽ hiện `Cao cấp (1161)` thay vì `Cao cấp (3)`.
+2. **Push 5 commit đang chờ** (`git push`) — phiên này CHƯA push lần nào.
+   App bản deploy vẫn là bản cũ; mọi thứ làm hôm nay chỉ mới có trên máy.
+3. Đo lại phủ sóng từ vựng Part 5 sau khi có deck BSL, đối chiếu với con số dự đoán 53% ở D30.
+4. Chạy lại `npm run build:vocab` để lấy nốt IPA cho deck TSL (mới có 35/1243 từ).
+5. M5: Huy cấu hình Supabase (hướng dẫn ở mục trên) để bật đồng bộ Mac ↔ iPhone.
+
+## File chưa commit khi dừng phiên
+- `public/content/vocab-toeic-bsl.json` — **cố ý chưa commit**, mới có 3 từ do chạy thử.
+  Pipeline sẽ ghi đè bằng bản đầy đủ. Commit sau khi pipeline xong.
 
 ## Vướng mắc / câu hỏi mở
 - Q1 (Giai đoạn 2): audio để chung repo hay bucket riêng — chưa tới lúc quyết.
@@ -127,7 +165,9 @@ khi chưa có SMTP riêng).
 ## Nhật ký phiên (mới nhất ở trên)
 - 2026-09-19 (tối) — Huy báo 3 việc. Lỗi bộ đếm hoá ra có ở cả 3 màn → thành quy tắc bắt buộc #7.
   Phân loại 4 mức (D29). Đo ra deck TSL lệch hẳn so với Part 5 → thêm deck BSL (D30) + phân tầng (D31).
-  265 test pass.
+  265 test pass. Sửa thêm lỗi `check_processes.sh` bỏ sót pipeline chạy bằng đường dẫn tương đối —
+  script báo "sạch" trong khi job vẫn sống, đúng thứ nó sinh ra để chặn.
+  Dừng phiên theo yêu cầu của Huy; pipeline BSL còn chạy nền ở 53/1161 từ.
 - 2026-09-19 — **MVP học được rồi**: M2 + M3 xong, deploy chạy thật, 133 test pass.
   Rút 6 quy tắc kỹ thuật từ sự cố thật vào CLAUDE.md. Khảo sát đối thủ → RESEARCH.md.
 - 2026-09-19 — M1 xong: deploy Cloudflare, repo private, 7 test.

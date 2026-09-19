@@ -22,8 +22,21 @@ PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
 report "Máy chủ dev / tiến trình Vite của project này" \
   "$(pgrep -fl vite 2>/dev/null | grep -v grep | grep -F "$PROJECT_DIR")"
-report "Pipeline đang chạy" \
-  "$(pgrep -fl 'pipeline/' 2>/dev/null | grep -v grep | grep -F "$PROJECT_DIR")"
+# Pipeline hay được chạy bằng đường dẫn TƯƠNG ĐỐI (`node pipeline/build-vocab.js`), nên dòng lệnh
+# KHÔNG chứa đường dẫn tuyệt đối của project — lọc theo dòng lệnh là bỏ sót. Đã xảy ra:
+# script báo "sạch" trong khi pipeline vẫn đang chạy. Phải soi THƯ MỤC LÀM VIỆC của tiến trình.
+pipeline_procs() {
+  local pid cwd
+  for pid in $(pgrep -f 'pipeline/[a-z-]*\.js' 2>/dev/null); do
+    [ "$pid" = "$$" ] && continue
+    cwd="$(lsof -a -d cwd -p "$pid" -Fn 2>/dev/null | sed -n 's/^n//p' | head -1)"
+    case "$cwd" in
+      "$PROJECT_DIR"|"$PROJECT_DIR"/*) ps -p "$pid" -o pid=,etime=,command= ;;
+    esac
+  done
+}
+
+report "Pipeline đang chạy" "$(pipeline_procs)"
 
 echo "— Tiến trình vite của project KHÁC (chỉ để biết, ĐỪNG tắt):"
 OTHER="$(pgrep -fl vite 2>/dev/null | grep -v grep | grep -vF "$PROJECT_DIR")"
