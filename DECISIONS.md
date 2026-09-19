@@ -59,6 +59,10 @@ Lý do: việc học không được chờ app. Trade-off: MVP rất hẹp (từ
 
 **D27. Host: Cloudflare Pages** (repo private vẫn deploy miễn phí). Hash router nên không cần cấu hình server.
 
+**D27b. Cập nhật D27 (không đổi bản chất):** Cloudflare đã gộp Pages vào **Workers & Pages**; project tạo mới chạy dưới dạng
+Worker phục vụ file tĩnh, nên tên miền là `*.workers.dev` chứ không phải `*.pages.dev`.
+Link thật: https://toeic-app.huybndc-451.workers.dev. Vẫn miễn phí, vẫn tự deploy mỗi lần push lên `main`, repo vẫn private.
+
 **D28. Test:** Vitest cho `src/logic` và `pipeline` (schema, chấm điểm, FSRS wrapper, gộp sự kiện). Không test UI.
 
 ## Câu hỏi còn mở

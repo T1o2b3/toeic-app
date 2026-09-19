@@ -36,8 +36,9 @@ toeic-app/
   Tiến độ: ✅ Node v24.18.0, npm 11.16.0, git 2.50.1 (đã có sẵn, git đã cấu hình user.name/email). ⏳ Còn lại: 4 tài khoản + Gemini key (Huy tự làm).
 
 ## Giai đoạn 1 — MVP (ngày 1–7, ~13 giờ)
-- [ ] **M1. Khung project + deploy ngay (ngày 1, ~2h).** Vite vanilla, Vitest + 1 test mẫu, git, repo GitHub private, deploy Cloudflare Pages trang "Hello".
+- [x] **M1. Khung project + deploy ngay (ngày 1, ~2h).** Vite vanilla, Vitest + 1 test mẫu, git, repo GitHub private, deploy Cloudflare Pages trang "Hello".
   Học: git, npm, Vite, deploy. Xong khi: mở được link trên iPhone; `npm test` pass.
+  ✅ Xong 2026-09-19. Link: https://toeic-app.huybndc-451.workers.dev — repo private https://github.com/huybndc/toeic-app
 - [ ] **M2. Schema + pipeline từ vựng (ngày 2, ~2h).** Schema vocab/event; tải TSL; lấy IPA; Gemini sinh nghĩa Việt, ví dụ, collocation, đồng/trái nghĩa theo lô; validator.
   Học: JSON schema, gọi API, biến môi trường. Xong khi: `public/content/vocab-toeic-tsl.json` ~1200 từ qua validator; Huy duyệt ngẫu nhiên 30 từ.
 - [ ] **M3. Nhật ký sự kiện + màn hình từ vựng (ngày 3, ~2h).** IndexedDB, reducer, FSRS; màn triage (biết/chưa biết), ôn thẻ, highlight từ hay sai, bookmark.
