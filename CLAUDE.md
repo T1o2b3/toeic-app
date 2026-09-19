@@ -56,6 +56,18 @@ Mỗi quy tắc dưới đây sinh ra từ một lỗi đã thực sự xảy ra
 6. **Việc chạy dài phải lưu tiến độ sau mỗi lô.** Dừng giữa chừng phải chạy lại tiếp đúng chỗ dở,
    không làm lại từ đầu (hạn mức API là tài nguyên không hoàn lại).
 
+## Làm song song khi an toàn
+
+Việc nào chạy song song được mà không ảnh hưởng tiến độ và chất lượng của nhau thì làm cùng lúc,
+không xếp hàng chờ.
+
+- **An toàn**: pipeline nội dung (tiến trình riêng, chỉ ghi `pipeline/.cache/`) chạy song song với
+  viết code `src/` + test; cài thêm gói npm; đọc tài liệu; sửa tài liệu `.md`.
+- **Không an toàn — phải chờ**: hai việc cùng ghi một file (vd pipeline ghi `public/content/*.json`
+  trong khi mình sửa chính file đó); chạy `npm test` khi đang sửa dở nửa chừng một module;
+  hai lần chạy pipeline cùng lúc (cùng ghi một file cache, đè lên nhau).
+- Khi có việc chạy nền, **luôn nói rõ nó đang chạy và đang ở bước nào** trong mỗi lần báo cáo.
+
 ## Checklist cuối MỖI bước con (làm đủ, không bỏ bước)
 
 1. `npm test` pass.
