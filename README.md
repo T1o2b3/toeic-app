@@ -12,6 +12,47 @@ npm test         # chạy test
 npm run build    # build ra dist/
 ```
 
+## Bắt đầu một phiên làm việc mới với Claude Code
+
+Áp dụng cho MỌI lần quay lại project, kể cả sau nhiều tuần.
+
+### 1. Mở đúng thư mục
+Mở Claude Code với thư mục `toeic_app` (không phải thư mục cha). Claude tự đọc `CLAUDE.md`.
+
+### 2. Gõ câu mở đầu này
+```
+Đọc PROGRESS.md rồi tóm tắt: đang ở milestone nào, bước tiếp theo là gì, hôm nay nên làm gì.
+```
+Không cần kể lại gì thêm. Mọi thứ cần biết đã nằm trong `PROGRESS.md`, `PLAN.md`, `DECISIONS.md`.
+Claude sẽ tự đối chiếu với `git log` để biết thực tế khớp tài liệu không.
+
+### 3. Trong lúc làm
+- Muốn đổi hướng hoặc thêm ý tưởng: cứ nói. Nếu nằm ngoài milestone hiện tại, Claude sẽ ghi vào
+  mục **Backlog** trong `PLAN.md` thay vì làm ngay (ràng buộc #8).
+- Muốn đổi một quyết định đã ghi trong `DECISIONS.md`: Claude phải hỏi lại trước khi đổi (ràng buộc #9).
+
+### 4. Khi nào gõ `/clear`
+- Khi Claude chủ động báo "đã lưu trạng thái, hãy `/clear`".
+- Hoặc khi chuyển sang việc khác hẳn (ví dụ đang làm nội dung, giờ chuyển sang sửa giao diện).
+
+**Trước khi `/clear`, nếu Claude chưa tự làm thì gõ:**
+```
+Cập nhật PROGRESS.md, chạy check_processes.sh, rồi commit và push.
+```
+
+### 5. Nếu phiên bị đứt giữa chừng (mất mạng, đóng nhầm)
+Không mất gì. Phiên mới chỉ cần:
+```
+Chạy git status và git log --oneline -5, đối chiếu với PROGRESS.md xem có gì làm dở không.
+```
+
+### 6. Cách báo lỗi cho nhanh
+Kèm đủ 2 thứ này thì Claude dò ra gần như ngay:
+1. **Số hiệu bản build** ở cuối màn chính (vd `bản 2026-09-19 12:19`) — để biết có đang xem bản cũ không.
+2. **Nguyên văn dòng lỗi** hiện trên màn hình, hoặc ảnh chụp.
+
+Nếu lỗi ở app đã deploy: tải lại trang trước khi báo (Mac `Cmd+Shift+R`; iPhone đóng hẳn app rồi mở lại).
+
 ## Pipeline nội dung (chạy trên máy, không chạy trong app)
 
 ```bash

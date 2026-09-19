@@ -1,6 +1,7 @@
 # PROGRESS.md — Trạng thái bàn giao giữa các phiên
 
 > Claude cập nhật file này sau MỖI bước con. Phiên mới đọc file này trước tiên.
+> Huy: cách bắt đầu phiên mới xem mục "Bắt đầu một phiên làm việc mới" trong `README.md`.
 
 ## Trạng thái hiện tại
 - Giai đoạn: 1 — MVP. **M0–M4 và M6 XONG. M5 code xong, chờ Huy cấu hình Supabase.**
