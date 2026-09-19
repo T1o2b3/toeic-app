@@ -56,6 +56,15 @@ Mỗi quy tắc dưới đây sinh ra từ một lỗi đã thực sự xảy ra
 6. **Việc chạy dài phải lưu tiến độ sau mỗi lô.** Dừng giữa chừng phải chạy lại tiếp đúng chỗ dở,
    không làm lại từ đầu (hạn mức API là tài nguyên không hoàn lại).
 
+7. **Bộ đếm "còn lại" KHÔNG được lấy từ độ dài hàng đợi.** Lỗi này đã xảy ra ba lần ở ba màn khác
+   nhau (Part 5 đứng yên ở 20, phân loại đứng yên ở 20, ôn thẻ đứng yên ở 10). Mọi hàng đợi trong
+   app (`quizQueue`, `triageQueue`, `reviewQueue`) đều là **cửa sổ trượt**: chúng cắt lấy N mục từ
+   một kho lớn hơn, nên làm xong một mục thì mục kế tiếp lấp ngay vào — `queue.length` không bao
+   giờ giảm. Số việc còn lại phải tính từ **số việc đã làm** (đếm ngược khỏi hạn mức của lượt) hoặc
+   từ một hàm đếm **không bị cắt** (`countUntriaged`, `reviewCounts`). Dùng `src/logic/round.js`;
+   đừng viết lại phép tính này ở từng màn.
+   *Nhận ra lỗi thế nào:* làm vài mục mà con số không nhúc nhích → gần như chắc chắn là lỗi này.
+
 ## Sau mỗi lần deploy
 
 1. **Luôn tải lại trang trước khi kết luận lỗi còn hay hết.** Service worker phục vụ bản đã lưu

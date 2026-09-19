@@ -4,7 +4,7 @@
 import { el, replace } from './dom.js';
 import { startRouter } from './router.js';
 import { renderHome } from './home-screen.js';
-import { renderTriage, handleTriageKey } from './triage-screen.js';
+import { renderTriage, handleTriageKey, resetTriage } from './triage-screen.js';
 import { renderReview, handleReviewKey, resetReview } from './review-screen.js';
 import { renderWeak } from './weak-screen.js';
 import { renderQuiz, handleQuizKey, resetQuiz } from './quiz-screen.js';
@@ -43,7 +43,7 @@ export function mountApp(root, store) {
   };
 
   startRouter((route) => {
-    if (route.name !== current.name) { resetReview(); resetQuiz(); resetSync(); }
+    if (route.name !== current.name) { resetTriage(); resetReview(); resetQuiz(); resetSync(); }
     current = route;
     draw();
   });

@@ -3,12 +3,23 @@
  * Mỗi nút chấm hiện luôn lần ôn kế tiếp (RESEARCH.md R3), phím tắt 1-4 và Space (R4).
  */
 import { el, goTo } from './dom.js';
-import { reviewQueue } from '../logic/vocab-state.js';
+import { reviewQueue, reviewCounts } from '../logic/vocab-state.js';
+import { reviewProgress } from '../logic/round.js';
 import { previewIntervals, GRADES } from '../logic/scheduler.js';
 import { formatDuration } from '../logic/format.js';
 
+/** Hạn mức từ MỚI mỗi lượt — không nhồi quá nhiều thứ mới một lúc (D03). */
+const NEW_PER_ROUND = 10;
+
 /** Trạng thái chỉ của riêng màn này: đã lật thẻ hay chưa. */
 let revealed = false;
+
+/**
+ * Từ MỚI đã đưa ra trong lượt này. Không có nó thì hạn mức maxNew vô tác dụng:
+ * học xong một từ mới, từ mới kế tiếp lấp ngay vào chỗ trống nên lượt kéo dài vô tận
+ * và bộ đếm đứng yên ở 10 (xem src/logic/round.js).
+ */
+let newThisRound = new Set();
 
 const GRADE_LABELS = [
   [GRADES.AGAIN, 'Quên', 'again', '1'],
@@ -17,9 +28,19 @@ const GRADE_LABELS = [
   [GRADES.EASY, 'Dễ', 'easy', '4'],
 ];
 
+/** Số từ mới còn được phép đưa ra trong lượt này. */
+function newLeft() {
+  return Math.max(0, NEW_PER_ROUND - newThisRound.size);
+}
+
+/** Hàng đợi của lượt hiện tại: hết hạn mức từ mới thì chỉ còn thẻ đến hạn. */
+function roundQueue(store) {
+  return reviewQueue(store.entries, store.states, { maxNew: newLeft() });
+}
+
 /** Lấy thẻ đang ôn, hoặc null nếu hết. */
 function currentItem(store) {
-  return reviewQueue(store.entries, store.states, {})[0] ?? null;
+  return roundQueue(store)[0] ?? null;
 }
 
 /**
@@ -27,25 +48,21 @@ function currentItem(store) {
  * @returns {HTMLElement}
  */
 export function renderReview(store) {
+  const counts = reviewCounts(store.entries, store.states);
+  const { remaining } = reviewProgress({
+    dueCount: counts.due,
+    newAvailable: counts.fresh,
+    newPerRound: NEW_PER_ROUND,
+    newDoneCount: newThisRound.size,
+  });
   const item = currentItem(store);
 
   if (!item) {
     revealed = false;
-    return el('div', {}, [
-      el('h1', { text: 'Xong phiên này' }),
-      el('p', { class: 'empty', text: 'Không còn thẻ nào đến hạn. Ôn dồn không giúp nhớ lâu hơn.' }),
-      store.questions.length > 0
-        ? el('button', { class: 'primary', onClick: () => goTo('/quiz') }, [
-            el('span', { text: 'Làm tiếp Part 5' }),
-            el('small', { text: 'phần còn lại của phiên hôm nay' }),
-          ])
-        : '',
-      el('button', { class: 'secondary', onClick: () => goTo('/') }, [el('span', { text: 'Về màn chính' })]),
-    ]);
+    return renderDone(store, counts);
   }
 
   const { entry, state } = item;
-  const remaining = reviewQueue(store.entries, store.states, {}).length;
 
   const front = el('div', { class: 'card big' }, [
     el('div', { class: 'word', text: entry.word }),
@@ -77,6 +94,30 @@ export function renderReview(store) {
 
   children.push(renderBookmark(store, entry, state));
   return el('div', {}, children);
+}
+
+/** Màn kết thúc: hết hạn mức từ mới của lượt, hoặc thật sự không còn gì đến hạn. */
+function renderDone(store, counts) {
+  const moreNew = counts.fresh > 0 && newLeft() === 0;
+
+  return el('div', {}, [
+    el('h1', { text: moreNew ? 'Xong lượt này' : 'Xong phiên này' }),
+    el('p', { class: 'empty', text: moreNew
+      ? `Đã học ${newThisRound.size} từ mới trong lượt này. Còn ${counts.fresh} từ mới chưa học.`
+      : 'Không còn thẻ nào đến hạn. Ôn dồn không giúp nhớ lâu hơn.' }),
+    moreNew
+      ? el('button', { class: 'primary', onClick: () => { resetReview(); store.refresh(); } }, [
+          el('span', { text: `Học thêm ${Math.min(NEW_PER_ROUND, counts.fresh)} từ mới` }),
+        ])
+      : '',
+    !moreNew && store.questions.length > 0
+      ? el('button', { class: 'primary', onClick: () => goTo('/quiz') }, [
+          el('span', { text: 'Làm tiếp Part 5' }),
+          el('small', { text: 'phần còn lại của phiên hôm nay' }),
+        ])
+      : '',
+    el('button', { class: 'secondary', onClick: () => goTo('/') }, [el('span', { text: 'Về màn chính' })]),
+  ]);
 }
 
 /** Mặt sau của thẻ: nghĩa, ví dụ, collocation, bẫy hay gặp. */
@@ -128,6 +169,7 @@ function renderBookmark(store, entry, state) {
 /** Ghi kết quả chấm rồi chuyển sang thẻ kế tiếp. */
 async function submitGrade(store, item, grade) {
   revealed = false;
+  if (item.isNew) newThisRound.add(item.entry.id);
   await store.record('vocab.reviewed', { wordId: item.entry.id, grade });
 }
 
@@ -157,7 +199,8 @@ export function handleReviewKey(store, event) {
   if (match) submitGrade(store, item, match[0]);
 }
 
-/** Đặt lại trạng thái lật thẻ khi rời màn. */
+/** Đặt lại khi rời màn hoặc khi bắt đầu lượt mới. */
 export function resetReview() {
   revealed = false;
+  newThisRound = new Set();
 }

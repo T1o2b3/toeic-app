@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   reduceVocabState, getWordState, triageQueue, reviewQueue, weakWords,
+  countUntriaged, reviewCounts,
 } from '../src/logic/vocab-state.js';
 
 const T0 = Date.UTC(2026, 8, 19, 10, 0, 0);
@@ -149,5 +150,41 @@ describe('weakWords', () => {
       ev('vocab.reviewed', { wordId: 'c', grade: 'good' }, T0 + 6),
     ]);
     expect(weakWords(states).map((w) => w.wordId)).toEqual(['b', 'a']);
+  });
+});
+
+describe('countUntriaged / reviewCounts — bộ đếm KHÔNG bị cắt', () => {
+  // Lỗi thật đã gặp hai lần: màn hình lấy độ dài hàng đợi làm "số việc còn lại".
+  // Hàng đợi là cửa sổ trượt nên con số đó đứng yên. Hai hàm này phải trả số ĐẦY ĐỦ.
+  const BIG_DECK = Array.from({ length: 100 }, (_, i) => ({ id: `w-${i}` }));
+
+  it('countUntriaged trả số thật, trong khi triageQueue(limit) đứng yên ở limit', () => {
+    const states = reduceVocabState([ev('vocab.triaged', { wordId: 'w-0', known: false })]);
+    expect(triageQueue(BIG_DECK, states, 20)).toHaveLength(20);   // cửa sổ trượt: vẫn 20
+    expect(countUntriaged(BIG_DECK, states)).toBe(99);            // số thật: đã giảm
+  });
+
+  it('countUntriaged bỏ qua mục đã gỡ (D16)', () => {
+    expect(countUntriaged(DECK_WITH_RETIRED, new Map())).toBe(3);
+  });
+
+  it('reviewCounts trả số từ mới thật, trong khi reviewQueue cắt ở maxNew', () => {
+    const states = reduceVocabState(BIG_DECK.map((e) => ev('vocab.triaged', { wordId: e.id, known: false })));
+    expect(reviewQueue(BIG_DECK, states, { now: NOW })).toHaveLength(10); // cửa sổ trượt
+    expect(reviewCounts(BIG_DECK, states, { now: NOW })).toEqual({ due: 0, fresh: 100 });
+  });
+
+  it('reviewCounts tách thẻ đến hạn khỏi từ mới', () => {
+    const states = reduceVocabState([
+      ev('vocab.triaged', { wordId: 'tsl-0001', known: false }, T0),
+      ev('vocab.reviewed', { wordId: 'tsl-0001', grade: 'good' }, T0 + 1000),
+      ev('vocab.triaged', { wordId: 'tsl-0002', known: false }, T0),
+      ev('vocab.triaged', { wordId: 'tsl-0003', known: true }, T0),
+    ]);
+    // tsl-0001 đã ôn -> hạn ở tương lai, chưa đến hạn; tsl-0002 còn mới; tsl-0003 đã biết -> bỏ.
+    expect(reviewCounts(DECK, states, { now: NOW })).toEqual({ due: 0, fresh: 1 });
+    // Một năm sau thì thẻ đã ôn đến hạn.
+    const later = new Date(T0 + 400 * 24 * 3600 * 1000);
+    expect(reviewCounts(DECK, states, { now: later })).toEqual({ due: 1, fresh: 1 });
   });
 });

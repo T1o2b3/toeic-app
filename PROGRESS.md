@@ -6,7 +6,7 @@
 ## Trạng thái hiện tại
 - Giai đoạn: 1 — MVP. **M0–M4 và M6 XONG. M5 code xong, chờ Huy cấu hình Supabase.**
 - **App đã dùng học thật được**: https://toeic-app.huybndc-451.workers.dev
-- Repo private: https://github.com/huybndc/toeic-app — 133 test pass.
+- Repo private: https://github.com/huybndc/toeic-app — **219 test pass**.
 
 ## Dùng app thế nào (cho Huy)
 1. Mở link trên (máy Mac hoặc iPhone).
@@ -58,12 +58,27 @@ khi chưa có SMTP riêng).
 - **RESEARCH.md**: khảo sát TOEIC Lab, GenLang, Test-English, Anki → 6 điểm UX đã áp dụng.
 - **CLAUDE.md**: thêm 6 quy tắc kỹ thuật bắt buộc + checklist cuối mỗi bước con + quy tắc làm song song.
 
+## Phiên 2026-09-19 (buổi tối) — 3 việc Huy giao
+
+**Việc 1 — lỗi bộ đếm (XONG).** Huy phát hiện đúng: đây là lỗi *universal*, có ở cả 3 màn.
+- Gốc chung: lấy `queue.length` làm "số việc còn lại". Mọi hàng đợi đều là **cửa sổ trượt** —
+  cắt N mục từ kho lớn hơn, làm xong một mục thì mục kế lấp vào ngay → con số không bao giờ giảm.
+- Đã sửa: `src/logic/round.js` (module dùng chung) + `countUntriaged`/`reviewCounts` (đếm không bị cắt).
+  Màn phân loại và màn ôn thẻ nay có khái niệm "lượt" rõ ràng như màn Part 5.
+- Đã ghi thành **quy tắc bắt buộc số 7** trong CLAUDE.md để không tái phạm.
+
+**Việc 2 — phân loại 4 mức + hiện nghĩa (ĐANG LÀM).** Thay 2 nút biết/chưa biết bằng 4 mức:
+không biết hoàn toàn / đoán được trong ngữ cảnh / biết nghĩa nhưng quên chính tả / dùng thành thạo.
+Phải giữ tương thích ngược với sự kiện `vocab.triaged {known}` cũ (ràng buộc #5: nhật ký append-only).
+
+**Việc 3 — cân đối từ vựng theo Part 5 (CHƯA LÀM).** Đã đo và xác nhận Huy đúng, xem D29.
+
 ## Bước tiếp theo (cụ thể)
-1. **M4 — Part 5**: schema question; pipeline sinh ~200 câu có kiểm định 2 bước (prompt A sinh,
-   prompt B tự giải, lệch thì loại); màn luyện 20 câu, giải thích tiếng Việt, gắn loại lỗi, nút báo câu lỗi.
-   Lưu ý hạn mức: mỗi model free tier ~20 request/ngày (D19) → gộp nhiều câu mỗi request.
-2. **M5 — Supabase + đồng bộ** (quan trọng với Huy vì dùng 2 Mac + iPhone).
-3. Chạy lại `npm run build:vocab` vài ngày tới để lấy nốt IPA + 7 từ còn thiếu.
+1. Việc 2: thêm 4 mức vào `vocab-state.js` (reducer đọc được cả `known` cũ lẫn `level` mới),
+   sửa `triage-screen.js` hiện nghĩa + 4 nút, phím tắt 1–4.
+2. Việc 3: thêm `pipeline/data/BSL_120_stats.csv` + `NAWL_12_stats.csv`, gắn `level` cho mọi từ,
+   chạy `npm run build:vocab` sinh nghĩa cho ~1561 từ mới (chạy nền nhiều ngày vì hạn mức AI).
+3. Chạy lại `npm run build:vocab` để lấy nốt IPA (mới có 35/1243 từ).
 
 ## Vướng mắc / câu hỏi mở
 - Q1 (Giai đoạn 2): audio để chung repo hay bucket riêng — chưa tới lúc quyết.

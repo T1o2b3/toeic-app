@@ -113,26 +113,3 @@ export function accuracyByErrorType(questions, states) {
     .map((bucket) => ({ ...bucket, accuracy: (bucket.attempts - bucket.wrong) / bucket.attempts }))
     .sort((a, b) => a.accuracy - b.accuracy);
 }
-
-/**
- * Tiến độ của một LƯỢT luyện (mặc định 20 câu).
- *
- * Phải tính theo số câu đã làm, không được lấy độ dài hàng đợi: hàng đợi luôn cắt lấy đúng
- * `roundSize` câu từ ngân hàng, nên khi ngân hàng còn nhiều thì độ dài đó không bao giờ giảm —
- * bộ đếm sẽ đứng yên ở 20 dù đã làm bao nhiêu câu.
- *
- * @param {object} input
- * @param {number} input.roundSize - số câu mỗi lượt
- * @param {number} input.doneCount - số câu đã làm trong lượt này (kể cả câu đang xem giải thích)
- * @param {number} input.availableCount - số câu còn lấy được từ ngân hàng
- * @param {boolean} [input.locked] - đang xem giải thích của câu vừa trả lời
- * @returns {{remaining: number, finished: boolean}} remaining tính cả câu đang hiện trên màn hình
- */
-export function roundProgress({ roundSize, doneCount, availableCount, locked = false }) {
-  const left = Math.max(0, roundSize - doneCount);
-  const finished = left === 0 && !locked;
-  const remaining = locked
-    ? Math.min(left, availableCount) + 1
-    : Math.min(left, availableCount);
-  return { remaining, finished };
-}

@@ -3,7 +3,8 @@
  * Mỗi câu ghi lại loại kiến thức để sau này biết lỗ hổng nằm ở đâu.
  */
 import { el, goTo } from './dom.js';
-import { quizQueue, gradeAnswer, roundProgress } from '../logic/quiz.js';
+import { quizQueue, gradeAnswer } from '../logic/quiz.js';
+import { roundProgress } from '../logic/round.js';
 
 import { getRoundSize } from '../data/prefs.js';
 

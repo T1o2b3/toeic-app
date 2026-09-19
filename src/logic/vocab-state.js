@@ -94,6 +94,10 @@ export function getWordState(states, wordId, { now = new Date() } = {}) {
 /**
  * Những từ chưa được phân loại biết/chưa biết — đầu vào cho màn triage.
  * Giữ nguyên thứ tự deck (đã sắp theo tần suất) để học từ phổ biến trước.
+ *
+ * CẢNH BÁO: khi truyền `limit`, đây là CỬA SỔ TRƯỢT — độ dài trả về đứng yên ở đúng `limit`
+ * chừng nào kho còn từ. Cần số từ còn lại thì dùng `countUntriaged`, đừng lấy `.length`.
+ *
  * @param {Array<{id: string}>} entries
  * @param {Map<string, object>} states
  * @param {number} [limit]
@@ -113,6 +117,10 @@ export function triageQueue(entries, states, limit = Infinity) {
 /**
  * Hàng đợi ôn tập: từ đến hạn trước (quá hạn lâu nhất lên đầu), rồi mới đến từ mới.
  * Từ đã đánh dấu "đã biết" không vào hàng đợi (D03: giữ hàng đợi nhẹ).
+ *
+ * CẢNH BÁO: đây là CỬA SỔ TRƯỢT — maxNew/maxTotal cắt bớt kết quả, nên độ dài trả về
+ * đứng yên chừng nào kho còn từ. Cần số việc còn lại thì dùng `reviewCounts` + `reviewProgress`.
+ *
  * @param {Array<{id: string}>} entries - deck
  * @param {Map<string, object>} states
  * @param {object} [options]
@@ -148,4 +156,46 @@ export function weakWords(states, limit = 20) {
     .filter((state) => state.lapses > 0)
     .sort((a, b) => b.lapses - a.lapses || (b.lastReviewTs ?? 0) - (a.lastReviewTs ?? 0))
     .slice(0, limit);
+}
+
+/**
+ * Số từ CHƯA phân loại trong cả deck — con số ĐẦY ĐỦ, không bị cắt bởi hạn mức nào.
+ *
+ * Bộ đếm trên màn hình phải dùng hàm này, KHÔNG được lấy `triageQueue(..., limit).length`:
+ * hàng đợi là cửa sổ trượt nên độ dài đó đứng yên ở đúng `limit` (xem `src/logic/round.js`).
+ *
+ * @param {Array<{id: string}>} entries
+ * @param {Map<string, object>} states
+ * @returns {number}
+ */
+export function countUntriaged(entries, states) {
+  let count = 0;
+  for (const entry of entries) {
+    if (entry.status === 'retired') continue;
+    if (states.get(entry.id)?.triaged) continue;
+    count += 1;
+  }
+  return count;
+}
+
+/**
+ * Số việc ôn tập còn lại THẬT SỰ, tách theo nguồn và KHÔNG bị cắt bởi maxNew/maxTotal.
+ * Đầu vào của `reviewProgress` (xem `src/logic/round.js`).
+ *
+ * @param {Array<{id: string}>} entries
+ * @param {Map<string, object>} states
+ * @param {{now?: Date}} [options]
+ * @returns {{due: number, fresh: number}} due = đến hạn ngay lúc này, fresh = từ mới chưa học
+ */
+export function reviewCounts(entries, states, { now = new Date() } = {}) {
+  let due = 0;
+  let fresh = 0;
+  for (const entry of entries) {
+    if (entry.status === 'retired') continue;
+    const state = states.get(entry.id);
+    if (!state || state.known) continue;
+    if (isNew(state.card)) fresh += 1;
+    else if (isDue(state.card, now)) due += 1;
+  }
+  return { due, fresh };
 }
