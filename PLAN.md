@@ -1,6 +1,6 @@
 # PLAN.md — TOEIC app
 
-**Trạng thái: CHỜ HUY DUYỆT.** Không code trước khi Huy đồng ý plan này.
+**Trạng thái: Huy đã duyệt (2026-09-19), không sửa gì.** Đang làm Giai đoạn 1.
 
 ## Mục tiêu
 App PWA cá nhân, miễn phí 100%, ôn TOEIC L&R cho khoảng 850 → 950, đồng bộ giữa 2 máy Mac và iPhone. Trọng tâm: tìm và vá lỗ hổng cá nhân (sổ lỗi, ôn từ ngắt quãng), phiên học ngắn. Sau này mở rộng từ vựng đời thường.
@@ -33,6 +33,7 @@ toeic-app/
 ## Giai đoạn 0 — Chuẩn bị (trước ngày 1, ~1–1,5 giờ)
 - [ ] **M0.** Cài Node.js LTS, git (kiểm tra `node -v`, `git --version`); tạo tài khoản GitHub, Cloudflare, Supabase; lấy Gemini API key tại Google AI Studio (không bật billing).
   Xong khi: 4 tài khoản đăng nhập được, key nằm trong `.env` trên máy.
+  Tiến độ: ✅ Node v24.18.0, npm 11.16.0, git 2.50.1 (đã có sẵn, git đã cấu hình user.name/email). ⏳ Còn lại: 4 tài khoản + Gemini key (Huy tự làm).
 
 ## Giai đoạn 1 — MVP (ngày 1–7, ~13 giờ)
 - [ ] **M1. Khung project + deploy ngay (ngày 1, ~2h).** Vite vanilla, Vitest + 1 test mẫu, git, repo GitHub private, deploy Cloudflare Pages trang "Hello".
