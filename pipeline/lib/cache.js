@@ -55,3 +55,24 @@ export function chunk(items, size) {
   for (let i = 0; i < items.length; i += size) out.push(items.slice(i, i + size));
   return out;
 }
+
+/**
+ * Đọc một mục cache về dạng chuẩn { ai, model, promptVersion, date }.
+ * Cache đời đầu chỉ lưu thẳng object AI, chưa kèm thông tin model — những mục đó
+ * được gắn thông tin dự phòng để `gen` của mỗi từ vẫn đúng với model đã sinh ra nó (D13).
+ * @param {unknown} value
+ * @param {{model: string, promptVersion: string, date: string}} fallback
+ * @returns {{ai: object, model: string, promptVersion: string, date: string}|null}
+ */
+export function readCachedAi(value, fallback) {
+  if (!value || typeof value !== 'object') return null;
+  if (value.ai && typeof value.ai === 'object') {
+    return {
+      ai: value.ai,
+      model: value.model ?? fallback.model,
+      promptVersion: value.promptVersion ?? fallback.promptVersion,
+      date: value.date ?? fallback.date,
+    };
+  }
+  return { ai: value, ...fallback };
+}

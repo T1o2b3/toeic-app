@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { createGeminiProvider, withRetry } from '../pipeline/lib/ai-provider.js';
+import { createGeminiProvider, withRetry, isDailyQuotaError, DEFAULT_GEMINI_MODELS } from '../pipeline/lib/ai-provider.js';
 import { pickIpa, fetchIpa } from '../pipeline/lib/ipa.js';
 
 /** Giả lập một Response tối thiểu để không cần gọi mạng thật. */
@@ -24,7 +24,7 @@ describe('createGeminiProvider', () => {
 
     expect(text).toBe('[{"word":"a"}]');
     const [url, init] = fetchImpl.mock.calls[0];
-    expect(url).toContain('gemini-3.8-flash:generateContent');
+    expect(url).toContain('gemini-3.5-flash:generateContent');
     expect(init.headers['x-goog-api-key']).toBe('k-123');
     expect(JSON.parse(init.body).contents[0].parts[0].text).toBe('xin chào');
   });
@@ -106,5 +106,29 @@ describe('IPA', () => {
       ok: true, status: 200, json: async () => [{ phonetics: [] }],
     });
     expect(await fetchIpa('refund', { fetchImpl })).toBeNull();
+  });
+});
+
+describe('isDailyQuotaError', () => {
+  it('nhận ra lỗi hết hạn mức NGÀY (phải đổi model hoặc đợi sang ngày)', () => {
+    const error = Object.assign(
+      new Error('Quota exceeded... quotaId: GenerateRequestsPerDayPerProjectPerModel-FreeTier'),
+      { status: 429 },
+    );
+    expect(isDailyQuotaError(error)).toBe(true);
+  });
+
+  it('429 do gửi quá nhanh KHÔNG bị coi là hết hạn mức ngày', () => {
+    const error = Object.assign(new Error('Too many requests per minute'), { status: 429 });
+    expect(isDailyQuotaError(error)).toBe(false);
+  });
+
+  it('lỗi khác không phải 429 thì không tính', () => {
+    expect(isDailyQuotaError(Object.assign(new Error('x'), { status: 503 }))).toBe(false);
+    expect(isDailyQuotaError(undefined)).toBe(false);
+  });
+
+  it('danh sách model mặc định không rỗng', () => {
+    expect(DEFAULT_GEMINI_MODELS.length).toBeGreaterThan(1);
   });
 });

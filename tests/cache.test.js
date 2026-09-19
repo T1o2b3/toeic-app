@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdtempSync, rmSync, writeFileSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { openCache, chunk } from '../pipeline/lib/cache.js';
+import { openCache, chunk, readCachedAi } from '../pipeline/lib/cache.js';
 import { createDeckValidator, findDuplicateIds } from '../pipeline/lib/validate-deck.js';
 
 describe('chunk', () => {
@@ -93,5 +93,26 @@ describe('createDeckValidator', () => {
     const duplicated = { ...deck, entries: [deck.entries[0], { ...deck.entries[0] }] };
     expect(findDuplicateIds(duplicated)).toEqual(['tsl-0001']);
     expect(findDuplicateIds(deck)).toEqual([]);
+  });
+});
+
+describe('readCachedAi', () => {
+  const fallback = { model: 'cũ', promptVersion: 'vocab-v1', date: '2026-09-19' };
+
+  it('đọc mục cache mới có kèm thông tin model', () => {
+    const value = { ai: { vi: 'khách hàng' }, model: 'gemini-3.5-flash', promptVersion: 'vocab-v2', date: '2026-09-20' };
+    expect(readCachedAi(value, fallback)).toEqual({
+      ai: { vi: 'khách hàng' }, model: 'gemini-3.5-flash', promptVersion: 'vocab-v2', date: '2026-09-20',
+    });
+  });
+
+  it('mục cache đời đầu (chỉ có object AI) được gắn thông tin dự phòng', () => {
+    expect(readCachedAi({ vi: 'khách hàng' }, fallback)).toEqual({
+      ai: { vi: 'khách hàng' }, model: 'cũ', promptVersion: 'vocab-v1', date: '2026-09-19',
+    });
+  });
+
+  it('không có gì trong cache thì trả null', () => {
+    expect(readCachedAi(undefined, fallback)).toBeNull();
   });
 });

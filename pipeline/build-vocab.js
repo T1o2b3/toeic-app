@@ -12,9 +12,9 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { parseTslCsv, TSL_ATTRIBUTION } from './lib/tsl.js';
 import { buildEntry } from './lib/vocab-entry.js';
 import { buildVocabPrompt, parseVocabResponse, matchVocabResponse, VOCAB_PROMPT_VERSION } from './lib/prompt-vocab.js';
-import { createGeminiProvider, withRetry, sleep } from './lib/ai-provider.js';
+import { createGeminiProvider, withRetry, sleep, isDailyQuotaError, DEFAULT_GEMINI_MODELS } from './lib/ai-provider.js';
 import { fetchIpa } from './lib/ipa.js';
-import { openCache, chunk } from './lib/cache.js';
+import { openCache, chunk, readCachedAi } from './lib/cache.js';
 import { createDeckValidator, findDuplicateIds } from './lib/validate-deck.js';
 
 const ROOT = new URL('..', import.meta.url);
@@ -33,7 +33,7 @@ function parseArgs(argv) {
   const batchFlag = argv.indexOf('--batch-size');
   return {
     limit: limitFlag === -1 ? Infinity : Number.parseInt(argv[limitFlag + 1], 10),
-    batchSize: batchFlag === -1 ? 10 : Number.parseInt(argv[batchFlag + 1], 10),
+    batchSize: batchFlag === -1 ? 25 : Number.parseInt(argv[batchFlag + 1], 10),
     withIpa: !argv.includes('--no-ipa'),
   };
 }
@@ -51,30 +51,52 @@ async function main() {
   const todo = words.filter((w) => !aiCache.has(w.word));
   console.log(`Đã có sẵn trong cache: ${words.length - todo.length} từ. Cần gọi AI: ${todo.length} từ.`);
 
-  const provider = createGeminiProvider({
-    apiKey: process.env.GEMINI_API_KEY,
-    ...(process.env.GEMINI_MODEL ? { model: process.env.GEMINI_MODEL } : {}),
-  });
+  const models = (process.env.GEMINI_MODELS ?? DEFAULT_GEMINI_MODELS.join(','))
+    .split(',').map((m) => m.trim()).filter(Boolean);
+  const today = new Date().toISOString().slice(0, 10);
 
   if (todo.length > 0) {
     const batches = chunk(todo, batchSize);
+    console.log(`Chia thành ${batches.length} lô, mỗi lô ${batchSize} từ. Model thử theo thứ tự: ${models.join(' → ')}`);
 
+    let modelIndex = 0;
     for (const [index, batch] of batches.entries()) {
       const label = `Lô ${index + 1}/${batches.length}`;
-      try {
-        const text = await withRetry(() => provider.generate(buildVocabPrompt(batch)));
-        const { matched, missing } = matchVocabResponse(batch, parseVocabResponse(text));
-        for (const item of matched) aiCache.set(item.word, item.ai);
-        aiCache.save();
-        console.log(`${label}: nhận ${matched.length}/${batch.length} từ${missing.length ? ` (thiếu: ${missing.join(', ')})` : ''}`);
-      } catch (error) {
-        console.error(`${label}: LỖI — ${error.message}`);
-        if (error.status === 401 || error.status === 403) {
-          console.error('→ Key sai hoặc chưa bật. Kiểm tra GEMINI_API_KEY trong .env rồi chạy lại.');
-          break;
+      let done = false;
+
+      // Hết hạn mức ngày của model này thì chuyển sang model kế tiếp, không bỏ cuộc ngay.
+      while (!done && modelIndex < models.length) {
+        const provider = createGeminiProvider({ apiKey: process.env.GEMINI_API_KEY, model: models[modelIndex] });
+        try {
+          const text = await withRetry(() => provider.generate(buildVocabPrompt(batch)));
+          const { matched, missing } = matchVocabResponse(batch, parseVocabResponse(text));
+          for (const item of matched) {
+            aiCache.set(item.word, { ai: item.ai, model: provider.model, promptVersion: VOCAB_PROMPT_VERSION, date: today });
+          }
+          aiCache.save();
+          console.log(`${label} [${provider.model}]: nhận ${matched.length}/${batch.length} từ${missing.length ? ` (thiếu ${missing.length})` : ''}`);
+          done = true;
+        } catch (error) {
+          if (isDailyQuotaError(error)) {
+            console.log(`${label}: ${provider.model} đã hết hạn mức NGÀY → chuyển model tiếp theo`);
+            modelIndex += 1;
+            continue;
+          }
+          if (error.status === 401 || error.status === 403) {
+            console.error(`${label}: LỖI — key sai hoặc chưa bật. Kiểm tra GEMINI_API_KEY trong .env.`);
+            modelIndex = models.length;
+            break;
+          }
+          console.error(`${label} [${provider.model}]: LỖI — ${error.message.slice(0, 160)}`);
+          done = true; // bỏ lô này, từ chưa có vẫn nằm trong danh sách cần làm lần chạy sau
         }
       }
-      // Free tier giới hạn số lượt/phút — nghỉ giữa các lô cho an toàn.
+
+      if (modelIndex >= models.length) {
+        console.log(`\nHết hạn mức của mọi model trong hôm nay. Đã dừng ở ${label}.`);
+        console.log('→ Hạn mức free tier đặt lại vào nửa đêm giờ Thái Bình Dương. Chạy lại lệnh cũ là tiếp tục đúng chỗ đang dở.');
+        break;
+      }
       if (index < batches.length - 1) await sleep(4000);
     }
   }
@@ -99,19 +121,22 @@ async function main() {
     }
   }
 
-  const gen = {
-    model: provider.model,
-    promptVersion: VOCAB_PROMPT_VERSION,
-    batch: new Date().toISOString().slice(0, 10),
-    date: new Date().toISOString().slice(0, 10),
-  };
+  // Mục cache đời đầu chưa kèm tên model — gắn thông tin của lần chạy đầu tiên (D13).
+  const legacy = { model: 'gemini-3.8-flash', promptVersion: VOCAB_PROMPT_VERSION, date: '2026-09-19' };
 
   const entries = [];
   const skipped = [];
   for (const { word, rank } of words) {
-    if (!aiCache.has(word)) continue;
+    const cached = readCachedAi(aiCache.get(word), legacy);
+    if (!cached) continue;
+    const gen = {
+      model: cached.model,
+      promptVersion: cached.promptVersion,
+      batch: cached.date,
+      date: cached.date,
+    };
     try {
-      entries.push(buildEntry({ word, rank, ai: aiCache.get(word), ipa: ipaCache.get(word) ?? undefined, gen }));
+      entries.push(buildEntry({ word, rank, ai: cached.ai, ipa: ipaCache.get(word) ?? undefined, gen }));
     } catch (error) {
       skipped.push(`${word}: ${error.message}`);
     }
