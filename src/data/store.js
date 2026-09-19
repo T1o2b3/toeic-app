@@ -55,6 +55,11 @@ export async function createStore({ factory, fetchImpl } = {}) {
       return events.map((event) => ({ ...event }));
     },
 
+    /** Yêu cầu vẽ lại mà không ghi sự kiện nào (vd khi lật thẻ). */
+    refresh() {
+      notify();
+    },
+
     /** Đăng ký hàm được gọi mỗi khi trạng thái đổi. Trả về hàm huỷ đăng ký. */
     subscribe(listener) {
       listeners.add(listener);

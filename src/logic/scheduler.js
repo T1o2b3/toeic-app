@@ -81,6 +81,22 @@ export function isNew(card) {
   return card.state === State.New;
 }
 
+/**
+ * Xem trước: bấm mỗi mức đánh giá thì lần ôn kế tiếp là khi nào.
+ * Hiện ngay trên nút để người học thấy hậu quả trước khi bấm (RESEARCH.md R3).
+ * @param {object} card
+ * @param {Date} [now]
+ * @returns {Record<string, number>} mức đánh giá -> số mili giây tới lần ôn kế tiếp
+ */
+export function previewIntervals(card, now = new Date()) {
+  const preview = {};
+  for (const grade of Object.values(GRADES)) {
+    const next = reviewCard(card, grade, now);
+    preview[grade] = new Date(next.due).getTime() - now.getTime();
+  }
+  return preview;
+}
+
 /** Chuyển thẻ của thư viện về dữ liệu thuần: Date -> chuỗi ISO, lưu/đồng bộ được. */
 function toPlain(card) {
   return { ...card, due: card.due.toISOString(), last_review: card.last_review?.toISOString() ?? null };
