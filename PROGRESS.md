@@ -4,7 +4,7 @@
 
 ## Trạng thái hiện tại
 - Giai đoạn: 1 — MVP
-- Milestone: **M1 XONG** ✅ (2026-09-19). Tiếp theo: M2 — schema + pipeline từ vựng.
+- Milestone: **M2 — schema + pipeline từ vựng.** Code xong hết, **đang chờ Gemini API key hợp lệ** để chạy thật.
 - Huy đã duyệt PLAN.md nguyên trạng ngày 2026-09-19 và giao Claude toàn quyền quyết định.
 
 ### Đã xong
@@ -23,16 +23,22 @@
   Credential GitHub có sẵn trong macOS Keychain nên `git push` chạy không cần cấu hình thêm.
 - `.env` đã tạo với `GEMINI_API_KEY` (chmod 600, đã xác nhận git bỏ qua, KHÔNG có trên GitHub). `.env.example` được commit.
 
+### M2 — đã xong phần code (58 test pass)
+- `schemas/vocab.schema.json`, `schemas/event.schema.json` (JSON Schema 2020-12, kiểm bằng ajv).
+- `pipeline/data/TSL_12_stats.csv`: 1250 từ nguồn, commit kèm ghi công CC BY-SA 4.0.
+- `pipeline/lib/`: `tsl.js` (đọc CSV, sinh id vĩnh viễn), `vocab-entry.js` (chuẩn hoá dữ liệu AI),
+  `prompt-vocab.js` (prompt + đọc kết quả + khớp từ thiếu), `ai-provider.js` (Gemini, đổi được nhà
+  cung cấp theo D14, có `withRetry` cho lỗi 429/5xx), `ipa.js`, `cache.js`, `validate-deck.js`.
+- `pipeline/build-vocab.js` (`npm run build:vocab`) và `pipeline/validate-content.js` (`npm run validate:content`).
+
 ## Bước tiếp theo (cụ thể)
-1. **Bắt đầu M2 — schema + pipeline từ vựng:**
-   a. Viết `schemas/vocab.schema.json` + `schemas/event.schema.json` và validator trong `pipeline/`.
-   b. Tải danh sách TSL 1.2 (1250 từ) từ newgeneralservicelist.com về `pipeline/.cache/`.
-   c. Lấy IPA qua Free Dictionary API (có cache, AI chỉ dự phòng).
-   d. Gọi Gemini Flash theo lô sinh nghĩa Việt / ví dụ / collocation / đồng–trái nghĩa; pipeline phải
-      **chạy lại được nhiều lần** (cache theo từ) vì free tier có giới hạn tốc độ.
-   e. Validator chạy qua toàn bộ file; Huy duyệt ngẫu nhiên 30 từ.
-   → Xong khi: `public/content/vocab-toeic-tsl.json` ~1250 từ qua validator.
-2. **Huy nên làm khi rảnh:** xoá Gemini key cũ ở Google AI Studio, tạo key mới, báo Claude cập nhật `.env`.
+1. **ĐANG CHỜ HUY:** lưu Gemini API key hợp lệ (bắt đầu bằng `AIza`, lấy ở aistudio.google.com/apikey)
+   vào `.env` dòng `GEMINI_API_KEY=...`. Key Huy đưa lần đầu (`AQ.A…`) bị API trả 401
+   `ACCESS_TOKEN_TYPE_UNSUPPORTED` — sai loại credential.
+2. Có key rồi: `npm run build:vocab -- --limit 20` để thử 20 từ, Claude đọc kết quả xem chất lượng
+   nghĩa Việt/ví dụ có ổn không, chỉnh prompt nếu cần (nhớ tăng `VOCAB_PROMPT_VERSION`).
+3. Ổn rồi thì chạy toàn bộ 1250 từ (chia nhiều đợt cũng được, cache tự nhớ).
+4. Huy duyệt ngẫu nhiên 30 từ → M2 xong → sang **M3 (IndexedDB + FSRS + màn hình từ vựng)**.
 
 ## Vướng mắc / câu hỏi mở
 - ~~Q2 (chặn M2)~~ → **đã giải quyết 2026-09-19**: TSL 1.2 (1250 từ) và NGSL 1.2 (2809 từ) đều CC BY-SA 4.0.
@@ -47,6 +53,7 @@
 | M1 | ~2h | ~35 phút | Máy đã sẵn Node/git + credential GitHub trong Keychain nên nhanh hơn nhiều |
 
 ## Nhật ký phiên (mới nhất ở trên, mỗi phiên 1–3 dòng)
+- 2026-09-19 — M2: viết xong toàn bộ pipeline từ vựng + schema + validator, 58 test pass. Chờ key hợp lệ để chạy thật.
 - 2026-09-19 — **M1 XONG**: deploy Cloudflare thành công, https://toeic-app.huybndc-451.workers.dev chạy đúng
   trên cả desktop lẫn khổ iPhone. Lưu ý: Cloudflare giờ dùng tên miền `*.workers.dev` (xem D27b).
 - 2026-09-19 — Push lên GitHub private thành công, tạo `.env` + `.env.example`. Còn mỗi Cloudflare Pages là xong M1.

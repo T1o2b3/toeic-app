@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "build:vocab": "node --env-file=.env pipeline/build-vocab.js"
+    "build:vocab": "node --env-file=.env pipeline/build-vocab.js",
+    "validate:content": "node pipeline/validate-content.js"
   },
   "devDependencies": {
     "ajv": "^8.20.0",

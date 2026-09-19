@@ -12,6 +12,18 @@ npm test         # chạy test
 npm run build    # build ra dist/
 ```
 
+## Pipeline nội dung (chạy trên máy, không chạy trong app)
+
+```bash
+npm run build:vocab -- --limit 20   # thử 20 từ đầu trước cho chắc
+npm run build:vocab                 # làm toàn bộ 1250 từ TSL
+npm run validate:content            # kiểm tra file nội dung theo schema
+```
+
+Cần `GEMINI_API_KEY` trong `.env` (xem `.env.example`). Pipeline **chạy lại được nhiều lần**:
+kết quả AI của từng từ được lưu ở `pipeline/.cache/`, chạy lại chỉ gọi AI cho từ còn thiếu —
+quan trọng vì free tier giới hạn số lượt mỗi phút.
+
 ## Cấu trúc
 
 | Thư mục | Trách nhiệm |
