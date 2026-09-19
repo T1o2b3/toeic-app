@@ -41,6 +41,20 @@ Lý do: việc học không được chờ app. Trade-off: MVP rất hẹp (từ
   3. **Code không bị ảnh hưởng**: ShareAlike chỉ áp cho bản phái sinh của danh sách, không lan sang phần mềm đọc nó.
 - Vì app là private, cá nhân, chưa phân phối công khai → nghĩa vụ chưa phát sinh; vẫn ghi công từ đầu cho đúng và khỏi sửa sau.
 
+**D19. Giới hạn thật của Gemini free tier (đo ngày 2026-09-19) và cách sống chung.**
+- Hạn mức tính theo **số request mỗi NGÀY, riêng cho từng model, từng project**
+  (`GenerateRequestsPerDayPerProjectPerModel-FreeTier`) — không tính theo số từ hay token.
+- Model đầu bảng `gemini-3.8-flash` và `gemini-flash-latest`: **20 request/ngày**. `gemini-2.5-flash`
+  và `gemini-2.5-flash-lite` đã bị gỡ khỏi v1beta (404). `gemini-3.5-flash` hạn mức cao hơn rõ rệt
+  (chạy >15 request vẫn chưa cạn).
+- Cách xử lý đã làm: (a) pipeline tự xoay vòng danh sách model khi cạn hạn mức ngày;
+  (b) gộp 50 từ/request → 1250 từ chỉ tốn ~25 request; (c) cache theo từ nên chạy lại tiếp đúng chỗ dở;
+  (d) bộ đọc JSON vớt được mục nguyên vẹn khi kết quả bị cắt → không mất trắng một request nào.
+- **Không** tạo nhiều project Google để nhân hạn mức: lách giới hạn nhà cung cấp, rủi ro khoá tài khoản,
+  trái tinh thần ràng buộc "miễn phí trong khuôn khổ họ cho".
+- Dự phòng nếu Gemini siết tiếp: thêm provider OpenRouter (D14 đã chuẩn bị interface), hoặc chỉ sinh thẻ
+  cho từ Huy đánh dấu "chưa biết" ở màn triage M3 thay vì cả 1250 từ.
+
 ## Kỹ thuật
 
 **D20. Pipeline viết bằng Node.js** (cùng ngôn ngữ với app). TTS gọi CLI, không cần viết Python.
