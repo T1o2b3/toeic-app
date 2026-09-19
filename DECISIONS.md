@@ -81,6 +81,21 @@ Lý do: việc học không được chờ app. Trade-off: MVP rất hẹp (từ
 - Nếu sau này 2 email/giờ thành vướng thật: gắn SMTP ngoài có free tier (Brevo, Resend). Chưa làm —
   chỉ thêm dịch vụ khi đã chạm giới hạn thật, không thêm phòng xa.
 
+**D25c. Thay phần đăng nhập của D25: dùng email + mật khẩu, KHÔNG dùng OTP.** (Huy đồng ý 2026-09-19)
+- **Lý do bắt buộc phải đổi:** Supabase không còn cho sửa mẫu email nếu chưa cấu hình SMTP riêng
+  (dashboard hiện dòng "Set up custom SMTP to edit templates", ô Subject/Body bị khoá). Mẫu mặc định
+  chỉ gửi magic link, không có biến `{{ .Token }}` → không lấy được mã 6 số.
+  Mà magic link chính là thứ D25 muốn tránh: trên iPhone nó mở Safari, phiên đăng nhập nằm ở Safari
+  còn PWA đã cài vẫn chưa đăng nhập.
+- **Phương án đã cân nhắc và loại:** gắn SMTP ngoài (Brevo/Resend đều có free tier) để mở khoá việc sửa
+  mẫu email. Loại vì phải thêm một dịch vụ bên thứ ba, thêm tài khoản phải quản và xác minh người gửi —
+  chỉ để tự gửi mã cho chính mình. Không tương xứng với app cá nhân một người dùng (ràng buộc #8).
+- **Hệ quả tốt kèm theo:** không gửi email lần nào → mất luôn giới hạn 2 email/giờ ghi ở D25b,
+  đăng nhập cả 3 máy trong vài phút được.
+- **Đánh đổi chấp nhận:** phải nhớ thêm một mật khẩu. Bảo vệ dữ liệu thật sự vẫn nằm ở RLS, không phụ
+  thuộc cách đăng nhập. Cần tắt "Confirm email" trong Supabase để việc tạo tài khoản không phải chờ email.
+- D25b vẫn giữ nguyên để biết vì sao đã từng chọn OTP; phần "đăng nhập OTP" của D25 coi như bị mục này thay.
+
 **D26. Ôn từ bằng FSRS** (thư viện mã nguồn mở), bọc sau interface riêng. Nhờ D23, đổi thuật toán sau này chỉ cần tính lại.
 
 **D27. Host: Cloudflare Pages** (repo private vẫn deploy miễn phí). Hash router nên không cần cấu hình server.

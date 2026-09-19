@@ -7,31 +7,60 @@ import { diffEvents, toRows, fromRows } from '../logic/sync.js';
 
 const TABLE = 'events';
 
-/**
- * Gửi mã OTP 6 số tới email.
- * @param {string} email
- */
-export async function requestOtp(email) {
-  const supabase = getSupabase();
-  if (!supabase) throw new Error('Chưa cấu hình Supabase');
-  const { error } = await supabase.auth.signInWithOtp({
-    email,
-    options: { shouldCreateUser: true },
-  });
-  if (error) throw new Error(`Không gửi được mã: ${error.message}`);
+/** Độ dài mật khẩu tối thiểu. Supabase mặc định 6; đặt cao hơn cho chắc. */
+export const MIN_PASSWORD_LENGTH = 8;
+
+/** Kiểm tra đầu vào trước khi gọi mạng, để báo lỗi rõ ràng bằng tiếng Việt. */
+function checkCredentials(email, password) {
+  if (!email?.includes('@')) throw new Error('Email không hợp lệ');
+  if (!password || password.length < MIN_PASSWORD_LENGTH) {
+    throw new Error(`Mật khẩu phải từ ${MIN_PASSWORD_LENGTH} ký tự trở lên`);
+  }
 }
 
 /**
- * Xác nhận mã OTP để đăng nhập.
+ * Tạo tài khoản lần đầu.
  * @param {string} email
- * @param {string} token - 6 chữ số
+ * @param {string} password
  * @returns {Promise<object>} thông tin người dùng
  */
-export async function verifyOtp(email, token) {
+export async function signUp(email, password) {
   const supabase = getSupabase();
   if (!supabase) throw new Error('Chưa cấu hình Supabase');
-  const { data, error } = await supabase.auth.verifyOtp({ email, token, type: 'email' });
-  if (error) throw new Error(`Mã không đúng: ${error.message}`);
+  checkCredentials(email, password);
+
+  const { data, error } = await supabase.auth.signUp({ email, password });
+  if (error) throw new Error(`Không tạo được tài khoản: ${error.message}`);
+
+  // Không có session nghĩa là Supabase đang bắt xác nhận qua email.
+  // Với app cá nhân thì đó chỉ là rào cản thừa — báo rõ cách tắt thay vì để Huy đoán.
+  if (!data.session) {
+    throw new Error(
+      'Đã tạo tài khoản nhưng Supabase đang bắt xác nhận email. '
+      + 'Vào Authentication → Sign In / Providers → Email, tắt "Confirm email", rồi đăng nhập lại.',
+    );
+  }
+  return data.user;
+}
+
+/**
+ * Đăng nhập.
+ * @param {string} email
+ * @param {string} password
+ * @returns {Promise<object>} thông tin người dùng
+ */
+export async function signIn(email, password) {
+  const supabase = getSupabase();
+  if (!supabase) throw new Error('Chưa cấu hình Supabase');
+  checkCredentials(email, password);
+
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) {
+    if (/invalid login credentials/i.test(error.message)) {
+      throw new Error('Sai email hoặc mật khẩu. Lần đầu dùng thì bấm "Tạo tài khoản".');
+    }
+    throw new Error(`Không đăng nhập được: ${error.message}`);
+  }
   return data.user;
 }
 

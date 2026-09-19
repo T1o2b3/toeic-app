@@ -22,17 +22,23 @@
 - ✅ **M5 (code)**: schema SQL + RLS, đăng nhập OTP, đồng bộ hai chiều. Chờ Huy cấu hình để chạy thật.
 
 ## VIỆC CỦA HUY — kích hoạt đồng bộ (M5), khoảng 15 phút
-1. Vào supabase.com → tạo project mới (gói Free), chọn region gần Việt Nam (Singapore).
-2. Vào **SQL Editor** → New query → dán toàn bộ nội dung `supabase/schema.sql` → **Run**.
-   Câu lệnh cuối file phải trả về `rowsecurity = true` cho cả hai bảng. Nếu không, DỪNG LẠI.
-3. Vào **Project Settings → API**, lấy **Project URL** và **anon public** key.
-   TUYỆT ĐỐI không lấy `service_role` key (ràng buộc #3).
-4. Thêm vào `.env` (xem mẫu trong `.env.example`):
-   `VITE_SUPABASE_URL=...` và `VITE_SUPABASE_ANON_KEY=...`
-5. Vào Cloudflare → project toeic-app → Settings → Variables: thêm đúng 2 biến đó rồi deploy lại.
-6. Mở app → **Đồng bộ giữa các máy** → nhập email → nhận mã 6 số → xác nhận → bấm **Đồng bộ ngay**.
-7. Kiểm tra: làm vài thẻ trên Mac, bấm Đồng bộ; sang iPhone đăng nhập cùng email, bấm Đồng bộ →
-   phải thấy đúng tiến độ đó.
+
+Đăng nhập bằng **email + mật khẩu** (D25c — đã đổi từ OTP vì Supabase chặn sửa mẫu email
+khi chưa có SMTP riêng).
+
+1. supabase.com → New project. Name `toeic-app`, Region **Singapore**, gói Free.
+   Lưu lại Database Password nó sinh ra.
+2. **SQL Editor** → New query → dán toàn bộ `supabase/schema.sql` → **Run**.
+   Kết quả cuối phải là `rowsecurity = true` cho CẢ HAI bảng. Nếu không, DỪNG LẠI.
+3. **Authentication → Sign In / Providers → Email**: tắt **Confirm email**, bấm Save.
+   (Không tắt thì tạo tài khoản xong phải chờ email xác nhận — thừa với app cá nhân.)
+4. **Project Settings → API**: copy **Project URL** và **anon public** key.
+   KHÔNG dùng `service_role` key (ràng buộc #3).
+5. Thêm vào `.env`: `VITE_SUPABASE_URL=...` và `VITE_SUPABASE_ANON_KEY=...`
+6. Cloudflare → toeic-app → Settings → Variables: thêm đúng 2 biến đó → deploy lại.
+7. Mở app → **Đồng bộ giữa các máy** → nhập email + mật khẩu (từ 8 ký tự) →
+   **Lần đầu dùng? Tạo tài khoản** → sau đó bấm **Đồng bộ ngay**.
+8. Máy thứ hai: cùng email + mật khẩu đó, bấm **Đăng nhập** rồi **Đồng bộ ngay**.
 
 ## Đã xong trong phiên 2026-09-19
 - **M1**: Vite + Vitest, git, GitHub private, Cloudflare Workers tự deploy mỗi lần push.

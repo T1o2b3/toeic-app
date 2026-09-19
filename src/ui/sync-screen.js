@@ -1,14 +1,15 @@
 /**
- * Màn đồng bộ: đăng nhập bằng mã OTP 6 số qua email, rồi trao đổi sự kiện với Supabase.
- * Dùng OTP thay vì magic link vì trên iPhone link sẽ mở Safari chứ không mở PWA (D25).
+ * Màn đồng bộ: đăng nhập bằng email + mật khẩu, rồi trao đổi sự kiện với Supabase.
+ * Không dùng mã OTP qua email vì Supabase chặn việc sửa mẫu email khi chưa có SMTP riêng (D25c).
  */
 import { el, goTo } from './dom.js';
-import { requestOtp, verifyOtp, getCurrentUser, signOut, syncEvents, isSupabaseConfigured } from '../data/sync.js';
+import { signUp, signIn, getCurrentUser, signOut, syncEvents, isSupabaseConfigured, MIN_PASSWORD_LENGTH } from '../data/sync.js';
 import { describeSync } from '../logic/sync.js';
 
 /** Trạng thái riêng của màn. */
-let stage = 'unknown';   // unknown | signed-out | code-sent | signed-in
+let stage = 'unknown';   // unknown | signed-out | signed-in
 let email = '';
+let password = '';
 let message = '';
 let busy = false;
 let user = null;
@@ -41,7 +42,8 @@ export function renderSync(store) {
         el('div', { class: 'meaning', text: 'Cần làm gì' }),
         el('div', { text: '1. Tạo project trên supabase.com (gói free).' }),
         el('div', { text: '2. Chạy file supabase/schema.sql trong SQL Editor.' }),
-        el('div', { text: '3. Thêm VITE_SUPABASE_URL và VITE_SUPABASE_ANON_KEY vào .env rồi build lại.' }),
+        el('div', { text: '3. Tắt "Confirm email" ở Authentication → Sign In / Providers → Email.' }),
+        el('div', { text: '4. Thêm VITE_SUPABASE_URL và VITE_SUPABASE_ANON_KEY vào .env rồi build lại.' }),
       ]),
       el('button', { class: 'secondary', onClick: () => goTo('/') }, [el('span', { text: 'Về màn chính' })]),
     ]);
@@ -99,47 +101,51 @@ export function renderSync(store) {
       autocomplete: 'email', inputmode: 'email',
     });
     emailInput.addEventListener('input', (e) => { email = e.target.value; });
-    children.push(emailInput);
 
-    if (stage === 'code-sent') {
-      const codeInput = el('input', {
-        type: 'text', class: 'field', placeholder: 'mã 6 số trong email',
-        inputmode: 'numeric', maxlength: '6',
-      });
-      children.push(
-        codeInput,
+    const passwordInput = el('input', {
+      type: 'password', class: 'field', placeholder: `mật khẩu (từ ${MIN_PASSWORD_LENGTH} ký tự)`,
+      value: password, autocomplete: 'current-password',
+    });
+    passwordInput.addEventListener('input', (e) => { password = e.target.value; });
+
+    const enter = (task) => (e) => { if (e.key === 'Enter') task(); };
+    const doSignIn = () => !busy && run(store, async () => {
+      user = await signIn(email.trim(), password);
+      stage = 'signed-in';
+      password = '';
+      return 'Đăng nhập xong. Bấm "Đồng bộ ngay" để trao đổi dữ liệu.';
+    });
+    passwordInput.addEventListener('keydown', enter(doSignIn));
+
+    children.push(
+      emailInput,
+      passwordInput,
+      el('button', { class: 'primary', onClick: doSignIn }, [
+        el('span', { text: 'Đăng nhập' }),
+        el('small', { text: 'dùng chung tài khoản này trên cả 3 máy' }),
+      ]),
+      el('div', { class: 'actions' }, [
         el('button', {
-          class: 'primary',
+          class: 'link',
+          text: 'Lần đầu dùng? Tạo tài khoản',
           onClick: () => !busy && run(store, async () => {
-            user = await verifyOtp(email.trim(), codeInput.value.trim());
+            user = await signUp(email.trim(), password);
             stage = 'signed-in';
-            return 'Đăng nhập thành công. Bấm "Đồng bộ ngay" để trao đổi dữ liệu.';
+            password = '';
+            return 'Đã tạo tài khoản và đăng nhập. Bấm "Đồng bộ ngay".';
           }),
-        }, [el('span', { text: 'Xác nhận mã' })]),
-      );
-    } else {
-      children.push(
-        el('button', {
-          class: 'primary',
-          onClick: () => !busy && run(store, async () => {
-            await requestOtp(email.trim());
-            stage = 'code-sent';
-            return 'Đã gửi mã 6 số tới email. Nhập mã vào ô bên dưới.';
-          }),
-        }, [
-          el('span', { text: 'Gửi mã đăng nhập' }),
-          el('small', { text: 'mã 6 số, không dùng magic link' }),
-        ]),
-      );
-    }
+        }),
+      ]),
+    );
   }
 
   if (message) children.push(el('div', { class: 'note', text: message }));
   return el('div', {}, children);
 }
 
-/** Đặt lại khi rời màn. */
+/** Đặt lại khi rời màn. Xoá mật khẩu khỏi bộ nhớ, không giữ lại. */
 export function resetSync() {
   message = '';
   busy = false;
+  password = '';
 }
