@@ -18,9 +18,10 @@ export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
  * @param {string} options.apiKey
  * @param {string} [options.model] - mặc định gemini-3.5-flash; xem DEFAULT_GEMINI_MODELS
  * @param {typeof fetch} [options.fetchImpl]
+ * @param {number} [options.timeoutMs] - bỏ dở request treo quá lâu; mặc định 180 giây
  * @returns {{name: string, model: string, generate: (prompt: string) => Promise<string>}}
  */
-export function createGeminiProvider({ apiKey, model = 'gemini-3.5-flash', fetchImpl = fetch }) {
+export function createGeminiProvider({ apiKey, model = 'gemini-3.5-flash', fetchImpl = fetch, timeoutMs = 180_000 }) {
   if (!apiKey) {
     throw new Error('Thiếu GEMINI_API_KEY trong .env — xem .env.example');
   }
@@ -29,7 +30,11 @@ export function createGeminiProvider({ apiKey, model = 'gemini-3.5-flash', fetch
     name: 'gemini',
     model,
     async generate(prompt) {
-      const response = await fetchImpl(`${GEMINI_ENDPOINT}/${model}:generateContent`, {
+      // Không có timeout thì một request treo sẽ làm đứng cả pipeline vô thời hạn.
+      let response;
+      try {
+        response = await fetchImpl(`${GEMINI_ENDPOINT}/${model}:generateContent`, {
+        signal: AbortSignal.timeout(timeoutMs),
         method: 'POST',
         headers: { 'content-type': 'application/json', 'x-goog-api-key': apiKey },
         body: JSON.stringify({
@@ -41,13 +46,14 @@ export function createGeminiProvider({ apiKey, model = 'gemini-3.5-flash', fetch
             maxOutputTokens: 32768,
           },
         }),
-      });
+        });
+      } catch (error) {
+        // Treo/đứt mạng là lỗi tạm thời — để withRetry thử lại.
+        throw Object.assign(new Error(`Gọi ${model} thất bại: ${error.message}`), { status: 503 });
+      }
 
       if (!response.ok) {
-        const detail = await response.text().catch(() => '');
-        const error = new Error(`Gemini trả về HTTP ${response.status}: ${detail.slice(0, 300)}`);
-        error.status = response.status;
-        throw error;
+        throw await readApiError(response, model);
       }
 
       const data = await response.json();
@@ -79,10 +85,44 @@ export async function withRetry(task, { retries = 4, baseDelayMs = 2000, wait = 
       const status = error?.status;
       const retriable = status === undefined || status === 429 || status >= 500;
       if (!retriable || attempt === retries) break;
-      await wait(baseDelayMs * 2 ** attempt);
+      // API tự nói nên chờ bao lâu thì nghe theo, còn không thì lùi gấp đôi mỗi lần.
+      const suggested = error?.retryDelayMs;
+      const backoff = baseDelayMs * 2 ** attempt;
+      await wait(Math.max(suggested ?? 0, backoff));
     }
   }
   throw lastError;
+}
+
+/**
+ * Đọc lỗi API thành một Error mang đủ thông tin để quyết định: thử lại, đổi model, hay dừng.
+ * Trước đây thông báo lỗi bị cắt ngắn làm mất `quotaId`, khiến pipeline không phân biệt được
+ * "hết hạn mức ngày" với "gửi quá nhanh" — đập mãi vào model đã cạn.
+ * @param {Response} response
+ * @param {string} model
+ * @returns {Promise<Error & {status: number, quotaId?: string, retryDelayMs?: number}>}
+ */
+async function readApiError(response, model) {
+  const raw = await response.text().catch(() => '');
+  let parsed;
+  try {
+    parsed = JSON.parse(raw)?.error;
+  } catch {
+    parsed = undefined;
+  }
+
+  const details = parsed?.details ?? [];
+  const quota = details.find((d) => d['@type']?.includes('QuotaFailure'))?.violations?.[0];
+  const retryInfo = details.find((d) => d['@type']?.includes('RetryInfo'))?.retryDelay;
+  const seconds = typeof retryInfo === 'string' ? Number.parseFloat(retryInfo) : NaN;
+
+  const summary = parsed?.message?.split('\n')[0] ?? raw.slice(0, 200);
+  const error = new Error(`${model} trả về HTTP ${response.status}: ${summary}`);
+  error.status = response.status;
+  if (quota?.quotaId) error.quotaId = quota.quotaId;
+  if (quota?.quotaValue) error.quotaValue = quota.quotaValue;
+  if (Number.isFinite(seconds)) error.retryDelayMs = Math.ceil(seconds * 1000);
+  return error;
 }
 
 /**
@@ -104,5 +144,6 @@ export const DEFAULT_GEMINI_MODELS = Object.freeze([
  */
 export function isDailyQuotaError(error) {
   if (error?.status !== 429) return false;
+  if (error.quotaId) return /PerDay/i.test(error.quotaId);
   return /PerDay|per day/i.test(String(error.message ?? ''));
 }

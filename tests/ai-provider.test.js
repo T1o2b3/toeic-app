@@ -29,10 +29,42 @@ describe('createGeminiProvider', () => {
     expect(JSON.parse(init.body).contents[0].parts[0].text).toBe('xin chào');
   });
 
-  it('ném lỗi kèm mã HTTP khi API từ chối', async () => {
-    const fetchImpl = vi.fn().mockResolvedValue(fakeResponse({ error: 'quota' }, { ok: false, status: 429 }));
+  it('giữ nguyên quotaId và retryDelay từ lỗi API (đừng cắt mất)', async () => {
+    const body = {
+      error: {
+        code: 429,
+        message: 'You exceeded your current quota...\n* Quota exceeded for metric: ...',
+        details: [
+          {
+            '@type': 'type.googleapis.com/google.rpc.QuotaFailure',
+            violations: [{ quotaId: 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', quotaValue: '20' }],
+          },
+          { '@type': 'type.googleapis.com/google.rpc.RetryInfo', retryDelay: '27s' },
+        ],
+      },
+    };
+    const fetchImpl = vi.fn().mockResolvedValue(fakeResponse(body, { ok: false, status: 429 }));
     const provider = createGeminiProvider({ apiKey: 'k', fetchImpl });
-    await expect(provider.generate('x')).rejects.toMatchObject({ status: 429 });
+    await expect(provider.generate('x')).rejects.toMatchObject({
+      status: 429,
+      quotaId: 'GenerateRequestsPerDayPerProjectPerModel-FreeTier',
+      quotaValue: '20',
+      retryDelayMs: 27000,
+    });
+  });
+
+  it('lỗi không phải JSON vẫn ném được, không làm sập pipeline', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: false, status: 502, text: async () => '<html>Bad Gateway</html>',
+    });
+    const provider = createGeminiProvider({ apiKey: 'k', fetchImpl });
+    await expect(provider.generate('x')).rejects.toMatchObject({ status: 502 });
+  });
+
+  it('request treo bị bỏ dở và quy về lỗi tạm thời để thử lại', async () => {
+    const fetchImpl = vi.fn().mockRejectedValue(Object.assign(new Error('The operation was aborted'), { name: 'TimeoutError' }));
+    const provider = createGeminiProvider({ apiKey: 'k', fetchImpl, timeoutMs: 10 });
+    await expect(provider.generate('x')).rejects.toMatchObject({ status: 503 });
   });
 
   it('ném lỗi khi Gemini trả về rỗng', async () => {
@@ -49,6 +81,15 @@ describe('withRetry', () => {
     const task = vi.fn().mockResolvedValue('xong');
     expect(await withRetry(task, { wait })).toBe('xong');
     expect(task).toHaveBeenCalledTimes(1);
+  });
+
+  it('nghe theo retryDelay do API đề nghị nếu nó dài hơn backoff', async () => {
+    const waitFn = vi.fn().mockResolvedValue(undefined);
+    const task = vi.fn()
+      .mockRejectedValueOnce(Object.assign(new Error('chậm lại'), { status: 429, retryDelayMs: 30000 }))
+      .mockResolvedValue('xong');
+    await withRetry(task, { wait: waitFn });
+    expect(waitFn).toHaveBeenCalledWith(30000);
   });
 
   it('thử lại khi bị 429 rồi thành công', async () => {
@@ -110,17 +151,22 @@ describe('IPA', () => {
 });
 
 describe('isDailyQuotaError', () => {
-  it('nhận ra lỗi hết hạn mức NGÀY (phải đổi model hoặc đợi sang ngày)', () => {
-    const error = Object.assign(
-      new Error('Quota exceeded... quotaId: GenerateRequestsPerDayPerProjectPerModel-FreeTier'),
-      { status: 429 },
-    );
+  it('nhận ra hết hạn mức NGÀY qua quotaId, không phụ thuộc chuỗi thông báo', () => {
+    const error = Object.assign(new Error('bất kỳ chữ gì'), {
+      status: 429, quotaId: 'GenerateRequestsPerDayPerProjectPerModel-FreeTier',
+    });
     expect(isDailyQuotaError(error)).toBe(true);
   });
 
-  it('429 do gửi quá nhanh KHÔNG bị coi là hết hạn mức ngày', () => {
-    const error = Object.assign(new Error('Too many requests per minute'), { status: 429 });
+  it('429 theo PHÚT không bị nhầm thành hết hạn mức ngày', () => {
+    const error = Object.assign(new Error('rate limit'), {
+      status: 429, quotaId: 'GenerateRequestsPerMinutePerProjectPerModel-FreeTier',
+    });
     expect(isDailyQuotaError(error)).toBe(false);
+  });
+
+  it('không có quotaId thì đọc tạm từ thông báo', () => {
+    expect(isDailyQuotaError(Object.assign(new Error('quota per day exceeded'), { status: 429 }))).toBe(true);
   });
 
   it('lỗi khác không phải 429 thì không tính', () => {
