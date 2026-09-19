@@ -10,6 +10,7 @@ export const EVENT_TYPES = Object.freeze([
   'vocab.triaged',
   'vocab.reviewed',
   'vocab.bookmarked',
+  'vocab.captured',
   'question.answered',
   'question.reported',
   'session.started',

@@ -90,3 +90,7 @@ toeic-app/
 ## Backlog (ý tưởng chưa lên lịch)
 - Ước lượng "mức sẵn sàng thi" (điểm hiện tại → mục tiêu) — cần mô hình quy đổi điểm, chờ đủ dữ liệu làm bài. (RESEARCH.md)
 - Kế hoạch hôm nay dạng nhiều nhiệm vụ nhỏ có tiến độ `3/5 xong` — cân nhắc khi làm M6. (RESEARCH.md)
+- **Deck `my-words` từ các từ đã gạt** (D34): pipeline đọc file xuất dữ liệu (nút "Xuất dữ liệu"), lấy các từ
+  `vocab.captured` chưa có trong deck, sinh nghĩa + ví dụ như deck TSL/BSL. Khi có, các từ đó tự thành thẻ học
+  (app tra lại theo deck hiện tại nên không phải sửa nhật ký).
+- Kéo thả bằng pointer events để dùng được trên cảm ứng — hiện iPhone dùng chạm-rồi-bấm (D34).

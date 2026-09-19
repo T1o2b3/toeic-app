@@ -214,6 +214,32 @@ phủ sóng từ vựng Part 5 — mới thấy NAWL đóng góp 1 từ. Ghi l�
   thêm attribution vào deck (D18).
 - `pipeline/lib/ipa.js` (dictionaryapi.dev) không còn được gọi; giữ lại chưa xoá, dọn khi chắc chắn không quay lại.
 
+**D34. Gạt từ lạ lúc làm Part 5 vào danh sách cần học (chạm hoặc kéo thả, không hiện nghĩa).**
+- **Yêu cầu của Huy:** đang làm bài kiểm tra không phải từ vựng mà gặp từ chưa biết, muốn đánh dấu nó vào
+  danh sách cần học NGAY, nhưng không xem nghĩa lúc đó (giữ mạch làm bài). Học từ vựng và học các môn khác
+  vẫn tách riêng — đây chỉ là cầu nối một chiều từ bài luyện sang danh sách học.
+- **Tương tác:** từng từ trong câu là một nút bấm/kéo được. **Mac:** kéo từ thả vào khay "Cần học".
+  **iPhone:** chạm từ → khay hiện `＋ Cần học`. Cả hai gọi cùng một hàm. Vì sao không kéo thả thuần: HTML5
+  drag-and-drop với chữ trên cảm ứng iOS không ổn định, còn tự viết bằng pointer events thì tốn công gấp
+  nhiều lần mà chạm-rồi-bấm đã nhanh ngang kéo thả. Nếu Huy thấy thiếu, thêm pointer events sau.
+- **Từ trong phương án A–D chỉ gạt được SAU khi trả lời:** trước đó việc đánh dấu từ nào là gợi ý ngầm cho
+  đáp án. Sau khi trả lời thì hiện hàng chip `＋ từ` dưới phần giải thích.
+- **Hai kiểu từ gạt được:**
+  1. Đã có trong deck (khớp đúng, hoặc qua dạng gốc: raised→raise, rising→rise, stopped→stop): ghi
+     `vocab.captured` + một `vocab.triaged` để vào hàng đợi học. Chưa phân loại → "không biết"; đang
+     "thành thạo" → hạ xuống "đoán được"; đang học sẵn → không đổi gì (lịch FSRS giữ nguyên).
+  2. Chưa có trong deck: chỉ ghi `vocab.captured`. **Không có nghĩa để làm thẻ** vì không gọi AI lúc chạy
+     app (ràng buộc #2). Hiện ở Kho từ vựng › "Đã gạt" kèm số lần gặp và nút "Tra nghĩa ↗" (Wiktionary).
+- **Nhật ký:** thêm loại sự kiện `vocab.captured {word, wordId?, questionId}`. Bản app cũ trong cache gặp loại
+  sự kiện lạ thì bỏ qua (reducer có nhánh `default`), cột `type` của Supabase là text không ràng buộc nên đồng
+  bộ không cần sửa. Sự kiện gạt KHÔNG tự đổi trạng thái học — chỉ `vocab.triaged` kèm theo mới đổi.
+- **Tra lại theo deck HIỆN TẠI, không tin `wordId` lúc gạt:** từ gạt lúc deck chưa có, sau này pipeline sinh
+  ra rồi thì tự chuyển sang "đã có thẻ" mà không cần sửa nhật ký.
+- **Chỉ tách từ gồm chữ cái, dài từ 3 ký tự** (bỏ `to`, `of`, số, chỗ trống ----). Không gạt hai lần cùng
+  một từ ở cùng một câu; cùng từ ở câu khác thì tính thêm một lần gặp (từ gặp nhiều là từ đáng học trước).
+- **Chưa làm (cố ý, ràng buộc #8):** biến danh sách "chưa có trong deck" thành thẻ học — cần một bước pipeline
+  đọc file xuất dữ liệu rồi sinh deck `my-words` (D04 đã chừa chỗ ở `OPTIONAL_DECKS`). Ghi vào Backlog.
+
 ## Câu hỏi còn mở
 - Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng? Quyết khi ước lượng được dung lượng thực.
 - ~~Q2 (trước M2): xác nhận license của TSL 1.2 và NGSL.~~ → **Đã giải quyết, xem D18.**

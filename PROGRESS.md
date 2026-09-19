@@ -55,6 +55,15 @@ Huy báo: phân loại chỉ chọn được 1 trong 4, không xem lại đượ
   loại lỗi giữa logic và màn hình mà test logic thuần không thấy. **`validate:content` giờ kiểm cả BSL.**
   `audit:vocab -- --deck bsl` soi deck BSL. **343 test pass.**
 
+## Phiên 2026-09-19 (đêm, cuối) — Gạt từ lạ lúc làm Part 5 (D34) — XONG
+Huy đề xuất: gặp từ lạ khi làm bài ngoài từ vựng thì kéo thả vào danh sách cần học, không hiện nghĩa.
+- **Part 5:** mỗi từ trong câu chạm/kéo được; khay "Cần học" dưới câu hỏi. Từ trong phương án A–D chỉ gạt
+  được sau khi trả lời (không lộ gợi ý). Từ đã có trong deck (kể cả dạng chia) vào thẳng hàng đợi học.
+- **Kho từ vựng › Đã gạt:** cả từ trong deck lẫn từ CHƯA có trong deck (kèm số lần gặp, nút "Tra nghĩa ↗").
+- Loại sự kiện mới `vocab.captured`; code mới `src/logic/capture.js`, `src/ui/capture-tray.js`.
+- **391 test pass** (32 test logic gạt từ, 11 test giao diện `tests/ui-capture.test.js`, test dùng chung ở
+  `tests/helpers/ui-app.js`). CHƯA thử kéo thả bằng chuột thật trên trình duyệt — jsdom giả lập sự kiện `drop`.
+
 ## Mục tiêu phiên này: 3 milestone — ĐÃ ĐẠT
 - ✅ **M4**: 200 câu Part 5 (phủ đều 12 loại kiến thức, 100% qua kiểm định 2 bước) + màn luyện.
 - ✅ **M6**: PWA cài được, học offline được, phiên "15 phút hôm nay", nút xuất dữ liệu.
@@ -133,8 +142,8 @@ khi chưa có SMTP riêng).
 
 ## Bước tiếp theo (cụ thể)
 
-1. **Tính năng mới Huy đề xuất — "gạt từ lạ vào danh sách cần học" khi làm Part 5** (kéo thả / chạm một từ
-   trong câu, không hiện nghĩa). Đang thiết kế, xem D34.
+1. **Huy thử "gạt từ lạ" khi làm Part 5** (D34) trên Mac (kéo thả) và iPhone (chạm) rồi báo cảm nhận. Nếu
+   thấy nên có: deck `my-words` biến từ chưa có trong deck thành thẻ học (đang ở Backlog trong PLAN.md).
 2. Chạy lại `npm run build:vocab` khi hạn mức AI đặt lại (nửa đêm giờ Thái Bình Dương) để bù 3 từ TSL còn
    thiếu (3/1250) và ~70 từ chưa có IPA. Nhớ: chạy các deck **nối tiếp**, không song song (D33).
 3. M5: Huy cấu hình Supabase (hướng dẫn ở mục "VIỆC CỦA HUY") để bật đồng bộ Mac ↔ iPhone.

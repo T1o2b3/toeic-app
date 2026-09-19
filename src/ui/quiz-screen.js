@@ -5,6 +5,7 @@
 import { el, goTo } from './dom.js';
 import { quizQueue, gradeAnswer } from '../logic/quiz.js';
 import { roundProgress } from '../logic/round.js';
+import { renderStem, renderTray, renderOptionCapture, resetCapture } from './capture-tray.js';
 
 import { getRoundSize } from '../data/prefs.js';
 
@@ -84,7 +85,8 @@ export function renderQuiz(store) {
       el('button', { class: 'link', text: '← Về màn chính', onClick: () => goTo('/') }),
       el('span', { class: 'progress', text: `còn ${remaining} câu · ${question.errorType}` }),
     ]),
-    el('div', { class: 'card' }, [el('div', { class: 'stem', text: question.stem })]),
+    el('div', { class: 'card' }, [renderStem(store, question)]),
+    renderTray(store, question),
     el('div', { class: 'options' }, LETTERS.map((letter) => {
       let className = 'option';
       if (result) {
@@ -108,6 +110,7 @@ export function renderQuiz(store) {
         el('div', { class: 'meaning', text: question.explanation }),
         question.trap ? el('div', { class: 'note', text: question.trap }) : '',
       ]),
+      renderOptionCapture(store, question),
       el('div', { class: 'actions' }, [
         el('button', { class: 'primary', onClick: () => next(store) }, [
           el('span', { text: 'Câu tiếp theo' }),
@@ -147,6 +150,7 @@ async function answer(store, question, letter) {
 function next(store) {
   picked = null;
   locked = null;
+  resetCapture();
   store.refresh();
 }
 
@@ -154,6 +158,7 @@ function next(store) {
 async function report(store, question) {
   picked = null;
   locked = null;
+  resetCapture();
   doneThisRound.add(question.id);
   await store.record('question.reported', { questionId: question.id });
 }
@@ -185,5 +190,6 @@ export function handleQuizKey(store, event) {
 export function resetQuiz() {
   picked = null;
   locked = null;
+  resetCapture();
   doneThisRound = new Set();
 }

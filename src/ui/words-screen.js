@@ -7,8 +7,9 @@
 import { el, goTo } from './dom.js';
 import { LEVEL_ORDER, LEVEL_INFO, payloadForLevel } from '../logic/vocab-levels.js';
 import {
-  FILTERS, FILTER_ORDER, normalizeFilter, filterWords, countByFilter,
+  FILTERS, FILTER_ORDER, normalizeFilter, filterWords, countByFilter, fold,
 } from '../logic/word-library.js';
+import { splitCaptured } from '../logic/capture.js';
 import { renderWordBack } from './word-detail.js';
 
 /** Số dòng hiện mỗi lần — deck có hàng nghìn từ, vẽ hết một lượt sẽ chậm trên điện thoại. */
@@ -21,6 +22,7 @@ const FILTER_LABEL = {
   [FILTERS.ALL]: 'Tất cả',
   [FILTERS.UNTRIAGED]: 'Chưa phân loại',
   [FILTERS.BOOKMARKED]: '★ Đánh dấu',
+  [FILTERS.CAPTURED]: 'Đã gạt',
   ...Object.fromEntries(LEVEL_ORDER.map((level) => [level, LEVEL_INFO[level].label])),
 };
 
@@ -37,7 +39,7 @@ let openId = null;
  */
 export function renderWords(store, params) {
   if (filter === null) filter = normalizeFilter(params?.get('f'));
-  const counts = countByFilter(store.entries, store.states);
+  const counts = countByFilter(store.entries, store.states, { capturedTotal: store.captured.size });
 
   const summary = el('p', { class: 'subtitle' });
   const list = el('div', { class: 'word-list' });
@@ -74,16 +76,20 @@ export function renderWords(store, params) {
 
 /** Vẽ (lại) phần danh sách theo bộ lọc + từ khoá hiện tại. */
 function fillList(store, list, summary, refill) {
-  const matches = filterWords(store.entries, store.states, { filter, query });
+  const { entryIds, unmatched } = splitCaptured(store.captured, store.wordIndex);
+  const matches = filterWords(store.entries, store.states, { filter, query, capturedIds: entryIds });
   const visible = matches.slice(0, shown);
+  // Từ đã gạt mà deck chưa có: chỉ hiện ở bộ lọc "Đã gạt", lọc theo từ khoá như các dòng khác.
+  const orphans = filter === FILTERS.CAPTURED ? unmatchedRows(unmatched) : [];
 
   summary.textContent = query.trim() === ''
     ? 'Bấm vào một từ để xem chi tiết và đổi mức.'
-    : `${matches.length} từ khớp “${query.trim()}”.`;
+    : `${matches.length + orphans.length} từ khớp “${query.trim()}”.`;
 
   const rows = visible.map((entry) => renderRow(store, entry, refill));
+  rows.push(...orphans.map(renderOrphanRow));
 
-  if (matches.length === 0) {
+  if (matches.length === 0 && orphans.length === 0) {
     rows.push(el('p', { class: 'empty', text: emptyText() }));
   } else if (matches.length > visible.length) {
     rows.push(el('button', { class: 'secondary', onClick: () => { shown += PAGE_SIZE; refill(); } }, [
@@ -94,8 +100,34 @@ function fillList(store, list, summary, refill) {
   list.replaceChildren(...rows);
 }
 
+/** Từ đã gạt chưa có trong deck, gặp nhiều lần nhất lên đầu, lọc theo từ khoá. */
+function unmatchedRows(unmatched) {
+  const needle = fold(query);
+  return unmatched
+    .filter((item) => needle === '' || fold(item.word).includes(needle))
+    .sort((a, b) => b.count - a.count || b.lastTs - a.lastTs);
+}
+
+/** Dòng cho từ đã gạt mà deck chưa có: chưa có nghĩa nên chỉ có nút tra ngoài. */
+function renderOrphanRow(item) {
+  return el('div', { class: 'word-row orphan' }, [
+    el('div', { class: 'word-head static' }, [
+      el('span', { class: 'wh-main' }, [
+        el('strong', { text: item.word }),
+        el('span', { class: 'lvl none', text: 'chưa có trong deck' }),
+      ]),
+      el('small', { text: `gặp ${item.count} lần trong ${item.questionIds.length} câu` }),
+      el('a', {
+        class: 'ext-link', href: `https://en.wiktionary.org/wiki/${encodeURIComponent(item.word)}`,
+        target: '_blank', rel: 'noopener', text: 'Tra nghĩa ↗',
+      }),
+    ]),
+  ]);
+}
+
 function emptyText() {
   if (query.trim() !== '') return 'Không có từ nào khớp.';
+  if (filter === FILTERS.CAPTURED) return 'Chưa gạt từ nào. Khi làm Part 5, chạm vào một từ lạ trong câu để thêm vào đây.';
   if (filter === FILTERS.BOOKMARKED) return 'Chưa đánh dấu từ nào. Mở một từ rồi bấm ☆ để đánh dấu.';
   if (filter === FILTERS.UNTRIAGED) return 'Đã phân loại hết mọi từ.';
   return 'Chưa có từ nào ở nhóm này.';

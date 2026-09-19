@@ -1,0 +1,131 @@
+/**
+ * Gạt từ lạ lúc làm Part 5 (D34): chạm hoặc kéo một từ trong câu vào khay "Cần học".
+ * KHÔNG hiện nghĩa ở đây — mục đích là không đứt mạch làm bài; nghĩa xem sau ở màn học.
+ *
+ * Trên Mac kéo thả được. Trên iPhone kéo thả HTML5 với chữ không chạy ổn định nên dùng
+ * chạm-để-chọn rồi bấm "Cần học" — cả hai đường cùng gọi `capture`.
+ */
+import { el } from './dom.js';
+import { tokenize, normalizeWord, planCapture } from '../logic/capture.js';
+
+/** Từ đang được chọn (chuẩn hoá), chờ bấm "Cần học". */
+let selected = null;
+
+/** Thông báo kết quả của lần gạt gần nhất. */
+let notice = null;
+
+/** Đang ghi sự kiện: chặn bấm/thả hai lần thật nhanh ghi trùng. */
+let busy = false;
+
+const HINT = 'Gặp từ lạ? Chạm vào từ trong câu (hoặc kéo vào đây) để thêm vào danh sách cần học — nghĩa xem sau, không hiện lúc làm bài.';
+
+/**
+ * Câu hỏi với từng từ bấm/kéo được.
+ * @param {object} store
+ * @param {{stem: string}} question
+ * @returns {HTMLElement}
+ */
+export function renderStem(store, question) {
+  const parts = tokenize(question.stem).map((token) => {
+    if (!token.word) return token.text;
+
+    const classes = ['tok'];
+    if (store.captured.has(token.word)) classes.push('captured');
+    if (token.word === selected) classes.push('selected');
+
+    const node = el('span', { class: classes.join(' '), draggable: 'true', role: 'button', tabindex: '0', text: token.text });
+    node.addEventListener('click', () => {
+      selected = selected === token.word ? null : token.word;
+      store.refresh();
+    });
+    node.addEventListener('dragstart', (event) => {
+      event.dataTransfer.setData('text/plain', token.word);
+      event.dataTransfer.effectAllowed = 'copy';
+    });
+    return node;
+  });
+  return el('div', { class: 'stem' }, parts);
+}
+
+/**
+ * Khay nhận từ: vùng thả (Mac) và nơi xác nhận "Cần học" (chạm).
+ * @param {object} store
+ * @param {{id: string}} question
+ * @returns {HTMLElement}
+ */
+export function renderTray(store, question) {
+  let content;
+  if (selected) {
+    content = [
+      el('span', { class: 'tray-word', text: `“${selected}”` }),
+      el('button', { class: 'tray-add', text: '＋ Cần học', onClick: () => capture(store, question, selected) }),
+      el('button', { class: 'link', text: 'Bỏ chọn', onClick: () => { selected = null; store.refresh(); } }),
+    ];
+  } else {
+    content = [el('span', { class: 'tray-note', text: notice ?? HINT })];
+  }
+
+  const tray = el('div', { class: 'tray' }, content);
+  tray.addEventListener('dragover', (event) => {
+    event.preventDefault();
+    tray.classList.add('over');
+  });
+  tray.addEventListener('dragleave', () => tray.classList.remove('over'));
+  tray.addEventListener('drop', (event) => {
+    event.preventDefault();
+    tray.classList.remove('over');
+    capture(store, question, event.dataTransfer.getData('text/plain'));
+  });
+  return tray;
+}
+
+/**
+ * Từ trong bốn phương án — CHỈ hiện sau khi đã trả lời, vì trước đó việc đánh dấu từ nào
+ * là gợi ý ngầm cho đáp án. Bấm để thêm vào danh sách cần học.
+ * @param {object} store
+ * @param {{id: string, options: Record<string, string>}} question
+ * @returns {HTMLElement}
+ */
+export function renderOptionCapture(store, question) {
+  const words = [...new Set(Object.values(question.options).map(normalizeWord).filter(Boolean))];
+  if (words.length === 0) return el('div');
+
+  return el('div', { class: 'option-capture' }, [
+    el('div', { class: 'gaps-title', text: 'Từ trong các phương án — thêm vào danh sách cần học:' }),
+    el('div', { class: 'chips' }, words.map((word) => {
+      const done = store.captured.get(word)?.questionIds.includes(question.id);
+      return el('button', {
+        class: done ? 'chip-btn active' : 'chip-btn',
+        text: done ? `✓ ${word}` : `＋ ${word}`,
+        onClick: () => !done && capture(store, question, word),
+      });
+    })),
+  ]);
+}
+
+/** Ghi một từ vào danh sách cần học rồi báo kết quả. */
+async function capture(store, question, raw) {
+  const word = normalizeWord(raw);
+  if (!word || busy) return;
+  busy = true;
+  try {
+    const plan = planCapture(word, {
+      questionId: question.id, index: store.wordIndex, states: store.states, captured: store.captured,
+    });
+    selected = null;
+    notice = plan.notice;
+    if (plan.events.length === 0) {
+      store.refresh();
+      return;
+    }
+    for (const event of plan.events) await store.record(event.type, event.payload);
+  } finally {
+    busy = false;
+  }
+}
+
+/** Đặt lại khi sang câu khác hoặc rời màn. */
+export function resetCapture() {
+  selected = null;
+  notice = null;
+}

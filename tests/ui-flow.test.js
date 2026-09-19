@@ -9,50 +9,12 @@
  * mỗi phím bị xử lý hai lần). Trạng thái của `it` trước là đầu vào của `it` sau, có chủ ý.
  */
 import { describe, it, expect, beforeAll } from 'vitest';
-import { IDBFactory } from 'fake-indexeddb';
-import { createStore } from '../src/data/store.js';
-import { mountApp } from '../src/ui/app.js';
+import { bootApp } from './helpers/ui-app.js';
 
-const WORD_COUNT = 60;
-const DECK = {
-  deck: 'toeic-tsl',
-  version: 1,
-  attribution: { source: 'TSL 1.2', authors: 'B&C', license: 'CC BY-SA 4.0', url: 'https://x.test' },
-  entries: Array.from({ length: WORD_COUNT }, (_, i) => {
-    const n = String(i + 1).padStart(2, '0');
-    return {
-      id: `tsl-00${n}`, word: `w${n}x`, rank: i + 1, deck: 'toeic-tsl', pos: ['noun'],
-      vi: `nghĩa số ${n}`, examples: [{ en: `Example ${n}.`, vi: `Ví dụ ${n}.` }],
-    };
-  }),
-};
-
-let store;
-let root;
-
-const tick = (ms = 30) => new Promise((resolve) => setTimeout(resolve, ms));
-const go = async (hash) => { window.location.hash = hash; await tick(50); };
-const key = async (k) => { window.dispatchEvent(new KeyboardEvent('keydown', { key: k })); await tick(); };
-const text = () => root.textContent.replace(/\s+/g, ' ');
-const word = () => root.querySelector('.word')?.textContent;
-const button = (matcher, scope = root) =>
-  [...scope.querySelectorAll('button')].find((b) => matcher(b.textContent));
-const click = async (matcher, scope) => {
-  const target = button(matcher, scope);
-  if (!target) throw new Error(`không thấy nút (${matcher})`);
-  target.click();
-  await tick();
-};
-const levelOf = (w) => store.states.get(store.entries.find((e) => e.word === w).id)?.level;
+let store; let root; let tick; let go; let key; let text; let word; let click; let levelOf;
 
 beforeAll(async () => {
-  const fetchImpl = async (url) => (String(url).includes('vocab-toeic-tsl')
-    ? { ok: true, status: 200, json: async () => DECK }
-    : { ok: false, status: 404 });
-  store = await createStore({ factory: new IDBFactory(), fetchImpl });
-  document.body.innerHTML = '<div id="app"></div>';
-  root = document.getElementById('app');
-  mountApp(root, store);
+  ({ store, root, tick, go, key, text, word, click, levelOf } = await bootApp());
 });
 
 describe('màn chính khi chưa học gì', () => {

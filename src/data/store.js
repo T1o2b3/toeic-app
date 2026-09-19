@@ -7,6 +7,7 @@
 import { createEvent } from '../logic/events.js';
 import { reduceVocabState } from '../logic/vocab-state.js';
 import { reduceQuizState } from '../logic/quiz.js';
+import { reduceCaptured, buildWordIndex } from '../logic/capture.js';
 import { openDb, appendEvents, readAllEvents } from './db.js';
 import { getDeviceId } from './device.js';
 import { loadAllVocabDecks, loadQuestionBank } from './content.js';
@@ -29,6 +30,8 @@ export async function createStore({ factory, fetchImpl } = {}) {
   let events = await readAllEvents(db);
   let states = reduceVocabState(events);
   let quizStates = reduceQuizState(events);
+  let captured = reduceCaptured(events);
+  const wordIndex = buildWordIndex(vocab.entries);
   const listeners = new Set();
 
   const notify = () => {
@@ -43,6 +46,10 @@ export async function createStore({ factory, fetchImpl } = {}) {
     deviceId,
     get states() { return states; },
     get quizStates() { return quizStates; },
+    /** Từ đã gạt lúc làm bài (D34): từ (chuẩn hoá) -> {count, questionIds, ...}. */
+    get captured() { return captured; },
+    /** Chỉ mục từ -> mục deck, dùng để biết một từ gạt được đã có trong deck chưa. */
+    wordIndex,
     get eventCount() { return events.length; },
 
     /**
@@ -56,6 +63,7 @@ export async function createStore({ factory, fetchImpl } = {}) {
       events = [...events, event];
       states = reduceVocabState(events);
       quizStates = reduceQuizState(events);
+      captured = reduceCaptured(events);
       notify();
       return event;
     },
@@ -72,6 +80,7 @@ export async function createStore({ factory, fetchImpl } = {}) {
         events = await readAllEvents(db);
         states = reduceVocabState(events);
         quizStates = reduceQuizState(events);
+        captured = reduceCaptured(events);
         notify();
       }
       return added;

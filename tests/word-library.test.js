@@ -108,6 +108,34 @@ describe('countByFilter', () => {
   });
 });
 
+describe('bộ lọc "đã gạt" (D34)', () => {
+  it('lọc theo id mục deck của các từ đã gạt, giữ thứ tự deck', () => {
+    expect(ids(filterWords(entries, states, { filter: FILTERS.CAPTURED, capturedIds: new Set(['d', 'b']) }))).toEqual(['b', 'd']);
+  });
+
+  it('không có từ nào đã gạt thì rỗng; mục đã gỡ không bao giờ hiện', () => {
+    expect(filterWords(entries, states, { filter: FILTERS.CAPTURED })).toEqual([]);
+    expect(ids(filterWords(entries, states, { filter: FILTERS.CAPTURED, capturedIds: new Set(['x']) }))).toEqual([]);
+  });
+
+  it('kết hợp được với tìm kiếm', () => {
+    const capturedIds = new Set(['a', 'b']);
+    expect(ids(filterWords(entries, states, { filter: FILTERS.CAPTURED, capturedIds, query: 'abo' }))).toEqual(['b']);
+  });
+
+  it('countByFilter lấy tổng số từ đã gạt từ ngoài vào (kể cả từ chưa có trong deck)', () => {
+    expect(countByFilter(entries, states, { capturedTotal: 5 })[FILTERS.CAPTURED]).toBe(5);
+    expect(countByFilter(entries, states)[FILTERS.CAPTURED]).toBe(0);
+  });
+
+  it('không lẫn vào mức: "đã gạt" không nằm trong tổng chưa phân loại + 4 mức', () => {
+    const counts = countByFilter(entries, states, { capturedTotal: 9 });
+    const sum = counts[FILTERS.UNTRIAGED] + counts[LEVELS.UNKNOWN] + counts[LEVELS.CONTEXT]
+      + counts[LEVELS.SPELLING] + counts[LEVELS.FLUENT];
+    expect(sum).toBe(counts[FILTERS.ALL]);
+  });
+});
+
 describe('fold', () => {
   it('bỏ dấu, đ thành d, hạ chữ hoa', () => {
     expect(fold('Đường Hầm')).toBe('duong ham');
