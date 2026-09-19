@@ -3,7 +3,7 @@
  * Mỗi câu ghi lại loại kiến thức để sau này biết lỗ hổng nằm ở đâu.
  */
 import { el, goTo } from './dom.js';
-import { quizQueue, gradeAnswer } from '../logic/quiz.js';
+import { quizQueue, gradeAnswer, roundProgress } from '../logic/quiz.js';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
 const QUIZ_SIZE = 20;
@@ -27,9 +27,14 @@ function currentQuestion(store) {
   return roundQueue(store)[0] ?? null;
 }
 
-/** Hàng đợi của lượt hiện tại. */
+/**
+ * Hàng đợi của lượt hiện tại. Chỉ lấy đúng số câu CÒN LẠI của lượt, không phải cả lượt —
+ * nhờ vậy lượt kết thúc sau đủ 20 câu thay vì kéo dài mãi.
+ */
 function roundQueue(store) {
-  return quizQueue(store.questions, store.quizStates, { size: QUIZ_SIZE, exclude: doneThisRound });
+  const left = Math.max(0, QUIZ_SIZE - doneThisRound.size);
+  if (left === 0) return [];
+  return quizQueue(store.questions, store.quizStates, { size: left, exclude: doneThisRound });
 }
 
 /**
@@ -59,8 +64,12 @@ export function renderQuiz(store) {
     ]);
   }
 
-  const queue = roundQueue(store);
-  const remaining = locked ? queue.length + 1 : queue.length;
+  const { remaining } = roundProgress({
+    roundSize: QUIZ_SIZE,
+    doneCount: doneThisRound.size,
+    availableCount: roundQueue(store).length,
+    locked: Boolean(locked),
+  });
   const result = picked ? gradeAnswer(question, picked) : null;
 
   const children = [

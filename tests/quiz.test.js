@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { reduceQuizState, gradeAnswer, quizQueue, accuracyByErrorType } from '../src/logic/quiz.js';
+import { reduceQuizState, gradeAnswer, quizQueue, accuracyByErrorType, roundProgress } from '../src/logic/quiz.js';
 
 const T0 = Date.UTC(2026, 8, 19, 10, 0, 0);
 const ev = (type, payload, ts = T0) => ({ id: `e-${ts}-${Math.random()}`, deviceId: 'mac', ts, type, payload });
@@ -109,5 +109,41 @@ describe('accuracyByErrorType', () => {
 
   it('chưa làm câu nào thì không có thống kê', () => {
     expect(accuracyByErrorType(QUESTIONS, new Map())).toEqual([]);
+  });
+});
+
+describe('roundProgress', () => {
+  // Lỗi thật đã gặp: bộ đếm đứng yên ở 20 dù đã làm nhiều câu, vì trước đây lấy độ dài
+  // hàng đợi — mà hàng đợi luôn cắt đủ 20 câu khi ngân hàng còn nhiều.
+  it('đếm lùi theo số câu đã làm, không theo độ dài hàng đợi', () => {
+    const big = 180; // ngân hàng còn rất nhiều câu
+    expect(roundProgress({ roundSize: 20, doneCount: 0, availableCount: big }).remaining).toBe(20);
+    expect(roundProgress({ roundSize: 20, doneCount: 5, availableCount: big }).remaining).toBe(15);
+    expect(roundProgress({ roundSize: 20, doneCount: 19, availableCount: big }).remaining).toBe(1);
+  });
+
+  it('câu đang xem giải thích vẫn được tính là còn lại', () => {
+    // Vừa trả lời câu đầu tiên: đã làm 1, nhưng câu đó còn trên màn hình -> vẫn hiện 20.
+    expect(roundProgress({ roundSize: 20, doneCount: 1, availableCount: 180, locked: true }).remaining).toBe(20);
+    // Bấm "Câu tiếp theo" -> còn 19.
+    expect(roundProgress({ roundSize: 20, doneCount: 1, availableCount: 180 }).remaining).toBe(19);
+  });
+
+  it('kết thúc lượt khi làm đủ số câu', () => {
+    expect(roundProgress({ roundSize: 20, doneCount: 20, availableCount: 180 }).finished).toBe(true);
+    expect(roundProgress({ roundSize: 20, doneCount: 19, availableCount: 180 }).finished).toBe(false);
+  });
+
+  it('đang xem giải thích của câu cuối thì chưa tính là xong', () => {
+    expect(roundProgress({ roundSize: 20, doneCount: 20, availableCount: 0, locked: true }).finished).toBe(false);
+  });
+
+  it('ngân hàng còn ít hơn số câu mỗi lượt thì lấy theo số thực có', () => {
+    expect(roundProgress({ roundSize: 20, doneCount: 0, availableCount: 7 }).remaining).toBe(7);
+    expect(roundProgress({ roundSize: 20, doneCount: 5, availableCount: 3 }).remaining).toBe(3);
+  });
+
+  it('không bao giờ trả số âm', () => {
+    expect(roundProgress({ roundSize: 20, doneCount: 25, availableCount: 100 }).remaining).toBe(0);
   });
 });
