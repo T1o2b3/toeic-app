@@ -33,6 +33,8 @@ export function openCache(filePath) {
       dirty = true;
     },
     size: () => Object.keys(data).length,
+    /** Bản sao nông toàn bộ cache, để duyệt qua mà không sửa nhầm dữ liệu gốc. */
+    snapshot: () => ({ ...data }),
     save() {
       if (!dirty) return;
       mkdirSync(dirname(filePath), { recursive: true });

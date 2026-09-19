@@ -6,15 +6,31 @@ import Ajv from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { readFileSync } from 'node:fs';
 
-const schemaPath = new URL('../../schemas/vocab.schema.json', import.meta.url);
+const vocabSchemaPath = new URL('../../schemas/vocab.schema.json', import.meta.url);
 
 /**
- * Tạo hàm kiểm tra deck.
+ * Tạo hàm kiểm tra theo một schema bất kỳ.
+ * @param {string|URL} schemaPath
+ * @returns {(data: unknown) => {valid: boolean, errors: string[]}}
+ */
+export function createValidator(schemaPath) {
+  const ajv = addFormats(new Ajv({ allErrors: true }));
+  const validate = ajv.compile(JSON.parse(readFileSync(schemaPath, 'utf8')));
+
+  return (data) => {
+    const valid = validate(data);
+    const errors = (validate.errors ?? []).map((e) => `${e.instancePath || '(gốc)'} ${e.message}`);
+    return { valid, errors };
+  };
+}
+
+/**
+ * Tạo hàm kiểm tra deck từ vựng.
  * @returns {(deck: unknown) => {valid: boolean, errors: string[]}}
  */
 export function createDeckValidator() {
   const ajv = addFormats(new Ajv({ allErrors: true }));
-  const validate = ajv.compile(JSON.parse(readFileSync(schemaPath, 'utf8')));
+  const validate = ajv.compile(JSON.parse(readFileSync(vocabSchemaPath, 'utf8')));
 
   return (deck) => {
     const valid = validate(deck);

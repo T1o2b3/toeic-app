@@ -1,0 +1,567 @@
+{
+  "set": "part5-core",
+  "part": 5,
+  "version": 1,
+  "entries": [
+    {
+      "id": "p5-0001",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The city council has granted the local authority the power to ---- the zoning regulations for the upcoming commercial development project in the downtown area.",
+      "options": {
+        "A": "amend",
+        "B": "abolish",
+        "C": "enforce",
+        "D": "suspend"
+      },
+      "answer": "A",
+      "errorType": "vocabulary",
+      "explanation": "Trong ngữ cảnh pháp lý và quy hoạch đô thị, 'amend' (sửa đổi) là từ phù hợp nhất để chỉ việc điều chỉnh các quy định hiện hành.",
+      "trap": "Các từ 'enforce' (thực thi) hoặc 'abolish' (bãi bỏ) nghe có vẻ hợp lý về mặt ngữ pháp nhưng không phản ánh đúng logic của việc điều chỉnh quy hoạch.",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-19",
+        "date": "2026-09-19"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "A",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0002",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The maintenance crew discovered that the faulty lamp in the lobby was ---- due to a persistent moisture issue within the ceiling structure.",
+      "options": {
+        "A": "corroding",
+        "B": "corroded",
+        "C": "corrosion",
+        "D": "corrosive"
+      },
+      "answer": "B",
+      "errorType": "word-form",
+      "explanation": "Cấu trúc 'was + V-ed' cần thiết để diễn tả trạng thái bị động của cái đèn do tác động bên ngoài.",
+      "trap": "Người học có thể chọn 'corroding' vì nghĩ rằng cái đèn đang tự hỏng, nhưng thực tế nó là đối tượng chịu tác động.",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-19",
+        "date": "2026-09-19"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "B",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0003",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The investigative journalism team has been working tirelessly to uncover evidence that the corporation ---- its financial reports for several consecutive fiscal years.",
+      "options": {
+        "A": "falsifies",
+        "B": "has falsified",
+        "C": "had falsified",
+        "D": "was falsifying"
+      },
+      "answer": "B",
+      "errorType": "verb-tense",
+      "explanation": "Sử dụng thì hiện tại hoàn thành để diễn tả một hành động kéo dài từ quá khứ đến hiện tại, phù hợp với cụm 'for several consecutive fiscal years'.",
+      "trap": "Người học dễ chọn 'had falsified' vì nghĩ rằng hành động đã kết thúc, nhưng câu này ám chỉ hậu quả vẫn còn liên quan đến hiện tại.",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-19",
+        "date": "2026-09-19"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "B",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0004",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "Please ensure that your team updates the project calendar ---- so that all departments remain aligned with the revised delivery schedule for the software launch.",
+      "options": {
+        "A": "repeatedly",
+        "B": "consecutively",
+        "C": "accordingly",
+        "D": "frequently"
+      },
+      "answer": "C",
+      "errorType": "vocabulary",
+      "explanation": "Trạng từ 'accordingly' (một cách phù hợp) là lựa chọn chính xác nhất để chỉ việc cập nhật lịch sao cho khớp với tiến độ mới.",
+      "trap": "Từ 'repeatedly' (lặp đi lặp lại) gây nhiễu vì người học nghĩ rằng cần cập nhật nhiều lần, nhưng 'accordingly' mới là từ chỉ sự logic.",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-19",
+        "date": "2026-09-19"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0005",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The major retailer has decided to close its flagship store because the operating costs ---- the revenue generated from local sales in that specific region.",
+      "options": {
+        "A": "exceed",
+        "B": "exceeded",
+        "C": "have exceeded",
+        "D": "are exceeding"
+      },
+      "answer": "A",
+      "errorType": "subject-verb-agreement",
+      "explanation": "Chủ ngữ 'operating costs' là số nhiều, nên động từ phải chia ở dạng số nhiều 'exceed' để diễn tả một sự thật hiển nhiên.",
+      "trap": "Người học dễ bị lừa bởi các thì quá khứ hoặc hiện tại tiếp diễn nếu không nhận ra đây là một sự thật khách quan dẫn đến quyết định đóng cửa.",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-19",
+        "date": "2026-09-19"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "A",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0006",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The safety inspector noted that the warehouse staff ---- the hazardous materials in the designated area without wearing the required protective gear.",
+      "options": {
+        "A": "handle",
+        "B": "handled",
+        "C": "have handled",
+        "D": "are handling"
+      },
+      "answer": "B",
+      "errorType": "verb-tense",
+      "explanation": "Động từ 'noted' ở quá khứ đòi hỏi hành động được quan sát cũng phải ở quá khứ đơn 'handled'.",
+      "trap": "Người học có thể chọn 'handle' vì nghĩ đến thói quen, nhưng ngữ cảnh 'inspector noted' yêu cầu sự nhất quán về thì.",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-19",
+        "date": "2026-09-19"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "B",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0007",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "Each shipping container must have a tracking tag attached to the exterior, ---- it can be easily identified by the automated sorting system.",
+      "options": {
+        "A": "so that",
+        "B": "in case",
+        "C": "provided that",
+        "D": "as if"
+      },
+      "answer": "A",
+      "errorType": "vocabulary",
+      "explanation": "Liên từ 'so that' (để mà) chỉ mục đích, hoàn toàn phù hợp với logic của việc gắn thẻ để hệ thống nhận diện.",
+      "trap": "Các từ như 'provided that' (với điều kiện là) nghe có vẻ trang trọng nhưng không diễn tả đúng mục đích của hành động gắn thẻ.",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-19",
+        "date": "2026-09-19"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "A",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0008",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The speaker's intonation during the presentation was so monotone that the audience ---- interest in the topic within the first ten minutes.",
+      "options": {
+        "A": "lost",
+        "B": "had lost",
+        "C": "was losing",
+        "D": "has lost"
+      },
+      "answer": "A",
+      "errorType": "verb-tense",
+      "explanation": "Cấu trúc 'so... that' với 'was' ở quá khứ yêu cầu động từ vế sau cũng phải ở quá khứ đơn 'lost'.",
+      "trap": "Người học dễ chọn 'had lost' vì nghĩ hành động đã xảy ra trước, nhưng đây là hệ quả trực tiếp trong quá khứ.",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-19",
+        "date": "2026-09-19"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "A",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0009",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The hazardous waste disposal site will be subject to a thorough inspection, as the local residents have ---- concerns about potential environmental contamination.",
+      "options": {
+        "A": "raised",
+        "B": "rising",
+        "C": "arisen",
+        "D": "arising"
+      },
+      "answer": "A",
+      "errorType": "vocabulary",
+      "explanation": "Cụm collocation 'raised concerns' (nêu lên mối quan ngại) là cách diễn đạt chuẩn mực trong tiếng Anh thương mại.",
+      "trap": "Từ 'arisen' (nảy sinh) thường bị nhầm với 'raised' vì nghĩa tương đồng nhưng cách dùng với tân ngữ 'concerns' khác nhau.",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-19",
+        "date": "2026-09-19"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "A",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0010",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The travel agent finalized the itinerary for the executive team, ensuring that all flights and hotel accommodations ---- well in advance of the departure date.",
+      "options": {
+        "A": "are booked",
+        "B": "were booked",
+        "C": "had been booked",
+        "D": "would be booked"
+      },
+      "answer": "C",
+      "errorType": "verb-tense",
+      "explanation": "Thì quá khứ hoàn thành bị động 'had been booked' diễn tả hành động đã hoàn tất trước một mốc thời gian trong quá khứ (finalized).",
+      "trap": "Người học dễ chọn 'were booked' vì nghĩ hành động xảy ra cùng lúc, nhưng 'finalized' cho thấy việc đặt chỗ phải xong trước đó.",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-19",
+        "date": "2026-09-19"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0011",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The technician identified that the circuit board was damaged, which explains why the entire production line ---- unexpectedly during the night shift.",
+      "options": {
+        "A": "shut down",
+        "B": "shuts down",
+        "C": "has shut down",
+        "D": "is shutting down"
+      },
+      "answer": "A",
+      "errorType": "verb-tense",
+      "explanation": "Dựa vào động từ 'identified' ở quá khứ, hành động 'shut down' cũng phải chia ở quá khứ đơn.",
+      "trap": "Người học có thể chọn 'has shut down' nếu không nhận ra sự đồng nhất về thì trong câu tường thuật sự việc đã qua.",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-19",
+        "date": "2026-09-19"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "A",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0012",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The board of directors agreed that the proposal was ----, as it failed to address the long-term sustainability goals outlined in the annual report.",
+      "options": {
+        "A": "inadequate",
+        "B": "inadequacy",
+        "C": "inadequately",
+        "D": "inadequateness"
+      },
+      "answer": "A",
+      "errorType": "word-form",
+      "explanation": "Sau động từ to-be 'was', cần một tính từ 'inadequate' để mô tả tính chất của bản đề xuất.",
+      "trap": "Người học dễ bị lừa bởi trạng từ 'inadequately' nếu họ không nhận ra cấu trúc câu cần tính từ bổ nghĩa cho chủ ngữ.",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-19",
+        "date": "2026-09-19"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "A",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0013",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The manager noted a striking similarity between the two proposals, ---- he requested that both teams merge their ideas into a single comprehensive document.",
+      "options": {
+        "A": "whereas",
+        "B": "consequently",
+        "C": "nonetheless",
+        "D": "furthermore"
+      },
+      "answer": "B",
+      "errorType": "conjunction",
+      "explanation": "Câu yêu cầu một trạng từ liên kết chỉ kết quả (consequently) vì việc nhận ra sự tương đồng là nguyên nhân dẫn đến yêu cầu sáp nhập.",
+      "trap": "Các phương án khác đều là liên từ hoặc trạng từ liên kết nhưng tạo ra quan hệ logic sai lệch (đối lập hoặc bổ sung thay vì nhân quả).",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-19",
+        "date": "2026-09-19"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "B",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0014",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The seminar room was severely overcrowded, ---- the organizers decided to move the remaining sessions to the larger auditorium on the second floor.",
+      "options": {
+        "A": "given that",
+        "B": "so that",
+        "C": "in that",
+        "D": "as such"
+      },
+      "answer": "D",
+      "errorType": "conjunction",
+      "explanation": "Cấu trúc 'as such' ở đây đóng vai trò là trạng từ liên kết chỉ hệ quả, phù hợp với ngữ cảnh mô tả hành động tiếp theo sau một tình trạng.",
+      "trap": "Người học dễ chọn 'so that' vì nhầm lẫn với cấu trúc chỉ mục đích, hoặc 'given that' vì tưởng là mệnh đề nguyên nhân.",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-19",
+        "date": "2026-09-19"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0015",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "Employees who dine at the corporate cafeteria are encouraged to provide feedback, ---- that the quality of service meets the company's high standards.",
+      "options": {
+        "A": "ensuring",
+        "B": "ensured",
+        "C": "to ensure",
+        "D": "ensure"
+      },
+      "answer": "A",
+      "errorType": "participle",
+      "explanation": "Cần một phân từ hiện tại để rút gọn mệnh đề trạng ngữ chỉ kết quả hoặc mục đích song song, diễn tả hành động chủ động của nhân viên.",
+      "trap": "Người học dễ nhầm lẫn với 'to ensure' (mục đích) nhưng xét về ngữ cảnh câu này, việc phản hồi là hành động song song hoặc hệ quả trực tiếp.",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-19",
+        "date": "2026-09-19"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "A",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0016",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The new clinic policy requires that every staff member be responsible for ---- own workstation, ensuring that all medical records remain strictly confidential.",
+      "options": {
+        "A": "his",
+        "B": "their",
+        "C": "its",
+        "D": "one's"
+      },
+      "answer": "B",
+      "errorType": "pronoun",
+      "explanation": "Mặc dù 'every staff member' ở dạng số ít, trong tiếng Anh thương mại hiện đại, 'their' được dùng phổ biến để chỉ định chung cho nhân viên mà không phân biệt giới tính.",
+      "trap": "Người học thường chọn 'his' hoặc 'its' vì bám sát quy tắc ngữ pháp truyền thống (số ít), trong khi 'their' là lựa chọn tự nhiên và phổ biến nhất trong môi trường công sở.",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-19",
+        "date": "2026-09-19"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "B",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0017",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The marketing department, ---- by the recent decline in voucher redemption rates, decided to launch an aggressive social media campaign starting next Monday.",
+      "options": {
+        "A": "alarming",
+        "B": "alarmed",
+        "C": "alarms",
+        "D": "to alarm"
+      },
+      "answer": "B",
+      "errorType": "participle",
+      "explanation": "Mệnh đề rút gọn mang nghĩa bị động ('bị báo động bởi...') cần dùng quá khứ phân từ (V-ed) để bổ nghĩa cho chủ ngữ 'The marketing department'.",
+      "trap": "Người học dễ chọn 'alarming' vì nhầm lẫn rằng chủ ngữ là tác nhân gây ra sự báo động, nhưng thực tế phòng ban là đối tượng chịu tác động của kết quả kinh doanh.",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-19",
+        "date": "2026-09-19"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "B",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0018",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The executive team decided to replace the company motorcycle fleet with electric vehicles, ---- that the long-term maintenance costs would decrease significantly over time.",
+      "options": {
+        "A": "predicting",
+        "B": "predicted",
+        "C": "to predict",
+        "D": "predict"
+      },
+      "answer": "A",
+      "errorType": "participle",
+      "explanation": "Cần dùng phân từ hiện tại để diễn tả hành động chủ động của 'executive team' khi họ đưa ra quyết định dựa trên sự dự đoán.",
+      "trap": "Người học dễ chọn 'predicted' vì nghĩ rằng đây là mệnh đề bị động, nhưng đội ngũ quản lý là chủ thể thực hiện hành động dự đoán.",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-19",
+        "date": "2026-09-19"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "A",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0019",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The pharmacy chain has decided to refresh its branding strategy, ---- the fact that recent market analysis indicates a decline in customer loyalty.",
+      "options": {
+        "A": "despite",
+        "B": "notwithstanding",
+        "C": "regardless of",
+        "D": "in view of"
+      },
+      "answer": "B",
+      "errorType": "preposition",
+      "explanation": "Cả 'despite' và 'notwithstanding' đều mang nghĩa 'mặc dù', nhưng 'notwithstanding' là giới từ trang trọng thường dùng trong văn bản kinh doanh để nối một cụm danh từ với mệnh đề chính khi có sự đối lập về logic.",
+      "trap": "Người học dễ chọn 'despite' vì quen thuộc, nhưng 'despite' không đi kèm 'the fact that' một cách tự nhiên bằng 'notwithstanding' trong các văn bản hành chính cao cấp.",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-19",
+        "date": "2026-09-19"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "B",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0020",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The CEO was quite amused by the proposal, ---- that it lacked the necessary financial rigor to be considered a viable long-term investment strategy.",
+      "options": {
+        "A": "noting",
+        "B": "to note",
+        "C": "having noted",
+        "D": "noted"
+      },
+      "answer": "A",
+      "errorType": "infinitive-gerund",
+      "explanation": "Câu này sử dụng mệnh đề phân từ hiện tại (present participle clause) để bổ nghĩa cho chủ ngữ 'The CEO' trong hành động đồng thời. 'Noting' diễn tả hành động nhận xét xảy ra song song với cảm xúc 'was amused', trong khi 'having noted' nhấn mạnh hành động đã hoàn tất trước đó, điều này không phù hợp với ngữ cảnh nhận xét trực tiếp về bản chất của bản đề xuất.",
+      "trap": "Người học dễ chọn 'having noted' vì nghĩ rằng hành động ghi chú phải xảy ra trước khi đưa ra nhận xét, hoặc chọn 'noted' (dạng bị động rút gọn) vì nhầm lẫn rằng CEO là đối tượng được ghi chú thay vì là người thực hiện hành động nhận xét.",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-19",
+        "date": "2026-09-19"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "A",
+        "agreed": true
+      }
+    }
+  ]
+}

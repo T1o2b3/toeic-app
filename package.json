@@ -11,7 +11,8 @@
     "test:watch": "vitest",
     "build:vocab": "node --env-file=.env pipeline/build-vocab.js",
     "validate:content": "node pipeline/validate-content.js",
-    "audit:vocab": "node pipeline/audit-vocab.js"
+    "audit:vocab": "node pipeline/audit-vocab.js",
+    "build:questions": "node --env-file=.env pipeline/build-questions.js"
   },
   "devDependencies": {
     "ajv": "^8.20.0",

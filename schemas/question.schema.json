@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://toeic-app.local/schemas/question.schema.json",
+  "title": "Bộ câu hỏi luyện tập",
+  "type": "object",
+  "required": ["set", "part", "version", "entries"],
+  "additionalProperties": false,
+  "properties": {
+    "set": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "part": { "type": "integer", "minimum": 1, "maximum": 7 },
+    "version": { "type": "integer", "minimum": 1 },
+    "entries": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/question" } }
+  },
+  "$defs": {
+    "question": {
+      "type": "object",
+      "required": ["id", "set", "part", "status", "stem", "options", "answer", "errorType", "explanation", "gen", "verify"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^p5-[0-9]{4}$" },
+        "set": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "part": { "type": "integer", "enum": [5] },
+        "status": { "enum": ["active", "retired"] },
+        "stem": {
+          "type": "string",
+          "minLength": 20,
+          "description": "Câu có chỗ trống, đánh dấu bằng ----"
+        },
+        "options": {
+          "type": "object",
+          "required": ["A", "B", "C", "D"],
+          "additionalProperties": false,
+          "properties": {
+            "A": { "type": "string", "minLength": 1 },
+            "B": { "type": "string", "minLength": 1 },
+            "C": { "type": "string", "minLength": 1 },
+            "D": { "type": "string", "minLength": 1 }
+          }
+        },
+        "answer": { "enum": ["A", "B", "C", "D"] },
+        "errorType": {
+          "enum": [
+            "word-form", "verb-tense", "subject-verb-agreement", "preposition",
+            "conjunction", "pronoun", "relative-clause", "participle",
+            "comparison", "vocabulary", "quantifier", "infinitive-gerund"
+          ],
+          "description": "Loại kiến thức câu này kiểm tra — dùng để chỉ ra lỗ hổng của người học"
+        },
+        "explanation": { "type": "string", "minLength": 20, "description": "Giải thích bằng tiếng Việt" },
+        "trap": { "type": "string", "description": "Vì sao các phương án sai lại hấp dẫn" },
+        "gen": {
+          "type": "object",
+          "required": ["model", "promptVersion", "batch", "date"],
+          "additionalProperties": false,
+          "properties": {
+            "model": { "type": "string", "minLength": 1 },
+            "promptVersion": { "type": "string", "minLength": 1 },
+            "batch": { "type": "string", "minLength": 1 },
+            "date": { "type": "string", "format": "date" }
+          }
+        },
+        "verify": {
+          "type": "object",
+          "required": ["model", "answer", "agreed"],
+          "additionalProperties": false,
+          "description": "Kết quả bước kiểm định: một model KHÁC tự giải câu này mà không thấy đáp án (D12)",
+          "properties": {
+            "model": { "type": "string", "minLength": 1 },
+            "answer": { "enum": ["A", "B", "C", "D"] },
+            "agreed": { "const": true }
+          }
+        }
+      }
+    }
+  }
+}
