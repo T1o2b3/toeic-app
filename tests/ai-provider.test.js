@@ -24,7 +24,7 @@ describe('createGeminiProvider', () => {
 
     expect(text).toBe('[{"word":"a"}]');
     const [url, init] = fetchImpl.mock.calls[0];
-    expect(url).toContain('gemini-2.0-flash:generateContent');
+    expect(url).toContain('gemini-3.8-flash:generateContent');
     expect(init.headers['x-goog-api-key']).toBe('k-123');
     expect(JSON.parse(init.body).contents[0].parts[0].text).toBe('xin chào');
   });
@@ -86,13 +86,25 @@ describe('IPA', () => {
     expect(pickIpa({ title: 'No Definitions Found' })).toBeNull();
   });
 
-  it('lỗi mạng không làm hỏng pipeline, chỉ trả null', async () => {
+  it('lỗi mạng trả undefined để pipeline tra lại lần sau', async () => {
     const fetchImpl = vi.fn().mockRejectedValue(new Error('mất mạng'));
-    expect(await fetchIpa('client', { fetchImpl })).toBeNull();
+    expect(await fetchIpa('client', { fetchImpl })).toBeUndefined();
   });
 
-  it('404 (từ không có trong từ điển) trả null', async () => {
+  it('522 (từ điển quá tải) trả undefined, KHÔNG phải null', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({ ok: false, status: 522 });
+    expect(await fetchIpa('sincerely', { fetchImpl })).toBeUndefined();
+  });
+
+  it('404 (từ điển không có từ này) trả null để khỏi tra lại', async () => {
     const fetchImpl = vi.fn().mockResolvedValue({ ok: false, status: 404 });
     expect(await fetchIpa('e-book', { fetchImpl })).toBeNull();
+  });
+
+  it('200 nhưng mục không kèm phiên âm trả null', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: true, status: 200, json: async () => [{ phonetics: [] }],
+    });
+    expect(await fetchIpa('refund', { fetchImpl })).toBeNull();
   });
 });

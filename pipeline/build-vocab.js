@@ -51,8 +51,12 @@ async function main() {
   const todo = words.filter((w) => !aiCache.has(w.word));
   console.log(`Đã có sẵn trong cache: ${words.length - todo.length} từ. Cần gọi AI: ${todo.length} từ.`);
 
+  const provider = createGeminiProvider({
+    apiKey: process.env.GEMINI_API_KEY,
+    ...(process.env.GEMINI_MODEL ? { model: process.env.GEMINI_MODEL } : {}),
+  });
+
   if (todo.length > 0) {
-    const provider = createGeminiProvider({ apiKey: process.env.GEMINI_API_KEY });
     const batches = chunk(todo, batchSize);
 
     for (const [index, batch] of batches.entries()) {
@@ -78,18 +82,25 @@ async function main() {
   if (withIpa) {
     const need = words.filter((w) => aiCache.has(w.word) && !ipaCache.has(w.word));
     console.log(`Tra IPA cho ${need.length} từ...`);
+    let transient = 0;
     for (const [index, { word }] of need.entries()) {
-      ipaCache.set(word, await fetchIpa(word));
+      const ipa = await fetchIpa(word);
+      // undefined = lỗi tạm thời: KHÔNG cache, để lần chạy sau tra lại.
+      if (ipa === undefined) transient += 1;
+      else ipaCache.set(word, ipa);
       if (index % 25 === 24) {
         ipaCache.save();
         console.log(`  ...${index + 1}/${need.length}`);
       }
     }
     ipaCache.save();
+    if (transient > 0) {
+      console.log(`  ${transient} từ chưa tra được do từ điển lỗi tạm thời — chạy lại pipeline sẽ tự tra tiếp.`);
+    }
   }
 
   const gen = {
-    model: 'gemini-2.0-flash',
+    model: provider.model,
     promptVersion: VOCAB_PROMPT_VERSION,
     batch: new Date().toISOString().slice(0, 10),
     date: new Date().toISOString().slice(0, 10),

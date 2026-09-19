@@ -1,0 +1,413 @@
+{
+  "deck": "toeic-tsl",
+  "version": 1,
+  "attribution": {
+    "source": "TOEIC Service List (TSL) 1.2",
+    "authors": "Browne, C. & Culligan, B. (2013)",
+    "license": "CC BY-SA 4.0",
+    "url": "https://www.newgeneralservicelist.com/toeic-service-list"
+  },
+  "entries": [
+    {
+      "id": "tsl-0011",
+      "deck": "toeic-tsl",
+      "status": "active",
+      "word": "sincerely",
+      "rank": 11,
+      "pos": [
+        "adverb"
+      ],
+      "vi": "chân thành (lời kết thư tín công việc)",
+      "examples": [
+        {
+          "en": "We sincerely appreciate your prompt assistance in resolving the system outage yesterday.",
+          "vi": "Chúng tôi chân thành cảm ơn sự hỗ trợ nhanh chóng của bạn trong việc khắc phục sự cố hệ thống hôm qua."
+        },
+        {
+          "en": "Please let us know if you are sincerely interested in joining our advisory board.",
+          "vi": "Vui lòng cho chúng tôi biết nếu bạn thực sự quan tâm đến việc gia nhập ban cố vấn của chúng tôi."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.8-flash",
+        "promptVersion": "vocab-v1",
+        "batch": "2026-09-19",
+        "date": "2026-09-19"
+      },
+      "note": "Rất hay xuất hiện ở phần kết thúc email thương mại (Yours sincerely) hoặc bổ nghĩa cho động từ tri ân.",
+      "collocations": [
+        "sincerely appreciate",
+        "yours sincerely",
+        "sincerely hope"
+      ],
+      "synonyms": [
+        "genuinely",
+        "truly",
+        "earnestly"
+      ],
+      "antonyms": [
+        "insincerely",
+        "falsely"
+      ]
+    },
+    {
+      "id": "tsl-0012",
+      "deck": "toeic-tsl",
+      "status": "active",
+      "word": "sometime",
+      "rank": 12,
+      "pos": [
+        "adverb"
+      ],
+      "vi": "vào một thời điểm nào đó chưa định rõ",
+      "examples": [
+        {
+          "en": "The regional manager plans to visit our branch sometime next week to inspect operations.",
+          "vi": "Trưởng khu vực dự định ghé thăm chi nhánh của chúng tôi vào lúc nào đó tuần tới để thanh tra vận hành."
+        },
+        {
+          "en": "We should schedule a follow-up discussion sometime this afternoon to finalize the contract.",
+          "vi": "Chúng ta nên sắp xếp một cuộc trao đổi tiếp theo vào lúc nào đó chiều nay để hoàn tất hợp đồng."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.8-flash",
+        "promptVersion": "vocab-v1",
+        "batch": "2026-09-19",
+        "date": "2026-09-19"
+      },
+      "note": "TOEIC rất hay bẫy giữa 'sometime' (một lúc nào đó), 'sometimes' (thỉnh thoảng) và 'some time' (một khoảng thời gian).",
+      "collocations": [
+        "sometime next week",
+        "sometime soon",
+        "sometime later"
+      ],
+      "synonyms": [
+        "at some point"
+      ]
+    },
+    {
+      "id": "tsl-0013",
+      "deck": "toeic-tsl",
+      "status": "active",
+      "word": "supervisor",
+      "rank": 13,
+      "pos": [
+        "noun"
+      ],
+      "vi": "người giám sát, cấp trên trực tiếp",
+      "examples": [
+        {
+          "en": "Employees must obtain written approval from their immediate supervisor before taking leave.",
+          "vi": "Nhân viên phải có được sự chấp thuận bằng văn bản từ người giám sát trực tiếp trước khi nghỉ phép."
+        },
+        {
+          "en": "The production supervisor conducted a thorough safety inspection of the factory floor.",
+          "vi": "Người giám sát sản xuất đã tiến hành kiểm tra an toàn kỹ lưỡng khu vực xưởng máy."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.8-flash",
+        "promptVersion": "vocab-v1",
+        "batch": "2026-09-19",
+        "date": "2026-09-19"
+      },
+      "ipa": "/ˈsuːpɚˌvaɪzɚ/",
+      "note": "Thường bị bẫy chia từ loại với danh từ trừu tượng chỉ sự giám sát là 'supervision'.",
+      "collocations": [
+        "immediate supervisor",
+        "production supervisor",
+        "report to a supervisor"
+      ],
+      "synonyms": [
+        "manager",
+        "overseer",
+        "director"
+      ],
+      "antonyms": [
+        "subordinate"
+      ]
+    },
+    {
+      "id": "tsl-0014",
+      "deck": "toeic-tsl",
+      "status": "active",
+      "word": "refund",
+      "rank": 14,
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "vi": "tiền hoàn lại; hoàn trả tiền",
+      "examples": [
+        {
+          "en": "Customers are eligible for a full refund if items are returned within thirty days.",
+          "vi": "Khách hàng đủ điều kiện nhận hoàn tiền đầy đủ nếu hàng hóa được trả lại trong vòng ba mươi ngày."
+        },
+        {
+          "en": "The airline agreed to refund the ticket price due to unexpected flight cancellations.",
+          "vi": "Hãng hàng không đã đồng ý hoàn trả tiền vé do các đợt hủy chuyến bay bất ngờ."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.8-flash",
+        "promptVersion": "vocab-v1",
+        "batch": "2026-09-19",
+        "date": "2026-09-19"
+      },
+      "note": "Cần phân biệt 'refund' (trả lại tiền mua hàng hóa/dịch vụ) với 'reimbursement' (hoàn trả tiền tạm ứng công tác/chi phí phát sinh cá nhân).",
+      "collocations": [
+        "full refund",
+        "issue a refund",
+        "refund policy",
+        "claim a refund"
+      ],
+      "synonyms": [
+        "reimbursement",
+        "rebate",
+        "repay"
+      ]
+    },
+    {
+      "id": "tsl-0015",
+      "deck": "toeic-tsl",
+      "status": "active",
+      "word": "goods",
+      "rank": 15,
+      "pos": [
+        "noun"
+      ],
+      "vi": "hàng hoá thương mại",
+      "examples": [
+        {
+          "en": "The shipping company guarantees that damaged goods will be replaced free of charge.",
+          "vi": "Công ty vận chuyển cam kết rằng hàng hóa bị hư hại sẽ được đổi mới miễn phí."
+        },
+        {
+          "en": "Our warehouse has sufficient capacity to store perishable goods under controlled temperatures.",
+          "vi": "Kho của chúng tôi có đủ sức chứa để bảo quản hàng hóa dễ hỏng ở nhiệt độ được kiểm soát."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.8-flash",
+        "promptVersion": "vocab-v1",
+        "batch": "2026-09-19",
+        "date": "2026-09-19"
+      },
+      "note": "Từ này luôn ở dạng số nhiều có 's' và đi với động từ số nhiều khi mang nghĩa hàng hóa.",
+      "collocations": [
+        "damaged goods",
+        "consumer goods",
+        "deliver goods",
+        "manufactured goods"
+      ],
+      "synonyms": [
+        "merchandise",
+        "products",
+        "commodities"
+      ]
+    },
+    {
+      "id": "tsl-0016",
+      "deck": "toeic-tsl",
+      "status": "active",
+      "word": "workshop",
+      "rank": 16,
+      "pos": [
+        "noun"
+      ],
+      "vi": "hội thảo thực hành; xưởng làm việc",
+      "examples": [
+        {
+          "en": "All sales representatives are required to attend the customer service training workshop tomorrow.",
+          "vi": "Tất cả đại diện bán hàng được yêu cầu tham dự buổi hội thảo đào tạo dịch vụ khách hàng vào ngày mai."
+        },
+        {
+          "en": "Experienced technicians assemble custom mechanical components inside the main repair workshop.",
+          "vi": "Các kỹ thuật viên giàu kinh nghiệm lắp ráp linh kiện cơ khí theo yêu cầu bên trong xưởng sửa chữa chính."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.8-flash",
+        "promptVersion": "vocab-v1",
+        "batch": "2026-09-19",
+        "date": "2026-09-19"
+      },
+      "ipa": "/ˈwɜːk.ʃɒp/",
+      "note": "Hay đi kèm các động từ như 'host', 'conduct', 'lead' hoặc 'attend' trong các bài đọc thông báo nội bộ.",
+      "collocations": [
+        "conduct a workshop",
+        "training workshop",
+        "attend a workshop",
+        "repair workshop"
+      ],
+      "synonyms": [
+        "seminar",
+        "session"
+      ]
+    },
+    {
+      "id": "tsl-0017",
+      "deck": "toeic-tsl",
+      "status": "active",
+      "word": "downtown",
+      "rank": 17,
+      "pos": [
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "vi": "khu trung tâm thành phố; ở trung tâm",
+      "examples": [
+        {
+          "en": "Our corporate headquarters will relocate to a modern downtown office building next month.",
+          "vi": "Trụ sở công ty chúng tôi sẽ chuyển đến một tòa nhà văn phòng hiện đại ở trung tâm thành phố vào tháng tới."
+        },
+        {
+          "en": "Employees traveling downtown for client meetings can claim reimbursement for parking fees.",
+          "vi": "Nhân viên đi vào trung tâm thành phố để họp khách hàng có thể yêu cầu thanh toán lại phí đỗ xe."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.8-flash",
+        "promptVersion": "vocab-v1",
+        "batch": "2026-09-19",
+        "date": "2026-09-19"
+      },
+      "note": "Khi đóng vai trò là trạng từ chỉ phương hướng (go downtown), tuyệt đối không dùng thêm giới từ 'to' phía trước.",
+      "collocations": [
+        "downtown office",
+        "downtown area",
+        "relocate downtown",
+        "travel downtown"
+      ],
+      "synonyms": [
+        "city center",
+        "central"
+      ],
+      "antonyms": [
+        "suburb",
+        "suburban"
+      ]
+    },
+    {
+      "id": "tsl-0018",
+      "deck": "toeic-tsl",
+      "status": "active",
+      "word": "deadline",
+      "rank": 18,
+      "pos": [
+        "noun"
+      ],
+      "vi": "hạn chót hoàn thành công việc",
+      "examples": [
+        {
+          "en": "The project manager requested an extension because the current deadline is completely unrealistic.",
+          "vi": "Người quản lý dự án đã yêu cầu gia hạn vì hạn chót hiện tại là hoàn toàn không thực tế."
+        },
+        {
+          "en": "Our design team worked overtime to meet the tight deadline for the proposal.",
+          "vi": "Đội ngũ thiết kế của chúng tôi đã làm thêm giờ để kịp thời hạn gấp cho bản đề xuất."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.8-flash",
+        "promptVersion": "vocab-v1",
+        "batch": "2026-09-19",
+        "date": "2026-09-19"
+      },
+      "ipa": "/ˈdɛdˌlaɪn/",
+      "note": "Cực kỳ hay kiểm tra cụm cố định 'meet the deadline' (kịp hạn) hoặc 'extend the deadline' (gia hạn thời gian).",
+      "collocations": [
+        "meet a deadline",
+        "tight deadline",
+        "extend a deadline",
+        "miss a deadline"
+      ],
+      "synonyms": [
+        "due date",
+        "time limit",
+        "cutoff date"
+      ]
+    },
+    {
+      "id": "tsl-0019",
+      "deck": "toeic-tsl",
+      "status": "active",
+      "word": "invoice",
+      "rank": 19,
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "vi": "hoá đơn yêu cầu thanh toán; lập hoá đơn",
+      "examples": [
+        {
+          "en": "Please review the attached invoice and verify the total amount before submitting payment.",
+          "vi": "Vui lòng xem lại hóa đơn đính kèm và kiểm tra tổng số tiền trước khi tiến hành thanh toán."
+        },
+        {
+          "en": "The accounting department will invoice the client directly once the shipment arrives safely.",
+          "vi": "Bộ phận kế toán sẽ xuất hóa đơn trực tiếp cho khách hàng ngay khi lô hàng đến nơi an toàn."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.8-flash",
+        "promptVersion": "vocab-v1",
+        "batch": "2026-09-19",
+        "date": "2026-09-19"
+      },
+      "ipa": "/ˈɪnˌvɔɪs/",
+      "note": "Dễ nhầm với 'receipt' (biên lai xác nhận tiền ĐÃ được trả xong, còn invoice là chứng từ yêu cầu thanh toán).",
+      "collocations": [
+        "issue an invoice",
+        "outstanding invoice",
+        "attached invoice",
+        "invoice a client"
+      ],
+      "synonyms": [
+        "bill",
+        "statement"
+      ]
+    },
+    {
+      "id": "tsl-0020",
+      "deck": "toeic-tsl",
+      "status": "active",
+      "word": "brochure",
+      "rank": 20,
+      "pos": [
+        "noun"
+      ],
+      "vi": "cuốn tài liệu giới thiệu quảng cáo",
+      "examples": [
+        {
+          "en": "The marketing team designed an informative brochure highlighting our new corporate software solutions.",
+          "vi": "Đội ngũ tiếp thị đã thiết kế cuốn tài liệu hữu ích nêu bật các giải pháp phần mềm doanh nghiệp mới."
+        },
+        {
+          "en": "Interested participants can pick up a promotional brochure at the main registration desk.",
+          "vi": "Những người tham dự quan tâm có thể nhận tài liệu quảng cáo tại bàn đăng ký chính."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.8-flash",
+        "promptVersion": "vocab-v1",
+        "batch": "2026-09-19",
+        "date": "2026-09-19"
+      },
+      "ipa": "/ˈbɹəʊ.ʃə(ɹ)/",
+      "note": "Trong bài đọc Part 7, từ này thường được paraphrase bằng 'pamphlet', 'booklet' hoặc 'informational material'.",
+      "collocations": [
+        "promotional brochure",
+        "product brochure",
+        "distribute brochures"
+      ],
+      "synonyms": [
+        "pamphlet",
+        "booklet",
+        "leaflet"
+      ]
+    }
+  ]
+}

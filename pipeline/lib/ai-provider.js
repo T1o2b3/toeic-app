@@ -16,11 +16,11 @@ export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
  * Tạo provider Gemini.
  * @param {object} options
  * @param {string} options.apiKey
- * @param {string} [options.model] - mặc định gemini-2.0-flash (free tier)
+ * @param {string} [options.model] - mặc định gemini-3.8-flash; đổi bằng biến môi trường GEMINI_MODEL
  * @param {typeof fetch} [options.fetchImpl]
  * @returns {{name: string, model: string, generate: (prompt: string) => Promise<string>}}
  */
-export function createGeminiProvider({ apiKey, model = 'gemini-2.0-flash', fetchImpl = fetch }) {
+export function createGeminiProvider({ apiKey, model = 'gemini-3.8-flash', fetchImpl = fetch }) {
   if (!apiKey) {
     throw new Error('Thiếu GEMINI_API_KEY trong .env — xem .env.example');
   }

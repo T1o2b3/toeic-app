@@ -27,18 +27,23 @@ export function pickIpa(data) {
 }
 
 /**
- * Tra IPA của một từ. Không tìm thấy hoặc lỗi mạng đều trả về null —
- * IPA là phần tuỳ chọn, không đáng để dừng cả pipeline.
+ * Tra IPA của một từ. Phân biệt ba kết quả để pipeline biết có nên tra lại không:
+ * - chuỗi IPA: tìm thấy
+ * - `null`: từ điển có từ này nhưng không có IPA (404 hoặc mục không kèm phiên âm) → khỏi tra lại
+ * - `undefined`: lỗi tạm thời (mất mạng, 5xx, 522 do máy chủ từ điển quá tải) → nên tra lại lần sau
+ *
+ * Không bao giờ ném lỗi: IPA là phần tuỳ chọn, không đáng để dừng cả pipeline.
  * @param {string} word
  * @param {{fetchImpl?: typeof fetch}} [options]
- * @returns {Promise<string|null>}
+ * @returns {Promise<string|null|undefined>}
  */
 export async function fetchIpa(word, { fetchImpl = fetch } = {}) {
   try {
     const response = await fetchImpl(`${DICT_ENDPOINT}/${encodeURIComponent(word)}`);
-    if (!response.ok) return null;
+    if (response.status === 404) return null;
+    if (!response.ok) return undefined;
     return pickIpa(await response.json());
   } catch {
-    return null;
+    return undefined;
   }
 }
