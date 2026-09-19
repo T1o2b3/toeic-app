@@ -69,6 +69,18 @@ Lý do: việc học không được chờ app. Trade-off: MVP rất hẹp (từ
 
 **D25. Supabase free:** chỉ lưu sự kiện + cài đặt. RLS bắt buộc. Đăng nhập **OTP 6 số qua email** (magic link mở nhầm Safari thay vì PWA trên iPhone). Free project tự tạm dừng sau 7 ngày không hoạt động → GitHub Actions ping định kỳ. Free không có backup tự động → nút xuất JSON + backup định kỳ.
 
+**D25b. Giới hạn thật của Supabase free tier về email đăng nhập (đo từ tài liệu chính thức 2026-09-19).**
+- **Chỉ 2 email/giờ** với bộ gửi mail sẵn có của Supabase (`Emails sent by Supabase Auth`, giới hạn theo
+  project). Huy có 3 thiết bị → đăng nhập cả 3 trong một giờ sẽ bị chặn ở máy thứ ba.
+  Cách sống chung: đăng nhập 2 máy trước, máy thứ ba sau 1 giờ. Đây là chi phí MỘT LẦN cho mỗi máy vì
+  phiên đăng nhập được lưu lại và tự gia hạn (`persistSession`, `autoRefreshToken`).
+- Mỗi người dùng chỉ xin mã mới được sau **60 giây**; mã hết hạn sau **1 giờ**.
+- **Mặc định Supabase gửi magic link, KHÔNG gửi mã 6 số.** Phải sửa mẫu email "Magic Link" để chèn biến
+  `{{ .Token }}` thì mới có mã. Không sửa thì màn đăng nhập của app vô dụng (D25 chọn OTP vì trên iPhone
+  magic link mở Safari chứ không mở PWA).
+- Nếu sau này 2 email/giờ thành vướng thật: gắn SMTP ngoài có free tier (Brevo, Resend). Chưa làm —
+  chỉ thêm dịch vụ khi đã chạm giới hạn thật, không thêm phòng xa.
+
 **D26. Ôn từ bằng FSRS** (thư viện mã nguồn mở), bọc sau interface riêng. Nhờ D23, đổi thuật toán sau này chỉ cần tính lại.
 
 **D27. Host: Cloudflare Pages** (repo private vẫn deploy miễn phí). Hash router nên không cần cấu hình server.
