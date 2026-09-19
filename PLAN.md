@@ -51,8 +51,10 @@ toeic-app/
 - [ ] **M5. Supabase + đồng bộ (ngày 5, ~2,5h).** Bảng events + settings, **bật RLS**, đăng nhập OTP, đồng bộ 2 chiều theo sự kiện.
   Học: database, RLS, auth. Xong khi: làm bài trên Mac → thấy trên iPhone và ngược lại; user khác không đọc được dữ liệu.
   Phương án lùi nếu trễ: đồng bộ thủ công bằng nút "Đồng bộ" thay vì tự động.
-- [ ] **M6. PWA + "15 phút hôm nay" + xuất dữ liệu (ngày 6, ~2h).** vite-plugin-pwa, cài lên màn hình iPhone, phiên học trộn từ đến hạn + câu từng sai + câu mới, nút xuất JSON.
+- [x] **M6. PWA + "15 phút hôm nay" + xuất dữ liệu (ngày 6, ~2h).** vite-plugin-pwa, cài lên màn hình iPhone, phiên học trộn từ đến hạn + câu từng sai + câu mới, nút xuất JSON.
   Học: manifest, service worker, cache. Xong khi: app cài được trên iPhone, mở offline vẫn học được.
+  ✅ Xong 2026-09-19: manifest + service worker chạy trên bản deploy; đã kiểm tra bộ nhớ offline có
+  cả `vocab-toeic-tsl.json` lẫn `questions-part5.json`; nút xuất JSON hoạt động.
 - [ ] **M7. Đệm + dùng thật (ngày 7, ~0,5–1h).** Sửa lỗi phát sinh, viết README.
   Xong khi: Huy dùng MVP học thật 1 phiên trên mỗi thiết bị.
 

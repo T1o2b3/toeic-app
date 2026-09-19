@@ -3,7 +3,7 @@
 > Claude cập nhật file này sau MỖI bước con. Phiên mới đọc file này trước tiên.
 
 ## Trạng thái hiện tại
-- Giai đoạn: 1 — MVP. **M0, M1, M2, M3 đã xong** (2026-09-19).
+- Giai đoạn: 1 — MVP. **M0, M1, M2, M3, M6 xong; M4 gần xong** (2026-09-19).
 - **App đã dùng học thật được**: https://toeic-app.huybndc-451.workers.dev
 - Repo private: https://github.com/huybndc/toeic-app — 133 test pass.
 
@@ -15,6 +15,11 @@
 4. Bàn phím: `Space` lật thẻ, `1`–`4` chấm điểm. Màn phân loại: `1` chưa biết, `2` đã biết.
 5. **Lưu ý quan trọng:** dữ liệu hiện lưu RIÊNG trên từng máy (IndexedDB), chưa đồng bộ.
    Đồng bộ Mac ↔ iPhone là M5. Học trên một máy trước để tránh lệch dữ liệu.
+
+## Mục tiêu phiên này: 3 milestone (M4, M6, M5)
+- ✅ **M6 xong**: PWA cài được, offline được, phiên "15 phút hôm nay", xuất dữ liệu.
+- 🔄 **M4 gần xong**: pipeline + màn luyện Part 5 đã chạy; đang sinh nốt cho đủ 200 câu.
+- ⏳ **M5**: sẽ viết xong toàn bộ code + SQL, chờ Huy tạo project Supabase để kích hoạt.
 
 ## Đã xong trong phiên 2026-09-19
 - **M1**: Vite + Vitest, git, GitHub private, Cloudflare Workers tự deploy mỗi lần push.
