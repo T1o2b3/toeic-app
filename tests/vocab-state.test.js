@@ -7,6 +7,7 @@ const T0 = Date.UTC(2026, 8, 19, 10, 0, 0);
 const ev = (type, payload, ts = T0) => ({ id: `e-${ts}-${type}`, deviceId: 'mac', ts, type, payload });
 const NOW = new Date(T0 + 60_000);
 const DECK = [{ id: 'tsl-0001' }, { id: 'tsl-0002' }, { id: 'tsl-0003' }];
+const DECK_WITH_RETIRED = [...DECK, { id: 'tsl-0004', status: 'retired' }];
 
 describe('reduceVocabState', () => {
   it('nhật ký rỗng thì không có trạng thái nào', () => {
@@ -81,6 +82,12 @@ describe('triageQueue', () => {
     expect(triageQueue(DECK, states).map((e) => e.id)).toEqual(['tsl-0001', 'tsl-0003']);
   });
 
+  it('bỏ qua mục đã gỡ (D16: không sửa mục đã phát hành, chỉ đánh dấu retired)', () => {
+    const ids = triageQueue(DECK_WITH_RETIRED, new Map()).map((e) => e.id);
+    expect(ids).not.toContain('tsl-0004');
+    expect(ids).toHaveLength(3);
+  });
+
   it('cắt theo số lượng yêu cầu', () => {
     expect(triageQueue(DECK, new Map(), 2)).toHaveLength(2);
   });
@@ -105,6 +112,14 @@ describe('reviewQueue', () => {
     expect(queue[0].entry.id).toBe('tsl-0001');
     expect(queue[0].isNew).toBe(false);
     expect(queue.at(-1).isNew).toBe(true);
+  });
+
+  it('không đưa mục đã gỡ vào hàng đợi ôn, kể cả khi đã từng học', () => {
+    const states = reduceVocabState([
+      ev('vocab.triaged', { wordId: 'tsl-0004', known: false }, T0),
+    ]);
+    expect(reviewQueue(DECK_WITH_RETIRED, states, { now: NOW }).map((i) => i.entry.id))
+      .not.toContain('tsl-0004');
   });
 
   it('giới hạn số từ mới mỗi phiên (D03: nhịp học ngắn)', () => {

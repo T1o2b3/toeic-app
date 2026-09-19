@@ -1,9 +1,12 @@
 import './ui/style.css';
 import { createStore } from './data/store.js';
+import { watchForUpdate } from './data/sw-update.js';
 import { mountApp } from './ui/app.js';
 import { el, replace } from './ui/dom.js';
 
 const root = document.querySelector('#app');
+
+watchForUpdate();
 
 createStore()
   .then((store) => mountApp(root, store))

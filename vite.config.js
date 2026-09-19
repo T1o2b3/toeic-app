@@ -10,6 +10,11 @@ import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
+  // Nhúng thời điểm build để màn chính hiện được "đang chạy bản nào" —
+  // giúp phân biệt "lỗi chưa sửa" với "máy đang dùng bản cũ trong bộ nhớ đệm".
+  define: {
+    __BUILD_TIME__: JSON.stringify(new Date().toISOString().slice(0, 16).replace('T', ' ')),
+  },
   plugins: [
     VitePWA({
       // Tự cập nhật khi có bản mới, không bắt người dùng bấm gì.

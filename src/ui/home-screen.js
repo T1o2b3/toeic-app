@@ -11,6 +11,9 @@ import { isSupabaseConfigured } from '../data/supabase.js';
 import { getRoundSize, setRoundSize } from '../data/prefs.js';
 import { ROUND_SIZES } from '../logic/prefs.js';
 
+/** Thời điểm build, do Vite nhúng vào (xem vite.config.js). */
+const BUILD_TIME = typeof __BUILD_TIME__ === 'string' ? __BUILD_TIME__ : 'dev';
+
 /**
  * @param {object} store
  * @returns {HTMLElement}
@@ -129,7 +132,7 @@ export function renderHome(store) {
         onClick: () => downloadBackup(store),
       }),
     ]),
-    el('p', { class: 'footnote', text: `${store.eventCount} sự kiện đã ghi trên máy này` }),
+    el('p', { class: 'footnote', text: `${store.eventCount} sự kiện đã ghi trên máy này · bản ${BUILD_TIME}` }),
   );
 
   return el('div', {}, sections);

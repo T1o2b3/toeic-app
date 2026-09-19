@@ -102,6 +102,7 @@ export function getWordState(states, wordId, { now = new Date() } = {}) {
 export function triageQueue(entries, states, limit = Infinity) {
   const out = [];
   for (const entry of entries) {
+    if (entry.status === 'retired') continue;   // D16: mục đã gỡ thì không đưa ra học nữa
     if (states.get(entry.id)?.triaged) continue;
     out.push(entry);
     if (out.length >= limit) break;
@@ -125,6 +126,7 @@ export function reviewQueue(entries, states, { now = new Date(), maxNew = 10, ma
   const fresh = [];
 
   for (const entry of entries) {
+    if (entry.status === 'retired') continue;     // D16: mục đã gỡ thì không đưa ra ôn nữa
     const state = states.get(entry.id);
     if (!state || state.known) continue;          // chưa triage hoặc đã biết -> bỏ
     if (isNew(state.card)) fresh.push({ entry, state, isNew: true });
