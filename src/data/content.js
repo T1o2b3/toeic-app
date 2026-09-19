@@ -23,3 +23,21 @@ export async function loadVocabDeck(deck = DEFAULT_DECK, fetchImpl = fetch) {
   }
   return data;
 }
+
+/**
+ * Tải ngân hàng câu hỏi. Thiếu file thì trả về bộ rỗng thay vì ném lỗi —
+ * app vẫn học từ vựng được khi chưa sinh xong câu hỏi.
+ * @param {string} [set]
+ * @param {typeof fetch} [fetchImpl]
+ * @returns {Promise<{set: string, part: number, entries: object[]}>}
+ */
+export async function loadQuestionBank(set = 'part5', fetchImpl = fetch) {
+  try {
+    const response = await fetchImpl(`/content/questions-${set}.json`);
+    if (!response.ok) return { set, part: 5, entries: [] };
+    const data = await response.json();
+    return Array.isArray(data?.entries) ? data : { set, part: 5, entries: [] };
+  } catch {
+    return { set, part: 5, entries: [] };
+  }
+}

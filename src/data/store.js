@@ -6,9 +6,10 @@
  */
 import { createEvent } from '../logic/events.js';
 import { reduceVocabState } from '../logic/vocab-state.js';
+import { reduceQuizState } from '../logic/quiz.js';
 import { openDb, appendEvents, readAllEvents } from './db.js';
 import { getDeviceId } from './device.js';
-import { loadVocabDeck } from './content.js';
+import { loadVocabDeck, loadQuestionBank } from './content.js';
 
 /**
  * Tạo store và nạp dữ liệu ban đầu.
@@ -19,11 +20,15 @@ import { loadVocabDeck } from './content.js';
  */
 export async function createStore({ factory, fetchImpl } = {}) {
   const db = await openDb(factory);
-  const deckData = await loadVocabDeck(undefined, fetchImpl);
+  const [deckData, questionBank] = await Promise.all([
+    loadVocabDeck(undefined, fetchImpl),
+    loadQuestionBank(undefined, fetchImpl),
+  ]);
   const deviceId = getDeviceId();
 
   let events = await readAllEvents(db);
   let states = reduceVocabState(events);
+  let quizStates = reduceQuizState(events);
   const listeners = new Set();
 
   const notify = () => {
@@ -33,7 +38,9 @@ export async function createStore({ factory, fetchImpl } = {}) {
   return {
     deck: deckData,
     entries: deckData.entries,
+    questions: questionBank.entries,
     get states() { return states; },
+    get quizStates() { return quizStates; },
     get eventCount() { return events.length; },
 
     /**
@@ -46,6 +53,7 @@ export async function createStore({ factory, fetchImpl } = {}) {
       await appendEvents(db, [event]);
       events = [...events, event];
       states = reduceVocabState(events);
+      quizStates = reduceQuizState(events);
       notify();
       return event;
     },

@@ -7,17 +7,20 @@ import { renderHome } from './home-screen.js';
 import { renderTriage, handleTriageKey } from './triage-screen.js';
 import { renderReview, handleReviewKey, resetReview } from './review-screen.js';
 import { renderWeak } from './weak-screen.js';
+import { renderQuiz, handleQuizKey, resetQuiz } from './quiz-screen.js';
 
 const SCREENS = {
   home: renderHome,
   triage: renderTriage,
   review: renderReview,
   weak: renderWeak,
+  quiz: renderQuiz,
 };
 
 const KEY_HANDLERS = {
   triage: handleTriageKey,
   review: handleReviewKey,
+  quiz: handleQuizKey,
 };
 
 /**
@@ -38,7 +41,7 @@ export function mountApp(root, store) {
   };
 
   startRouter((route) => {
-    if (route.name !== current.name) resetReview();
+    if (route.name !== current.name) { resetReview(); resetQuiz(); }
     current = route;
     draw();
   });

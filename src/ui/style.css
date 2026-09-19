@@ -118,3 +118,28 @@ button.grade.easy { color: var(--easy); border-color: var(--easy); }
   .card.big { padding: 1.25rem 1rem; }
   .word { font-size: 1.75rem; }
 }
+
+/* Màn luyện câu hỏi */
+.stem { font-size: 1.05rem; line-height: 1.7; }
+.options { display: grid; gap: 0.5rem; margin-top: 0.75rem; }
+button.option {
+  display: flex; align-items: flex-start; gap: 0.6rem; text-align: left;
+  padding: 0.7rem 0.8rem; background: var(--surface); width: 100%;
+}
+button.option .letter {
+  font-weight: 700; color: var(--muted); min-width: 1.2rem;
+}
+button.option .option-text { flex: 1; }
+button.option.correct { border-color: var(--good); background: #eef6f1; }
+button.option.correct .letter { color: var(--good); }
+button.option.wrong { border-color: var(--again); background: #fbeae6; }
+button.option.wrong .letter { color: var(--again); }
+
+.verdict { margin-top: 0.75rem; font-weight: 700; }
+.verdict.ok { color: var(--good); }
+.verdict.no { color: var(--again); }
+
+.gaps { border: 1px solid var(--border); border-radius: 0.75rem; padding: 0.75rem; margin-bottom: 0.75rem; background: var(--surface); }
+.gaps-title { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.4rem; }
+.gap-row { display: flex; justify-content: space-between; font-size: 0.9rem; padding: 0.15rem 0; }
+.gap-value { color: var(--again); font-weight: 600; }

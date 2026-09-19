@@ -4,6 +4,7 @@
 import { el, goTo } from './dom.js';
 import { triageQueue, reviewQueue, weakWords } from '../logic/vocab-state.js';
 import { estimateSessionTime, summarizeQueue } from '../logic/format.js';
+import { quizQueue, accuracyByErrorType } from '../logic/quiz.js';
 
 /**
  * @param {object} store
@@ -63,6 +64,29 @@ export function renderHome(store) {
         el('small', { text: `${weak.length} từ cần để mắt` }),
       ]),
     );
+  }
+
+  if (store.questions.length > 0) {
+    const quiz = quizQueue(store.questions, store.quizStates, { size: 20 });
+    sections.push(
+      el('button', { class: 'secondary', onClick: () => goTo('/quiz') }, [
+        el('span', { text: 'Luyện Part 5' }),
+        el('small', { text: `${quiz.length} câu · ~${Math.max(1, Math.round(quiz.length * 25 / 60))} phút` }),
+      ]),
+    );
+
+    const weakTypes = accuracyByErrorType(store.questions, store.quizStates)
+      .filter((row) => row.attempts >= 3 && row.accuracy < 0.8)
+      .slice(0, 3);
+    if (weakTypes.length > 0) {
+      sections.push(el('div', { class: 'gaps' }, [
+        el('div', { class: 'gaps-title', text: 'Lỗ hổng theo loại kiến thức' }),
+        ...weakTypes.map((row) => el('div', { class: 'gap-row' }, [
+          el('span', { text: row.errorType }),
+          el('span', { class: 'gap-value', text: `${Math.round(row.accuracy * 100)}% đúng (${row.attempts} câu)` }),
+        ])),
+      ]));
+    }
   }
 
   sections.push(
