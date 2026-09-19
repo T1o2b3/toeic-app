@@ -3,61 +3,54 @@
 > Claude cập nhật file này sau MỖI bước con. Phiên mới đọc file này trước tiên.
 
 ## Trạng thái hiện tại
-- Giai đoạn: 1 — MVP
-- Milestone: **M2 — schema + pipeline từ vựng.** Code xong hết, **đang chờ Gemini API key hợp lệ** để chạy thật.
-- Huy đã duyệt PLAN.md nguyên trạng ngày 2026-09-19 và giao Claude toàn quyền quyết định.
+- Giai đoạn: 1 — MVP. **M0, M1, M2, M3 đã xong** (2026-09-19).
+- **App đã dùng học thật được**: https://toeic-app.huybndc-451.workers.dev
+- Repo private: https://github.com/huybndc/toeic-app — 133 test pass.
 
-### Đã xong
-- M0 phần công cụ: Node v24.18.0, npm 11.16.0, git 2.50.1, git đã có user.name/user.email.
-- M1 phần local:
-  - `package.json` + Vite 7 + Vitest 3; script `dev` / `build` / `test` / `test:watch`.
-  - Cấu trúc thư mục theo PLAN (`src/logic`, `src/data`, `src/ui`, `public/content`, `pipeline`, `schemas`, `tests`).
-  - `src/logic/events.js`: `createEvent` (sự kiện bất biến, validate type + deviceId) và
-    `mergeEventLogs` (gộp nhật ký nhiều thiết bị, bỏ trùng theo id, sắp xếp ổn định) — nền cho D23.
-  - `src/data/device.js`: id thiết bị lưu localStorage.
-  - `src/ui/home-screen.js` + `style.css`: màn hình chào tạm, sẽ thay bằng router ở M3.
-  - `tests/events.test.js`: **7 test pass**. `npm run build` chạy được. Đã xem thật trên dev server.
-  - `.claude/launch.json` để mở dev server nhanh.
-- Git repo đã init (nhánh `main`), commit đầu: `chore: khung project Vite + Vitest, nhật ký sự kiện ban đầu`.
-- Đã push lên GitHub **private**: https://github.com/huybndc/toeic-app (remote `origin`, nhánh `main`).
-  Credential GitHub có sẵn trong macOS Keychain nên `git push` chạy không cần cấu hình thêm.
-- `.env` đã tạo với `GEMINI_API_KEY` (chmod 600, đã xác nhận git bỏ qua, KHÔNG có trên GitHub). `.env.example` được commit.
+## Dùng app thế nào (cho Huy)
+1. Mở link trên (máy Mac hoặc iPhone).
+2. Bấm **Phân loại từ đã biết / chưa biết** — lướt 20 từ một lượt, bấm "Đã biết" để loại bớt.
+3. Về màn chính bấm **Ôn tập ngay**. Xem từ → bấm "Hiện nghĩa" → tự chấm Quên/Khó/Tốt/Dễ.
+   Mỗi nút ghi sẵn lần ôn kế tiếp là bao lâu nữa.
+4. Bàn phím: `Space` lật thẻ, `1`–`4` chấm điểm. Màn phân loại: `1` chưa biết, `2` đã biết.
+5. **Lưu ý quan trọng:** dữ liệu hiện lưu RIÊNG trên từng máy (IndexedDB), chưa đồng bộ.
+   Đồng bộ Mac ↔ iPhone là M5. Học trên một máy trước để tránh lệch dữ liệu.
 
-### M2 — đã xong phần code (58 test pass)
-- `schemas/vocab.schema.json`, `schemas/event.schema.json` (JSON Schema 2020-12, kiểm bằng ajv).
-- `pipeline/data/TSL_12_stats.csv`: 1250 từ nguồn, commit kèm ghi công CC BY-SA 4.0.
-- `pipeline/lib/`: `tsl.js` (đọc CSV, sinh id vĩnh viễn), `vocab-entry.js` (chuẩn hoá dữ liệu AI),
-  `prompt-vocab.js` (prompt + đọc kết quả + khớp từ thiếu), `ai-provider.js` (Gemini, đổi được nhà
-  cung cấp theo D14, có `withRetry` cho lỗi 429/5xx), `ipa.js`, `cache.js`, `validate-deck.js`.
-- `pipeline/build-vocab.js` (`npm run build:vocab`) và `pipeline/validate-content.js` (`npm run validate:content`).
+## Đã xong trong phiên 2026-09-19
+- **M1**: Vite + Vitest, git, GitHub private, Cloudflare Workers tự deploy mỗi lần push.
+- **M2**: schema vocab/event; pipeline sinh 1243/1250 từ TSL 1.2 (nghĩa Việt, 2 ví dụ song ngữ,
+  collocation, đồng/trái nghĩa, note bẫy TOEIC); validator; `npm run audit:vocab`.
+  Chỉ 35/1243 từ có IPA vì API từ điển hỏng — chạy lại pipeline sẽ tự tra tiếp.
+- **M3**: FSRS bọc sau interface riêng; reducer gấp nhật ký sự kiện; IndexedDB append-only;
+  router hash; màn tổng quan / phân loại / ôn thẻ / từ hay sai.
+- **RESEARCH.md**: khảo sát TOEIC Lab, GenLang, Test-English, Anki → 6 điểm UX đã áp dụng.
+- **CLAUDE.md**: thêm 6 quy tắc kỹ thuật bắt buộc + checklist cuối mỗi bước con + quy tắc làm song song.
 
 ## Bước tiếp theo (cụ thể)
-1. **ĐANG CHỜ HUY:** lưu Gemini API key hợp lệ (bắt đầu bằng `AIza`, lấy ở aistudio.google.com/apikey)
-   vào `.env` dòng `GEMINI_API_KEY=...`. Key Huy đưa lần đầu (`AQ.A…`) bị API trả 401
-   `ACCESS_TOKEN_TYPE_UNSUPPORTED` — sai loại credential.
-2. Có key rồi: `npm run build:vocab -- --limit 20` để thử 20 từ, Claude đọc kết quả xem chất lượng
-   nghĩa Việt/ví dụ có ổn không, chỉnh prompt nếu cần (nhớ tăng `VOCAB_PROMPT_VERSION`).
-3. Ổn rồi thì chạy toàn bộ 1250 từ (chia nhiều đợt cũng được, cache tự nhớ).
-4. Huy duyệt ngẫu nhiên 30 từ → M2 xong → sang **M3 (IndexedDB + FSRS + màn hình từ vựng)**.
+1. **M4 — Part 5**: schema question; pipeline sinh ~200 câu có kiểm định 2 bước (prompt A sinh,
+   prompt B tự giải, lệch thì loại); màn luyện 20 câu, giải thích tiếng Việt, gắn loại lỗi, nút báo câu lỗi.
+   Lưu ý hạn mức: mỗi model free tier ~20 request/ngày (D19) → gộp nhiều câu mỗi request.
+2. **M5 — Supabase + đồng bộ** (quan trọng với Huy vì dùng 2 Mac + iPhone).
+3. Chạy lại `npm run build:vocab` vài ngày tới để lấy nốt IPA + 7 từ còn thiếu.
 
 ## Vướng mắc / câu hỏi mở
-- ~~Q2 (chặn M2)~~ → **đã giải quyết 2026-09-19**: TSL 1.2 (1250 từ) và NGSL 1.2 (2809 từ) đều CC BY-SA 4.0.
-  Dùng được, chỉ cần ghi công + phát hành phần dữ liệu phái sinh cùng giấy phép. Chi tiết: DECISIONS.md D18.
-  → M2 không còn bị chặn.
-- npm 11 chặn install script của `esbuild`; đã kiểm tra `npm run build` vẫn chạy bình thường nên bỏ qua.
+- Q1 (Giai đoạn 2): audio để chung repo hay bucket riêng — chưa tới lúc quyết.
+- File deck 1,37 MB (gzip 308 KB). Chấp nhận được với 1243 từ, nhưng khi thêm Part 5/6/7 nên tách
+  file theo deck và tải theo nhu cầu. Ghi nhớ khi làm M6 (PWA cache).
+- API từ điển (dictionaryapi.dev) chập chờn, chỉ lấy được 35/1243 IPA. Nếu lần chạy sau vẫn hỏng,
+  cân nhắc đổi nguồn sang Wiktionary.
 
 ## Giờ thực tế so với ước tính
 | Milestone | Ước tính | Thực tế | Ghi chú |
 |---|---|---|---|
-| M0 (phần công cụ) | ~1–1,5h | ~0h | Node/git đã có sẵn trên máy |
-| M1 | ~2h | ~35 phút | Máy đã sẵn Node/git + credential GitHub trong Keychain nên nhanh hơn nhiều |
+| M0 (công cụ) | ~1–1,5h | ~0h | Node/git đã có sẵn |
+| M1 | ~2h | ~35 phút | Credential GitHub sẵn trong Keychain |
+| M2 | ~2h | ~2h15 | Phát sinh 3 lỗi mạng (timeout, quota, IPA chậm) |
+| M3 | ~2h | ~1h | Làm song song lúc pipeline chạy nền |
 
-## Nhật ký phiên (mới nhất ở trên, mỗi phiên 1–3 dòng)
-- 2026-09-19 — M2: viết xong toàn bộ pipeline từ vựng + schema + validator, 58 test pass. Chờ key hợp lệ để chạy thật.
-- 2026-09-19 — **M1 XONG**: deploy Cloudflare thành công, https://toeic-app.huybndc-451.workers.dev chạy đúng
-  trên cả desktop lẫn khổ iPhone. Lưu ý: Cloudflare giờ dùng tên miền `*.workers.dev` (xem D27b).
-- 2026-09-19 — Push lên GitHub private thành công, tạo `.env` + `.env.example`. Còn mỗi Cloudflare Pages là xong M1.
-  ⚠️ Gemini key từng bị dán vào khung chat → đã dặn Huy tạo key mới và xoá key cũ ở Google AI Studio.
-- 2026-09-19 — Huy duyệt PLAN, giao toàn quyền. Dựng khung Vite+Vitest, viết `events.js` (7 test pass),
-  màn hình chào chạy được, git init + commit đầu. Chờ Huy tạo tài khoản để push + deploy.
-- 2026-09-19 — Bộ bàn giao được tạo từ claude.ai: CLAUDE.md, PLAN.md, DECISIONS.md, PROGRESS.md, skill mini-project-setup.
+## Nhật ký phiên (mới nhất ở trên)
+- 2026-09-19 — **MVP học được rồi**: M2 + M3 xong, deploy chạy thật, 133 test pass.
+  Rút 6 quy tắc kỹ thuật từ sự cố thật vào CLAUDE.md. Khảo sát đối thủ → RESEARCH.md.
+- 2026-09-19 — M1 xong: deploy Cloudflare, repo private, 7 test.
+- 2026-09-19 — Huy duyệt PLAN, giao toàn quyền quyết định.
+- 2026-09-19 — Bộ bàn giao được tạo từ claude.ai.

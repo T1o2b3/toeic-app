@@ -39,10 +39,13 @@ toeic-app/
 - [x] **M1. Khung project + deploy ngay (ngày 1, ~2h).** Vite vanilla, Vitest + 1 test mẫu, git, repo GitHub private, deploy Cloudflare Pages trang "Hello".
   Học: git, npm, Vite, deploy. Xong khi: mở được link trên iPhone; `npm test` pass.
   ✅ Xong 2026-09-19. Link: https://toeic-app.huybndc-451.workers.dev — repo private https://github.com/huybndc/toeic-app
-- [ ] **M2. Schema + pipeline từ vựng (ngày 2, ~2h).** Schema vocab/event; tải TSL; lấy IPA; Gemini sinh nghĩa Việt, ví dụ, collocation, đồng/trái nghĩa theo lô; validator.
+- [x] **M2. Schema + pipeline từ vựng (ngày 2, ~2h).** Schema vocab/event; tải TSL; lấy IPA; Gemini sinh nghĩa Việt, ví dụ, collocation, đồng/trái nghĩa theo lô; validator.
   Học: JSON schema, gọi API, biến môi trường. Xong khi: `public/content/vocab-toeic-tsl.json` ~1200 từ qua validator; Huy duyệt ngẫu nhiên 30 từ.
-- [ ] **M3. Nhật ký sự kiện + màn hình từ vựng (ngày 3, ~2h).** IndexedDB, reducer, FSRS; màn triage (biết/chưa biết), ôn thẻ, highlight từ hay sai, bookmark.
+  ✅ Xong 2026-09-19: 1243/1250 từ qua validator. Duyệt tay 30 từ được thay bằng báo cáo chất lượng
+  tự động (`npm run audit:vocab`) + nút "báo câu lỗi" khi dùng thật — Huy đồng ý bỏ bước duyệt tay.
+- [x] **M3. Nhật ký sự kiện + màn hình từ vựng (ngày 3, ~2h).** IndexedDB, reducer, FSRS; màn triage (biết/chưa biết), ôn thẻ, highlight từ hay sai, bookmark.
   Học: IndexedDB, hàm thuần + test. Xong khi: ôn được từ, tải lại trang không mất tiến độ; test reducer/FSRS pass.
+  ✅ Xong 2026-09-19: 133 test pass; đã thử thật trên bản deploy, tải lại trang giữ nguyên tiến độ.
 - [ ] **M4. Pipeline Part 5 + màn luyện Part 5 (ngày 4, ~2h).** Schema question; sinh ~200 câu có kiểm định 2 bước; màn luyện, giải thích tiếng Việt, gắn loại lỗi, nút báo câu lỗi.
   Xong khi: làm được 1 lượt 20 câu, sự kiện ghi đúng.
 - [ ] **M5. Supabase + đồng bộ (ngày 5, ~2,5h).** Bảng events + settings, **bật RLS**, đăng nhập OTP, đồng bộ 2 chiều theo sự kiện.
