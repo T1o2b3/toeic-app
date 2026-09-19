@@ -26,11 +26,12 @@
    - Tạo repo **private** tên `toeic-app` trên GitHub (không tick "Add README").
    - Báo Claude khi xong → Claude nối remote, push, rồi hướng dẫn nối Cloudflare Pages.
 2. Sau khi mở được link trên iPhone → M1 xong → sang **M2 (schema + pipeline từ vựng)**.
-3. Trước M2 phải trả lời Q2: license TSL 1.2 (xem dưới).
+3. M2 đã sẵn sàng bắt đầu bất cứ lúc nào (chỉ cần Gemini API key trong `.env`).
 
 ## Vướng mắc / câu hỏi mở
-- **Q2 (chặn M2):** xác nhận license TOEIC Service List 1.2 và NGSL có cho phép dùng lại không.
-  Nếu không → cần đổi nguồn từ vựng, M2 sẽ đổi hướng.
+- ~~Q2 (chặn M2)~~ → **đã giải quyết 2026-09-19**: TSL 1.2 (1250 từ) và NGSL 1.2 (2809 từ) đều CC BY-SA 4.0.
+  Dùng được, chỉ cần ghi công + phát hành phần dữ liệu phái sinh cùng giấy phép. Chi tiết: DECISIONS.md D18.
+  → M2 không còn bị chặn.
 - npm 11 chặn install script của `esbuild`; đã kiểm tra `npm run build` vẫn chạy bình thường nên bỏ qua.
 
 ## Giờ thực tế so với ước tính
