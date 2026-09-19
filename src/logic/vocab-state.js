@@ -4,6 +4,7 @@
  * Hàm thuần: không đụng DOM, không đọc giờ hệ thống trừ khi được truyền vào.
  */
 import { createNewCard, reviewCard, isDue, isNew } from './scheduler.js';
+import { LEVELS, levelFromPayload, needsStudy, studyPriority } from './vocab-levels.js';
 
 /**
  * Trạng thái khởi đầu của một từ chưa có sự kiện nào.
@@ -14,8 +15,9 @@ import { createNewCard, reviewCard, isDue, isNew } from './scheduler.js';
 function blankState(wordId, now) {
   return {
     wordId,
-    triaged: false,     // Huy đã phân loại biết/chưa biết chưa
-    known: false,       // đánh dấu "đã biết" -> không đưa vào hàng đợi học
+    triaged: false,          // Huy đã phân loại chưa
+    level: LEVELS.UNKNOWN,   // biết tới đâu (xem vocab-levels.js)
+    known: false,            // suy ra từ level: chỉ mức "thành thạo" mới không phải học
     card: createNewCard(now),
     reviews: 0,
     lapses: 0,          // số lần bấm "quên" -> dùng để highlight từ hay sai
@@ -48,7 +50,9 @@ export function reduceVocabState(events, { now = new Date() } = {}) {
       case 'vocab.triaged': {
         const state = ensure(wordId, event.ts);
         state.triaged = true;
-        state.known = event.payload.known === true;
+        // Đọc được cả sự kiện cũ chỉ có {known} lẫn sự kiện mới có {level}.
+        state.level = levelFromPayload(event.payload);
+        state.known = !needsStudy(state.level);
         break;
       }
       case 'vocab.reviewed': {
@@ -63,7 +67,8 @@ export function reduceVocabState(events, { now = new Date() } = {}) {
         if (grade === 'again') state.lapses += 1;
         state.lastGrade = grade;
         state.lastReviewTs = event.ts;
-        // Ôn một từ tức là đang học nó, kể cả khi trước đó đánh dấu "đã biết".
+        // Ôn một từ tức là đang học nó, kể cả khi trước đó đánh dấu "thành thạo".
+        if (state.level === LEVELS.FLUENT) state.level = LEVELS.SPELLING;
         state.known = false;
         break;
       }
@@ -142,6 +147,8 @@ export function reviewQueue(entries, states, { now = new Date(), maxNew = 10, ma
   }
 
   due.sort((a, b) => new Date(a.state.card.due) - new Date(b.state.card.due));
+  // Từ chưa biết gì học trước từ đã đoán được nghĩa — cùng công sức nhưng lợi hơn.
+  fresh.sort((a, b) => studyPriority(a.state.level) - studyPriority(b.state.level));
   return [...due, ...fresh.slice(0, maxNew)].slice(0, maxTotal);
 }
 

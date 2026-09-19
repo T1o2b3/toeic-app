@@ -106,6 +106,40 @@ Link thật: https://toeic-app.huybndc-451.workers.dev. Vẫn miễn phí, vẫn
 
 **D28. Test:** Vitest cho `src/logic` và `pipeline` (schema, chấm điểm, FSRS wrapper, gộp sự kiện). Không test UI.
 
+**D29. Phân loại từ vựng theo 4 mức thay vì hai nút biết / chưa biết.** (Huy đề xuất 2026-09-19)
+- **Vấn đề:** "đã biết" gộp chung hai thứ rất khác nhau — từ đọc hiểu được trong câu, và từ tự
+  viết/dùng ra được. Với mục tiêu 850 → 950 thì phần lớn từ nằm đúng ở khoảng giữa đó, nên gộp lại
+  thành một nút làm mất chính thông tin cần để xếp lịch ôn. Màn phân loại lại không hiện nghĩa,
+  nên việc tự chấm dựa vào cảm giác "quen mặt chữ" chứ không phải biết nghĩa thật.
+- **Bốn mức:** `unknown` không biết hoàn toàn · `context` gặp rồi, đoán được nghĩa theo ngữ cảnh ·
+  `spelling` hiểu nghĩa nhưng không tự viết ra được · `fluent` dùng thành thạo.
+  Chỉ `fluent` mới bị loại khỏi hàng đợi học; ba mức còn lại đều học, nhưng `unknown` được học trước.
+- **Tương thích ngược (ràng buộc #5):** nhật ký là append-only nên sự kiện cũ `{known}` phải đọc đúng
+  mãi mãi (`known: true` → `fluent`, `known: false` → `unknown`). Sự kiện MỚI vẫn ghi kèm `known`
+  để máy còn chạy bản app cũ trong bộ nhớ đệm service worker không xếp nhầm từ. Không sửa nhật ký cũ.
+- **Hiện nghĩa khi phân loại:** mặc định BẬT, tắt được (lưu trong localStorage từng máy).
+
+**D30. Thêm deck cao cấp BSL + NAWL, cân đối theo đúng trình độ Part 5.** (Huy giao toàn quyền quyết định 2026-09-19)
+- **Số liệu dẫn tới quyết định:** đo trên chính ngân hàng 200 câu Part 5 đã sinh, các phương án của
+  câu `errorType: vocabulary` chỉ có **32% nằm trong deck TSL** hiện tại. Những từ đề đang hỏi —
+  `amend`, `abolish`, `enforce`, `inadequate`, `thereby`, `erratic` — không có từ nào trong deck,
+  trong khi deck lại dạy `mister`, `apple`, `jazz`, `balcony`.
+- **Nguyên nhân:** TSL 1.2 là danh sách **bổ sung cho NGSL**, gồm 1250 từ đặc thù TOEIC ở tầng nền —
+  đúng cho người 500–700 điểm. Kiểm chứng: `interview`, `raise`, `frequent`, `suspend`, `meanwhile`
+  đều KHÔNG có trong TSL vì chúng thuộc NGSL. Tầng nền này Huy đã biết gần hết.
+- **Quyết định:** thêm **BSL 1.20** (Business Service List, 1744 từ) và **NAWL 1.2** (New Academic
+  Word List, 957 từ), lọc bỏ phần trùng TSL → **1561 từ mới** thuộc tầng trên. Cùng nguồn
+  newgeneralservicelist.com, cùng license CC BY-SA 4.0 đã duyệt ở D18 → không phát sinh ràng buộc mới.
+  Sau khi thêm, phủ sóng từ vựng Part 5 tăng từ 32% lên 56%; phần còn thiếu chủ yếu là từ NGSL
+  (Huy đã biết) và dạng phái sinh (`inaccessible`, `reconfigure`).
+- **Kèm theo:** gắn `level` (cơ bản / trung cấp / cao cấp) cho mọi từ để Huy bỏ qua tầng dễ ngay,
+  không phải chờ pipeline sinh xong.
+- **Phương án đã loại:** (a) chỉ phân tầng deck hiện có — không giải quyết gốc, 77% từ Part 5 vẫn
+  không có để học; (b) để AI tự nghĩ ra danh sách từ cao cấp — không có tần suất kiểm chứng,
+  dễ bịa từ hiếm vô dụng, trái tinh thần D18.
+- **Chi phí:** 0 đồng. Tốn hạn mức AI free tier (~20 request/ngày/model, gộp 50 từ mỗi request)
+  nên pipeline chạy nền nhiều ngày.
+
 ## Câu hỏi còn mở
 - Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng? Quyết khi ước lượng được dung lượng thực.
 - ~~Q2 (trước M2): xác nhận license của TSL 1.2 và NGSL.~~ → **Đã giải quyết, xem D18.**

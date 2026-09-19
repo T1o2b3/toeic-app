@@ -2,7 +2,8 @@
  * Màn chính: cho biết hôm nay có gì để học, tốn bao lâu (RESEARCH.md R1, R2).
  */
 import { el, goTo } from './dom.js';
-import { triageQueue, reviewQueue, weakWords } from '../logic/vocab-state.js';
+import { countUntriaged, reviewQueue, weakWords } from '../logic/vocab-state.js';
+import { LEVEL_ORDER, LEVEL_INFO, countByLevel } from '../logic/vocab-levels.js';
 import { estimateSessionTime, summarizeQueue } from '../logic/format.js';
 import { quizQueue, accuracyByErrorType } from '../logic/quiz.js';
 import { planToday, describePlan } from '../logic/today.js';
@@ -22,7 +23,7 @@ export function renderHome(store) {
   const states = store.states;
   const queue = reviewQueue(store.entries, states, {});
   const { total, fresh, due } = summarizeQueue(queue);
-  const untriaged = triageQueue(store.entries, states).length;
+  const untriaged = countUntriaged(store.entries, states);
   const weak = weakWords(states);
   const learning = [...states.values()].filter((s) => s.triaged && !s.known).length;
 
@@ -72,10 +73,21 @@ export function renderHome(store) {
     const batch = Math.min(untriaged, 20);
     sections.push(
       el('button', { class: 'secondary', onClick: () => goTo('/triage') }, [
-        el('span', { text: 'Phân loại từ đã biết / chưa biết' }),
+        el('span', { text: 'Phân loại từ vựng' }),
         el('small', { text: `còn ${untriaged} từ · làm ${batch} từ · ~${Math.max(1, Math.round(batch * 4 / 60))} phút` }),
       ]),
     );
+  }
+
+  const byLevel = countByLevel(states);
+  if (Object.values(byLevel).some((count) => count > 0)) {
+    sections.push(el('div', { class: 'gaps' }, [
+      el('div', { class: 'gaps-title', text: 'Đã phân loại tới đâu' }),
+      ...LEVEL_ORDER.map((level) => el('div', { class: 'gap-row' }, [
+        el('span', { text: LEVEL_INFO[level].label }),
+        el('span', { class: 'gap-value', text: `${byLevel[level]} từ` }),
+      ])),
+    ]));
   }
 
   if (weak.length > 0) {

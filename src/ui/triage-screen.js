@@ -1,13 +1,21 @@
 /**
- * Màn phân loại: lướt nhanh từng từ, đánh dấu đã biết / chưa biết.
- * Mục đích là loại bớt từ Huy đã thuộc để hàng đợi ôn không phình (D03).
+ * Màn phân loại: lướt từng từ, tự chấm "biết tới đâu" theo 4 mức (vocab-levels.js).
+ * Mục đích là biết từ nào thật sự phải học, để hàng đợi ôn không phình (D03).
+ *
+ * Có hiện sẵn nghĩa: tự chấm 4 mức mà không thấy nghĩa thì rất dễ nhầm
+ * "quen mặt chữ" thành "biết nghĩa". Tắt được nếu muốn lướt nhanh.
  */
 import { el, goTo } from './dom.js';
 import { triageQueue, countUntriaged } from '../logic/vocab-state.js';
 import { roundProgress } from '../logic/round.js';
+import { LEVEL_ORDER, LEVEL_INFO, payloadForLevel } from '../logic/vocab-levels.js';
+import { getShowMeaning, setShowMeaning } from '../data/prefs.js';
 
 /** Số từ mỗi lượt phân loại — đủ ngắn để làm xong trong một lần ngồi. */
 const ROUND_SIZE = 20;
+
+/** Lớp CSS của 4 nút, đi từ "chưa biết" (đỏ) tới "thành thạo" (xanh) như nút chấm khi ôn. */
+const LEVEL_CLASS = { unknown: 'again', context: 'hard', spelling: 'good', fluent: 'easy' };
 
 /** Từ đã phân loại trong lượt này. Nguồn duy nhất để đếm ngược (xem src/logic/round.js). */
 let doneThisRound = new Set();
@@ -38,10 +46,7 @@ export function renderTriage(store) {
   if (remaining === 0) return renderDone(store, { finished, untriaged });
 
   const entry = queue[0];
-  const answer = async (known) => {
-    doneThisRound.add(entry.id);
-    await store.record('vocab.triaged', { wordId: entry.id, known });
-  };
+  const showMeaning = getShowMeaning();
 
   return el('div', {}, [
     el('div', { class: 'topbar' }, [
@@ -51,20 +56,53 @@ export function renderTriage(store) {
     el('div', { class: 'card big' }, [
       el('div', { class: 'word', text: entry.word }),
       entry.ipa ? el('div', { class: 'ipa', text: entry.ipa }) : '',
-      el('div', { class: 'hint', text: 'Bạn có biết nghĩa của từ này không?' }),
+      el('div', { class: 'pos', text: (entry.pos ?? []).join(' · ') }),
+      el('div', { class: 'hint', text: 'Bạn dùng được từ này tới mức nào?' }),
     ]),
-    el('div', { class: 'actions two' }, [
-      el('button', { class: 'grade again', onClick: () => answer(false) }, [
-        el('span', { text: 'Chưa biết' }),
-        el('small', { text: 'đưa vào danh sách học' }),
-      ]),
-      el('button', { class: 'grade easy', onClick: () => answer(true) }, [
-        el('span', { text: 'Đã biết' }),
-        el('small', { text: 'bỏ qua từ này' }),
-      ]),
+    showMeaning ? renderMeaning(entry) : '',
+    el('div', { class: 'actions four' }, LEVEL_ORDER.map((level) => {
+      const info = LEVEL_INFO[level];
+      return el('button', {
+        class: `grade ${LEVEL_CLASS[level]}`,
+        onClick: () => answer(store, entry, level),
+      }, [
+        el('span', { text: info.label }),
+        el('small', { text: info.hint }),
+        el('kbd', { text: info.key }),
+      ]);
+    })),
+    el('div', { class: 'actions' }, [
+      el('button', {
+        class: showMeaning ? 'link active' : 'link',
+        text: showMeaning ? '👁 Đang hiện nghĩa — ẩn đi' : '👁 Hiện nghĩa khi phân loại',
+        onClick: () => { setShowMeaning(!showMeaning); store.refresh(); },
+      }),
     ]),
-    el('p', { class: 'footnote', text: 'Phím tắt: 1 = chưa biết, 2 = đã biết' }),
+    el('p', { class: 'footnote', text: 'Phím tắt: 1–4 chọn mức · Space bật/tắt hiện nghĩa' }),
   ]);
+}
+
+/** Nghĩa tiếng Việt + một ví dụ, đủ để tự chấm đúng mà không rối mắt. */
+function renderMeaning(entry) {
+  const example = entry.examples?.[0];
+  return el('div', { class: 'card back' }, [
+    el('div', { class: 'meaning', text: entry.vi }),
+    example
+      ? el('div', { class: 'example' }, [
+          el('div', { class: 'en', text: example.en }),
+          el('div', { class: 'vi', text: example.vi }),
+        ])
+      : '',
+  ]);
+}
+
+/** Ghi mức vừa chấm. Sự kiện mang cả `level` mới lẫn `known` cũ (xem vocab-levels.js). */
+async function answer(store, entry, level) {
+  // Bấm phím hai lần thật nhanh: lần sau vẫn thấy từ cũ vì màn chưa kịp vẽ lại.
+  // Không chặn thì ghi hai sự kiện cho cùng một từ, và nhìn ra ngoài đúng như bộ đếm bị kẹt.
+  if (doneThisRound.has(entry.id)) return;
+  doneThisRound.add(entry.id);
+  await store.record('vocab.triaged', payloadForLevel(entry.id, level));
 }
 
 /** Màn kết thúc: hết lượt (còn từ để làm tiếp) hoặc hết sạch deck. */
@@ -90,16 +128,22 @@ function renderDone(store, { finished, untriaged }) {
 }
 
 /**
- * Phím tắt cho màn phân loại.
+ * Phím tắt: 1–4 chọn mức, Space bật/tắt hiện nghĩa.
  * @param {object} store
  * @param {KeyboardEvent} event
  */
 export function handleTriageKey(store, event) {
-  if (event.key !== '1' && event.key !== '2') return;
+  if (event.key === ' ' || event.key === 'Enter') {
+    event.preventDefault();
+    setShowMeaning(!getShowMeaning());
+    store.refresh();
+    return;
+  }
+
+  const level = LEVEL_ORDER.find((name) => LEVEL_INFO[name].key === event.key);
+  if (!level) return;
   const entry = roundQueue(store)[0];
-  if (!entry) return;
-  doneThisRound.add(entry.id);
-  store.record('vocab.triaged', { wordId: entry.id, known: event.key === '2' });
+  if (entry) answer(store, entry, level);
 }
 
 /** Đặt lại khi rời màn hoặc khi bắt đầu lượt mới. */
