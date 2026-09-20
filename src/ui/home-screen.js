@@ -8,6 +8,7 @@
  * Nút chi tiết (ôn thẻ, phân loại, luyện câu...) nằm ở mục Từ vựng và Bài thi, không ở đây.
  */
 import { el, goTo } from './dom.js';
+import { SKILL_LABEL } from '../logic/exam-time.js';
 import { countUntriaged } from '../logic/vocab-state.js';
 import { planToday, describePlan, planTarget } from '../logic/today.js';
 import {
@@ -165,8 +166,8 @@ function renderExamsPanel(store, events, now) {
     examTile('Nghe (Part 2–4)', examOverview(events, 'listening', now), bank.listening.length),
   ];
   const weak = [
-    ...weakestTypes(bank.reading, store.quizStates).map((row) => ({ ...row, part: 'Đọc' })),
-    ...weakestTypes(bank.listening, store.quizStates).map((row) => ({ ...row, part: 'Nghe' })),
+    ...weakestTypes(bank.reading, store.quizStates).map((row) => ({ ...row, part: SKILL_LABEL.reading })),
+    ...weakestTypes(bank.listening, store.quizStates).map((row) => ({ ...row, part: SKILL_LABEL.listening })),
   ].sort((a, b) => a.accuracy - b.accuracy).slice(0, 4);
 
   return panel('Bài thi', '/exams', [

@@ -1,8 +1,21 @@
 /**
- * Mặt sau của thẻ từ: nghĩa, ví dụ, collocation, bẫy hay gặp.
- * Dùng chung cho màn ôn thẻ, kho từ vựng và ôn chủ động để cả ba hiện cùng một kiểu.
+ * Hai mặt của thẻ từ, dùng chung cho màn ôn thẻ, phân loại, kho từ vựng và ôn chủ động
+ * để mọi nơi hiện cùng một kiểu: mặt trước (từ + phiên âm + từ loại), mặt sau (nghĩa, ví dụ, collocation, bẫy).
  */
 import { el } from './dom.js';
+
+/**
+ * Mặt trước: từ, phiên âm, từ loại.
+ * @param {object} entry
+ * @returns {Array<HTMLElement|string>} các dòng để ghép vào thẻ của từng màn
+ */
+export function renderWordHead(entry) {
+  return [
+    el('div', { class: 'word', text: entry.word }),
+    entry.ipa ? el('div', { class: 'ipa', text: entry.ipa }) : '',
+    el('div', { class: 'pos', text: (entry.pos ?? []).join(' · ') }),
+  ];
+}
 
 /**
  * @param {object} entry

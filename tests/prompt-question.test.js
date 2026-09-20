@@ -1,8 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import {
-  buildQuestionPrompt, buildVerifyPrompt, crossCheck, questionKey,
+  buildQuestionPrompt, buildVerifyPrompt, crossCheck, questionKey, hasBlank,
   ERROR_TYPES, ERROR_TYPE_DEFINITIONS, QUESTION_PROMPT_VERSION,
 } from '../pipeline/lib/prompt-question.js';
+import { hasBlank as appHasBlank } from '../src/logic/part5.js';
 
 const q = (answer, stem = 'The manager ---- the report yesterday afternoon before the meeting.') => ({
   stem, answer, options: { A: 'submit', B: 'submitted', C: 'submitting', D: 'to submit' },
@@ -118,5 +119,25 @@ describe('questionKey', () => {
     const a = { stem: 'x ---- y', options: { A: 'a', B: 'b', C: 'c', D: 'd' } };
     const b = { stem: 'x ---- y', options: { A: 'd', B: 'c', C: 'b', D: 'a' } };
     expect(questionKey(a)).toBe(questionKey(b));
+  });
+});
+
+describe('câu phải có chỗ trống (lỗi thật: p5-0079)', () => {
+  it('loại câu không có chỗ trống dù hai model đồng ý đáp án', () => {
+    const broken = { stem: 'The manager was irritated by the constant interruptions all morning.', answer: 'A', options: { A: 'irritated', B: 'irritating', C: 'irritation', D: 'irritable' } };
+    const { agreed, rejected } = crossCheck([broken], [{ index: 1, answer: 'A', obvious: false }]);
+    expect(agreed).toHaveLength(0);
+    expect(rejected[0].reason).toBe('thiếu chỗ trống');
+  });
+
+  it('nhận cả chỗ trống bằng gạch nối lẫn gạch dưới, không nhận từ ghép có gạch nối', () => {
+    expect(hasBlank('The council will ---- the rules.')).toBe(true);
+    expect(hasBlank('The council will ____ the rules.')).toBe(true);
+    expect(hasBlank('A well-known author wrote it.')).toBe(false);
+  });
+
+  it('bản của pipeline và bản của app hiểu chỗ trống GIỐNG NHAU (hai file cố ý tách nhau)', () => {
+    const samples = ['a ---- b', 'a -- b', 'a ____ b', 'well-known', 'không có gì', '', '-'];
+    for (const sample of samples) expect(hasBlank(sample)).toBe(appHasBlank(sample));
   });
 });

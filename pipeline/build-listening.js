@@ -15,7 +15,8 @@ import {
 } from './lib/prompt-listening.js';
 import { crossCheck } from './lib/prompt-question.js';
 import { parseVocabResponse } from './lib/prompt-vocab.js';
-import { createGeminiProvider, withRetry, sleep, isDailyQuotaError, DEFAULT_GEMINI_MODELS } from './lib/ai-provider.js';
+import { sleep } from './lib/ai-provider.js';
+import { createModelPair, aiStep, QUOTA_MESSAGE } from './lib/model-pair.js';
 import { openCache } from './lib/cache.js';
 import { createValidator } from './lib/validate-deck.js';
 import { assembleEntry } from './lib/listening-assemble.js';
@@ -46,58 +47,42 @@ function pickTypes(counts, howMany = 6) {
 /** Sinh + kiểm định cho tới đủ mục tiêu hoặc hết hạn mức. Trả về khi xong hoặc phải dừng. */
 async function generate({ target, batchSize, cache }) {
   const today = new Date().toISOString().slice(0, 10);
-  const models = (process.env.GEMINI_MODELS ?? DEFAULT_GEMINI_MODELS.join(','))
-    .split(',').map((m) => m.trim()).filter(Boolean);
-  if (models.length < 2) throw new Error('Cần ít nhất 2 model: một để sinh, một để kiểm định (D12)');
-
+  const pair = createModelPair();
   console.log(`Đã có sẵn: ${cache.size()} câu. Mục tiêu: ${target} câu.`);
-  let writerIndex = 0;
-  let solverIndex = 1;
 
   while (cache.size() < target) {
-    if (writerIndex >= models.length || solverIndex >= models.length) {
-      console.log('\nHết hạn mức của các model hôm nay. Chạy lại ngày mai để làm tiếp.');
+    if (pair.exhausted()) {
+      console.log(QUOTA_MESSAGE);
       return;
     }
     const counts = {};
     for (const value of Object.values(cache.snapshot())) counts[value.errorType] = (counts[value.errorType] ?? 0) + 1;
 
     const need = Math.min(batchSize, target - cache.size());
-    const writer = createGeminiProvider({ apiKey: process.env.GEMINI_API_KEY, model: models[writerIndex] });
-    const solver = createGeminiProvider({ apiKey: process.env.GEMINI_API_KEY, model: models[solverIndex] });
+    const writer = pair.provider('writer');
+    const solver = pair.provider('solver');
 
-    let drafted;
-    try {
-      const text = await withRetry(() => writer.generate(buildPart2Prompt({ types: pickTypes(counts), count: need })));
-      drafted = parseVocabResponse(text).filter(isWellFormedPart2);
-    } catch (error) {
-      if (isDailyQuotaError(error)) {
-        console.log(`${writer.model} hết hạn mức ngày → đổi model sinh đề`);
-        writerIndex += 1;
-        if (writerIndex === solverIndex) writerIndex += 1;
-        continue;
-      }
-      console.error(`Sinh đề lỗi: ${error.message.slice(0, 160)}`);
-      return;
-    }
+    const draft = await aiStep({
+      pair, role: 'writer', provider: writer,
+      run: () => writer.generate(buildPart2Prompt({ types: pickTypes(counts), count: need })),
+      parse: (text) => parseVocabResponse(text).filter(isWellFormedPart2),
+    });
+    if (draft.status === 'quota') continue;
+    if (draft.status === 'error') return;
+    const drafted = draft.value;
 
     const seen = new Set(Object.values(cache.snapshot()).map(part2Key));
     const fresh = drafted.filter((item) => !seen.has(part2Key(item)));
     if (fresh.length === 0) { console.log('Lô này không có câu mới hợp lệ, thử lô khác.'); await sleep(4000); continue; }
 
-    let solved;
-    try {
-      solved = parseVocabResponse(await withRetry(() => solver.generate(buildPart2VerifyPrompt(fresh))));
-    } catch (error) {
-      if (isDailyQuotaError(error)) {
-        console.log(`${solver.model} hết hạn mức ngày → đổi model kiểm định`);
-        solverIndex += 1;
-        if (solverIndex === writerIndex) solverIndex += 1;
-        continue;
-      }
-      console.error(`Kiểm định lỗi: ${error.message.slice(0, 160)}`);
-      return;
-    }
+    const check = await aiStep({
+      pair, role: 'solver', provider: solver,
+      run: () => solver.generate(buildPart2VerifyPrompt(fresh)),
+      parse: parseVocabResponse,
+    });
+    if (check.status === 'quota') continue;
+    if (check.status === 'error') return;
+    const solved = check.value;
 
     const { agreed, rejected } = crossCheck(fresh, solved);
     for (const { question, solvedAnswer } of agreed) {

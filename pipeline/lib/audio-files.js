@@ -6,7 +6,7 @@
 import { existsSync, readdirSync, readFileSync, unlinkSync } from 'node:fs';
 
 /** Các file nội dung có tham chiếu âm thanh. Thêm file mới ở đây khi có phần nghe mới. */
-export const AUDIO_CONTENT_FILES = Object.freeze(['listening-part2', 'sets-part3', 'sets-part4']);
+const AUDIO_CONTENT_FILES = Object.freeze(['listening-part2', 'sets-part3', 'sets-part4']);
 
 /**
  * Mọi tên file MP3 đang được tham chiếu.

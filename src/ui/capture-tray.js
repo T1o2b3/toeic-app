@@ -7,6 +7,7 @@
  */
 import { el } from './dom.js';
 import { tokenize, normalizeWord, planCapture } from '../logic/capture.js';
+import { renderBlanks } from './exam-unit.js';
 
 /** Từ đang được chọn (chuẩn hoá), chờ bấm "Cần học". */
 let selected = null;
@@ -20,14 +21,16 @@ let busy = false;
 const HINT = 'Gặp từ lạ? Chạm vào từ trong câu (hoặc kéo vào đây) để thêm vào danh sách cần học — nghĩa xem sau, không hiện lúc làm bài.';
 
 /**
- * Câu hỏi với từng từ bấm/kéo được.
+ * Câu hỏi với từng từ bấm/kéo được, và chỗ trống in đúng kiểu đề thật.
  * @param {object} store
  * @param {{stem: string}} question
+ * @param {{numbers?: number[]}} [options] - số hiệu câu cho chỗ trống [1], [2]… của Part 6
  * @returns {HTMLElement}
  */
-export function renderStem(store, question) {
-  const parts = tokenize(question.stem).map((token) => {
-    if (!token.word) return token.text;
+export function renderStem(store, question, { numbers = [] } = {}) {
+  const parts = tokenize(question.stem).flatMap((token) => {
+    // Phần không phải từ có thể chứa chỗ trống (---- hoặc [1]); in nó thành ô trống thay vì gạch nối thô.
+    if (!token.word) return renderBlanks(token.text, numbers);
 
     const classes = ['tok'];
     if (store.captured.has(token.word)) classes.push('captured');
@@ -42,7 +45,7 @@ export function renderStem(store, question) {
       event.dataTransfer.setData('text/plain', token.word);
       event.dataTransfer.effectAllowed = 'copy';
     });
-    return node;
+    return [node];
   });
   return el('div', { class: 'stem' }, parts);
 }

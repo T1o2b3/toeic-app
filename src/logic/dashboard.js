@@ -42,7 +42,7 @@ const PART_PREFIX = Object.freeze({
 });
 
 /** Phần thi → kỹ năng. TOEIC Listening = Part 1–4, Reading = Part 5–7. */
-export const SKILL_OF_PART = Object.freeze({
+const SKILL_OF_PART = Object.freeze({
   part2: 'listening', part3: 'listening', part4: 'listening', part5: 'reading', part6: 'reading', part7: 'reading',
 });
 

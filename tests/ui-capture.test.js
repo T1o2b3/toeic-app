@@ -27,7 +27,9 @@ describe('gạt từ lạ lúc làm Part 5 (D34)', () => {
     expect(root.querySelectorAll('.stem .tok').length).toBeGreaterThan(5);
     expect(root.querySelector('.tray').textContent).toContain('Gặp từ lạ?');
     expect(text()).not.toContain('nghĩa số');
-    expect(root.querySelector('.stem').textContent).toBe('The council will ---- the ledger rules and zoning laws quickly.');
+    // Chỗ trống in dài như đề thật (D39), phần chữ còn lại giữ nguyên
+    expect(root.querySelector('.stem').textContent).toBe('The council will ------- the ledger rules and zoning laws quickly.');
+    expect(root.querySelector('.stem .blank')).not.toBe(null);
   });
 
   it('chạm vào một từ thì chọn nó; khay hiện nút "Cần học", vẫn không lộ nghĩa', async () => {

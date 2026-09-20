@@ -41,7 +41,7 @@ describe('màn chọn chế độ', () => {
     expect(text()).toContain('Chỉ phần Nghe');
     expect(text()).toContain('Riêng Part 6');
     expect(text()).toMatch(/thiếu \d+ câu so với đề thật/);
-    expect(nav().hidden).toBe(true);
+    expect(nav().classList.contains('in-session')).toBe(true);
   });
 
   it('phần chưa có câu hỏi nào (Part 4) bị vô hiệu', () => {
@@ -55,9 +55,14 @@ describe('làm bài Part 6 (bộ 4 câu)', () => {
   it('có đồng hồ đếm ngược, số câu, và KHÔNG có phản hồi gì lúc làm bài', async () => {
     await start('Riêng Part 6');
     expect(root.querySelector('.exam-clock').textContent).toMatch(/^\d{2}:\d{2}$/);
-    expect(text()).toContain('câu 1–4/4');
+    expect(text()).toContain('câu 131–134');                 // số hiệu THẬT của đề (Part 6 = 131–146)
     expect(root.querySelectorAll('.set-q')).toHaveLength(4);
     expect(text()).not.toMatch(/Đúng|Sai —|Giải thích/);
+    // Đoạn văn in chỗ trống kèm số câu ngay tại chỗ, như đề thật; không còn "[1]"
+    expect(text()).toContain('131. -------');
+    expect(text()).not.toContain('[1]');
+    expect(root.querySelectorAll('.split-material').length).toBe(1);
+    expect(root.querySelectorAll('.split-questions').length).toBe(1);
   });
 
   it('chọn đáp án chỉ tô đáp án đã chọn (không chấm), đổi lại được', async () => {
@@ -110,10 +115,11 @@ describe('làm bài Part 6 (bộ 4 câu)', () => {
 
   it('kết quả: số câu đúng, thời gian, theo phần, và xem lại các câu sai kèm giải thích', () => {
     expect(text()).toContain('Kết quả');
-    expect(text()).toMatch(/\/ 4 câu đúng/);
+    expect(text()).toMatch(/\d\/4 câu đúng/);
     expect(text()).toContain('trả lời 2/4 câu');
     expect(text()).toContain('Part 6');
-    expect(text()).toContain('chưa phải điểm 10–990');
+    expect(text()).toContain('điểm ƯỚC LƯỢNG');
+    expect(text()).toContain('khoảng điểm càng rộng');       // làm 4 câu thì phải nói rõ là suy ra từ rất ít câu
     const wrong = root.querySelector('.wrong-list');
     expect(wrong.textContent).toMatch(/Xem lại \d câu sai hoặc bỏ trống/);
     expect(wrong.textContent).toContain('Bạn chưa trả lời câu này');
@@ -150,17 +156,17 @@ describe('Part 2 và bộ nghe trong thi thử', () => {
   });
 
   it('điều hướng bằng ← → và nút Trước/Tiếp; ở đơn vị đầu thì Trước bị khoá', async () => {
-    expect(text()).toContain('câu 1/3');
+    expect(text()).toContain('câu 7');                        // Part 2 trong đề thật là câu 7–31
     expect([...root.querySelectorAll('button')].find((b) => b.textContent.includes('Trước')).disabled).toBe(true);
     await key('ArrowRight'); await tick(30);
-    expect(text()).toContain('câu 2/3');
+    expect(text()).toContain('câu 8');
     await key('ArrowLeft'); await tick(30);
-    expect(text()).toContain('câu 1/3');
+    expect(text()).toContain('câu 7');
   });
 
   it('đơn vị cuối có nút Nộp bài thay cho Tiếp', async () => {
     await key('ArrowRight'); await key('ArrowRight'); await tick(30);
-    expect(text()).toContain('câu 3/3');
+    expect(text()).toContain('câu 9');
     expect([...root.querySelectorAll('.exam-nav button')].map((b) => b.textContent)).toEqual(['← Trước', 'Nộp bài']);
     await go('#/');                                        // bỏ bài dở
   });
@@ -191,6 +197,65 @@ describe('hết giờ tự nộp', () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+});
+
+describe('đề đủ chia hai phần tính giờ riêng như đề thật (D39)', () => {
+  it('bắt đầu ở phần Nghe, đồng hồ là giờ của RIÊNG phần Nghe', async () => {
+    await go('#/');                                         // rời màn để bỏ bài thi trước
+    await start('Đề đủ');
+    expect(text()).toContain('Phần Nghe');
+    expect(text()).toContain('câu 7');
+    // Nghe 9 câu / 94 câu của đề thật × 45 phút ≈ 4 phút, KHÔNG phải giờ của cả bài
+    expect(root.querySelector('.exam-clock').textContent).toMatch(/^04:1\d$/);
+  });
+
+  it('danh sách câu chỉ hiện các câu của phần đang làm', async () => {
+    await click((t) => t.includes('Danh sách câu'));
+    expect(root.querySelectorAll('.pal')).toHaveLength(5);   // 3 câu Part 2 + 2 bộ Part 3
+    await click((t) => t.includes('Ẩn danh sách'));
+  });
+
+  it('cuối phần Nghe: nút chuyển phần, có cảnh báo không quay lại được', async () => {
+    for (let i = 0; i < 4; i += 1) { await key('ArrowRight'); }
+    await tick(30);
+    const next = [...root.querySelectorAll('.exam-nav button')].at(-1);
+    expect(next.textContent).toContain('Xong phần nghe');
+    await click((t) => t.includes('Xong phần nghe'));
+    expect(text()).toContain('KHÔNG quay lại');
+    expect(text()).toContain('sang phần đọc');
+  });
+
+  it('hết phần Nghe thì đồng hồ chạy lại theo giờ phần Đọc và không lùi về phần trước được', async () => {
+    await click((t) => t.startsWith('Sang phần đọc'));
+    expect(text()).toContain('Phần Đọc');
+    expect(root.querySelector('.exam-clock').textContent).toBe('09:00');  // 12 câu / 100 × 75 phút
+    const back = [...root.querySelectorAll('.exam-nav button')][0];
+    expect(back.disabled).toBe(true);
+    await key('ArrowLeft'); await tick(30);
+    expect(text()).toContain('Phần Đọc');                   // phím ← cũng không lùi qua ranh giới phần
+  });
+
+  it('câu Part 5 mang số 101 và chỗ trống in dài như đề thật', async () => {
+    expect(text()).toContain('101');
+    expect(text()).toContain('-------');
+    expect(root.querySelector('.blank')).not.toBe(null);
+  });
+
+  it('nộp bài: có điểm ước lượng cho CẢ HAI phần và điểm tổng', async () => {
+    await click((t) => t.includes('Nộp bài sớm'));
+    await click((t) => t.startsWith('Nộp bài'), root.querySelector('.confirm'));
+    await tick(200);
+    expect(text()).toContain('điểm ước lượng / 990');
+    expect(text()).toContain('Phần Nghe');
+    expect(text()).toContain('Phần Đọc');
+    expect(text()).toMatch(/còn \d+ điểm nữa tới mục tiêu 950/);
+    // Không dùng .at(-1): test "hết giờ" ở trên chạy bằng đồng hồ GIẢ nên sự kiện của nó mang mốc thời gian
+    // ở tương lai và luôn đứng cuối danh sách. Lấy đúng bài thi vừa nộp theo chế độ.
+    const payload = eventsOf('exam.finished').find((e) => e.payload.mode === 'full').payload;
+    expect(payload.estimate.complete).toBe(true);
+    expect(payload.estimate.total.point).toBeGreaterThan(0);
+    expect(payload.estimate.sections.map((x) => x.skill)).toEqual(['listening', 'reading']);
   });
 });
 

@@ -119,3 +119,29 @@ export function createPlayer({
     },
   };
 }
+
+/**
+ * "Ổ cắm" bộ phát cho một màn: tạo bộ phát lúc cần, và cho test thay bằng bộ phát giả.
+ *
+ * Ba màn (luyện nghe, luyện bộ, thi thử) đều cần đúng mẫu này. Chép tay ba lần thì sửa một chỗ
+ * hai chỗ kia lệch — nhất là chỗ `dispose()` khi rời màn (quên là còn tiếng chạy nền).
+ *
+ * @param {() => object} [makeDefault]
+ * @returns {{get: () => object, setFactory: (factory: () => object) => void, dispose: () => void}}
+ */
+export function createPlayerSlot(makeDefault = () => createPlayer()) {
+  let make = makeDefault;
+  let player = null;
+  return {
+    get: () => (player ??= make()),
+    setFactory(factory) {
+      player?.dispose();
+      player = null;
+      make = factory;
+    },
+    dispose() {
+      player?.dispose();
+      player = null;
+    },
+  };
+}

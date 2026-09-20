@@ -2191,7 +2191,7 @@
       "id": "p5-0079",
       "set": "part5-core",
       "part": 5,
-      "status": "active",
+      "status": "retired",
       "stem": "The manager was irritated by the constant interruptions, yet she remained professional and continued to address the concerns of every single patron.",
       "options": {
         "A": "irritated",
@@ -2213,7 +2213,8 @@
         "model": "gemini-flash-lite-latest",
         "answer": "A",
         "agreed": true
-      }
+      },
+      "retiredReason": "Câu không có chỗ trống — đáp án \"irritated\" đã nằm sẵn trong câu nên không làm được (phát hiện 2026-09-20)."
     },
     {
       "id": "p5-0080",

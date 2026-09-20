@@ -29,10 +29,19 @@ Claude Code tự đọc file này ở đầu mọi phiên. Mọi quy tắc ở �
 - Không giả định Huy biết thuật ngữ. Nếu dùng thuật ngữ tiếng Anh, giải thích lần đầu.
 
 ## Quy trình code
-- Tuân theo skill `.claude/skills/mini-project-setup/SKILL.md` (logic tách UI, file < 300 dòng, test trước khi nối UI, commit nhỏ).
+- Tuân theo skill `.claude/skills/mini-project-setup/SKILL.md` (logic tách UI, test trước khi nối UI, commit nhỏ).
+  - **Độ dài file: khoảng 400 dòng, trần cứng 450** (Huy nới từ 300 ngày 2026-09-20 — xem D40). Mốc này để giữ
+    "một file một việc", không phải để đếm dòng: file 420 dòng làm đúng một việc thì cứ để yên.
   - Kiểm tra độ dài file: `bash scripts/check_file_sizes.sh .` (script nằm trong repo, không dùng đường dẫn trong skill).
   - Kiểm tra tiến trình nền còn sót: `bash scripts/check_processes.sh`.
   - Thư mục `assets/templates` mà skill nhắc tới không tồn tại; các file PLAN/README/CLAUDE đã được tạo sẵn.
+- **Hàm sinh ra phải dùng được ở NHIỀU nơi** (Huy, 2026-09-20). Đừng đẻ một đống hàm phụ chỉ để rút ngắn một file:
+  hàm chỉ gọi đúng một chỗ thì viết thẳng tại chỗ. Thấy hai nơi làm cùng một việc thì gom lại ngay, kể cả đang làm dở
+  việc khác — vừa làm vừa refactor. Các khối giao diện dùng chung nằm ở `src/ui/blocks.js`.
+- **Trước khi tạo BẤT KỲ file nào, tự hỏi ba câu** (Huy, 2026-09-20): nội dung này có bị trùng chỗ khác không?
+  đã có helper sẵn chưa? có nhét được vào module đang có thay vì đẻ file mới không? (DRY)
+- **Tự đánh giá code trước khi commit** (Huy, 2026-09-20): đọc lại diff như người review — helper mới có thật sự
+  dùng ở ≥ 2 nơi không, có import thừa không, hành vi người dùng thấy có đổi ngoài ý muốn không. Rồi mới commit/push.
 - Code và tên biến bằng tiếng Anh; tài liệu `.md` bằng tiếng Việt.
 - Commit theo dạng `type: mô tả ngắn` với type ∈ feat, fix, test, docs, chore, refactor, content.
 
@@ -90,7 +99,7 @@ không xếp hàng chờ.
 ## Checklist cuối MỖI bước con (làm đủ, không bỏ bước)
 
 1. `npm test` pass.
-2. `bash scripts/check_file_sizes.sh .` — không file nào > 300 dòng.
+2. `bash scripts/check_file_sizes.sh .` — không file nào > 450 dòng (D40).
 3. **`bash scripts/check_processes.sh` — tắt mọi tiến trình nền không còn cần** (máy chủ dev bật để xem
    thử rồi quên tắt là lỗi đã xảy ra; nó chạy tới khi bị tắt, không tự dừng).
 4. Cập nhật `PROGRESS.md`: vừa xong gì, bước tiếp theo cụ thể, vướng mắc.

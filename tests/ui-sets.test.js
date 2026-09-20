@@ -42,41 +42,68 @@ describe('mục Bài thi liệt kê các phần đã có bộ đề', () => {
 });
 
 describe('Part 6: đọc đoạn văn rồi trả lời từng chỗ trống', () => {
-  it('hiện đoạn văn (còn nguyên dấu [1]..[4]), 4 câu, thanh tab ẩn, khay gạt từ có sẵn', async () => {
+  it('bố cục hai cột: đoạn văn bên trái, câu hỏi bên phải; chỗ trống in kèm số câu', async () => {
     await go('#/sets?part=6');
-    expect(text()).toContain('Dear staff, the ledger [1] updated');
-    expect(text()).toContain('[4] and complete');
-    expect(root.querySelectorAll('.set-q')).toHaveLength(4);
-    expect(document.querySelector('nav.tabbar').hidden).toBe(true);
+    // Chỗ trống [1]..[4] được in thành ô trống đánh số như đề thật, không còn dấu ngoặc vuông
+    expect(text()).toContain('1. -------');
+    expect(text()).toContain('4. -------');
+    expect(text()).not.toContain('[1]');
+    expect(root.querySelector('.split-material').textContent).toContain('Dear staff');
+    expect(root.querySelector('.split-questions').querySelectorAll('.set-q')).toHaveLength(4);
+    expect(document.querySelector('nav.tabbar').classList.contains('in-session')).toBe(true);
     expect(root.querySelector('.tray')).not.toBeNull();
     expect(text()).toContain('còn 1 bộ');
   });
 
-  it('trả lời sai: ghi đúng sự kiện, hiện đáp án đúng + giải thích ngay dưới câu đó, chưa hiện "Bộ tiếp theo"', async () => {
+  it('chọn đáp án khi CHƯA xong bộ: chỉ tô lại, không chấm, không giải thích, chưa ghi nhật ký (D42)', async () => {
     const events = store.eventCount;
     await choose(0, 'A');                                  // đáp án câu 1 là B
-    expect(store.eventCount).toBe(events + 1);
-    expect(answered().at(-1).payload).toEqual({ questionId: 'p6-0001-1', choice: 'A', correct: false, errorType: 'grammar-in-context' });
-    expect(text()).toContain('Sai — đáp án là B');
-    expect(text()).toContain('Giải thích câu 1');
+    expect(store.eventCount).toBe(events);                 // chưa ghi gì cả
+    expect(text()).not.toContain('Sai — đáp án là B');
+    expect(text()).not.toContain('Giải thích câu 1');
     expect(text()).not.toContain('Bộ tiếp theo');
+    expect(text()).toContain('Còn 3 câu nữa');
+    expect(options(0)[0].className).toContain('picked');
   });
 
-  it('bấm lại câu đã trả lời không ghi thêm', async () => {
+  it('đổi đáp án trước khi chấm được, chỉ giữ lựa chọn cuối', async () => {
+    await choose(0, 'C');
+    expect([...options(0)].filter((b) => b.className.includes('picked'))).toHaveLength(1);
+    expect(options(0)[2].className).toContain('picked');
+    await choose(0, 'A');                                  // quay lại A để phần sau chấm ra "sai"
+  });
+
+  it('phím 1–4 trả lời câu đầu tiên chưa trả lời (câu 2)', async () => {
+    await key('3');
+    await tick(50);
+    expect(options(1)[2].className).toContain('picked');
+    expect(store.exportEvents().some((e) => e.payload?.questionId === 'p6-0001-2')).toBe(false);
+  });
+
+  it('trả lời câu cuối: chấm CẢ BỘ một lượt, hiện giải thích và ghi 4 sự kiện', async () => {
+    const events = store.eventCount;
+    await choose(2, 'D');
+    expect(store.eventCount).toBe(events);                 // còn một câu nữa
+    await choose(3, 'A');
+    await tick(80);
+    expect(store.eventCount).toBe(events + 4);             // ghi gói gọn cả bộ
+    const p6 = answered().filter((e) => e.payload.questionId.startsWith('p6-'));
+    // .sort(): cả bộ được ghi trong CÙNG một mili-giây nên thứ tự trong nhật ký không cố định — so theo tập.
+    expect(p6.map((e) => e.payload.questionId).sort()).toEqual(['p6-0001-1', 'p6-0001-2', 'p6-0001-3', 'p6-0001-4']);
+    expect(p6.find((e) => e.payload.questionId === 'p6-0001-1').payload).toEqual({ questionId: 'p6-0001-1', choice: 'A', correct: false, errorType: 'grammar-in-context' });
+    expect(text()).toContain('Sai — đáp án là B');
+    expect(text()).toContain('Giải thích câu 1');
+    expect(text()).toContain('Giải thích câu 4');
+    expect(text()).not.toContain('Còn 1 câu nữa');
+  });
+
+  it('chấm xong thì khoá, bấm nữa không ghi thêm', async () => {
     const events = store.eventCount;
     await choose(0, 'B');
     expect(store.eventCount).toBe(events);
   });
 
-  it('phím 1–4 trả lời câu đầu tiên chưa trả lời (câu 2, đáp án C)', async () => {
-    await key('3');
-    await tick(50);
-    expect(answered().at(-1).payload).toMatchObject({ questionId: 'p6-0001-2', choice: 'C', correct: true });
-  });
-
-  it('trả lời hết thì hiện "Bộ tiếp theo" và bộ đó tính là xong lượt', async () => {
-    await choose(2, 'D');
-    await choose(3, 'A');
+  it('xong bộ thì sang bộ kế, bộ đó tính là xong lượt', async () => {
     expect(text()).toContain('Bộ tiếp theo');
     await key(' ');
     expect(text()).toContain('Xong lượt này');
@@ -103,6 +130,7 @@ describe('Part 3: nghe hội thoại', () => {
 
   it('sau khi trả lời hết mới hiện transcript có nhãn người nói, và từng từ gạt được', async () => {
     await choose(0, 'B'); await choose(1, 'C'); await choose(2, 'D');
+    await tick(80);
     expect(text()).toContain('Hello Tom, the shipment number');
     expect(text()).toContain('Well, let me check');
     const labels = [...root.querySelectorAll('.transcript-line .letter')].map((n) => n.textContent);
@@ -116,7 +144,7 @@ describe('Part 3: nghe hội thoại', () => {
   });
 
   it('câu trả lời của bộ nghe ghi cùng loại sự kiện và id dạng p3-0001-n', () => {
-    const ids = answered().filter((e) => e.payload.questionId.startsWith('p3-')).map((e) => e.payload.questionId);
+    const ids = answered().filter((e) => e.payload.questionId.startsWith('p3-')).map((e) => e.payload.questionId).sort();
     expect(ids).toEqual(['p3-0001-1', 'p3-0001-2', 'p3-0001-3']);
   });
 });

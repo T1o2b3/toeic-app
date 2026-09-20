@@ -10,6 +10,8 @@
  * (words-screen.js).
  */
 import { el, goTo } from './dom.js';
+import { renderWordHead } from './word-detail.js';
+import { backButton, backLink } from './blocks.js';
 import { triageQueue, countUntriaged } from '../logic/vocab-state.js';
 import { roundProgress } from '../logic/round.js';
 import { LEVEL_ORDER, LEVEL_INFO, payloadForLevel } from '../logic/vocab-levels.js';
@@ -21,7 +23,6 @@ import { TIER_ORDER, TIER_INFO, ALL_TIERS, filterByTier } from '../logic/deck-ti
 const ROUND_SIZE = 20;
 
 /** Lớp CSS của 4 nút, đi từ "chưa biết" (đỏ) tới "thành thạo" (xanh) như nút chấm khi ôn. */
-const LEVEL_CLASS = { unknown: 'again', context: 'hard', spelling: 'good', fluent: 'easy' };
 
 /** Từ đã phân loại trong lượt này. Nguồn duy nhất để đếm ngược (xem src/logic/round.js). */
 let doneThisRound = new Set();
@@ -88,15 +89,13 @@ export function renderTriage(store) {
 
   return el('div', {}, [
     el('div', { class: 'topbar' }, [
-      el('button', { class: 'link', text: '← Từ vựng', onClick: () => goTo('/vocab') }),
+      backLink('vocab'),
       el('span', { class: 'progress', text: reviewing
         ? `xem lại từ đã chấm (${revisitIndex + 1}/${history.length})`
         : `còn ${remaining} từ trong lượt · ${untriaged} từ ${tierNote()}` }),
     ]),
     el('div', { class: 'card big' }, [
-      el('div', { class: 'word', text: entry.word }),
-      entry.ipa ? el('div', { class: 'ipa', text: entry.ipa }) : '',
-      el('div', { class: 'pos', text: (entry.pos ?? []).join(' · ') }),
+      ...renderWordHead(entry),
       el('div', { class: 'hint', text: reviewing
         ? `Trước đó bạn chấm: ${LEVEL_INFO[previous]?.label ?? '—'}. Chấm lại nếu cần.`
         : 'Bạn dùng được từ này tới mức nào?' }),
@@ -105,7 +104,7 @@ export function renderTriage(store) {
     el('div', { class: 'actions four' }, LEVEL_ORDER.map((level) => {
       const info = LEVEL_INFO[level];
       return el('button', {
-        class: `grade ${LEVEL_CLASS[level]}${level === previous ? ' chosen' : ''}`,
+        class: `grade ${LEVEL_INFO[level].css}${level === previous ? ' chosen' : ''}`,
         onClick: () => answer(store, entry, level),
       }, [
         el('span', { text: info.label }),
@@ -205,7 +204,7 @@ function renderDone(store, { finished, untriaged }) {
       el('h1', { text: 'Phân loại xong' }),
       el('p', { class: 'empty', text: 'Mọi từ trong deck đã được phân loại.' }),
       library,
-      el('button', { class: 'secondary', onClick: () => goTo('/vocab') }, [el('span', { text: 'Về mục Từ vựng' })]),
+      backButton('vocab'),
       fixLast,
     ]);
   }
@@ -218,7 +217,7 @@ function renderDone(store, { finished, untriaged }) {
       el('span', { text: `Làm tiếp ${Math.min(ROUND_SIZE, untriaged)} từ nữa` }),
     ]),
     library,
-    el('button', { class: 'secondary', onClick: () => goTo('/vocab') }, [el('span', { text: 'Về mục Từ vựng' })]),
+    backButton('vocab'),
     fixLast,
   ]);
 }

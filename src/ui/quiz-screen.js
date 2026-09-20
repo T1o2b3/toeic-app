@@ -1,48 +1,45 @@
 /**
- * Màn luyện Part 5: làm câu, chấm ngay, đọc giải thích tiếng Việt (RESEARCH.md R5).
- * Mỗi câu ghi lại loại kiến thức để sau này biết lỗ hổng nằm ở đâu.
+ * Màn luyện Part 5, dựng theo ĐÚNG đề thật (D39).
+ *
+ * Một lượt = một "mẻ" Part 5 như đề thật: 30 câu đánh số 101–130, chia đúng mặt cắt ba nhóm
+ * (từ loại / từ vựng / ngữ pháp), thứ tự xáo. Lượt được CHỐT ngay khi bắt đầu — có chốt thì tỉ lệ ba
+ * nhóm mới giữ được, và bộ đếm mới đếm ngược thật (quy tắc bắt buộc #7).
+ *
+ * Khác thi thử: ở đây chấm ngay từng câu và đọc giải thích tiếng Việt (RESEARCH.md R5) vì mỗi câu Part 5
+ * độc lập, chấm ngay không lộ bài cho câu sau — khác hẳn bộ nhiều câu chung một tài liệu (D42).
+ *
+ * Nhịp: đề thật cho ~20 giây/câu (30 câu trong ~10 phút) để còn giờ cho Part 6 và 7. Màn này đo thời gian
+ * từng câu và nói nhịp sau khi trả lời — nhắc, không ép.
  */
-import { el, goTo } from './dom.js';
-import { quizQueue, gradeAnswer } from '../logic/quiz.js';
+import { el } from './dom.js';
+import { gradeAnswer } from '../logic/quiz.js';
+import { composeRound, questionNumber, groupBreakdown, pace, PART5_GROUPS, PART5_COUNT } from '../logic/part5.js';
 import { roundProgress } from '../logic/round.js';
 import { renderStem, renderTray, renderOptionCapture, resetCapture } from './capture-tray.js';
-
+import { optionList, splitPane, backLink, backButton, verdictLine, explanationCard, letterFromKey } from './blocks.js';
 import { getRoundSize } from '../data/prefs.js';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
 
-/** Số câu mỗi lượt do Huy chọn ở màn chính (10/15/20). */
-function roundSize() {
-  return getRoundSize();
-}
-
-/** Trạng thái riêng của màn: phương án vừa chọn (null = chưa trả lời). */
+/** Các câu của lượt hiện tại, chốt khi bắt đầu lượt. */
+let roundList = [];
+/** Vị trí câu đang làm trong lượt. */
+let at = 0;
+/** Phương án vừa chọn (null = chưa trả lời). */
 let picked = null;
+/** Mốc bắt đầu câu hiện tại, để đo nhịp. */
+let askedAt = 0;
+/** Kết quả từng câu của lượt: {question, picked, correct, seconds}. */
+let results = [];
 
-/**
- * Câu đang làm, được KHOÁ lại khi đã trả lời.
- * Nếu không khoá, việc ghi sự kiện làm hàng đợi sắp xếp lại và màn hình nhảy sang câu kế,
- * khiến lựa chọn vừa bấm bị chấm nhầm cho câu khác.
- */
-let locked = null;
-
-/** Câu đã làm trong lượt này — không hiện lại ngay, để dành cho lượt sau. */
-let doneThisRound = new Set();
-
-/** Lấy câu đang làm. */
-function currentQuestion(store) {
-  if (locked) return locked;
-  return roundQueue(store)[0] ?? null;
-}
-
-/**
- * Hàng đợi của lượt hiện tại. Chỉ lấy đúng số câu CÒN LẠI của lượt, không phải cả lượt —
- * nhờ vậy lượt kết thúc sau đủ 20 câu thay vì kéo dài mãi.
- */
-function roundQueue(store) {
-  const left = Math.max(0, roundSize() - doneThisRound.size);
-  if (left === 0) return [];
-  return quizQueue(store.questions, store.quizStates, { size: left, exclude: doneThisRound });
+/** Dựng lượt mới nếu chưa có. Mỗi lượt lấy số câu Huy chọn ở mục Bài thi (mặc định 30 = đề thật). */
+function ensureRound(store) {
+  if (roundList.length > 0) return;
+  roundList = composeRound(store.questions, store.quizStates, { size: getRoundSize() });
+  at = 0;
+  picked = null;
+  results = [];
+  askedAt = Date.now();
 }
 
 /**
@@ -54,90 +51,118 @@ export function renderQuiz(store) {
     return el('div', {}, [
       el('h1', { text: 'Luyện Part 5' }),
       el('p', { class: 'empty', text: 'Chưa có câu hỏi nào. Chạy pipeline sinh câu trước đã.' }),
-      el('button', { class: 'secondary', onClick: () => goTo('/exams') }, [el('span', { text: 'Về mục Bài thi' })]),
+      backButton('exams'),
     ]);
   }
 
-  const question = currentQuestion(store);
-  if (!question) {
-    picked = null;
-    locked = null;
-    const doneCount = doneThisRound.size;
-    return el('div', {}, [
-      el('h1', { text: doneCount > 0 ? 'Xong lượt này' : 'Hết câu rồi' }),
-      el('p', { class: 'empty', text: doneCount > 0
-        ? `Đã làm ${doneCount} câu. Câu nào sai sẽ quay lại ở lượt sau.`
-        : 'Đã làm hết ngân hàng câu hỏi hiện có.' }),
-      el('button', { class: 'primary', onClick: () => goTo('/exams') }, [el('span', { text: 'Về mục Bài thi' })]),
-    ]);
-  }
+  ensureRound(store);
+  if (at >= roundList.length) return renderSummary(store);
 
-  const { remaining } = roundProgress({
-    roundSize: roundSize(),
-    doneCount: doneThisRound.size,
-    availableCount: roundQueue(store).length,
-    locked: Boolean(locked),
-  });
+  const question = roundList[at];
   const result = picked ? gradeAnswer(question, picked) : null;
+  // `at` là câu ĐANG làm (chưa xong), nên doneCount = at và câu trên màn vẫn được tính vào "còn lại".
+  const { remaining } = roundProgress({
+    roundSize: roundList.length, doneCount: at, availableCount: roundList.length - at,
+  });
 
-  const children = [
-    el('div', { class: 'topbar' }, [
-      el('button', { class: 'link', text: '← Bài thi', onClick: () => goTo('/exams') }),
-      el('span', { class: 'progress', text: `còn ${remaining} câu · ${question.errorType}` }),
+  // Cột trái: câu đề (chỗ trống in dài như đề thật) + khay gạt từ lạ (D34).
+  const material = [
+    el('div', { class: 'card' }, [
+      el('span', { class: 'q-no inline', text: `${questionNumber(at)}.` }),
+      renderStem(store, question),
     ]),
-    el('div', { class: 'card' }, [renderStem(store, question)]),
     renderTray(store, question),
-    el('div', { class: 'options' }, LETTERS.map((letter) => {
-      let className = 'option';
-      if (result) {
-        if (letter === question.answer) className += ' correct';
-        else if (letter === picked) className += ' wrong';
-      }
-      return el('button', {
-        class: className,
-        onClick: () => !picked && answer(store, question, letter),
-      }, [
-        el('span', { class: 'letter', text: letter }),
-        el('span', { class: 'option-text', text: question.options[letter] }),
-      ]);
-    })),
+  ];
+
+  // Cột phải: 4 phương án, rồi mới tới chấm + giải thích. KHÔNG hiện loại kiến thức trước khi trả lời —
+  // đề thật không mách "đây là câu mệnh đề quan hệ", biết trước là mất một nửa bài tập.
+  const right = [
+    optionList({
+      letters: LETTERS, textOf: (l) => question.options[l], picked,
+      answer: result ? question.answer : null, locked: Boolean(picked),
+      onPick: (letter) => answer(store, question, letter),
+    }),
   ];
 
   if (result) {
-    children.push(
-      el('div', { class: `verdict ${result.correct ? 'ok' : 'no'}` , text: result.correct ? 'Đúng' : `Sai — đáp án là ${question.answer}` }),
-      el('div', { class: 'card back' }, [
-        el('div', { class: 'meaning', text: question.explanation }),
-        question.trap ? el('div', { class: 'note', text: question.trap }) : '',
+    const spent = pace(results.at(-1)?.seconds ?? 0);
+    right.push(
+      verdictLine(result, question.answer),
+      el('div', { class: 'gap-row' }, [
+        el('span', { class: 'chip', text: groupLabel(question.errorType) }),
+        el('span', { class: spent.onPace ? 'gap-value plain' : 'gap-value', text: spent.label }),
       ]),
+      explanationCard(question),
       renderOptionCapture(store, question),
       el('div', { class: 'actions' }, [
         el('button', { class: 'primary', onClick: () => next(store) }, [
-          el('span', { text: 'Câu tiếp theo' }),
+          el('span', { text: at + 1 >= roundList.length ? 'Xem kết quả lượt' : 'Câu tiếp theo' }),
           el('small', { text: 'phím Space' }),
         ]),
       ]),
       el('div', { class: 'actions' }, [
-        el('button', {
-          class: 'link',
-          text: '⚑ Báo câu này sai',
-          onClick: () => report(store, question),
-        }),
+        el('button', { class: 'link', text: '⚑ Báo câu này sai', onClick: () => report(store, question) }),
       ]),
     );
   } else {
-    children.push(el('p', { class: 'footnote', text: 'Phím tắt: 1–4 hoặc A–D để chọn' }));
+    right.push(el('p', { class: 'footnote left', text: `Phím tắt: 1–4 hoặc A–D để chọn · nhịp đề thật khoảng 20 giây/câu` }));
   }
 
-  return el('div', {}, children);
+  return el('div', {}, [
+    el('div', { class: 'topbar' }, [
+      backLink('exams'),
+      el('span', { class: 'progress', text: `còn ${remaining} câu · Part 5` }),
+    ]),
+    splitPane(material, right),
+  ]);
+}
+
+/** Tên nhóm của một dạng câu, hiện SAU khi trả lời để biết mình yếu mảng nào. */
+function groupLabel(errorType) {
+  for (const [, group] of Object.entries(PART5_GROUPS)) {
+    if (group.types.includes(errorType)) return `${group.label} · ${errorType}`;
+  }
+  return errorType;
+}
+
+/** Tổng kết lượt: đúng bao nhiêu, nhịp thế nào, yếu nhóm nào — đọc được ngay như bảng điểm nhỏ. */
+function renderSummary(store) {
+  const correct = results.filter((r) => r.correct).length;
+  const seconds = results.reduce((sum, r) => sum + r.seconds, 0);
+  const average = results.length === 0 ? 0 : Math.round(seconds / results.length);
+  const done = groupBreakdown(results.map((r) => r.question));
+
+  const rows = Object.entries(PART5_GROUPS).map(([key, group]) => {
+    const inGroup = results.filter((r) => group.types.includes(r.question.errorType));
+    const right = inGroup.filter((r) => r.correct).length;
+    return el('div', { class: 'gap-row' }, [
+      el('span', { text: `${group.label} (${done[key]} câu)` }),
+      el('span', { class: 'gap-value plain', text: inGroup.length === 0 ? '—' : `${right}/${inGroup.length}` }),
+    ]);
+  });
+
+  return el('div', {}, [
+    el('h1', { text: 'Xong lượt Part 5' }),
+    el('div', { class: 'panel' }, [
+      el('div', { class: 'hero' }, [
+        el('span', { class: 'hero-value', text: `${correct}` }),
+        el('span', { class: 'hero-label', text: ` / ${results.length} câu đúng` }),
+        el('div', { class: 'hero-sub', text: `nhịp trung bình ${average} giây/câu · ${pace(average).onPace ? 'kịp nhịp đề thật' : 'đề thật cần ~20 giây/câu'}` }),
+      ]),
+      ...rows,
+    ]),
+    el('p', { class: 'footnote left', text: 'Câu nào sai sẽ được ưu tiên quay lại ở lượt sau.' }),
+    el('button', { class: 'primary', onClick: () => { newRound(store); } }, [el('span', { text: 'Lượt mới' })]),
+    backButton('exams'),
+  ]);
 }
 
 /** Ghi kết quả trả lời. Sự kiện mang theo loại kiến thức để thống kê lỗ hổng. */
 async function answer(store, question, letter) {
+  if (picked) return;
   picked = letter;
-  locked = question;
-  doneThisRound.add(question.id);
   const result = gradeAnswer(question, letter);
+  results.push({ question, picked: letter, correct: result.correct, seconds: (Date.now() - askedAt) / 1000 });
   await store.record('question.answered', {
     questionId: question.id,
     choice: letter,
@@ -148,18 +173,27 @@ async function answer(store, question, letter) {
 
 /** Sang câu kế tiếp. */
 function next(store) {
+  at += 1;
   picked = null;
-  locked = null;
+  askedAt = Date.now();
   resetCapture();
   store.refresh();
 }
 
-/** Báo câu hỏi có vấn đề — câu đó bị loại khỏi hàng đợi (D12). */
-async function report(store, question) {
-  picked = null;
-  locked = null;
+/** Bắt đầu lượt mới (dựng lại từ trạng thái mới nhất nên câu vừa sai sẽ quay lại). */
+function newRound(store) {
+  roundList = [];
   resetCapture();
-  doneThisRound.add(question.id);
+  ensureRound(store);
+  store.refresh();
+}
+
+/** Báo câu hỏi có vấn đề — câu đó bị loại khỏi lượt và khỏi ngân hàng (D12). */
+async function report(store, question) {
+  roundList = roundList.filter((q) => q.id !== question.id);
+  picked = null;
+  askedAt = Date.now();
+  resetCapture();
   await store.record('question.reported', { questionId: question.id });
 }
 
@@ -169,7 +203,7 @@ async function report(store, question) {
  * @param {KeyboardEvent} event
  */
 export function handleQuizKey(store, event) {
-  const question = currentQuestion(store);
+  const question = roundList[at];
   if (!question) return;
 
   if (picked) {
@@ -180,16 +214,18 @@ export function handleQuizKey(store, event) {
     return;
   }
 
-  const byNumber = LETTERS[Number.parseInt(event.key, 10) - 1];
-  const byLetter = LETTERS.includes(event.key.toUpperCase?.()) ? event.key.toUpperCase() : null;
-  const letter = byNumber ?? byLetter;
+  const letter = letterFromKey(event, LETTERS);
   if (letter) answer(store, question, letter);
 }
 
-/** Đặt lại khi rời màn. */
+/** Đặt lại khi rời màn: bỏ lượt đang làm dở. */
 export function resetQuiz() {
+  roundList = [];
+  at = 0;
   picked = null;
-  locked = null;
+  results = [];
   resetCapture();
-  doneThisRound = new Set();
 }
+
+/** Số câu mặc định của một lượt Part 5 = đề thật. */
+export { PART5_COUNT };

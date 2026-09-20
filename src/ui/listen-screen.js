@@ -5,12 +5,13 @@
  * mở sau khi đã nghe hết một lượt. Trả lời xong mới hiện transcript, giải thích, và cho gạt từ lạ (D34).
  * Kết quả ghi bằng cùng sự kiện `question.answered` như Part 5 nên thống kê lỗ hổng dùng chung.
  */
-import { el, goTo } from './dom.js';
+import { el } from './dom.js';
 import { quizQueue, gradeAnswer } from '../logic/quiz.js';
 import { roundProgress } from '../logic/round.js';
-import { LISTEN_ROUND_SIZE, SPEEDS, clipSequence, canAnswer, audioUrl } from '../logic/listen.js';
-import { getListenSpeed, setListenSpeed } from '../data/prefs.js';
-import { createPlayer } from './audio-player.js';
+import { LISTEN_ROUND_SIZE, clipSequence, canAnswer, audioUrl } from '../logic/listen.js';
+import { getListenSpeed } from '../data/prefs.js';
+import { createPlayerSlot } from './audio-player.js';
+import { backButton, backLink, explanationCard, letterFromKey, optionList, speedChooser, verdictLine } from './blocks.js';
 import { renderStem, renderTray, resetCapture } from './capture-tray.js';
 
 const LETTERS = ['A', 'B', 'C'];
@@ -24,17 +25,11 @@ let playing = false;
 let nowKey = null;            // đoạn đang phát: 'question' | 'A' | 'B' | 'C'
 let playError = null;
 
-let makePlayer = () => createPlayer();
-let player = null;
+const slot = createPlayerSlot();
+const getPlayer = () => slot.get();
 
 /** Tiêm bộ phát giả khi test (jsdom không phát được âm thanh). */
-export function setListenPlayerFactory(factory) {
-  player?.dispose();
-  player = null;
-  makePlayer = factory;
-}
-
-const getPlayer = () => (player ??= makePlayer());
+export const setListenPlayerFactory = (factory) => slot.setFactory(factory);
 
 function roundQueue(store) {
   const left = Math.max(0, LISTEN_ROUND_SIZE - doneThisRound.size);
@@ -57,7 +52,7 @@ export function renderListen(store) {
     return el('div', {}, [
       el('h1', { text: 'Luyện nghe Part 2' }),
       el('p', { class: 'empty', text: 'Chưa có câu nghe nào. Chạy pipeline: npm run build:listening' }),
-      el('button', { class: 'secondary', onClick: () => goTo('/exams') }, [el('span', { text: 'Về mục Bài thi' })]),
+      backButton('exams'),
     ]);
   }
 
@@ -69,7 +64,7 @@ export function renderListen(store) {
       el('p', { class: 'empty', text: count > 0
         ? `Đã nghe ${count} câu. Câu nào sai sẽ quay lại ở lượt sau.`
         : 'Đã làm hết các câu nghe hiện có.' }),
-      el('button', { class: 'primary', onClick: () => goTo('/exams') }, [el('span', { text: 'Về mục Bài thi' })]),
+      backButton('exams', { primary: true }),
     ]);
   }
 
@@ -84,45 +79,30 @@ export function renderListen(store) {
     locked: Boolean(locked),
   });
   const result = picked ? gradeAnswer(question, picked) : null;
-  const speed = getListenSpeed();
 
   const children = [
     el('div', { class: 'topbar' }, [
-      el('button', { class: 'link', text: '← Bài thi', onClick: () => goTo('/exams') }),
-      el('span', { class: 'progress', text: `còn ${remaining} câu · ${question.errorType}` }),
+      backLink('exams'),
+      // Dạng câu hỏi chỉ hiện SAU khi trả lời: biết trước "wh-where" là đã đoán được câu đáp (cùng lý do D39).
+      el('span', { class: 'progress', text: `còn ${remaining} câu${result ? ` · ${question.errorType}` : ''}` }),
     ]),
     el('div', { class: 'card big' }, [
       el('button', { class: 'primary listen-play', onClick: () => play(store, question) }, [
         el('span', { text: playing ? '🔊 Đang phát…' : heard ? '▶ Nghe lại' : '▶ Nghe câu này' }),
         el('small', { text: 'phím Space' }),
       ]),
-      el('div', { class: 'chooser' }, [
-        el('span', { class: 'chooser-label', text: 'Tốc độ' }),
-        ...SPEEDS.map((option) => el('button', {
-          class: option === speed ? 'chip-btn active' : 'chip-btn',
-          text: `${option}×`,
-          onClick: () => { setListenSpeed(option); store.refresh(); },
-        })),
-      ]),
+      speedChooser(store),
       playError ? el('div', { class: 'warn', text: playError }) : '',
     ]),
-    el('div', { class: 'options' }, LETTERS.map((letter) => {
-      let className = 'option listen-opt';
-      if (result) {
-        if (letter === question.answer) className += ' correct';
-        else if (letter === picked) className += ' wrong';
-      }
-      if (nowKey === letter) className += ' now';
-      const enabled = canAnswer(heard, picked);
-      return el('button', {
-        class: className,
-        disabled: !enabled && !picked ? 'disabled' : false,
-        onClick: () => enabled && answer(store, question, letter),
-      }, [
-        el('span', { class: 'letter', text: letter }),
-        el('span', { class: 'option-text', text: result ? question.responses[letter] : (nowKey === letter ? '🔊' : '') }),
-      ]);
-    })),
+    // Nghe hết mới chọn được; chọn xong mới lộ chữ của ba câu đáp (D35).
+    optionList({
+      letters: LETTERS,
+      textOf: (letter) => (result ? question.responses[letter] : (nowKey === letter ? '🔊' : '')),
+      picked, answer: result ? question.answer : null, marker: nowKey, extra: 'listen-opt',
+      locked: !canAnswer(heard, picked),
+      isDisabled: () => !canAnswer(heard, picked) && !picked,
+      onPick: (letter) => answer(store, question, letter),
+    }),
   ];
 
   if (!picked) {
@@ -133,13 +113,10 @@ export function renderListen(store) {
   }
 
   children.push(
-    el('div', { class: `verdict ${result.correct ? 'ok' : 'no'}`, text: result.correct ? 'Đúng' : `Sai — đáp án là ${question.answer}` }),
+    verdictLine(result, question.answer),
     renderTranscript(store, question),
     renderTray(store, question),
-    el('div', { class: 'card back' }, [
-      el('div', { class: 'meaning', text: question.explanation }),
-      question.trap ? el('div', { class: 'note', text: question.trap }) : '',
-    ]),
+    explanationCard(question),
     el('div', { class: 'actions' }, [
       el('button', { class: 'primary', onClick: () => next(store) }, [
         el('span', { text: 'Câu tiếp theo' }),
@@ -245,16 +222,13 @@ export function handleListenKey(store, event) {
   }
   if (picked) return;
 
-  const byNumber = LETTERS[Number.parseInt(event.key, 10) - 1];
-  const byLetter = LETTERS.includes(event.key.toUpperCase?.()) ? event.key.toUpperCase() : null;
-  const letter = byNumber ?? byLetter;
+  const letter = letterFromKey(event, LETTERS);
   if (letter) answer(store, question, letter);
 }
 
 /** Đặt lại khi rời màn. */
 export function resetListen() {
-  player?.dispose();
-  player = null;
+  slot.dispose();
   picked = null;
   locked = null;
   doneThisRound = new Set();

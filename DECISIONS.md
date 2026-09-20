@@ -333,6 +333,71 @@ phủ sóng từ vựng Part 5 — mới thấy NAWL đóng góp 1 từ. Ghi l�
   đồng hồ đã có; còn thiếu lưu tiến độ giữa chừng. Đề thật chỉ phát âm thanh một lần; app cho nghe lại (ghi rõ trên nút) vì
   bấm nhầm/không phát được trên iPhone sẽ làm hỏng cả bài.
 
+**D39. Part 5 dựng lại theo đề thật, và CÓ quy đổi điểm 10–990 (đảo lại D36 + D38).**
+- **Huy yêu cầu ngày 2026-09-20.** D36 và D38 đã chốt "không quy đổi điểm"; đây là lần đổi có chủ đích, ghi lại
+  theo ràng buộc #9. Lý do đổi hợp lệ: điều kiện mà D36 đặt ra ("làm sau khi có bài thi thử đủ bộ M15") nay đã đủ,
+  và Huy cần biết mình đang cách mục tiêu 950 bao xa — "155/194 câu đúng" không trả lời được câu đó.
+- **Cách giữ cho con số không thành số bịa:** luôn hiện một KHOẢNG kèm chữ "ước lượng", không bao giờ một con số trần.
+  Khoảng gồm hai nguồn sai số: (1) bảng quy đổi của ETS vốn cho sẵn một khoảng cho mỗi mốc số câu đúng;
+  (2) sai số lấy mẫu `sqrt(p(1-p)/n)` quy về thang 100 câu — làm 30 câu Part 5 rồi suy ra điểm phần Đọc thì
+  khoảng rộng hẳn ra, và màn kết quả nói thẳng điều đó. Chỉ làm một kỹ năng thì KHÔNG bịa điểm kỹ năng kia
+  và không có điểm tổng.
+- **Đường cong điểm phải ĐƠN ĐIỆU TĂNG.** Bản đầu nội suy giữa hai đầu của mỗi mốc, cho ra 95 câu đúng = 495
+  nhưng 96 câu = 475 — càng đúng nhiều càng ít điểm. Sửa bằng cách nội suy giữa TÂM các mốc, neo hai đầu ở 5 và 495.
+  Có test quét cả 0–100 câu cho cả hai kỹ năng.
+- **Part 5 theo mặt cắt đề thật:** đề thật chia xấp xỉ đều ba nhóm — từ loại / từ vựng / ngữ pháp, mỗi nhóm ~10/30 câu.
+  Ngân hàng của app có 12 dạng số lượng gần bằng nhau, nên lấy ngẫu nhiên thì ~2/3 lượt rơi vào nhóm ngữ pháp.
+  `composeRound` lấy theo hạn mức từng nhóm, trải đều các dạng trong nhóm, rồi xáo. Lượt mặc định 30 câu,
+  đánh số 101–130, nhịp mục tiêu 20 giây/câu (để còn 65 phút cho Part 6 và 7). Dùng cho cả màn luyện lẫn đề thi.
+- **Loại kiến thức bị GIẤU cho tới khi trả lời xong.** Trước đây thanh trên hiện "vocabulary", "relative-clause"
+  ngay lúc đang làm — biết trước dạng câu là mất một nửa bài tập.
+- **Thi thử chạy hai đồng hồ riêng:** Nghe 45 phút, hết giờ (hoặc bấm xác nhận) mới sang Đọc 75 phút, và KHÔNG
+  quay lại phần trước — đúng như đề thật. Trước đó app gộp 194 câu vào một đồng hồ 120 phút và cho đi lại tự do.
+- **Số hiệu câu là số thật của đề** (Part 2 = 7–31, Part 5 = 101–130, Part 7 = 147–200), tính lại từ đầu mỗi phần
+  nên phần trước thiếu câu cũng không làm lệch số hiệu phần sau.
+- **Lỗi nội dung tìm ra nhờ việc này:** câu `p5-0079` KHÔNG có chỗ trống (đáp án "irritated" nằm sẵn trong câu) —
+  không ai làm được. Đã `retired` (ràng buộc #6: không sửa, chỉ đánh dấu) kèm `retiredReason`, và thêm hai lớp chặn:
+  pipeline loại bản thảo thiếu chỗ trống ngay lúc sinh, `validate:content` chặn câu `active` thiếu chỗ trống.
+
+**D40. Nới hạn mức độ dài file: 300 → khoảng 400, trần 450.**
+- **Huy yêu cầu ngày 2026-09-20:** mốc 300 đang thành gánh nặng — phải cắt file giữa chừng chỉ vì đếm dòng.
+- Mục đích thật của quy tắc là "một file một việc", không phải con số. File 420 dòng làm đúng một việc thì để yên;
+  vượt 450 thì gần như chắc chắn đang làm nhiều việc. `scripts/check_file_sizes.sh` mặc định 450.
+
+**D41. Bố cục hai cột trên màn rộng: tài liệu bên trái, câu hỏi bên phải.**
+- **Huy yêu cầu ngày 2026-09-20.** App vốn thiết kế cho iPhone (một cột, rộng tối đa 34rem) nên trên Mac phải
+  cuộn qua cuộn lại giữa đoạn văn và phương án — đúng thứ đề thật không bắt làm (đề in đoạn văn và câu hỏi cùng trang).
+- Một hàm `splitPane(material, questions)` dùng cho MỌI màn làm bài (Part 5, các bộ Part 3/4/6/7, thi thử);
+  CSS xếp dọc lại dưới ngưỡng hẹp nên iPhone không đổi gì.
+
+**D42. Bộ nhiều câu chỉ chấm và giải thích khi đã trả lời HẾT bộ.**
+- **Huy yêu cầu ngày 2026-09-20.** Trước đó mỗi câu chấm ngay. Với bộ nhiều câu dựa trên cùng một tài liệu,
+  chấm ngay là LỘ BÀI: biết câu 1 sai và đáp án đúng là gì thì đoán được câu 2, 3 nói về đoạn nào.
+- Chọn đáp án giờ chỉ tô lại và ĐỔI ĐƯỢC; trả lời câu cuối mới chấm cả bộ, hiện giải thích, rồi ghi nhật ký
+  MỘT lượt cho cả bộ (ghi từng câu sẽ vẽ lại màn nhiều lần — cùng lý do exam-screen gói sự kiện khi nộp).
+- Part 5 và Part 2 vẫn chấm ngay: mỗi câu độc lập, chấm ngay không lộ gì cho câu sau.
+- Thi thử không đổi: vốn đã không lộ gì cho tới khi nộp.
+
+**D43. Điều hướng: cột bên trái trên máy tính, thanh dưới đáy trên điện thoại.**
+- **Huy yêu cầu ngày 2026-09-20:** "kéo mục lục sang bên trái như một trang web thực thụ".
+- Cùng MỘT `<nav>`, chỉ CSS đổi chỗ ở ngưỡng 62rem (≈992px): dưới ngưỡng giữ nguyên thanh đáy đã chọn ở D36
+  (hợp ngón tay trên iPhone/PWA), trên ngưỡng thành cột cố định bên trái có tên app.
+- **Bốn mục: Tổng quan · Từ vựng · Bài thi · Sao lưu.** Tra từ gộp vào Từ vựng (D36 để riêng một tab, nhưng
+  nó là một việc của phần từ vựng chứ không ngang hàng), Sao lưu/đồng bộ lên menu thay vì nằm trong màn chính.
+- Trong phiên học, thanh ĐÁY vẫn ẩn (vướng hàng nút chấm dính đáy) nhưng cột trái thì hiện — màn rộng không
+  thiếu chỗ. Đánh dấu bằng lớp `in-session` thay cho thuộc tính `hidden` (hidden là ẩn ở MỌI khổ màn hình).
+- Nội dung nới từ 34rem lên 44rem trên màn rộng, riêng màn làm bài (có `.split`) lên 66rem.
+
+**D44. Bản nhận xét điểm mạnh/yếu chạy AI trong PIPELINE, không gọi API lúc app chạy (M19).**
+- **Huy chốt ngày 2026-09-20**, sau khi Claude nêu ba đường (xem PLAN.md M19). Chọn đường 2 → **ràng buộc #2
+  giữ nguyên**, không phải sửa gì: app vẫn chạy offline, không có khoá API trong frontend, không tốn hạn mức khi dùng.
+- **Hình dung luồng:** Huy bấm "Xuất dữ liệu" (đã có) → chạy `npm run advise` trên máy → script đọc nhật ký,
+  tự tính phần đo đạc (tỉ lệ đúng theo 12 dạng Part 5, theo kỹ năng, theo Part, nhịp làm bài, từ hay quên),
+  đưa SỐ LIỆU cho AI viết lời khuyên → ghi ra một file → Huy nạp lại vào app để đọc trong màn Tổng quan.
+- **Phần đo đạc viết trước và dùng chung**: nó là đầu vào của lời khuyên, và tự nó đã trả lời được "yếu chỗ nào".
+  AI chỉ làm phần diễn đạt. Làm vậy thì kể cả hết hạn mức AI, app vẫn có bản nhận xét dạng số.
+- **Không gửi nhật ký thô cho AI**: chỉ gửi bảng thống kê đã tổng hợp (không có gì riêng tư, nhẹ hơn nhiều).
+
 ## Câu hỏi còn mở
 - ~~Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng?~~ → **Đã giải quyết, xem D35** (chung repo, xét lại khi ~100 MB).
 - ~~Q2 (trước M2): xác nhận license của TSL 1.2 và NGSL.~~ → **Đã giải quyết, xem D18.**

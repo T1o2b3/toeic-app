@@ -12,7 +12,7 @@
 import { LEVELS, payloadForLevel } from './vocab-levels.js';
 
 /** Từ ngắn hơn số này (so, of, to, in…) không đáng đưa vào danh sách học. */
-export const MIN_WORD_LENGTH = 3;
+const MIN_WORD_LENGTH = 3;
 
 const WORD_PATTERN = /[A-Za-z]+(?:['’-][A-Za-z]+)*/g;
 

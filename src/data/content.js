@@ -4,14 +4,14 @@
  */
 
 /** Deck nền, bắt buộc phải có. Thiếu nó thì app không chạy được. */
-export const DEFAULT_DECK = 'toeic-tsl';
+const DEFAULT_DECK = 'toeic-tsl';
 
 /**
  * Deck phụ: thiếu file thì BỎ QUA chứ không làm sập app.
  * `toeic-bsl` là tầng cao cấp (D30), sinh dần bằng pipeline nên có thể chưa tồn tại.
  * Sau này thêm ngsl, daily, my-words vào đây (D04).
  */
-export const OPTIONAL_DECKS = Object.freeze(['toeic-bsl']);
+const OPTIONAL_DECKS = Object.freeze(['toeic-bsl']);
 
 /**
  * Tải một deck từ vựng.
@@ -74,7 +74,7 @@ export async function loadAllVocabDecks(fetchImpl = fetch) {
  * @param {typeof fetch} [fetchImpl]
  * @returns {Promise<object|null>}
  */
-export async function loadOptionalDeck(deck, fetchImpl = fetch) {
+async function loadOptionalDeck(deck, fetchImpl = fetch) {
   try {
     return await loadVocabDeck(deck, fetchImpl);
   } catch {

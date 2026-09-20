@@ -22,6 +22,7 @@ body.has-tabbar #app { padding-bottom: calc(5rem + env(safe-area-inset-bottom));
   --viz-s1: #2a78d6; --viz-s2: #eb6834; --viz-s3: #1baf7a;
   --viz-l0: #d9d8d2; --viz-l1: #86b6ef; --viz-l2: #3987e5; --viz-l3: #1c5cab; --viz-l4: #0d366b;
   --viz-grid: #ecebe6;
+  --nav-width: 13.5rem;
 }
 .dash-title { display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.25rem; }
 .dash-title h1 { margin: 0; }
@@ -133,3 +134,68 @@ button.pal.current { outline: 2px solid var(--fg); outline-offset: 1px; }
 /* Kết quả thi thử: số liệu trung tính (màu đỏ của .gap-value dành cho danh sách lỗ hổng, không dùng cho điểm số) */
 .gap-value.plain { color: var(--fg); }
 .wrong-list { margin: 0.75rem 0 1rem; }
+
+/* ===== Điều hướng: cột bên TRÁI trên máy tính, thanh dưới đáy trên điện thoại (D43) =====
+   Cùng một <nav>; chỉ CSS đổi chỗ. Ngưỡng 62rem ≈ 992px: dưới mức đó (iPhone, iPad dọc) thanh đáy
+   vẫn hợp tay hơn; trên mức đó màn hình thừa chỗ cho một cột menu cố định như trang web thật. */
+.tabbar.in-session { display: none; }
+.nav-brand { display: none; }
+
+@media (min-width: 62rem) {
+  .tabbar {
+    position: fixed; inset: 0 auto 0 0; transform: none;
+    width: var(--nav-width); max-width: none; height: 100vh;
+    flex-direction: column; align-items: stretch; gap: 0.15rem;
+    border-top: none; border-right: 1px solid var(--border);
+    padding: 1.25rem 0.75rem calc(1.25rem + env(safe-area-inset-bottom));
+  }
+  /* Phiên học chỉ ẩn thanh ĐÁY (vì vướng hàng nút chấm dính đáy); cột bên trái không vướng gì nên vẫn hiện. */
+  .tabbar.in-session { display: flex; }
+  .nav-brand {
+    display: block; font-weight: 700; font-size: 1.05rem;
+    color: var(--accent); padding: 0 0.75rem 1.1rem;
+  }
+  .tabbar .tab {
+    flex: none; flex-direction: row; justify-content: flex-start; align-items: center;
+    gap: 0.7rem; padding: 0.55rem 0.75rem; border-radius: 0.6rem; font-size: 0.95rem;
+  }
+  .tabbar .tab:hover { background: #f2f2ed; }
+  .tabbar .tab.active { background: #eef6f1; }
+  .tabbar .tab-icon { font-size: 1rem; }
+
+  /* Đẩy toàn bộ nội dung sang phải đúng bề rộng menu, rồi vẫn căn giữa trong phần còn lại.
+     Nới bề ngang từ 34rem (khổ điện thoại) lên 44rem: màn rộng mà cột chữ vẫn hẹp thì thừa chỗ vô ích,
+     nhưng không nới quá vì dòng chữ dài hơn ~90 ký tự là khó đọc. */
+  body { padding-left: var(--nav-width); }
+  #app { max-width: 44rem; }
+  body.has-tabbar #app { padding-bottom: 2.5rem; }
+}
+
+/* ===== Bố cục hai cột khi làm bài (D41): tài liệu bên trái, câu hỏi bên phải =====
+   Điện thoại giữ nguyên một cột, tài liệu lên trước — đúng thứ tự đọc. */
+.split { display: grid; gap: 0.75rem; }
+
+@media (min-width: 62rem) {
+  /* Chỉ màn làm bài mới nới rộng; các màn khác giữ bề ngang dễ đọc 34rem. */
+  #app:has(.split) { max-width: 66rem; }
+  .split { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; align-items: start; }
+  /* Đoạn văn dài (Part 7 ba tài liệu) tự cuộn trong cột của nó, câu hỏi bên phải đứng yên. */
+  .split-material { position: sticky; top: 3.25rem; max-height: calc(100vh - 5rem); overflow-y: auto; }
+  .split-questions .set-q:first-child { margin-top: 0; border-top: none; padding-top: 0; }
+}
+
+/* Chỗ trống và số hiệu câu in như đề thật (D39) */
+.blank { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.02em; white-space: nowrap; }
+.blank.numbered { font-weight: 600; }
+.blank-no { color: var(--accent); font-weight: 700; }
+.q-no { color: var(--muted); font-weight: 700; font-size: 0.85rem; }
+.q-no.inline { display: inline; margin-right: 0.3rem; }
+.set-q-stem .q-no.inline { color: var(--accent); }
+
+/* Thẻ nhắc việc giữa lúc làm bài (còn mấy câu nữa mới chấm, đã sang phần Đọc) */
+.card.notice { color: var(--fg); font-size: 0.9rem; margin-top: 0.75rem; border-color: var(--accent); }
+.card.notice p { margin: 0; }
+.card.notice .gaps-title { margin-bottom: 0.25rem; }
+
+/* Ghi chú căn trái (dưới khối điểm, dưới dãy phương án) */
+.footnote.left { text-align: left; margin-top: 0.75rem; }
