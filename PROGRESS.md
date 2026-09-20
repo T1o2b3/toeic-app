@@ -55,6 +55,61 @@ Huy báo: phân loại chỉ chọn được 1 trong 4, không xem lại đượ
   loại lỗi giữa logic và màn hình mà test logic thuần không thấy. **`validate:content` giờ kiểm cả BSL.**
   `audit:vocab -- --deck bsl` soi deck BSL. **343 test pass.**
 
+## Phiên 2026-09-20 (khuya) — Soát codebase + refactor DRY — XONG giai đoạn A & B
+
+Huy giao: "kiểm tra file dư thừa, refactor ở mức độ phù hợp, báo cáo phần nào đã làm phần nào chưa".
+Cách soát: script đếm (a) export không ai import, (b) file không ai import, (c) dòng code giống hệt ở ≥ 2 file.
+
+### ĐÃ REFACTOR (2 commit, 750 test pass)
+
+**A. Lớp giao diện** (`refactor: gom code trùng lặp ở lớp giao diện`)
+| Gom về | Thay cho | Số nơi dùng |
+|---|---|---|
+| `blocks.js` `backLink` / `backButton` | nút "← Bài thi" / "Về mục Từ vựng"… chép tay | 8 màn |
+| `blocks.js` `verdictLine` + `explanationCard` | khối "Đúng/Sai + giải thích + bẫy" | 3 màn |
+| `blocks.js` `letterFromKey` | đọc phím 1–4 / A–D | 3 màn |
+| `blocks.js` `speedChooser` | hàng chọn tốc độ 0.75/1/1.25× | 2 màn |
+| `word-detail.js` `renderWordHead` | mặt trước thẻ từ (từ + IPA + từ loại) | 3 màn |
+| `audio-player.js` `createPlayerSlot` | chỗ tạo/huỷ bộ phát + tiêm bộ phát giả | 3 màn |
+| `vocab-levels.js` `LEVEL_INFO[].css` | 3 bản `LEVEL_CLASS` chép tay | 3 màn |
+| `exam-time.js` `SKILL_LABEL` | 2 bản nhãn Nghe/Đọc **khác chữ nhau** | 4 nơi |
+- Bỏ **13 export** chỉ dùng trong chính file đó (đang giả vờ là API công khai) và **8 import thừa**.
+- Bắt được một lỗi cùng loại vừa sửa ở Part 5: màn nghe Part 2 **lộ dạng câu hỏi** (`wh-where`) trước khi trả lời.
+
+**B. Pipeline** (`refactor: gom luật luân phiên model`)
+- `pipeline/lib/model-pair.js` + 9 test: ba pipeline (Part 5, Part 2, bộ Part 3/4/6/7) chép tay cùng một đoạn
+  "hai model, hết hạn mức ngày thì đổi, tránh hai vai trùng model". Đây đúng là chỗ đã từng có lỗi thật (quy tắc #3).
+- **Đổi hành vi có chủ đích:** `withRetry` không thử lại khi lỗi là hết hạn mức NGÀY — trước đây vẫn lùi
+  2+4+8+16 giây rồi mới báo, phí ~30 giây mỗi lô. Có test canh cả hai loại 429 (theo ngày / theo phút).
+- **CHƯA chạy thật ba script này** (môi trường phiên này không có `GEMINI_API_KEY`). Đã kiểm `node --check`
+  và `npm run validate:content`. **Lần chạy pipeline tới, Huy để ý dòng log đầu tiên có đúng "Model sinh đề: … ·
+  model kiểm định: …" không** — sai là biết ngay từ lô đầu, không mất hạn mức.
+
+### CHƯA REFACTOR (cố ý, có lý do — để phiên sau làm tiếp)
+
+1. **Pipeline: `parseArgs` + `path()` + `today`** lặp ở cả 4 script (`build-vocab/questions/listening/sets`).
+   *Chưa làm vì* mỗi script có bộ cờ riêng (`--target`, `--part`, `--variant`, `--list`); gom phải thiết kế
+   một bộ đọc cờ dùng chung. **Ước ~1 giờ, rủi ro thấp.** Nên làm trước tiên ở phiên sau.
+2. **Pipeline: khối sinh âm thanh** (`EDGE_TTS`, `runLimited`, đếm created/existed/failed, thông báo lỗi edge-tts)
+   lặp ở `build-listening` và `build-sets`, khoảng 25 dòng. *Chưa làm vì* hai bên lấy `clips` theo cách khác nhau.
+   **Ước ~45 phút.**
+3. **Pipeline: khối "báo cáo lô"** (`+N câu đạt · loại: … · trùng …`) và khối dựng `entry` (explanation/trap/verify)
+   lặp ở `build-listening` và `build-questions`. **Ước ~30 phút.**
+4. **UI: `listen-screen` và `quiz-screen` gần như cùng một màn** ("một câu · chấm ngay · giải thích · báo câu sai"),
+   khác mỗi phần nghe. Gom được thành một bộ điều khiển chung nhưng **đây là refactor lớn nhất còn lại và rủi ro
+   cao nhất** (hai màn đều có trạng thái riêng, khoá bàn phím, khay gạt từ). **Ước 2–3 giờ, nên làm riêng một phiên.**
+5. **UI: phát âm thanh** (`playError`, `nowTurn`, thông báo lỗi phát) lặp ở `listen-screen` và `sets-screen`.
+   Làm cùng lúc với mục 4 thì hợp lý hơn.
+6. **Cố ý ĐỂ YÊN, không phải bỏ sót:**
+   - `build-vocab.js` không dùng `model-pair`: nó xoay MỘT model (không cần cặp sinh/kiểm định) và có nhánh 401/403 riêng.
+   - `pad()` ở `dashboard.js` (định dạng **ngày**) và `exam-time.js` (định dạng **khoảng thời gian**): trùng ký tự
+     chứ không trùng kiến thức — gom lại là buộc hai thứ không liên quan vào nhau.
+   - Các đoạn một dòng lặp đúng 2 lần (`byId`, `tierEntries`): đẻ hàm cho chúng còn rối hơn để nguyên.
+
+### Quy tắc mới Huy đặt (đã vào CLAUDE.md)
+- Trước khi tạo BẤT KỲ file nào: hỏi 3 câu — trùng chỗ khác không? đã có helper chưa? nhét vào module cũ được không?
+- Tự đánh giá diff như người review trước khi commit; xong một giai đoạn thì commit + push.
+
 ## Phiên 2026-09-20 (tối) — Part 5 theo đề thật, chấm điểm, thi thử hai phần, UI hai cột — XONG, đã push
 Huy giao 4 việc + 3 bổ sung giữa phiên. Xem **D39–D42**.
 - **Part 5 đúng đề thật (D39):** một lượt = 30 câu đánh số **101–130**, chia đúng mặt cắt đề thật

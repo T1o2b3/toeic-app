@@ -127,7 +127,7 @@ export function confirmCard({ message, warn, confirmLabel, onConfirm, onCancel, 
 }
 
 /** Hai mục lớn mà các màn học quay về. Nhãn viết một lần ở đây, không rải chuỗi khắp nơi. */
-export const SECTIONS = Object.freeze({
+const SECTIONS = Object.freeze({
   exams: { label: 'Bài thi', path: '/exams' },
   vocab: { label: 'Từ vựng', path: '/vocab' },
 });
