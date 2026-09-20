@@ -55,7 +55,13 @@ Huy báo: phân loại chỉ chọn được 1 trong 4, không xem lại đượ
   loại lỗi giữa logic và màn hình mà test logic thuần không thấy. **`validate:content` giờ kiểm cả BSL.**
   `audit:vocab -- --deck bsl` soi deck BSL. **343 test pass.**
 
-## Phiên 2026-09-20 (khuya) — Soát codebase + refactor DRY — XONG giai đoạn A & B
+## Phiên 2026-09-20 (khuya) — Soát codebase + refactor DRY — XONG giai đoạn A & B, ĐÃ MERGE VÀO MAIN
+
+> **Đã merge vào `main` và push lúc kết phiên** → Cloudflare tự build và deploy (D27b).
+> **Huy kiểm giúp:** mở app, xem dòng cuối màn chính có phải `bản 2026-09-20 12:xx` không. Nếu vẫn là bản cũ:
+> Mac `Cmd+Shift+R`, iPhone đóng hẳn app rồi mở lại (service worker giữ bản cũ — xem mục "Sau mỗi lần deploy").
+> *Claude KHÔNG tự kiểm được link thật: môi trường phiên này chặn `*.workers.dev` ở tầng proxy (403).*
+
 
 Huy giao: "kiểm tra file dư thừa, refactor ở mức độ phù hợp, báo cáo phần nào đã làm phần nào chưa".
 Cách soát: script đếm (a) export không ai import, (b) file không ai import, (c) dòng code giống hệt ở ≥ 2 file.
