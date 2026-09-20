@@ -102,6 +102,9 @@ không xếp hàng chờ.
 2. `bash scripts/check_file_sizes.sh .` — không file nào > 450 dòng (D40).
 3. **`bash scripts/check_processes.sh` — tắt mọi tiến trình nền không còn cần** (máy chủ dev bật để xem
    thử rồi quên tắt là lỗi đã xảy ra; nó chạy tới khi bị tắt, không tự dừng).
+   **Huy cho phép tự tắt, không cần hỏi — kể cả server của project KHÁC trên máy** (Huy, 2026-09-20:
+   "sau có server nào đang chạy thì cứ tắt đi, khi nào có project quan trọng thì tôi sẽ thông báo sau").
+   Tắt xong báo lại một dòng là đã tắt cái gì.
 4. Cập nhật `PROGRESS.md`: vừa xong gì, bước tiếp theo cụ thể, vướng mắc.
 5. Commit.
 
