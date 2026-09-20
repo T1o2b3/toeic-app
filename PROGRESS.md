@@ -267,17 +267,77 @@ khi chưa có SMTP riêng).
 
 ## Bước tiếp theo (cụ thể)
 
-1. **Huy thử trên máy thật** (mọi thứ dưới đây mới chạy bằng jsdom + bộ phát âm thanh GIẢ, chưa nghe thử thật):
-   - iPhone: chạm "Nghe" ở Part 2/3/4 có ra tiếng không; nghe hết mới chọn được (Part 2); bật máy bay rồi nghe lại
-     câu đã nghe; tốc độ 0.75× có méo giọng không.
-   - Thi thử `#/exam` → "Riêng Part 6" (ngắn nhất, 12 phút) để thử cả vòng: làm → danh sách câu → nộp → xem lại câu sai.
-   - Kéo thả từ lạ vào khay "Cần học" trên Mac; chạm-rồi-bấm trên iPhone (D34).
-   - M5: đăng nhập + "Đồng bộ ngay" trên hai máy (Supabase và biến môi trường Cloudflare đã có sẵn, đã kiểm tra).
-2. **Đa dạng đề thi thử:** Part 3 / 4 / 6 mới đủ ĐÚNG MỘT đề (13 / 10 / 4 bộ) nên mỗi lần "Đề đủ" chỉ đổi thứ tự bộ, không đổi
-   nội dung; Part 7 có 20 bộ (59 câu, dư ~5); Part 2 (72) và Part 5 (200) đa dạng hơn. Muốn 3 đề khác nhau: sinh thêm gấp ~3 lần
-   (`npm run build:sets -- --part N --target M`, chạy các Part NỐI TIẾP không song song vì cùng hạn mức AI).
-3. **M16:** làm dở rồi tiếp trên máy khác — hiện thoát giữa bài thi là mất bài (D38).
-4. M10 còn dở: bảng/biểu trong Part 3, đánh dấu câu chứa đáp án trong transcript. M11 (dictation câu nghe sai) chưa làm.
+> **Phiên sau chạy LOCAL trên máy Huy** (Huy quyết 2026-09-20), không chạy trên cloud nữa.
+> Chạy local mở ra ba thứ phiên cloud KHÔNG làm được, nên tận dụng ngay:
+> 1. có `.env` → **chạy được pipeline** (phiên cloud không có `GEMINI_API_KEY`);
+> 2. mở được link thật (cloud bị proxy chặn `*.workers.dev`) → tự kiểm bản deploy;
+> 3. mở được trình duyệt thật → nhìn bố cục bằng mắt, không phải chỉ chụp ảnh headless.
+
+### 1. VIỆC ĐẦU TIÊN của phiên sau: dọn nốt refactor
+
+Đợt soát 2026-09-20 đã gom xong lớp giao diện và luật luân phiên model. Còn lại 3 mục, xếp theo
+**giá trị chia cho rủi ro** — làm từ trên xuống, mỗi mục một commit riêng.
+
+**1A. Gom `parseArgs` + `path()` + `today` của 4 script pipeline** *(~1 giờ, rủi ro THẤP — làm trước)*
+- Lặp ở: `pipeline/build-vocab.js`, `build-questions.js`, `build-listening.js`, `build-sets.js`.
+- Ba dòng giống hệt nhau ở cả bốn file:
+  `const path = (relative) => new URL(relative, ROOT).pathname;`
+  `const today = new Date().toISOString().slice(0, 10);`
+  và hàm đọc cờ `return index === -1 ? fallback : Number.parseInt(argv[index + 1], 10);`
+- **Cái khó (đọc trước khi làm):** mỗi script có bộ cờ RIÊNG — `--target`, `--batch`, `--part`,
+  `--variant`, `--list`, `--generate`. Nên helper phải là "đọc một cờ" chứ không phải "đọc hết cờ":
+  vd `flag(argv, '--target', 200)` và `hasFlag(argv, '--generate')`, còn việc ghép thành object
+  thì để từng script tự làm. Gom thành một `parseArgs` chung cho cả bốn là SAI hướng.
+- Đặt ở đâu: thêm vào `pipeline/lib/` — cân nhắc gộp chung file với `path()` vì cùng là tiện ích chạy CLI.
+- Kiểm tra: `node --check` từng file + `npm test` + chạy thử một lệnh có cờ thật (local có `.env`).
+
+**1B. Gom khối sinh âm thanh của `build-listening.js` và `build-sets.js`** *(~45 phút, rủi ro TRUNG BÌNH)*
+- Khoảng 25 dòng giống nhau: `EDGE_TTS`, kiểm tra đã cài edge-tts chưa, `runLimited(clips, 4, …)`,
+  ba biến đếm `created/existed/failed`, dòng log tiến độ mỗi 40 đoạn, và luật
+  **"có đoạn lỗi thì KHÔNG ghi file nội dung"** (luật này quan trọng, đừng làm rơi lúc gom).
+- **Cái khó:** hai bên lấy danh sách `clips` theo cách khác nhau (Part 2 từ `assembleEntry`,
+  các bộ từ `assembleSet`). Helper nên nhận thẳng mảng `clips` đã dựng sẵn, không tự đi dựng.
+- Kiểm tra: chỉ chạy thật được ở local (cần `pipeline/.venv/bin/edge-tts`).
+
+**1C. Gộp hai màn `listen-screen.js` và `quiz-screen.js`** *(~2–3 giờ, rủi ro CAO — nên làm RIÊNG một phiên)*
+- Hai màn gần như cùng một thứ: "một câu · chấm ngay · giải thích · nút báo câu sai · lượt có bộ đếm",
+  khác mỗi phần nghe và số phương án (3 với Part 2, 4 với Part 5).
+- Đã giống nhau tới mức chép tay cả tên hàm: `answer()`, `report()`, `next()`, `roundQueue()`.
+- **Vì sao rủi ro cao:** mỗi màn giữ trạng thái riêng ở mức module (`picked`, `locked`, `doneThisRound`,
+  `heard`, `nowKey`), có khoá bàn phím riêng, và Part 5 còn có khay gạt từ + lượt theo mặt cắt đề thật (D39).
+  Gộp ẩu là vỡ cả hai. **Điều kiện an toàn:** `tests/ui-listen.test.js` (18 test) và `tests/ui-quiz.test.js`
+  (9 test) phải xanh nguyên vẹn, KHÔNG được sửa test cho vừa code mới.
+- Gợi ý hướng: tách phần "vòng lặp một lượt câu hỏi" thành một bộ điều khiển chung nhận cấu hình
+  (số phương án, có phần nghe hay không, cách dựng lượt), còn phần vẽ giữ riêng từng màn.
+
+**Đã cố ý KHÔNG gom — đừng làm lại cho mất công:**
+- `build-vocab.js` không dùng `model-pair`: nó xoay MỘT model (không cần cặp sinh/kiểm định) và có nhánh 401/403 riêng.
+- `pad()` ở `dashboard.js` định dạng **ngày**, ở `exam-time.js` định dạng **khoảng thời gian** — trùng ký tự
+  chứ không trùng kiến thức.
+- Đoạn một dòng lặp đúng 2 lần (`byId`, `tierEntries`): đẻ hàm cho chúng còn rối hơn để nguyên.
+
+### 2. Việc của Huy trên máy thật (chưa ai kiểm, tôi không kiểm hộ được)
+- **Đối chiếu số hiệu bản build** ở cuối màn chính trước khi kết luận bất cứ lỗi nào.
+- Mac: menu trái có hiện không; Part 5 và Part 7 có đúng hai cột không; thi thử "Riêng Part 6"
+  trọn một vòng → nộp → xem **điểm ước lượng** có hợp lý không.
+- iPhone: thanh tab đáy + một cột còn nguyên không (CSS điều hướng vừa đổi, đây là chỗ dễ vỡ nhất).
+- **Nghe thử thật Part 2/3/4 trên iPhone** — test dùng bộ phát GIẢ nên lỗi âm thanh không thể lộ ra bằng test.
+- M5: đăng nhập + "Đồng bộ ngay" trên cả hai máy (càng học nhiều trước khi bật thì dữ liệu càng lệch).
+- Part 5 nay mặc định **30 câu/lượt** (đúng đề thật) thay vì 15 — thấy dài thì đổi ở chip "Mỗi lượt".
+
+### 3. Lần chạy pipeline tới — kiểm giúp một dòng
+Ba script (`build:questions`, `build:listening`, `build:sets`) vừa đổi sang `lib/model-pair.js` nhưng
+**chưa chạy thật lần nào** (phiên cloud không có khoá API). Dòng log đầu phải có dạng
+`Model sinh đề: … · model kiểm định: …`. Sai thì lộ ngay từ lô đầu, chưa tốn hạn mức.
+
+### 4. Sau refactor thì tới (theo thứ tự tôi đề xuất)
+1. **M16 — cứu bài thi đang làm dở**: hiện thoát giữa chừng là mất sạch; đề đủ dài 2 tiếng nên đây là rủi ro thật.
+2. **Đa dạng đề thi**: Part 3/4/6 mới đủ ĐÚNG MỘT đề (13/10/4 bộ) → thi lần hai gặp lại y hệt.
+   `npm run build:sets -- --part N --target M`, chạy các Part **nối tiếp**, không song song (chung hạn mức AI).
+3. **M20 — nhận xét điểm mạnh/yếu** (D44): *nên hoãn tới khi Huy đã học thật vài tuần* — nó đọc nhật ký
+   làm bài, mà ít dữ liệu thì nhận xét chỉ ra câu chung chung. Phần đo đạc làm trước, AI viết lời khuyên sau.
+4. M10 còn dở (bảng/biểu Part 3, đánh dấu câu chứa đáp án trong transcript) — **PLAN.md đang đánh dấu `[x]`
+   nhưng thực tế chưa xong; Huy xác nhận giúp là tính xong hay để mở.** M11 (dictation) chưa làm.
 5. Sinh bù: 3 từ TSL còn thiếu và ~70 từ chưa có IPA — `npm run build:vocab` (chạy đơn lẻ, xem D33).
 6. M18 (GitHub Actions ping Supabase + sao lưu hằng tuần) cần Huy tạo secret trên GitHub.
 
