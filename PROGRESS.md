@@ -349,12 +349,15 @@ khi chưa có SMTP riêng).
 > 2. mở được link thật (cloud bị proxy chặn `*.workers.dev`) → tự kiểm bản deploy;
 > 3. mở được trình duyệt thật → nhìn bố cục bằng mắt, không phải chỉ chụp ảnh headless.
 
-### 1. VIỆC ĐẦU TIÊN của phiên sau: dọn nốt refactor
+### 1. Dọn nốt refactor — **1A và 1B ĐÃ XONG ngày 2026-09-20 (tối)**, chỉ còn 1C
 
-Đợt soát 2026-09-20 đã gom xong lớp giao diện và luật luân phiên model. Còn lại 3 mục, xếp theo
-**giá trị chia cho rủi ro** — làm từ trên xuống, mỗi mục một commit riêng.
+> Giữ lại nguyên văn kế hoạch bên dưới vì phần "cái khó" của 1C vẫn còn giá trị.
+> **1A** → `pipeline/lib/cli.js` (đã chạy thật `validate:content`, `audit:vocab --deck bsl`, `audit:coverage`).
+> **1B** → `renderClips` trong `pipeline/lib/tts.js` (đã chạy thật Part 3 = 77 đoạn, Part 2 = 288 đoạn,
+> file nội dung ra y hệt từng byte).
+> **1C** → Huy chốt để RIÊNG một phiên, chưa làm.
 
-**1A. Gom `parseArgs` + `path()` + `today` của 4 script pipeline** *(~1 giờ, rủi ro THẤP — làm trước)*
+**1A. ~~Gom `parseArgs` + `path()` + `today` của 4 script pipeline~~ — XONG 2026-09-20**
 - Lặp ở: `pipeline/build-vocab.js`, `build-questions.js`, `build-listening.js`, `build-sets.js`.
 - Ba dòng giống hệt nhau ở cả bốn file:
   `const path = (relative) => new URL(relative, ROOT).pathname;`
@@ -367,7 +370,7 @@ khi chưa có SMTP riêng).
 - Đặt ở đâu: thêm vào `pipeline/lib/` — cân nhắc gộp chung file với `path()` vì cùng là tiện ích chạy CLI.
 - Kiểm tra: `node --check` từng file + `npm test` + chạy thử một lệnh có cờ thật (local có `.env`).
 
-**1B. Gom khối sinh âm thanh của `build-listening.js` và `build-sets.js`** *(~45 phút, rủi ro TRUNG BÌNH)*
+**1B. ~~Gom khối sinh âm thanh của `build-listening.js` và `build-sets.js`~~ — XONG 2026-09-20**
 - Khoảng 25 dòng giống nhau: `EDGE_TTS`, kiểm tra đã cài edge-tts chưa, `runLimited(clips, 4, …)`,
   ba biến đếm `created/existed/failed`, dòng log tiến độ mỗi 40 đoạn, và luật
   **"có đoạn lỗi thì KHÔNG ghi file nội dung"** (luật này quan trọng, đừng làm rơi lúc gom).
@@ -375,7 +378,7 @@ khi chưa có SMTP riêng).
   các bộ từ `assembleSet`). Helper nên nhận thẳng mảng `clips` đã dựng sẵn, không tự đi dựng.
 - Kiểm tra: chỉ chạy thật được ở local (cần `pipeline/.venv/bin/edge-tts`).
 
-**1C. Gộp hai màn `listen-screen.js` và `quiz-screen.js`** *(~2–3 giờ, rủi ro CAO — nên làm RIÊNG một phiên)*
+**1C. Gộp hai màn `listen-screen.js` và `quiz-screen.js`** *(~2–3 giờ, rủi ro CAO — Huy chốt 2026-09-20: làm RIÊNG một phiên)*
 - Hai màn gần như cùng một thứ: "một câu · chấm ngay · giải thích · nút báo câu sai · lượt có bộ đếm",
   khác mỗi phần nghe và số phương án (3 với Part 2, 4 với Part 5).
 - Đã giống nhau tới mức chép tay cả tên hàm: `answer()`, `report()`, `next()`, `roundQueue()`.
