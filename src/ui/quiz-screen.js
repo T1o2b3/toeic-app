@@ -54,7 +54,7 @@ export function renderQuiz(store) {
     return el('div', {}, [
       el('h1', { text: 'Luyện Part 5' }),
       el('p', { class: 'empty', text: 'Chưa có câu hỏi nào. Chạy pipeline sinh câu trước đã.' }),
-      el('button', { class: 'secondary', onClick: () => goTo('/') }, [el('span', { text: 'Về màn chính' })]),
+      el('button', { class: 'secondary', onClick: () => goTo('/exams') }, [el('span', { text: 'Về mục Bài thi' })]),
     ]);
   }
 
@@ -68,7 +68,7 @@ export function renderQuiz(store) {
       el('p', { class: 'empty', text: doneCount > 0
         ? `Đã làm ${doneCount} câu. Câu nào sai sẽ quay lại ở lượt sau.`
         : 'Đã làm hết ngân hàng câu hỏi hiện có.' }),
-      el('button', { class: 'primary', onClick: () => goTo('/') }, [el('span', { text: 'Về màn chính' })]),
+      el('button', { class: 'primary', onClick: () => goTo('/exams') }, [el('span', { text: 'Về mục Bài thi' })]),
     ]);
   }
 
@@ -82,7 +82,7 @@ export function renderQuiz(store) {
 
   const children = [
     el('div', { class: 'topbar' }, [
-      el('button', { class: 'link', text: '← Về màn chính', onClick: () => goTo('/') }),
+      el('button', { class: 'link', text: '← Bài thi', onClick: () => goTo('/exams') }),
       el('span', { class: 'progress', text: `còn ${remaining} câu · ${question.errorType}` }),
     ]),
     el('div', { class: 'card' }, [renderStem(store, question)]),

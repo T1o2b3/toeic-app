@@ -17,9 +17,9 @@ beforeAll(async () => {
   ({ store, root, tick, go, key, text, word, click, levelOf } = await bootApp());
 });
 
-describe('màn chính khi chưa học gì', () => {
+describe('mục Từ vựng khi chưa học gì', () => {
   it('có Kho từ vựng nhưng chưa hiện Ôn chủ động (chưa có gì để ôn)', async () => {
-    await go('#/');
+    await go('#/vocab');
     expect(text()).toContain('Kho từ vựng');
     expect(text()).not.toContain('Ôn chủ động');
   });
@@ -118,8 +118,8 @@ describe('kho từ vựng', () => {
 describe('ôn chủ động', () => {
   let fluentWord;
 
-  it('hiện ở màn chính sau khi đã phân loại; nhóm rỗng bị vô hiệu', async () => {
-    await go('#/');
+  it('hiện ở mục Từ vựng sau khi đã phân loại; nhóm rỗng bị vô hiệu', async () => {
+    await go('#/vocab');
     expect(text()).toContain('Ôn chủ động');
     await go('#/practice');
     expect(text()).toContain('Kiểm tra từ đã thành thạo');

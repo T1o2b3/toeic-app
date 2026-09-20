@@ -35,7 +35,7 @@ function renderPick(store) {
 
   return el('div', {}, [
     el('div', { class: 'topbar' }, [
-      el('button', { class: 'link', text: '← Về màn chính', onClick: () => goTo('/') }),
+      el('button', { class: 'link', text: '← Từ vựng', onClick: () => goTo('/vocab') }),
     ]),
     el('h1', { text: 'Ôn chủ động' }),
     el('p', { class: 'subtitle', text: `Tự chọn nhóm từ để kiểm tra trí nhớ, mỗi lượt ${PRACTICE_SIZE} từ. Không làm đổi lịch ôn.` }),
@@ -138,7 +138,7 @@ function renderSummary(store, byId) {
     el('button', { class: 'secondary', onClick: () => { resetPractice(); store.refresh(); } }, [
       el('span', { text: 'Chọn nhóm khác' }),
     ]),
-    el('button', { class: 'secondary', onClick: () => goTo('/') }, [el('span', { text: 'Về màn chính' })]),
+    el('button', { class: 'secondary', onClick: () => goTo('/vocab') }, [el('span', { text: 'Về mục Từ vựng' })]),
   );
   return el('div', {}, sections);
 }

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { planToday, describePlan, COST } from '../src/logic/today.js';
+import { planTarget, planToday, describePlan, COST } from '../src/logic/today.js';
 import { reduceVocabState } from '../src/logic/vocab-state.js';
 import { reduceQuizState } from '../src/logic/quiz.js';
 
@@ -82,5 +82,16 @@ describe('describePlan', () => {
 
   it('bỏ qua loại việc không có', () => {
     expect(describePlan({ vocabDue: 0, vocabNew: 3, quiz: 0, seconds: 60 })).toBe('3 từ mới · ~1 phút');
+  });
+});
+
+describe('planTarget', () => {
+  it('có việc từ vựng (ôn hoặc từ mới) thì vào ôn thẻ', () => {
+    expect(planTarget({ vocabDue: 3, vocabNew: 0 })).toBe('/review');
+    expect(planTarget({ vocabDue: 0, vocabNew: 2 })).toBe('/review');
+  });
+
+  it('kế hoạch chỉ toàn câu Part 5 thì đi thẳng tới Part 5', () => {
+    expect(planTarget({ vocabDue: 0, vocabNew: 0 })).toBe('/quiz');
   });
 });

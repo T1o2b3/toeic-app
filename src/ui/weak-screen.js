@@ -16,13 +16,13 @@ export function renderWeak(store) {
     return el('div', {}, [
       el('h1', { text: 'Từ hay sai' }),
       el('p', { class: 'empty', text: 'Chưa có từ nào bị quên. Ôn thêm vài phiên rồi quay lại.' }),
-      el('button', { class: 'secondary', onClick: () => goTo('/') }, [el('span', { text: 'Về màn chính' })]),
+      el('button', { class: 'secondary', onClick: () => goTo('/vocab') }, [el('span', { text: 'Về mục Từ vựng' })]),
     ]);
   }
 
   return el('div', {}, [
     el('div', { class: 'topbar' }, [
-      el('button', { class: 'link', text: '← Về màn chính', onClick: () => goTo('/') }),
+      el('button', { class: 'link', text: '← Từ vựng', onClick: () => goTo('/vocab') }),
       el('span', { class: 'progress', text: `${weak.length} từ` }),
     ]),
     el('h1', { text: 'Từ hay sai' }),

@@ -45,7 +45,7 @@ export function renderSync(store) {
         el('div', { text: '3. Tắt "Confirm email" ở Authentication → Sign In / Providers → Email.' }),
         el('div', { text: '4. Thêm VITE_SUPABASE_URL và VITE_SUPABASE_ANON_KEY vào .env rồi build lại.' }),
       ]),
-      el('button', { class: 'secondary', onClick: () => goTo('/') }, [el('span', { text: 'Về màn chính' })]),
+      el('button', { class: 'secondary', onClick: () => goTo('/') }, [el('span', { text: 'Về Tổng quan' })]),
     ]);
   }
 
@@ -55,7 +55,7 @@ export function renderSync(store) {
       el('h1', { text: 'Cấu hình Supabase đang sai' }),
       el('div', { class: 'note', text: configError }),
       el('p', { class: 'empty', text: 'Sửa biến môi trường rồi build/deploy lại. Dữ liệu trên máy không bị ảnh hưởng.' }),
-      el('button', { class: 'secondary', onClick: () => goTo('/') }, [el('span', { text: 'Về màn chính' })]),
+      el('button', { class: 'secondary', onClick: () => goTo('/') }, [el('span', { text: 'Về Tổng quan' })]),
     ]);
   }
 
@@ -70,7 +70,7 @@ export function renderSync(store) {
 
   const children = [
     el('div', { class: 'topbar' }, [
-      el('button', { class: 'link', text: '← Về màn chính', onClick: () => goTo('/') }),
+      el('button', { class: 'link', text: '← Tổng quan', onClick: () => goTo('/') }),
       el('span', { class: 'progress', text: `${store.eventCount} sự kiện ở máy này` }),
     ]),
     el('h1', { text: 'Đồng bộ giữa các máy' }),

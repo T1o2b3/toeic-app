@@ -8,6 +8,7 @@ import { createEvent } from '../logic/events.js';
 import { reduceVocabState } from '../logic/vocab-state.js';
 import { reduceQuizState } from '../logic/quiz.js';
 import { reduceCaptured, buildWordIndex } from '../logic/capture.js';
+import { buildSearchIndex } from '../logic/lookup.js';
 import { openDb, appendEvents, readAllEvents } from './db.js';
 import { getDeviceId } from './device.js';
 import { loadAllVocabDecks, loadQuestionBank, loadListeningBank } from './content.js';
@@ -33,6 +34,7 @@ export async function createStore({ factory, fetchImpl } = {}) {
   let quizStates = reduceQuizState(events);
   let captured = reduceCaptured(events);
   const wordIndex = buildWordIndex(vocab.entries);
+  let searchIndex = null; // dựng lần đầu khi cần tra từ, không tốn thời gian lúc mở app
   const listeners = new Set();
 
   const notify = () => {
@@ -54,6 +56,10 @@ export async function createStore({ factory, fetchImpl } = {}) {
     /** Chỉ mục từ -> mục deck, dùng để biết một từ gạt được đã có trong deck chưa. */
     wordIndex,
     get eventCount() { return events.length; },
+    /** Toàn bộ nhật ký, CHỈ ĐỌC (không sửa). Dashboard tính số liệu từ đây; muốn bản sao thì dùng exportEvents(). */
+    get events() { return events; },
+    /** Chỉ mục tra cứu từ vựng (xem logic/lookup.js), dựng một lần. */
+    get searchIndex() { return (searchIndex ??= buildSearchIndex(vocab.entries)); },
 
     /**
      * Ghi một sự kiện mới rồi tính lại trạng thái.

@@ -50,6 +50,16 @@ export function planToday({ entries, states, questions, quizStates, minutes = 15
 }
 
 /**
+ * Nút "15 phút hôm nay" nên dẫn tới đâu: có việc từ vựng (ôn hoặc từ mới) thì vào ôn thẻ; kế hoạch chỉ toàn
+ * câu Part 5 thì đi thẳng tới Part 5 — vào màn ôn thẻ trống rồi mới bấm "làm tiếp Part 5" là một lần chạm thừa.
+ * @param {{vocabDue: number, vocabNew: number}} plan
+ * @returns {'/review'|'/quiz'}
+ */
+export function planTarget(plan) {
+  return plan.vocabDue + plan.vocabNew > 0 ? '/review' : '/quiz';
+}
+
+/**
  * Mô tả kế hoạch bằng tiếng Việt để hiện trên nút.
  * @param {{vocabDue: number, vocabNew: number, quiz: number, seconds: number}} plan
  * @returns {string}

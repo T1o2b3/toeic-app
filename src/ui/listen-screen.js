@@ -57,7 +57,7 @@ export function renderListen(store) {
     return el('div', {}, [
       el('h1', { text: 'Luyện nghe Part 2' }),
       el('p', { class: 'empty', text: 'Chưa có câu nghe nào. Chạy pipeline: npm run build:listening' }),
-      el('button', { class: 'secondary', onClick: () => goTo('/') }, [el('span', { text: 'Về màn chính' })]),
+      el('button', { class: 'secondary', onClick: () => goTo('/exams') }, [el('span', { text: 'Về mục Bài thi' })]),
     ]);
   }
 
@@ -69,7 +69,7 @@ export function renderListen(store) {
       el('p', { class: 'empty', text: count > 0
         ? `Đã nghe ${count} câu. Câu nào sai sẽ quay lại ở lượt sau.`
         : 'Đã làm hết các câu nghe hiện có.' }),
-      el('button', { class: 'primary', onClick: () => goTo('/') }, [el('span', { text: 'Về màn chính' })]),
+      el('button', { class: 'primary', onClick: () => goTo('/exams') }, [el('span', { text: 'Về mục Bài thi' })]),
     ]);
   }
 
@@ -88,7 +88,7 @@ export function renderListen(store) {
 
   const children = [
     el('div', { class: 'topbar' }, [
-      el('button', { class: 'link', text: '← Về màn chính', onClick: () => goTo('/') }),
+      el('button', { class: 'link', text: '← Bài thi', onClick: () => goTo('/exams') }),
       el('span', { class: 'progress', text: `còn ${remaining} câu · ${question.errorType}` }),
     ]),
     el('div', { class: 'card big' }, [

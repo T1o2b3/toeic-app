@@ -59,7 +59,7 @@ export function renderWords(store, params) {
 
   return el('div', {}, [
     el('div', { class: 'topbar' }, [
-      el('button', { class: 'link', text: '← Về màn chính', onClick: () => goTo('/') }),
+      el('button', { class: 'link', text: '← Từ vựng', onClick: () => goTo('/vocab') }),
       el('span', { class: 'progress', text: `${counts[FILTERS.ALL]} từ trong kho` }),
     ]),
     el('h1', { text: 'Kho từ vựng' }),

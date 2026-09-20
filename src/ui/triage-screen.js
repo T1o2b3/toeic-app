@@ -88,7 +88,7 @@ export function renderTriage(store) {
 
   return el('div', {}, [
     el('div', { class: 'topbar' }, [
-      el('button', { class: 'link', text: '← Về màn chính', onClick: () => goTo('/') }),
+      el('button', { class: 'link', text: '← Từ vựng', onClick: () => goTo('/vocab') }),
       el('span', { class: 'progress', text: reviewing
         ? `xem lại từ đã chấm (${revisitIndex + 1}/${history.length})`
         : `còn ${remaining} từ trong lượt · ${untriaged} từ ${tierNote()}` }),
@@ -205,7 +205,7 @@ function renderDone(store, { finished, untriaged }) {
       el('h1', { text: 'Phân loại xong' }),
       el('p', { class: 'empty', text: 'Mọi từ trong deck đã được phân loại.' }),
       library,
-      el('button', { class: 'secondary', onClick: () => goTo('/') }, [el('span', { text: 'Về màn chính' })]),
+      el('button', { class: 'secondary', onClick: () => goTo('/vocab') }, [el('span', { text: 'Về mục Từ vựng' })]),
       fixLast,
     ]);
   }
@@ -218,7 +218,7 @@ function renderDone(store, { finished, untriaged }) {
       el('span', { text: `Làm tiếp ${Math.min(ROUND_SIZE, untriaged)} từ nữa` }),
     ]),
     library,
-    el('button', { class: 'secondary', onClick: () => goTo('/') }, [el('span', { text: 'Về màn chính' })]),
+    el('button', { class: 'secondary', onClick: () => goTo('/vocab') }, [el('span', { text: 'Về mục Từ vựng' })]),
     fixLast,
   ]);
 }

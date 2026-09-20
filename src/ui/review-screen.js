@@ -81,7 +81,7 @@ export function renderReview(store) {
 
   const children = [
     el('div', { class: 'topbar' }, [
-      el('button', { class: 'link', text: '← Về màn chính', onClick: () => goTo('/') }),
+      el('button', { class: 'link', text: '← Từ vựng', onClick: () => goTo('/vocab') }),
       el('span', { class: 'progress', text: `còn ${remaining} thẻ` }),
     ]),
     front,
@@ -124,7 +124,7 @@ function renderDone(store, counts) {
           el('small', { text: 'phần còn lại của phiên hôm nay' }),
         ])
       : '',
-    el('button', { class: 'secondary', onClick: () => goTo('/') }, [el('span', { text: 'Về màn chính' })]),
+    el('button', { class: 'secondary', onClick: () => goTo('/vocab') }, [el('span', { text: 'Về mục Từ vựng' })]),
   ]);
 }
 

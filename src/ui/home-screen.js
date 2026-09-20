@@ -1,230 +1,197 @@
 /**
- * Màn chính: cho biết hôm nay có gì để học, tốn bao lâu (RESEARCH.md R1, R2).
+ * Tổng quan (dashboard): hôm nay làm gì, tuần này đã làm bao nhiêu, đang tiến tới đâu (D36).
+ *
+ * Trả lời ba câu hỏi theo thứ tự người học hay hỏi:
+ *   1. Bây giờ nên làm gì?            → thẻ "Hôm nay" với một nút chính (RESEARCH.md R1, R2)
+ *   2. Mình có đều đặn không?          → số việc 7 ngày, số ngày có học, chuỗi ngày, biểu đồ 14 ngày
+ *   3. Mình đang tiến bộ ở đâu?        → tiến độ từ vựng; độ chính xác từng phần thi + lỗ hổng
+ * Nút chi tiết (ôn thẻ, phân loại, luyện câu...) nằm ở mục Từ vựng và Bài thi, không ở đây.
  */
 import { el, goTo } from './dom.js';
-import { countUntriaged, reviewQueue, weakWords } from '../logic/vocab-state.js';
-import { LEVEL_ORDER, LEVEL_INFO, countByLevel } from '../logic/vocab-levels.js';
-import { estimateSessionTime, summarizeQueue } from '../logic/format.js';
-import { quizQueue, accuracyByErrorType } from '../logic/quiz.js';
-import { LISTEN_ROUND_SIZE, estimateMinutes } from '../logic/listen.js';
-import { planToday, describePlan } from '../logic/today.js';
+import { countUntriaged } from '../logic/vocab-state.js';
+import { planToday, describePlan, planTarget } from '../logic/today.js';
+import {
+  activityByDay, studyStreak, examOverview, vocabProgress, weakestTypes,
+  estimateStudyMinutes, matureTrend, combinedExam, WEEKLY_GOAL_MINUTES, MATURE_DAYS,
+} from '../logic/dashboard.js';
 import { buildExport, exportFileName } from '../logic/export.js';
 import { isSupabaseConfigured } from '../data/supabase.js';
-import { getRoundSize, setRoundSize, getTier, setTier } from '../data/prefs.js';
-import { TIER_ORDER, TIER_INFO, ALL_TIERS, filterByTier, untriagedByTier } from '../logic/deck-tiers.js';
-import { ROUND_SIZES } from '../logic/prefs.js';
+import { getTier } from '../data/prefs.js';
+import { TIER_ORDER, filterByTier } from '../logic/deck-tiers.js';
+import { renderActivityChart, renderLevelBar, renderAccuracyBars } from './dashboard-charts.js';
 
 /** Thời điểm build, do Vite nhúng vào (xem vite.config.js). */
 const BUILD_TIME = typeof __BUILD_TIME__ === 'string' ? __BUILD_TIME__ : 'dev';
+
+/** Khung một khối của dashboard: tiêu đề (bấm được nếu có `to`) + nội dung. */
+function panel(title, to, children) {
+  const head = to
+    ? el('button', { class: 'panel-head link-row', onClick: () => goTo(to) }, [
+        el('span', { text: title }), el('span', { class: 'panel-more', text: 'Xem ›' }),
+      ])
+    : el('div', { class: 'panel-head' }, [el('span', { text: title })]);
+  return el('section', { class: 'panel' }, [head, ...children]);
+}
 
 /**
  * @param {object} store
  * @returns {HTMLElement}
  */
 export function renderHome(store) {
-  const states = store.states;
-  const tier = getTier(TIER_ORDER);
-  // Mọi con số ở màn này tính theo tầng đang chọn, để khớp với thứ màn học sẽ đưa ra.
-  const entries = filterByTier(store.entries, tier);
-  const queue = reviewQueue(entries, states, {});
-  const { total, fresh, due } = summarizeQueue(queue);
-  const untriaged = countUntriaged(entries, states);
-  const weak = weakWords(states);
-  const learning = [...states.values()].filter((s) => s.triaged && !s.known).length;
+  const now = Date.now();
+  const events = store.events;
+  const activity = activityByDay(events, { now, days: 14 });
+  const streak = studyStreak(events, now);
 
-  const stat = (value, label) =>
-    el('div', { class: 'stat' }, [
-      el('div', { class: 'stat-value', text: String(value) }),
-      el('div', { class: 'stat-label', text: label }),
-    ]);
-
-  const sections = [
-    el('h1', { text: 'Hôm nay học gì' }),
-    el('p', { class: 'subtitle', text: tier === ALL_TIERS
-      ? `${store.entries.length} từ · ${(store.decks ?? [store.deck]).map((d) => d.deck).join(' + ')}`
-      : `Tầng ${TIER_INFO[tier].label.toLowerCase()} · ${entries.length}/${store.entries.length} từ` }),
-    renderTierChooser(store, tier),
-    el('div', { class: 'stats' }, [
-      stat(due, 'đến hạn ôn'),
-      stat(fresh, 'từ mới'),
-      stat(learning, 'đang học'),
+  return el('div', {}, [
+    el('div', { class: 'dash-title' }, [
+      el('h1', { text: 'Tổng quan' }),
+      streak > 0 ? el('span', { class: 'streak', text: `Chuỗi ${streak} ngày` }) : '',
     ]),
-  ];
-
-  const plan = planToday({
-    entries, states, questions: store.questions, quizStates: store.quizStates,
-  });
-
-  if (!plan.empty) {
-    sections.push(
-      el('button', { class: 'primary', onClick: () => goTo('/review') }, [
-        el('span', { text: '15 phút hôm nay' }),
-        el('small', { text: describePlan(plan) }),
-      ]),
-    );
-  }
-
-  if (total > 0) {
-    sections.push(
-      el('button', { class: 'secondary', onClick: () => goTo('/review') }, [
-        el('span', { text: 'Ôn tập từ vựng' }),
-        el('small', { text: `${total} thẻ · ${estimateSessionTime(due, fresh)}` }),
-      ]),
-    );
-  } else if (untriaged > 0) {
-    sections.push(el('p', { class: 'empty', text: 'Chưa có thẻ nào đến hạn. Phân loại thêm từ để bắt đầu học.' }));
-  } else {
-    sections.push(el('p', { class: 'empty', text: 'Xong hết rồi. Quay lại sau nhé.' }));
-  }
-
-  if (untriaged > 0) {
-    const batch = Math.min(untriaged, 20);
-    sections.push(
-      el('button', { class: 'secondary', onClick: () => goTo('/triage') }, [
-        el('span', { text: 'Phân loại từ vựng' }),
-        el('small', { text: `còn ${untriaged} từ · làm ${batch} từ · ~${Math.max(1, Math.round(batch * 4 / 60))} phút` }),
-      ]),
-    );
-  }
-
-  const byLevel = countByLevel(states);
-  const triagedCount = Object.values(byLevel).reduce((sum, count) => sum + count, 0);
-
-  // Kho từ vựng + ôn chủ động (D32): chỗ nhìn lại và tự kiểm tra, tách khỏi luồng lướt một chiều.
-  sections.push(
-    el('button', { class: 'secondary', onClick: () => goTo('/words') }, [
-      el('span', { text: 'Kho từ vựng' }),
-      el('small', { text: triagedCount > 0
-        ? `${triagedCount} từ đã phân loại · xem lại, tìm kiếm, đổi mức`
-        : 'xem, tìm kiếm và đổi mức từng từ' }),
-    ]),
-  );
-  if (triagedCount > 0) {
-    sections.push(
-      el('button', { class: 'secondary', onClick: () => goTo('/practice') }, [
-        el('span', { text: 'Ôn chủ động' }),
-        el('small', { text: 'tự chọn nhóm từ để kiểm tra lại trí nhớ' }),
-      ]),
-    );
-  }
-
-  if (triagedCount > 0) {
-    // Mỗi dòng bấm được: nhảy thẳng tới danh sách từ ở mức đó trong kho.
-    sections.push(el('div', { class: 'gaps' }, [
-      el('div', { class: 'gaps-title', text: 'Đã phân loại tới đâu' }),
-      ...LEVEL_ORDER.map((level) => el('button', {
-        class: 'gap-row gap-link',
-        onClick: () => goTo(`/words?f=${level}`),
-      }, [
-        el('span', { text: LEVEL_INFO[level].label }),
-        el('span', { class: 'gap-value', text: `${byLevel[level]} từ ›` }),
-      ])),
-    ]));
-  }
-
-  if (weak.length > 0) {
-    sections.push(
-      el('button', { class: 'secondary', onClick: () => goTo('/weak') }, [
-        el('span', { text: 'Từ hay sai' }),
-        el('small', { text: `${weak.length} từ cần để mắt` }),
-      ]),
-    );
-  }
-
-  if (store.questions.length > 0) {
-    const size = getRoundSize();
-    const quiz = quizQueue(store.questions, store.quizStates, { size });
-    sections.push(
-      el('button', { class: 'secondary', onClick: () => goTo('/quiz') }, [
-        el('span', { text: 'Luyện Part 5' }),
-        el('small', { text: `${quiz.length} câu · ~${Math.max(1, Math.round(quiz.length * 25 / 60))} phút` }),
-      ]),
-      el('div', { class: 'chooser' }, [
-        el('span', { class: 'chooser-label', text: 'Mỗi lượt' }),
-        ...ROUND_SIZES.map((option) => el('button', {
-          class: option === size ? 'chip-btn active' : 'chip-btn',
-          text: String(option),
-          onClick: () => { setRoundSize(option); store.refresh(); },
-        })),
-        el('span', { class: 'chooser-label', text: 'câu' }),
-      ]),
-    );
-
-    const weakTypes = accuracyByErrorType(store.questions, store.quizStates)
-      .filter((row) => row.attempts >= 3 && row.accuracy < 0.8)
-      .slice(0, 3);
-    if (weakTypes.length > 0) {
-      sections.push(el('div', { class: 'gaps' }, [
-        el('div', { class: 'gaps-title', text: 'Lỗ hổng theo loại kiến thức' }),
-        ...weakTypes.map((row) => el('div', { class: 'gap-row' }, [
-          el('span', { text: row.errorType }),
-          el('span', { class: 'gap-value', text: `${Math.round(row.accuracy * 100)}% đúng (${row.attempts} câu)` }),
-        ])),
-      ]));
-    }
-  }
-
-  if (store.listening.length > 0) {
-    const round = quizQueue(store.listening, store.quizStates, { size: LISTEN_ROUND_SIZE });
-    sections.push(
-      el('button', { class: 'secondary', onClick: () => goTo('/listen') }, [
-        el('span', { text: 'Luyện nghe Part 2' }),
-        el('small', { text: `${round.length} câu · ~${estimateMinutes(round.length)} phút · nên đeo tai nghe` }),
-      ]),
-    );
-    const weakListening = accuracyByErrorType(store.listening, store.quizStates)
-      .filter((row) => row.attempts >= 3 && row.accuracy < 0.8)
-      .slice(0, 3);
-    if (weakListening.length > 0) {
-      sections.push(el('div', { class: 'gaps' }, [
-        el('div', { class: 'gaps-title', text: 'Lỗ hổng phần nghe' }),
-        ...weakListening.map((row) => el('div', { class: 'gap-row' }, [
-          el('span', { text: row.errorType }),
-          el('span', { class: 'gap-value', text: `${Math.round(row.accuracy * 100)}% đúng (${row.attempts} câu)` }),
-        ])),
-      ]));
-    }
-  }
-
-  sections.push(
+    renderToday(store),
+    renderKpis(store, events, now),
+    panel('14 ngày gần đây', null, [renderActivityChart(activity)]),
+    renderVocabPanel(store),
+    renderExamsPanel(store, events, now),
     el('button', { class: 'secondary', onClick: () => goTo('/sync') }, [
       el('span', { text: 'Đồng bộ giữa các máy' }),
       el('small', { text: isSupabaseConfigured() ? 'Mac ↔ iPhone' : 'chưa cấu hình — dữ liệu chỉ ở máy này' }),
     ]),
     el('div', { class: 'actions' }, [
-      el('button', {
-        class: 'link',
-        text: '⬇ Xuất dữ liệu ra file',
-        onClick: () => downloadBackup(store),
-      }),
+      el('button', { class: 'link', text: '⬇ Xuất dữ liệu ra file', onClick: () => downloadBackup(store) }),
     ]),
     el('p', { class: 'footnote', text: `${store.eventCount} sự kiện đã ghi trên máy này · bản ${BUILD_TIME}` }),
-  );
-
-  return el('div', {}, sections);
+  ]);
 }
 
 /**
- * Chọn tầng từ vựng. Deck xếp theo tần suất nên mặc định màn phân loại bắt đầu từ từ dễ nhất;
- * ai đã ở mức 850 thì chọn thẳng tầng trên để khỏi cày lại 400 từ đã biết (xem deck-tiers.js).
+ * Ba con số đầu trang, mỗi số trả lời một câu người học thật sự hỏi:
+ *   - Học tuần này: đã học bao nhiêu phút so với mục tiêu tuần?  (ước tính từ số việc × thời gian trung bình)
+ *   - Từ nhớ vững:  thật sự nhớ được bao nhiêu từ?               (thẻ có lần ôn kế tiếp cách ≥ 21 ngày)
+ *   - Đúng ở bài thi: làm bài đúng bao nhiêu, đang lên hay xuống? (Part 5 + nghe, 7 ngày, so với tuần trước)
+ * Xu hướng luôn kèm mũi tên VÀ chữ, không chỉ dựa vào màu.
  */
-function renderTierChooser(store, current) {
-  const counts = untriagedByTier(store.entries, store.states);
-  const option = (value, label, note) => el('button', {
-    class: value === current ? 'chip-btn active' : 'chip-btn',
-    title: note,
-    text: label,
-    onClick: () => { setTier(value, TIER_ORDER); store.refresh(); },
-  });
+function renderKpis(store, events, now) {
+  const minutes = estimateStudyMinutes(events, { now });
+  const goalMet = minutes >= WEEKLY_GOAL_MINUTES;
+  const mature = matureTrend(events, store.states, now);
+  const exam = combinedExam(events, now);
 
-  return el('div', { class: 'chooser' }, [
-    el('span', { class: 'chooser-label', text: 'Tầng từ' }),
-    option(ALL_TIERS, 'Tất cả', 'không lọc gì'),
-    ...TIER_ORDER.map((value) => option(
-      value,
-      `${TIER_INFO[value].label} (${counts[value]})`,
-      `${TIER_INFO[value].hint} — còn ${counts[value]} từ chưa phân loại`,
-    )),
+  let matureNote = `ôn cách ≥ ${MATURE_DAYS} ngày`;
+  if (mature.delta > 0) matureNote = `▲ +${mature.delta} so với tuần trước`;
+  else if (mature.delta < 0) matureNote = `▼ ${mature.delta} so với tuần trước`;
+
+  let examNote = 'chưa làm câu nào tuần này';
+  if (exam.recent.attempts > 0) {
+    examNote = `${exam.recent.attempts} câu · 7 ngày qua`;
+    if (exam.delta > 0) examNote = `▲ +${exam.delta} điểm so với tuần trước`;
+    else if (exam.delta < 0) examNote = `▼ ${exam.delta} điểm so với tuần trước`;
+    else if (exam.delta === 0) examNote = '＝ như tuần trước';
+  }
+
+  return el('div', { class: 'kpis' }, [
+    el('div', { class: 'kpi', title: 'Ước tính từ số việc đã làm × thời gian trung bình mỗi việc, không phải đồng hồ bấm giờ' }, [
+      el('div', { class: 'kpi-label', text: 'Học tuần này' }),
+      el('div', { class: 'kpi-value' }, [`${minutes}`, el('span', { class: 'kpi-unit', text: ' phút' })]),
+      el('div', {
+        class: 'meter', role: 'progressbar', 'aria-valuemin': '0', 'aria-valuemax': String(WEEKLY_GOAL_MINUTES),
+        'aria-valuenow': String(Math.min(minutes, WEEKLY_GOAL_MINUTES)), 'aria-label': 'Tiến độ mục tiêu học tuần',
+      }, [el('div', { class: 'meter-fill', style: `width:${Math.min(100, (minutes / WEEKLY_GOAL_MINUTES) * 100)}%` })]),
+      el('div', { class: 'kpi-note', text: goalMet ? `✓ đạt mục tiêu ${WEEKLY_GOAL_MINUTES} phút` : `mục tiêu ${WEEKLY_GOAL_MINUTES} phút` }),
+    ]),
+    el('div', { class: 'kpi', title: `Từ có lần ôn kế tiếp cách từ ${MATURE_DAYS} ngày trở lên — thuật toán FSRS thấy bạn thật sự nhớ` }, [
+      el('div', { class: 'kpi-label', text: 'Từ nhớ vững' }),
+      el('div', { class: 'kpi-value', text: String(mature.now) }),
+      el('div', { class: 'kpi-note', text: matureNote }),
+    ]),
+    el('div', { class: 'kpi', title: 'Độ chính xác gộp Part 5 và luyện nghe trong 7 ngày gần nhất' }, [
+      el('div', { class: 'kpi-label', text: 'Đúng ở bài thi' }),
+      el('div', { class: 'kpi-value', text: exam.recent.accuracy === null ? '—' : `${Math.round(exam.recent.accuracy * 100)}%` }),
+      el('div', { class: 'kpi-note', text: examNote }),
+    ]),
+  ]);
+}
+
+/** Thẻ "Hôm nay": MỘT nút chính. Hết việc đến hạn thì gợi ý việc kế tiếp thay vì để trống. */
+function renderToday(store) {
+  const entries = filterByTier(store.entries, getTier(TIER_ORDER));
+  const plan = planToday({ entries, states: store.states, questions: store.questions, quizStates: store.quizStates });
+
+  // Người mới (chưa phân loại từ nào) thì việc đầu tiên là phân loại — chưa có thẻ nào để ôn, chỉ toàn câu Part 5 là gợi ý lạc hướng.
+  const newcomer = ![...store.states.values()].some((state) => state.triaged);
+
+  let action;
+  if (newcomer && countUntriaged(entries, store.states) > 0) {
+    action = el('button', { class: 'primary', onClick: () => goTo('/triage') }, [
+      el('span', { text: 'Bắt đầu: phân loại từ vựng' }),
+      el('small', { text: 'chấm 20 từ đầu tiên (~2 phút) để app biết bạn cần học gì' }),
+    ]);
+  } else if (!plan.empty) {
+    action = el('button', { class: 'primary', onClick: () => goTo(planTarget(plan)) }, [
+      el('span', { text: '15 phút hôm nay' }),
+      el('small', { text: describePlan(plan) }),
+    ]);
+  } else if (countUntriaged(entries, store.states) > 0) {
+    action = el('button', { class: 'primary', onClick: () => goTo('/triage') }, [
+      el('span', { text: 'Phân loại thêm từ vựng' }),
+      el('small', { text: 'chưa có thẻ nào đến hạn — thêm từ để có gì học' }),
+    ]);
+  } else {
+    action = el('p', { class: 'empty', text: 'Hôm nay không còn việc đến hạn. Luyện thêm ở mục Bài thi nhé.' });
+  }
+  return el('section', { class: 'panel today' }, [el('div', { class: 'panel-head' }, [el('span', { text: 'Hôm nay' })]), action]);
+}
+
+/** Tiến độ từ vựng: một thanh xếp chồng theo mức + chú thích, bấm dòng để mở đúng danh sách trong kho. */
+function renderVocabPanel(store) {
+  const progress = vocabProgress(store.entries, store.states);
+  const percent = progress.total === 0 ? 0 : Math.round((progress.triaged / progress.total) * 100);
+  return panel('Từ vựng', '/vocab', [
+    el('div', { class: 'hero' }, [
+      el('span', { class: 'hero-value', text: String(progress.triaged) }),
+      el('span', { class: 'hero-label', text: ` / ${progress.total} từ đã phân loại (${percent}%)` }),
+      el('div', { class: 'hero-sub', text: `${progress.mastered} thành thạo · ${progress.learning} đang học` }),
+    ]),
+    renderLevelBar(progress, (key) => goTo(`/words?f=${key}`)),
+  ]);
+}
+
+/** Độ chính xác từng phần thi (ô số lớn) + các dạng câu yếu nhất gộp cả hai phần. */
+function renderExamsPanel(store, events, now) {
+  const tiles = [
+    examTile('Part 5', examOverview(events, 'part5', now), store.questions.length),
+    examTile('Nghe Part 2', examOverview(events, 'listening', now), store.listening.length),
+  ];
+  const weak = [
+    ...weakestTypes(store.questions, store.quizStates).map((row) => ({ ...row, part: 'Part 5' })),
+    ...weakestTypes(store.listening, store.quizStates).map((row) => ({ ...row, part: 'Nghe' })),
+  ].sort((a, b) => a.accuracy - b.accuracy).slice(0, 4);
+
+  return panel('Bài thi', '/exams', [
+    el('div', { class: 'tiles' }, tiles),
+    weak.length > 0
+      ? el('div', {}, [el('div', { class: 'gaps-title', text: 'Dạng câu yếu nhất (đã làm ≥ 3 câu)' }), renderAccuracyBars(weak)])
+      : el('p', { class: 'empty small', text: 'Làm thêm vài câu mỗi dạng để thấy chỗ nào còn yếu.' }),
+  ]);
+}
+
+/** Một ô: tên phần thi, % đúng (7 ngày gần nhất, không có thì tất cả), và xu hướng so với tuần trước bằng chữ + mũi tên. */
+function examTile(label, overview, available) {
+  const recent = overview.recent.attempts > 0;
+  const basis = recent ? overview.recent : overview.all;
+  let trend = '';
+  if (overview.delta !== null) {
+    if (overview.delta > 0) trend = `▲ ${overview.delta} điểm so với tuần trước`;
+    else if (overview.delta < 0) trend = `▼ ${-overview.delta} điểm so với tuần trước`;
+    else trend = '＝ như tuần trước';
+  }
+  return el('div', { class: 'tile' }, [
+    el('div', { class: 'tile-label', text: label }),
+    el('div', { class: 'tile-value', text: basis.accuracy === null ? '—' : `${Math.round(basis.accuracy * 100)}%` }),
+    el('div', { class: 'tile-note', text: available === 0
+      ? 'chưa có câu hỏi'
+      : basis.attempts === 0 ? 'chưa làm câu nào' : `${basis.attempts} câu · ${recent ? '7 ngày qua' : 'tổng cộng'}` }),
+    trend ? el('div', { class: 'tile-note', text: trend }) : '',
   ]);
 }
 

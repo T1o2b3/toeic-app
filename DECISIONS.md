@@ -272,6 +272,32 @@ phủ sóng từ vựng Part 5 — mới thấy NAWL đóng góp 1 từ. Ghi l�
 - **Chưa làm (ràng buộc #8):** Part 3–4 (hội thoại/bài nói, cần bảng biểu và nhiều giọng trong một đoạn), đọc trước câu
   hỏi có giờ (M10), dictation câu nghe sai (M11). Ghi âm thanh thuần từng phần nên đường ống này dùng lại được.
 
+**D36. Tổ chức lại app: thanh tab (Tổng quan · Từ vựng · Bài thi · Tra từ), dashboard mới, màn Tra từ.**
+- **Vì sao:** màn chính chứa lẫn mọi nút của từ vựng và bài thi (~12 nút) nên khó tìm, và không cho biết mình đang
+  tiến bộ hay không. Nay: Tổng quan = "làm gì hôm nay + đang tiến tới đâu"; nút học nằm ở mục Từ vựng / Bài thi.
+- **Thanh tab dưới đáy** (hợp iPhone/PWA), ẩn trong các phiên học (phân loại, ôn thẻ, luyện câu, nghe, ôn chủ động)
+  vì các màn đó có hàng nút chấm dính đáy. Nằm ngoài #app nên vẽ lại màn không làm nó nháy. Nút "←" ở các màn học
+  trỏ về đúng mục (Từ vựng / Bài thi) thay vì về màn chính.
+- **Ba số đầu dashboard** (thay cho "việc trong 7 ngày / ngày có học / thẻ đến hạn" — Huy thấy vô nghĩa):
+  1. *Học tuần này* — số phút ƯỚC TÍNH (số việc × thời gian trung bình; nhật ký không ghi giờ) so với mục tiêu
+     90 phút/tuần (giữa 1–2 giờ/tuần), có thanh tiến độ;
+  2. *Từ nhớ vững* — thẻ có lần ôn kế tiếp cách ≥ 21 ngày (ngưỡng thẻ trưởng thành của Anki): khó "tự khen" hơn mức
+     "thành thạo" tự chấm; kèm chênh lệch so với tuần trước, tính lùi bằng cách dựng lại trạng thái từ nhật ký;
+  3. *Đúng ở bài thi* — độ chính xác gộp Part 5 + nghe, 7 ngày, xu hướng so với tuần trước (mũi tên + chữ).
+- **KHÔNG làm "dự đoán điểm" ở giai đoạn này** (Huy gợi ý): câu hỏi do AI ra đề nên độ khó không hiệu chuẩn theo đề
+  thật, chưa có Part 3/4/6/7, chưa có bài thi thử đủ bộ. Một con số điểm bây giờ là số bịa có vẻ khoa học, dễ làm
+  người học tin sai. Làm sau khi có bài thi thử đủ bộ (M15) và đủ dữ liệu để đối chiếu (PLAN.md, Backlog).
+- **Biểu đồ** theo skill dataviz, chạy `validate_palette.js` (không đánh giá bằng mắt): cột xếp chồng 14 ngày dùng 3 màu
+  đầu của bảng đã kiểm định (xanh/cam/ngọc) — đạt mọi cổng, riêng màu ngọc dưới 3:1 nên bù bằng chú thích chữ, số in
+  trực tiếp và bảng "Xem dạng bảng"; thanh mức từ vựng dùng thang xanh có thứ tự và CHỈ vẽ các từ đã phân loại
+  (deck ~2400 từ, gộp "chưa phân loại" vào thanh thì 4 mức còn lại chỉ còn vạch li ti — phát hiện khi chụp ảnh
+  màn hình thật). Chưa có giao diện tối nên mới khai báo màu bản sáng.
+- **Tra từ** (`#/lookup`): tìm cả từ chưa học, xếp hạng (đúng từ > dạng chia > bắt đầu bằng > chứa > nghĩa > cụm từ >
+  ví dụ), hiểu dạng chia (raised → raise), tiếng Việt không cần gõ dấu; mở thẻ đầy đủ và cho thêm vào danh sách học;
+  từ không có trong deck thì ghi lại (như D34) + link Wiktionary/Cambridge.
+- **Sửa hành vi cũ lộ ra khi làm dashboard:** nút "15 phút hôm nay" dẫn tới màn ôn thẻ dù kế hoạch chỉ có Part 5 →
+  nay đi thẳng tới Part 5; người mới chưa phân loại từ nào được mời phân loại trước.
+
 ## Câu hỏi còn mở
 - ~~Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng?~~ → **Đã giải quyết, xem D35** (chung repo, xét lại khi ~100 MB).
 - ~~Q2 (trước M2): xác nhận license của TSL 1.2 và NGSL.~~ → **Đã giải quyết, xem D18.**

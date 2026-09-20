@@ -37,9 +37,9 @@ beforeAll(async () => {
   ({ store, root, tick, go, key, text, click } = await bootApp());
 });
 
-describe('màn chính', () => {
+describe('mục Bài thi', () => {
   it('có nút Luyện nghe Part 2 với số câu và gợi ý tai nghe', async () => {
-    await go('#/');
+    await go('#/exams');
     expect(text()).toContain('Luyện nghe Part 2');
     expect(text()).toContain('3 câu');
     expect(text()).toContain('tai nghe');

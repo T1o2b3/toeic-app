@@ -1,0 +1,104 @@
+/* Khung điều hướng và dashboard (D36): thanh tab, các khối, biểu đồ, tra từ. Nạp sau style.css. */
+/* ===== Thanh tab dưới đáy (D36) ===== */
+.tabbar {
+  position: fixed; left: 50%; bottom: 0; transform: translateX(-50%); z-index: 20;
+  width: 100%; max-width: 34rem; display: flex;
+  background: var(--surface); border-top: 1px solid var(--border);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.tabbar[hidden] { display: none; }
+.tabbar .tab {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.1rem;
+  padding: 0.5rem 0 0.45rem; font-size: 0.72rem; color: var(--muted); text-decoration: none;
+}
+.tabbar .tab-icon { font-size: 1.15rem; line-height: 1.2; font-weight: 600; }
+.tabbar .tab.active { color: var(--accent); font-weight: 600; }
+body.has-tabbar #app { padding-bottom: calc(5rem + env(safe-area-inset-bottom)); }
+
+/* ===== Dashboard (D36) =====
+   Màu biểu đồ: 3 màu chuỗi đầu của bảng đã chạy validate_palette (xanh, cam, ngọc) và thang xanh có thứ tự
+   cho tiến độ từ vựng. Chưa có giao diện tối nên chỉ khai báo bản sáng; khi làm chế độ tối thì chỉ cần đổi ở đây. */
+:root {
+  --viz-s1: #2a78d6; --viz-s2: #eb6834; --viz-s3: #1baf7a;
+  --viz-l0: #d9d8d2; --viz-l1: #86b6ef; --viz-l2: #3987e5; --viz-l3: #1c5cab; --viz-l4: #0d366b;
+  --viz-grid: #ecebe6;
+}
+.dash-title { display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.25rem; }
+.dash-title h1 { margin: 0; }
+.streak { font-size: 0.8rem; color: var(--accent); font-weight: 600; border: 1px solid var(--accent); border-radius: 999px; padding: 0.05rem 0.6rem; }
+.panel { background: var(--surface); border: 1px solid var(--border); border-radius: 0.75rem; padding: 0.85rem 0.9rem; margin-bottom: 0.75rem; }
+.panel.today { border-color: var(--accent); }
+.panel-head { display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 0.8rem; color: var(--muted); font-weight: 600; margin-bottom: 0.6rem; }
+button.panel-head { background: none; border: none; border-radius: 0; padding: 0; text-align: left; font: inherit; font-size: 0.8rem; font-weight: 600; color: var(--muted); }
+button.panel-head span { display: inline; }
+.panel-more { font-weight: 400; }
+.panel button.primary, .panel button.secondary { margin-bottom: 0; }
+.empty.small { font-size: 0.85rem; margin: 0.25rem 0 0; }
+.hero { margin-bottom: 0.6rem; }
+.hero-value { font-size: 2.2rem; font-weight: 700; line-height: 1; }
+.hero-label { font-size: 0.85rem; color: var(--muted); }
+.hero-sub { font-size: 0.85rem; color: var(--muted); margin-top: 0.15rem; }
+.viz-caption { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.4rem; }
+
+/* Cột xếp chồng: việc đã làm mỗi ngày */
+.viz-cols { display: flex; align-items: flex-end; gap: 3px; height: 8.5rem; padding-top: 1rem; border-bottom: 1px solid var(--viz-grid); }
+.viz-col { flex: 1; min-width: 0; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: stretch; position: relative; }
+.viz-stack { display: flex; flex-direction: column-reverse; gap: 2px; min-height: 0; }
+.viz-seg { min-height: 3px; }
+.viz-seg.top { border-radius: 4px 4px 0 0; }
+.viz-val { text-align: center; font-size: 0.7rem; color: var(--fg); height: 1rem; line-height: 1rem; }
+.viz-x { position: absolute; bottom: -1.25rem; left: 0; right: 0; text-align: center; font-size: 0.62rem; color: var(--muted); }
+.viz-col.today .viz-x { color: var(--fg); font-weight: 700; }
+.viz-legend { display: flex; flex-wrap: wrap; gap: 0.9rem; margin-top: 1.6rem; font-size: 0.75rem; color: var(--muted); }
+.viz-key { display: inline-flex; align-items: center; gap: 0.3rem; }
+.viz-swatch { display: inline-block; width: 0.7rem; height: 0.7rem; border-radius: 2px; flex: none; }
+.viz-table { margin-top: 0.6rem; font-size: 0.78rem; color: var(--muted); }
+.viz-table summary { cursor: pointer; }
+.viz-table table { width: 100%; border-collapse: collapse; margin-top: 0.4rem; }
+.viz-table th, .viz-table td { text-align: right; padding: 0.15rem 0.3rem; border-bottom: 1px solid var(--viz-grid); }
+.viz-table th:first-child, .viz-table td:first-child { text-align: left; }
+
+/* Thanh xếp chồng tiến độ từ vựng */
+.viz-bar { display: flex; gap: 2px; height: 0.9rem; }
+.viz-bar-seg { min-width: 3px; border-radius: 2px; }
+.viz-bar-seg:first-child { border-radius: 4px 2px 2px 4px; }
+.viz-bar-seg:last-child { border-radius: 2px 4px 4px 2px; }
+.viz-rows { margin-top: 0.6rem; }
+.viz-row { display: flex; align-items: center; gap: 0.5rem; width: 100%; padding: 0.2rem 0; font-size: 0.85rem; }
+button.viz-row { background: none; border: none; border-radius: 0; text-align: left; color: inherit; font: inherit; font-size: 0.85rem; }
+button.viz-row span { display: inline; }
+.viz-row-label { flex: 1; }
+.viz-row-value { color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* Ô số lớn: độ chính xác từng phần thi */
+.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.75rem; }
+.tile { border: 1px solid var(--border); border-radius: 0.6rem; padding: 0.6rem 0.7rem; }
+.tile-label { font-size: 0.75rem; color: var(--muted); }
+.tile-value { font-size: 1.9rem; font-weight: 700; line-height: 1.15; }
+.tile-note { font-size: 0.72rem; color: var(--muted); }
+
+/* Thanh ngang độ chính xác theo dạng câu */
+.viz-hbars { display: grid; gap: 0.45rem; }
+.viz-hbar { display: grid; grid-template-columns: 10.5rem 1fr 2.6rem; align-items: center; gap: 0.5rem; font-size: 0.8rem; }
+.viz-hbar-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.viz-track { height: 0.55rem; background: var(--viz-grid); border-radius: 4px; overflow: hidden; }
+.viz-fill { height: 100%; background: var(--viz-s1); border-radius: 4px; }
+.viz-hbar-value { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); }
+
+/* Tra từ */
+.lookup-input { font-size: 1.05rem; }
+.lookup-results { margin-top: 0.25rem; }
+.notice { color: var(--accent); font-size: 0.9rem; margin: 0.4rem 0; }
+.ipa-inline { color: var(--muted); font-size: 0.8rem; }
+.ext-links { display: flex; gap: 1rem; margin: 0.5rem 0 1rem; }
+.lookup-none .primary { margin-top: 0.5rem; }
+
+/* Ba số đầu trang dashboard */
+.kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 0.75rem; }
+.kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 0.75rem; padding: 0.65rem 0.7rem; min-width: 0; }
+.kpi-label { font-size: 0.72rem; color: var(--muted); }
+.kpi-value { font-size: 1.75rem; font-weight: 700; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.kpi-unit { font-size: 0.8rem; font-weight: 400; color: var(--muted); }
+.kpi-note { font-size: 0.68rem; color: var(--muted); line-height: 1.3; margin-top: 0.2rem; }
+.meter { height: 0.4rem; background: var(--viz-grid); border-radius: 4px; overflow: hidden; margin-top: 0.3rem; }
+.meter-fill { height: 100%; background: var(--viz-s1); border-radius: 4px; }
