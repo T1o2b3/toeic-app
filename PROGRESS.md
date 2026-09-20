@@ -80,7 +80,28 @@ do băng quyết định (con số 5 giây lấy từ mô tả giao diện thi c
 1280×900 và 375×812: hai cột, đồng hồ chạy 00:08→00:11, chấm xong ra "⏱ 00:17 · chuẩn 02:00 cho 4 câu —
 nhanh hơn 01:43", gạt từ "successfully" vào danh sách học ngon.
 
-**3. Góp ý thứ ba (mô tả giao diện đề thi thật) — CHƯA làm, đang đối chiếu.** Xem mục "Đối chiếu với đề thật".
+**3. Góp ý thứ ba: mô tả giao diện đề thi thật (IIG) — ĐÃ ĐỐI CHIẾU, CHƯA sửa gì, chờ Huy chốt.**
+
+Đã soi từng ý trong mô tả Huy gửi so với code hiện tại:
+
+| Đề thật | App | |
+|---|---|---|
+| 120 phút / 200 câu; Nghe 45 phút, Đọc 75 phút | Thi thử chạy hai đồng hồ riêng 45 + 75 | ✅ D39 |
+| Không được quay lại phần Nghe khi đã sang Đọc | Sang phần sau là một chiều | ✅ D39 |
+| Thang 0–990, hiện điểm ngay sau khi nộp | Điểm ước lượng 10–990 kèm khoảng dao động | ✅ D39 |
+| Part 1 & 2 KHÔNG hiện câu hỏi/đáp án trên màn | Part 2 trong thi thử chỉ hiện A/B/C trống | ✅ |
+| Part 3 & 4 CÓ hiện câu hỏi/đáp án | Hiện sẵn | ✅ |
+| Đọc: màn chia đôi, văn bản trái, câu hỏi phải | `splitPane` | ✅ D41 |
+| Danh sách câu chia theo phần để theo dõi | Nút "Danh sách câu" (palette) | ✅ |
+| **Audio phát MỘT LẦN, không tua, không dừng** | Thi thử vẫn cho "▶ Nghe lại (đã nghe N lần)" | ❌ **lệch** |
+| **Tự chuyển câu sau ~5 giây dừng** | App đợi Huy bấm Tiếp | ❌ **lệch** |
+| **Đánh dấu câu chưa chắc để quay lại** | Chưa có (palette chỉ tô câu đã làm) | ❌ **thiếu** |
+| Part 1 (6 câu tả tranh) | Không có (cần ảnh) | ❌ đã biết, 194/200 |
+| Thanh trên hiện tổng số câu đã làm | Chỉ hiện trong palette, theo từng bộ | ⚠️ nhỏ |
+
+**Đề xuất của Claude:** tách đôi rõ ràng — **màn LUYỆN giữ nguyên** (nghe lại thoải mái, chỉnh tốc độ
+0.75×: đó là cách học), còn **màn THI THỬ làm đúng đề thật** (một lần, không tua, tự chuyển câu). Học và thi
+là hai việc khác nhau; làm thi thử giống thật mới đo được sức thật. Chờ Huy chốt trước khi sửa (ràng buộc #8).
 
 ### Dọn nốt refactor (kế hoạch 1A/1B/1C ở cuối file)
 - **1A XONG** — `pipeline/lib/cli.js` (`projectPath`, `today`, `flagValue`, `flagNumber`, `hasFlag`) + 8 test.
