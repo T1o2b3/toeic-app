@@ -34,6 +34,14 @@ describe('normalizeWord', () => {
   it('giữ từ ghép có gạch nối', () => {
     expect(normalizeWord('long-term')).toBe('long-term');
   });
+
+  it('cả CỤM thì không phải một từ — không ghi cụm vào nhật ký append-only được', () => {
+    // 31% phương án Part 5 dài hơn một từ; trước đây chúng bị ghi nguyên cụm và không bao giờ tra được nghĩa.
+    expect(normalizeWord('have been')).toBe('');
+    expect(normalizeWord('to be raised')).toBe('');
+    expect(normalizeWord('in contrast')).toBe('');
+    expect(normalizeWord('  amend  ')).toBe('amend');     // khoảng trắng thừa hai đầu vẫn nhận
+  });
 });
 
 describe('tokenize', () => {

@@ -12,6 +12,11 @@ Claude Code tự đọc file này ở đầu mọi phiên. Mọi quy tắc ở �
 **Đầu phiên:**
 1. Đọc `PROGRESS.md` → biết đang ở milestone nào, bước tiếp theo là gì.
 2. Chạy `git status` và `git log --oneline -5` để đối chiếu với PROGRESS.md.
+   **Rồi `git fetch --prune` + `git branch -r --no-merged main`** (Huy, 2026-09-20: "thường xuyên kiểm tra
+   branch và nếu không xung đột hãy merge khi có thể"). Nhánh nào merge sạch thì merge luôn, không để
+   nhánh sống lâu — phiên trên máy khác / trên web hay đẩy việc lên nhánh riêng, để lâu là lệch xa và
+   khó gộp. Có xung đột thì DỪNG, báo Huy chỗ đụng nhau chứ không tự chọn bên.
+   Trong phiên cũng kiểm lại, không chỉ lúc mở đầu.
 3. Tóm tắt cho Huy trong 3–5 dòng: đang ở đâu, hôm nay làm gì, ước tính bao lâu.
 
 **Sau MỖI bước con hoàn thành (không đợi hết milestone):**

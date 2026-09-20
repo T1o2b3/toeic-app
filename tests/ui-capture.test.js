@@ -93,6 +93,23 @@ describe('gạt từ lạ lúc làm Part 5 (D34)', () => {
     expect(chips.textContent).toContain('suspend');
   });
 
+  it('phương án dài hơn một từ thì tách RA TỪNG TỪ, không lấy cả cụm', async () => {
+    // 31% phương án Part 5 dài hơn một từ ("have been"). Lấy cả cụm thì ghi vào danh sách học một thứ
+    // không bao giờ tra được nghĩa — mà nhật ký là append-only nên rác đó nằm lại vĩnh viễn.
+    const question = store.questions[0];
+    const goc = question.options.B;
+    question.options.B = 'have been raised';
+    store.refresh();
+    await tick();
+    const chips = [...root.querySelectorAll('.option-capture .chip-btn')].map((b) => b.textContent.replace('＋ ', ''));
+    expect(chips).toContain('raised');
+    expect(chips).toContain('have');
+    expect(chips.some((c) => c.includes(' '))).toBe(false);      // không chip nào là cả cụm
+    question.options.B = goc;
+    store.refresh();
+    await tick();
+  });
+
   it('bấm một từ ở phương án thì thêm vào danh sách và chip đổi thành ✓', async () => {
     const events = store.eventCount;
     await click((t) => t.includes('suspend'), root.querySelector('.option-capture'));

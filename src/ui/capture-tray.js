@@ -107,7 +107,11 @@ export function renderTray(store, question, { extra = '' } = {}) {
  * @returns {HTMLElement}
  */
 export function renderOptionCapture(store, question) {
-  const words = [...new Set(Object.values(question.options).map(normalizeWord).filter(Boolean))];
+  // Tách TỪNG TỪ chứ không lấy cả phương án: 31% phương án Part 5 dài hơn một từ ("have been",
+  // "to be raised") — lấy cả cụm thì ghi vào danh sách học một thứ không tra được nghĩa.
+  const words = [...new Set(
+    Object.values(question.options).flatMap((text) => tokenize(text).map((t) => t.word)).filter(Boolean),
+  )];
   if (words.length === 0) return el('div');
 
   return el('div', { class: 'option-capture' }, [

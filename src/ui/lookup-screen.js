@@ -137,7 +137,10 @@ function renderNotFound(store, text) {
   const actions = [];
 
   if (word === '') {
-    actions.push(el('p', { class: 'empty', text: 'Gõ thêm chữ cái để tìm (tối thiểu 3 chữ cái để ghi lại).' }));
+    // Ghi lại được MỘT từ thôi (xem normalizeWord): gõ cả cụm thì nói đúng lý do, đừng bảo "gõ thêm chữ cái".
+    actions.push(el('p', { class: 'empty', text: /\s/.test(text.trim())
+      ? 'Ghi lại được từng từ một thôi — gõ lại một từ trong cụm này.'
+      : 'Gõ thêm chữ cái để tìm (tối thiểu 3 chữ cái để ghi lại).' }));
   } else if (already) {
     actions.push(
       el('p', { class: 'notice', text: `✓ Đã ghi lại “${word}” — xem ở Kho từ vựng › Đã gạt.` }),

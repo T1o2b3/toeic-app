@@ -22,7 +22,13 @@ const WORD_PATTERN = /[A-Za-z]+(?:['’-][A-Za-z]+)*/g;
  * @returns {string} rỗng nếu không phải từ đáng gạt
  */
 export function normalizeWord(raw) {
-  const word = String(raw ?? '')
+  const text = String(raw ?? '').trim();
+  // MỘT từ thôi. Trước đây cụm nhiều từ ("have been", "in contrast" — 31% phương án Part 5) được trả về
+  // nguyên cụm rồi ghi thẳng vào nhật ký: không bao giờ khớp được mục deck nào, mà nhật ký là append-only
+  // (ràng buộc #5) nên rác đó nằm lại vĩnh viễn. Muốn lấy từ trong một cụm thì `tokenize` trước.
+  if (/\s/.test(text)) return '';
+
+  const word = text
     .toLowerCase()
     .replace(/’/g, "'")
     .replace(/'s$/, '')
@@ -119,6 +125,8 @@ export function reduceCaptured(events) {
   const captured = new Map();
   for (const event of events ?? []) {
     if (event?.type !== 'vocab.captured') continue;
+    // Sự kiện cũ có thể chứa cả cụm (lỗi đã sửa): normalizeWord trả về '' nên chúng rơi khỏi danh sách.
+    // Cố ý — cụm không bao giờ tra được nghĩa, để lại chỉ làm bẩn "Kho từ vựng › Đã gạt".
     const word = normalizeWord(event.payload?.word);
     if (!word) continue;
 

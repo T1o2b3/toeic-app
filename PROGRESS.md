@@ -112,6 +112,19 @@ nhanh hơn 01:43", gạt từ "successfully" vào danh sách học ngon.
   minh được điều này). **Vẫn chưa ai xác nhận có TIẾNG ra loa** — cửa sổ trình duyệt của Claude không
   nghe được; Huy nghe thử giúp.
 
+### Việc gọn nhẹ làm thêm cuối phiên
+- **Sửa lỗi gạt cả CỤM thay vì một từ.** `normalizeWord('have been')` trước đây trả về nguyên cụm
+  `"have been"` → chip phương án của Part 5 ghi cả cụm vào danh sách học, không bao giờ tra được nghĩa.
+  **31% phương án Part 5 dài hơn một từ** nên lỗi này gặp thường xuyên. Sửa ở hai lớp: chip tách từng từ
+  (`tokenize`), và `normalizeWord` từ chối mọi chuỗi có khoảng trắng — nhật ký là append-only (ràng buộc #5)
+  nên rác ghi vào là nằm lại vĩnh viễn, phải chặn ở gốc. Sự kiện CŨ dạng cụm tự rơi khỏi "Kho từ vựng › Đã gạt".
+  Màn Tra từ gõ cả cụm nay báo đúng lý do thay vì "gõ thêm chữ cái".
+- **Đã tắt 3 server dev của project khác** (`project_linalg`, `project_kmap` chiếm cổng 5173–5176).
+  Huy cho phép tự tắt từ nay, đã ghi vào CLAUDE.md.
+- **Kiểm branch** (`git fetch --prune` + `git branch -r --no-merged main`): không có nhánh nào chưa merge.
+  Nhánh `claude/redesign-part-5-toeic-fm73hx` đã nằm trong `main` (merge e516a76) — còn sót trên GitHub,
+  xoá được nếu Huy muốn. Quy tắc kiểm branch thường xuyên đã vào CLAUDE.md.
+
 ### Dọn nốt refactor (kế hoạch 1A/1B/1C ở cuối file)
 - **1A XONG** — `pipeline/lib/cli.js` (`projectPath`, `today`, `flagValue`, `flagNumber`, `hasFlag`) + 8 test.
   Nối vào **cả 7 script** pipeline, không chỉ 4 script build: `audit-vocab` (cùng kiểu đọc cờ `--deck`),
