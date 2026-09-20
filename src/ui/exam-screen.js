@@ -233,7 +233,8 @@ export function handleExamKey(store, event) {
   if (event.key === 'ArrowLeft') { go(store, -1); return; }
   if (event.key === ' ') {
     event.preventDefault();
-    play(store, unit);
+    // Space cũng phải theo luật "một lần duy nhất", nếu không thì bấm phím là lách được nút đã khoá.
+    if (!playing && !(heard[unit.id] > 0)) play(store, unit);
     return;
   }
   const question = unit.questions.find((q) => !answers[q.id]);

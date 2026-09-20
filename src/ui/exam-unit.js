@@ -16,12 +16,25 @@ import { optionList, splitPane, questionLabel } from './blocks.js';
 const LETTERS4 = ['A', 'B', 'C', 'D'];
 const LETTERS3 = ['A', 'B', 'C'];
 
-/** Nút Nghe của một đơn vị âm thanh. */
+/**
+ * Nút Nghe của một đơn vị âm thanh trong THI THỬ: mỗi đoạn phát ĐÚNG MỘT LẦN, không tua, không nghe lại —
+ * đúng như đề thi trên máy (Huy chốt 2026-09-20, xem M21). Màn LUYỆN thì ngược lại: nghe lại bao nhiêu
+ * cũng được và chỉnh được tốc độ, vì đó là lúc học chứ không phải lúc đo sức.
+ *
+ * Phát lỗi giữa chừng thì `heard` KHÔNG tăng (xem exam-screen.play) nên vẫn bấm lại được: trục trặc kỹ thuật
+ * không được phép làm mất câu.
+ */
 function renderPlay(ctx, label) {
+  const done = ctx.heard > 0;
+  const off = done || ctx.playing;
   return el('div', { class: 'card big' }, [
-    el('button', { class: 'primary listen-play', onClick: ctx.play }, [
-      el('span', { text: ctx.playing ? '🔊 Đang phát…' : ctx.heard > 0 ? `▶ Nghe lại (đã nghe ${ctx.heard} lần)` : `▶ ${label}` }),
-      el('small', { text: 'đề thật chỉ phát một lần — ở đây nghe lại được' }),
+    el('button', {
+      class: 'primary listen-play',
+      disabled: off ? 'disabled' : false,
+      onClick: () => { if (!off) ctx.play(); },
+    }, [
+      el('span', { text: ctx.playing ? '🔊 Đang phát…' : done ? '✓ Đã nghe xong' : `▶ ${label}` }),
+      el('small', { text: done ? 'đề thật không cho nghe lại' : 'phát MỘT lần duy nhất, không tua lại' }),
     ]),
     ctx.error ? el('div', { class: 'warn', text: ctx.error }) : '',
   ]);

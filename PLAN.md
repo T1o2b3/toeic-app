@@ -87,8 +87,10 @@ toeic-app/
   Đủ nội dung để dựng đúng 194 câu (đã kiểm bằng dữ liệu thật); mới đủ MỘT đề nên chưa có nhiều đề khác nhau.
 - [ ] M16. Làm dở trên máy này, tiếp trên máy khác; màn xem lại sau bài.
 - [ ] M21. Thi thử giống đề thật hơn (Huy gửi mô tả giao diện thi của IIG, 2026-09-20 — bảng đối chiếu đầy đủ
-  ở PROGRESS.md). Ba chỗ còn lệch: **audio chỉ phát một lần, không tua** · **tự chuyển câu sau ~5 giây** ·
-  **đánh dấu câu để quay lại**. Chỉ áp cho màn THI THỬ; màn luyện giữ nghe lại + chỉnh tốc độ. Chờ Huy chốt.
+  ở PROGRESS.md). Chỉ áp cho màn THI THỬ; màn luyện giữ nghe lại + chỉnh tốc độ.
+  - [x] Audio phát MỘT LẦN, không tua, không nghe lại ✅ 2026-09-20 (Huy chốt làm mục này trước).
+  - [ ] Tự chuyển câu sau ~5 giây dừng.
+  - [ ] Đánh dấu câu chưa chắc để quay lại (chỉ có tác dụng ở phần Đọc).
 
 ## Giai đoạn 5 — Hoàn thiện & mở rộng (tuần 9–10 trở đi, ~6 giờ + liên tục)
 - [ ] M17. Trang ngữ pháp & từ nối (tra cứu + liên kết câu từng sai).

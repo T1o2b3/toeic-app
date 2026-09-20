@@ -152,7 +152,27 @@ describe('Part 2 và bộ nghe trong thi thử', () => {
     expect(text()).not.toContain('signed contract');
     await click((t) => t.includes('Nghe câu này'));
     expect(fake.calls.at(-1).filter((s) => s.type === 'clip').map((s) => s.key)).toEqual(['question', 'A', 'B', 'C']);
-    expect(text()).toContain('đã nghe 1 lần');
+    expect(text()).toContain('Đã nghe xong');
+  });
+
+  it('nghe xong là KHOÁ, không nghe lại được — kể cả bằng phím Space (đề thật phát một lần, M21)', async () => {
+    const played = fake.play.mock.calls.length;
+    const button = root.querySelector('button.listen-play');
+    expect(button.disabled).toBe(true);
+    expect(button.textContent).toContain('đề thật không cho nghe lại');
+    button.click();
+    await key(' ');
+    await tick(30);
+    expect(fake.play.mock.calls).toHaveLength(played);      // không phát thêm lần nào
+  });
+
+  it('rời đơn vị rồi quay lại vẫn không nghe thêm được (đếm theo từng đơn vị, không reset khi chuyển câu)', async () => {
+    const played = fake.play.mock.calls.length;
+    await key('ArrowRight'); await tick(30);
+    expect(root.querySelector('button.listen-play').disabled).toBe(false);   // câu MỚI thì nghe được
+    await key('ArrowLeft'); await tick(30);
+    expect(root.querySelector('button.listen-play').disabled).toBe(true);    // câu cũ vẫn khoá
+    expect(fake.play.mock.calls).toHaveLength(played);
   });
 
   it('điều hướng bằng ← → và nút Trước/Tiếp; ở đơn vị đầu thì Trước bị khoá', async () => {

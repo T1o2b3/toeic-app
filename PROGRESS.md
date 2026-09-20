@@ -99,9 +99,18 @@ nhanh hơn 01:43", gạt từ "successfully" vào danh sách học ngon.
 | Part 1 (6 câu tả tranh) | Không có (cần ảnh) | ❌ đã biết, 194/200 |
 | Thanh trên hiện tổng số câu đã làm | Chỉ hiện trong palette, theo từng bộ | ⚠️ nhỏ |
 
-**Đề xuất của Claude:** tách đôi rõ ràng — **màn LUYỆN giữ nguyên** (nghe lại thoải mái, chỉnh tốc độ
-0.75×: đó là cách học), còn **màn THI THỬ làm đúng đề thật** (một lần, không tua, tự chuyển câu). Học và thi
-là hai việc khác nhau; làm thi thử giống thật mới đo được sức thật. Chờ Huy chốt trước khi sửa (ràng buộc #8).
+**Huy chốt:** làm mục "nghe một lần, không tua" — **XONG**. Hai mục còn lại (tự chuyển câu sau ~5 giây,
+đánh dấu câu để quay lại) để trong M21, chưa làm.
+- **Thi thử** nay mỗi đoạn phát ĐÚNG MỘT LẦN: nghe xong nút khoá lại, ghi "✓ Đã nghe xong · đề thật không
+  cho nghe lại". Phím Space cũng theo luật đó (không thì bấm phím là lách được nút đã khoá).
+  Rời câu rồi quay lại vẫn khoá — `heard` đếm theo từng đơn vị, không reset khi chuyển câu.
+- **Phát lỗi giữa chừng thì KHÔNG tính là đã nghe** → vẫn bấm lại được. Trục trặc kỹ thuật không được
+  phép làm mất câu.
+- **Màn LUYỆN giữ nguyên** nghe lại + chỉnh tốc độ 0.75×: đó là lúc học, không phải lúc đo sức.
+- Đã chạy thật trên trình duyệt: bấm Nghe → hết chuỗi 4 đoạn (câu hỏi + A/B/C) **không lỗi**, rồi nút tự
+  khoá. Tức là đường phát âm thanh thật chạy được trên Mac (test jsdom dùng bộ phát giả nên không chứng
+  minh được điều này). **Vẫn chưa ai xác nhận có TIẾNG ra loa** — cửa sổ trình duyệt của Claude không
+  nghe được; Huy nghe thử giúp.
 
 ### Dọn nốt refactor (kế hoạch 1A/1B/1C ở cuối file)
 - **1A XONG** — `pipeline/lib/cli.js` (`projectPath`, `today`, `flagValue`, `flagNumber`, `hasFlag`) + 8 test.
