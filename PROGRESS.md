@@ -92,7 +92,14 @@ nhanh hơn 01:43", gạt từ "successfully" vào danh sách học ngon.
   - **Đã chạy thật** (local có `.env`): `validate:content` (8 file nội dung + mọi MP3 tham chiếu) · `audit:vocab -- --deck bsl`
     (đọc đúng deck 1161 từ) · `audit:coverage` · `build-sets --part 9` và `--variant bogus` báo lỗi đúng, không gọi AI.
     Ba script build chưa chạy thật (tốn hạn mức AI) — phần đường dẫn của chúng dùng chung hàm đã chạy ở trên.
-- 1B (gom khối sinh âm thanh), 1C (gộp listen/quiz) chưa bắt đầu.
+- **1B XONG** — `renderClips` + `EDGE_TTS_MISSING` + `AUDIO_FAILED_MESSAGE` trong `pipeline/lib/tts.js`
+  (không đẻ file mới: đây đúng là module âm thanh). `build-listening` và `build-sets` bớt mỗi bên ~20 dòng.
+  Nhận thẳng mảng `clips` đã dựng, không tự dựng — vì hai bên dựng khác nhau (`assembleEntry`/`assembleSet`).
+  Giữ nguyên luật **có đoạn lỗi thì KHÔNG ghi file nội dung** (có test canh riêng).
+  - Tiện thể: `build-sets` nay cũng báo tiến độ mỗi 40 đoạn như `build-listening` (quy tắc số 5).
+  - **Đã chạy thật cả hai** (`--no-generate` nên không gọi AI): Part 3 = 77 đoạn, Part 2 = 288 đoạn,
+    cả hai "0 mới, đã có đủ, 0 lỗi" và file nội dung ghi ra **y hệt từng byte** (git sạch).
+- **1C (gộp listen/quiz) CHƯA làm** — kế hoạch ghi rõ rủi ro CAO, nên làm riêng một phiên. Xem mục cuối file.
 
 ## Phiên 2026-09-20 (khuya) — Soát codebase + refactor DRY — XONG giai đoạn A & B, ĐÃ MERGE VÀO MAIN
 

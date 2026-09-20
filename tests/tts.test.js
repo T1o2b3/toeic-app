@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import {
   VOICES, MIN_AUDIO_BYTES, audioPath, voicesFor, edgeTtsArgs, synthesize, runLimited,
+  renderClips, EDGE_TTS_MISSING,
 } from '../pipeline/lib/tts.js';
 
 describe('audioPath', () => {
@@ -105,5 +106,59 @@ describe('runLimited', () => {
     });
     expect(peak).toBeLessThanOrEqual(3);
     expect(done.sort()).toEqual([1, 2, 3, 4, 5, 6, 7]);
+  });
+});
+
+describe('renderClips', () => {
+  const clips = (n) => Array.from({ length: n }, (_, i) => ({ text: `Câu ${i}`, voice: VOICES[0], path: `audio/${i}.mp3` }));
+  const silent = () => ({ log: vi.fn(), error: vi.fn() });
+  const base = { publicDir: '/tmp/pub/', command: '/bin/edge-tts', exists: () => true };
+
+  it('đếm riêng đoạn mới sinh và đoạn đã có sẵn (chạy lại không sinh lại)', async () => {
+    const make = vi.fn(async ({ outFile }) => (outFile.endsWith('0.mp3') ? 'exists' : 'created'));
+    const counts = await renderClips(clips(3), { ...base, label: '3 câu', make, log: silent() });
+    expect(counts).toEqual({ created: 2, existed: 1, failed: 0 });
+    expect(make).toHaveBeenCalledTimes(3);
+    // Đường dẫn ghi ra phải là public/ + path của clip, không phải path trần.
+    expect(make.mock.calls[0][0].outFile).toBe('/tmp/pub/audio/0.mp3');
+  });
+
+  it('một đoạn lỗi KHÔNG làm hỏng cả lô, nhưng phải đếm vào failed để bên gọi biết mà không ghi file', async () => {
+    const make = vi.fn(async ({ text }) => { if (text === 'Câu 1') throw new Error('edge-tts sập'); return 'created'; });
+    const log = silent();
+    const counts = await renderClips(clips(4), { ...base, label: '4 câu', make, log });
+    expect(counts).toEqual({ created: 3, existed: 0, failed: 1 });
+    expect(log.error.mock.calls[0][0]).toContain('edge-tts sập');
+  });
+
+  it('danh sách rỗng (Part 6/7 không có tiếng): trả về ngay, không đòi edge-tts, không in gì', async () => {
+    const log = silent();
+    const counts = await renderClips([], { ...base, label: '4 bộ', exists: () => false, log });
+    expect(counts).toEqual({ created: 0, existed: 0, failed: 0 });
+    expect(log.log).not.toHaveBeenCalled();
+  });
+
+  it('chưa cài edge-tts thì báo đúng cách cài, không lặng lẽ bỏ qua', async () => {
+    await expect(renderClips(clips(1), { ...base, label: '1 câu', exists: () => false, log: silent() }))
+      .rejects.toThrow(EDGE_TTS_MISSING);
+  });
+
+  it('giữ giới hạn số luồng (quy tắc số 2: không ép dịch vụ miễn phí)', async () => {
+    let running = 0; let peak = 0;
+    const make = async () => {
+      running += 1; peak = Math.max(peak, running);
+      await new Promise((r) => setTimeout(r, 5));
+      running -= 1; return 'created';
+    };
+    await renderClips(clips(10), { ...base, label: '10 câu', make, concurrency: 3, log: silent() });
+    expect(peak).toBeLessThanOrEqual(3);
+  });
+
+  it('báo tiến độ giữa chừng cho việc chạy dài (quy tắc số 5)', async () => {
+    const log = silent();
+    await renderClips(clips(80), { ...base, label: '80 câu', make: async () => 'created', log });
+    const lines = log.log.mock.calls.map((c) => String(c[0]));
+    expect(lines.filter((l) => l.startsWith('  ...'))).toEqual(['  ...40/80', '  ...80/80']);
+    expect(lines.at(-1)).toContain('80 mới, 0 đã có, 0 lỗi');
   });
 });

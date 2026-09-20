@@ -128,3 +128,56 @@ export async function runLimited(items, limit, task) {
   };
   await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker));
 }
+
+/** Câu báo khi chưa cài edge-tts. */
+export const EDGE_TTS_MISSING = 'Chưa cài edge-tts: python3 -m venv pipeline/.venv && pipeline/.venv/bin/pip install edge-tts';
+
+/**
+ * Câu báo khi có đoạn lỗi. Luật đi kèm: **có đoạn lỗi thì KHÔNG ghi file nội dung** — file nội dung mà
+ * tham chiếu một MP3 không tồn tại thì app im lặng khi chạm "Nghe", còn pipeline vẫn báo thành công.
+ */
+export const AUDIO_FAILED_MESSAGE = 'Có đoạn âm thanh lỗi — không ghi file nội dung để khỏi có câu thiếu tiếng. Chạy lại lệnh cũ.';
+
+/**
+ * Sinh MP3 cho một danh sách đoạn ĐÃ DỰNG SẴN.
+ *
+ * `build-listening` (Part 2) và `build-sets` (Part 3/4) chép tay cùng khối này. Hai bên dựng `clips`
+ * theo cách khác nhau (`assembleEntry` / `assembleSet`) nên hàm này KHÔNG tự đi dựng — nhận thẳng mảng
+ * đã có. Đoạn nào đã có file thì `synthesize` bỏ qua, nên chạy lại là tiếp tục chỗ dở (quy tắc số 6).
+ *
+ * @param {Array<{text: string, voice: string, path: string}>} clips
+ * @param {object} options
+ * @param {string} options.publicDir - thư mục public/ (đường dẫn của clip tính từ đây)
+ * @param {string} options.command - đường dẫn edge-tts
+ * @param {string} options.label - hiện trong dòng log, vd "58 câu" hoặc "13 bộ"
+ * @param {number} [options.concurrency] - số luồng, giới hạn để không ép dịch vụ miễn phí (quy tắc số 2)
+ * @param {object} [options.log] - console giả khi test
+ * @param {Function} [options.make] - mặc định synthesize (test tiêm bản giả)
+ * @param {Function} [options.exists] - mặc định existsSync
+ * @returns {Promise<{created: number, existed: number, failed: number}>}
+ */
+export async function renderClips(clips, {
+  publicDir, command, label, concurrency = 4, log = console, make = synthesize, exists = existsSync,
+}) {
+  const counts = { created: 0, existed: 0, failed: 0 };
+  if (clips.length === 0) return counts;
+
+  log.log(`\nSinh âm thanh cho ${clips.length} đoạn (${label})...`);
+  if (!exists(command)) throw new Error(EDGE_TTS_MISSING);
+
+  await runLimited(clips, concurrency, async (clip) => {
+    try {
+      const result = await make({ text: clip.text, voice: clip.voice, outFile: `${publicDir}${clip.path}`, command });
+      counts[result === 'created' ? 'created' : 'existed'] += 1;
+    } catch (error) {
+      counts.failed += 1;
+      log.error(`  ✗ ${error.message.slice(0, 160)}`);
+    }
+    // Báo tiến độ giữa chừng: việc này chạy nhiều phút, im lặng thì không biết đang chạy hay treo (quy tắc số 5).
+    const done = counts.created + counts.existed + counts.failed;
+    if (done % 40 === 0) log.log(`  ...${done}/${clips.length}`);
+  });
+
+  log.log(`Âm thanh: ${counts.created} mới, ${counts.existed} đã có, ${counts.failed} lỗi.`);
+  return counts;
+}

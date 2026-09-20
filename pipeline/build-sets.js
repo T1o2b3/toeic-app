@@ -10,7 +10,7 @@
  * Part 7 có 3 dạng (single/double/triple) chạy riêng nhưng GHI CHUNG một file public/content/sets-part7.json.
  * Tiến độ lưu sau MỖI lô (quy tắc số 6): dừng giữa chừng chạy lại là tiếp tục đúng chỗ dở.
  */
-import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
+import { writeFileSync, mkdirSync } from 'node:fs';
 import { buildSetPrompt, buildSetVerifyPrompt, SET_PROMPT_VERSION } from './lib/prompt-sets.js';
 import { isWellFormedSet, setKey, crossCheckSets, assembleSet } from './lib/set-check.js';
 import { parseVocabResponse } from './lib/prompt-vocab.js';
@@ -18,7 +18,7 @@ import { sleep } from './lib/ai-provider.js';
 import { createModelPair, aiStep, QUOTA_MESSAGE } from './lib/model-pair.js';
 import { openCache } from './lib/cache.js';
 import { createValidator } from './lib/validate-deck.js';
-import { synthesize, runLimited } from './lib/tts.js';
+import { renderClips, AUDIO_FAILED_MESSAGE } from './lib/tts.js';
 import { removeOrphanAudio } from './lib/audio-files.js';
 import { projectPath, today, flagValue, flagNumber, hasFlag } from './lib/cli.js';
 
@@ -133,23 +133,10 @@ async function main() {
     return result;
   });
 
+  // Part 6/7 không có âm thanh: renderClips thấy danh sách rỗng thì trả về ngay, không đòi edge-tts.
   const clips = assembled.flatMap((a) => a.clips);
-  if (clips.length > 0) {
-    console.log(`\nSinh âm thanh cho ${clips.length} đoạn (${drafts.length} bộ)...`);
-    if (!existsSync(EDGE_TTS)) throw new Error('Chưa cài edge-tts: python3 -m venv pipeline/.venv && pipeline/.venv/bin/pip install edge-tts');
-    let created = 0; let existed = 0; let failed = 0;
-    await runLimited(clips, 4, async (clip) => {
-      try {
-        const r = await synthesize({ text: clip.text, voice: clip.voice, outFile: `${PUBLIC}${clip.path}`, command: EDGE_TTS });
-        if (r === 'created') created += 1; else existed += 1;
-      } catch (error) {
-        failed += 1;
-        console.error(`  ✗ ${error.message.slice(0, 160)}`);
-      }
-    });
-    console.log(`Âm thanh: ${created} mới, ${existed} đã có, ${failed} lỗi.`);
-    if (failed > 0) { console.error('Có đoạn âm thanh lỗi — không ghi file nội dung. Chạy lại lệnh cũ.'); process.exitCode = 1; return; }
-  }
+  const audio = await renderClips(clips, { publicDir: PUBLIC, command: EDGE_TTS, label: `${drafts.length} bộ` });
+  if (audio.failed > 0) { console.error(AUDIO_FAILED_MESSAGE); process.exitCode = 1; return; }
 
   const bank = { set: `part${part}-core`, part, version: 1, entries: assembled.map((a) => a.entry) };
   const { valid, errors } = createValidator(projectPath('schemas/set.schema.json'))(bank);

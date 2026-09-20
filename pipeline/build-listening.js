@@ -9,7 +9,7 @@
  * thì loại. Bước 3: cân bằng đáp án A/B/C, gán giọng, sinh MP3 (bỏ qua file đã có). Bước 4: validate + ghi.
  * Tiến độ lưu sau MỖI lô (quy tắc số 6): dừng giữa chừng chạy lại là tiếp tục đúng chỗ dở.
  */
-import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
+import { writeFileSync, mkdirSync } from 'node:fs';
 import {
   buildPart2Prompt, buildPart2VerifyPrompt, part2Key, isWellFormedPart2, PART2_TYPES, PART2_PROMPT_VERSION,
 } from './lib/prompt-listening.js';
@@ -20,7 +20,7 @@ import { createModelPair, aiStep, QUOTA_MESSAGE } from './lib/model-pair.js';
 import { openCache } from './lib/cache.js';
 import { createValidator } from './lib/validate-deck.js';
 import { assembleEntry } from './lib/listening-assemble.js';
-import { synthesize, runLimited } from './lib/tts.js';
+import { renderClips, AUDIO_FAILED_MESSAGE } from './lib/tts.js';
 import { removeOrphanAudio } from './lib/audio-files.js';
 import { projectPath, today, flagNumber, hasFlag } from './lib/cli.js';
 
@@ -123,24 +123,9 @@ async function main() {
   // Âm thanh: giọng và chữ cái đáp án phụ thuộc thứ tự câu, nên gán theo vị trí trong danh sách đã sắp.
   const assembled = drafts.map((draft, index) => assembleEntry(draft, index));
   const clips = assembled.flatMap((a) => a.clips);
-  console.log(`\nSinh âm thanh cho ${clips.length} đoạn (${drafts.length} câu)...`);
-  if (!existsSync(EDGE_TTS)) throw new Error('Chưa cài edge-tts: python3 -m venv pipeline/.venv && pipeline/.venv/bin/pip install edge-tts');
-
-  let created = 0; let existed = 0; let failed = 0;
-  await runLimited(clips, 4, async (clip) => {
-    try {
-      const result = await synthesize({ text: clip.text, voice: clip.voice, outFile: `${PUBLIC}${clip.path}`, command: EDGE_TTS });
-      if (result === 'created') created += 1; else existed += 1;
-    } catch (error) {
-      failed += 1;
-      console.error(`  ✗ ${error.message.slice(0, 160)}`);
-    }
-    const done = created + existed + failed;
-    if (done % 40 === 0) console.log(`  ...${done}/${clips.length}`);
-  });
-  console.log(`Âm thanh: ${created} mới, ${existed} đã có, ${failed} lỗi.`);
-  if (failed > 0) {
-    console.error('Có đoạn âm thanh lỗi — không ghi file nội dung để khỏi có câu thiếu tiếng. Chạy lại lệnh cũ.');
+  const audio = await renderClips(clips, { publicDir: PUBLIC, command: EDGE_TTS, label: `${drafts.length} câu` });
+  if (audio.failed > 0) {
+    console.error(AUDIO_FAILED_MESSAGE);
     process.exitCode = 1;
     return;
   }
