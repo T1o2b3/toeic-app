@@ -97,7 +97,19 @@ toeic-app/
 ~44 giờ làm việc, **khoảng 10 tuần** theo nhịp trên. MVP dùng được từ ngày 7.
 
 ## Backlog (ý tưởng chưa lên lịch)
-- Ước lượng "mức sẵn sàng thi" (điểm hiện tại → mục tiêu) — cần mô hình quy đổi điểm, chờ đủ dữ liệu làm bài. (RESEARCH.md)
+- ~~Ước lượng "mức sẵn sàng thi"~~ → **đã làm 2026-09-20, xem D39** (điểm ước lượng 10–990 kèm khoảng dao động).
+- **M19 — Bản nhận xét điểm mạnh/điểm yếu + cách luyện** (Huy đề xuất 2026-09-20). *Chưa làm, CẦN HUY CHỐT
+  một việc trước:* Huy nói "chạy API đánh giá", nhưng **ràng buộc #2 cấm gọi AI lúc app chạy** (DECISIONS.md D02:
+  app phải chạy offline, không có khoá API trong frontend, không tốn tiền/hạn mức khi dùng). Ba đường đi:
+  1. **Không cần AI** — app tự tính từ nhật ký: tỉ lệ đúng theo 12 dạng câu Part 5, theo kỹ năng, theo Part,
+     nhịp làm bài, từ hay quên; rồi khớp với một bảng "yếu dạng này → luyện thế này" viết sẵn bằng tiếng Việt.
+     Làm được ngay, offline, miễn phí, không đụng ràng buộc nào. Nhận xét sẽ đúng nhưng khô.
+  2. **AI trong pipeline** — Huy bấm "Xuất dữ liệu", chạy `npm run advise` trên máy Huy, dán bản nhận xét
+     (do AI viết) trở lại app. Giữ nguyên ràng buộc #2, lời văn hay hơn, nhưng phải thao tác tay mỗi lần.
+  3. **Gọi API lúc chạy** — sửa ràng buộc #2. Cần một proxy giữ khoá API (Cloudflare Worker), và hạn mức
+     miễn phí của Gemini là theo ngày nên có lúc app sẽ báo lỗi. Đây là đổi kiến trúc, phải ghi vào DECISIONS.md.
+  *Đề xuất của Claude: làm (1) trước — phần đo đạc là chung cho cả ba đường, và (1) đã trả lời được
+  "yếu chỗ nào, luyện gì" mà không phải đánh đổi gì.*
 - Kế hoạch hôm nay dạng nhiều nhiệm vụ nhỏ có tiến độ `3/5 xong` — cân nhắc khi làm M6. (RESEARCH.md)
 - **Deck `my-words` từ các từ đã gạt** (D34): pipeline đọc file xuất dữ liệu (nút "Xuất dữ liệu"), lấy các từ
   `vocab.captured` chưa có trong deck, sinh nghĩa + ví dụ như deck TSL/BSL. Khi có, các từ đó tự thành thẻ học

@@ -55,7 +55,7 @@ Huy báo: phân loại chỉ chọn được 1 trong 4, không xem lại đượ
   loại lỗi giữa logic và màn hình mà test logic thuần không thấy. **`validate:content` giờ kiểm cả BSL.**
   `audit:vocab -- --deck bsl` soi deck BSL. **343 test pass.**
 
-## Phiên 2026-09-20 (tối) — Part 5 theo đề thật, chấm điểm, thi thử hai phần, UI hai cột — ĐANG LÀM
+## Phiên 2026-09-20 (tối) — Part 5 theo đề thật, chấm điểm, thi thử hai phần, UI hai cột — XONG, đã push
 Huy giao 4 việc + 3 bổ sung giữa phiên. Xem **D39–D42**.
 - **Part 5 đúng đề thật (D39):** một lượt = 30 câu đánh số **101–130**, chia đúng mặt cắt đề thật
   (từ loại 10 · từ vựng 10 · ngữ pháp 10 — trước đây lấy đều 12 dạng nên 2/3 lượt là ngữ pháp), xáo thứ tự,
@@ -79,7 +79,17 @@ Huy giao 4 việc + 3 bổ sung giữa phiên. Xem **D39–D42**.
 - **Đã xem bằng ảnh chụp trình duyệt thật** (Chromium 1440×900 và 390×844): Part 5, Part 6, Part 7, thi thử,
   màn chính — bố cục hai cột và menu đúng ý. Bắt được hai lỗi nhờ nhìn: nhãn câu Part 6 in thừa "Blank [1]",
   và nội dung quá hẹp trên màn rộng.
-- **734 test pass** (thêm: part5, score, ui-quiz, phases/numbering trong exam).
+- **Mục Bài thi hiện điểm ước lượng của bài thi gần nhất** (không phải mở lại bài thi mới thấy).
+- **736 test pass** (thêm: part5, score, ui-quiz, phases/numbering trong exam).
+
+### CẦN HUY CHỐT — việc thứ 6 Huy nhắc (API đánh giá điểm mạnh/yếu)
+Huy nói "sau cập nhật thêm mục nữa là chạy api đánh giá điểm mạnh điểm yếu, những điểm cần luyện và cách luyện".
+Việc này **đụng ràng buộc #2** (không gọi AI lúc app chạy) nên tôi CHƯA làm, đã ghi thành **M19 trong PLAN.md**
+với ba đường đi. Tóm tắt để Huy chọn:
+1. **Không cần AI** — app tự tính từ nhật ký (yếu dạng nào, nhịp chậm chỗ nào) rồi khớp bảng lời khuyên viết sẵn.
+   Offline, miễn phí, làm được ngay. *Claude đề xuất đường này trước.*
+2. **AI trong pipeline** — xuất dữ liệu → chạy trên máy Huy → dán bản nhận xét vào app. Giữ ràng buộc, lời văn hay hơn.
+3. **Gọi API lúc chạy** — phải sửa ràng buộc #2, cần proxy giữ khoá, và hạn mức miễn phí theo ngày sẽ có lúc lỗi.
 
 ## Phiên 2026-09-20 (chiều) — Đủ nội dung cho đề 194 câu + thi thử đủ bộ — XONG, đã lưu
 Huy giao: "đẩy nhanh các phần ngoài Part 5 để có đề 194/200". 194 = 200 trừ 6 câu Part 1 (cần ảnh).

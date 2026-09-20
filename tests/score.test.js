@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   GOAL_SCORE, FULL_QUESTIONS, SECTION_MIN, SECTION_MAX,
-  tableBand, sectionScore, samplingSpread, estimateSection, estimateScore, formatBand,
+  tableBand, sectionScore, samplingSpread, estimateSection, estimateScore, formatBand, latestEstimate,
 } from '../src/logic/score.js';
 
 describe('bảng quy đổi', () => {
@@ -115,5 +115,24 @@ describe('ước lượng điểm cả bài', () => {
   it('cách viết khoảng điểm', () => {
     expect(formatBand({ low: 395, high: 445 })).toBe('395–445');
     expect(formatBand({ low: 495, high: 495 })).toBe('495');
+  });
+});
+
+describe('điểm của bài thi gần nhất', () => {
+  const finished = (ts, point, complete = true) => ({
+    type: 'exam.finished', ts,
+    payload: { mode: 'full', estimate: { complete, total: complete ? { point, low: point - 50, high: point + 50 } : null, sections: [] } },
+  });
+
+  it('lấy bài mới nhất, bỏ qua sự kiện khác', () => {
+    const events = [finished(100, 700), { type: 'question.answered', ts: 900, payload: {} }, finished(300, 780)];
+    expect(latestEstimate(events).estimate.total.point).toBe(780);
+    expect(latestEstimate(events).ts).toBe(300);
+  });
+
+  it('bỏ qua bài thi cũ chưa có điểm (trước D39) và nhật ký rỗng', () => {
+    expect(latestEstimate([{ type: 'exam.finished', ts: 5, payload: { mode: 'full', correct: 10 } }])).toBe(null);
+    expect(latestEstimate([])).toBe(null);
+    expect(latestEstimate(undefined)).toBe(null);
   });
 });

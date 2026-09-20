@@ -7,6 +7,8 @@ import { quizQueue } from '../logic/quiz.js';
 import { LISTEN_ROUND_SIZE, estimateMinutes } from '../logic/listen.js';
 import { examOverview, weakestTypes } from '../logic/dashboard.js';
 import { getRoundSize, setRoundSize } from '../data/prefs.js';
+import { PART5_TARGET_SECONDS } from '../logic/part5.js';
+import { latestEstimate, formatBand, GOAL_SCORE } from '../logic/score.js';
 import { ROUND_SIZES } from '../logic/prefs.js';
 import { renderAccuracyBars } from './dashboard-charts.js';
 import { SET_PARTS, PART_LABEL, SET_ROUND_SIZE, setQueue, countAvailableSets, estimateSetMinutes, questionsBySkill } from '../logic/sets.js';
@@ -17,6 +19,21 @@ function accuracyNote(overview) {
   if (basis.accuracy === null) return 'chưa làm câu nào';
   const scope = overview.recent.attempts > 0 ? '7 ngày qua' : 'tổng cộng';
   return `đúng ${Math.round(basis.accuracy * 100)}% (${basis.attempts} câu, ${scope})`;
+}
+
+/** Điểm ước lượng của bài thi gần nhất — để thấy mình đang ở đâu mà không phải mở lại bài thi (D39). */
+function renderLastScore(last) {
+  const { estimate } = last;
+  const line = estimate.complete
+    ? `${estimate.total.point} điểm (${formatBand(estimate.total)}) · còn ${GOAL_SCORE - estimate.total.point} điểm nữa tới mục tiêu`
+    : estimate.sections.map((s) => `${s.skill === 'listening' ? 'Nghe' : 'Đọc'} ${s.point} (${formatBand(s)})`).join(' · ');
+  return el('div', { class: 'gaps' }, [
+    el('div', { class: 'gaps-title', text: 'Bài thi gần nhất — điểm ước lượng' }),
+    el('div', { class: 'gap-row' }, [
+      el('span', { text: new Date(last.ts).toLocaleDateString('vi-VN') }),
+      el('span', { class: 'gap-value plain', text: line }),
+    ]),
+  ]);
 }
 
 /**
@@ -30,10 +47,12 @@ export function renderExams(store) {
     el('p', { class: 'subtitle', text: 'Luyện theo từng phần. Làm sai sẽ quay lại ở lượt sau.' }),
   ];
 
+  const last = latestEstimate(events);
   sections.push(el('button', { class: 'primary', onClick: () => goTo('/exam') }, [
     el('span', { text: 'Thi thử' }),
-    el('small', { text: 'đề đủ ~194 câu tính giờ (Nghe 45 + Đọc 75 phút), hoặc theo kỹ năng / từng Part' }),
+    el('small', { text: 'đề đủ ~194 câu tính giờ: Nghe 45 phút rồi Đọc 75 phút, hoặc theo kỹ năng / từng Part' }),
   ]));
+  if (last) sections.push(renderLastScore(last));
 
   if (store.questions.length > 0) {
     const size = getRoundSize();
@@ -41,7 +60,7 @@ export function renderExams(store) {
     sections.push(
       el('button', { class: 'secondary', onClick: () => goTo('/quiz') }, [
         el('span', { text: 'Luyện Part 5' }),
-        el('small', { text: `${quiz.length} câu · ~${Math.max(1, Math.round(quiz.length * 25 / 60))} phút · ${accuracyNote(examOverview(events, 'part5'))}` }),
+        el('small', { text: `${quiz.length} câu (như đề thật) · ~${Math.max(1, Math.round(quiz.length * PART5_TARGET_SECONDS / 60))} phút · ${accuracyNote(examOverview(events, 'part5'))}` }),
       ]),
       el('div', { class: 'chooser' }, [
         el('span', { class: 'chooser-label', text: 'Mỗi lượt' }),

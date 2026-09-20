@@ -162,3 +162,21 @@ export function estimateScore(score) {
 
 /** "395–445" — cách viết một khoảng điểm. */
 export const formatBand = ({ low, high }) => (low === high ? `${low}` : `${low}–${high}`);
+
+/**
+ * Điểm ước lượng của bài thi GẦN NHẤT trong nhật ký, để hiện ở mục Bài thi và (sau này) vẽ đường tiến bộ.
+ *
+ * Đọc lại `estimate` đã lưu chứ không tính lại: bảng quy đổi có thể đổi, nhưng con số Huy đã thấy hôm đó
+ * phải giữ nguyên. Bài thi cũ (trước D39) không có `estimate` nên bị bỏ qua.
+ *
+ * @param {Array<{type: string, ts: number, payload: object}>} events
+ * @returns {{ts: number, mode: string, estimate: object}|null}
+ */
+export function latestEstimate(events) {
+  let best = null;
+  for (const event of events ?? []) {
+    if (event?.type !== 'exam.finished' || !event.payload?.estimate) continue;
+    if (!best || event.ts > best.ts) best = { ts: event.ts, mode: event.payload.mode, estimate: event.payload.estimate };
+  }
+  return best;
+}
