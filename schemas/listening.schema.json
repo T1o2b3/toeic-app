@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://toeic-app.local/schemas/listening.schema.json",
+  "title": "Bộ câu hỏi luyện nghe (Part 2)",
+  "type": "object",
+  "required": ["set", "part", "version", "entries"],
+  "additionalProperties": false,
+  "properties": {
+    "set": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "part": { "type": "integer", "enum": [2] },
+    "version": { "type": "integer", "minimum": 1 },
+    "entries": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/item" } }
+  },
+  "$defs": {
+    "audioPath": { "type": "string", "pattern": "^audio/[0-9a-f]{16}\\.mp3$" },
+    "item": {
+      "type": "object",
+      "required": ["id", "set", "part", "status", "question", "responses", "answer", "errorType", "explanation", "audio", "voices", "gen", "verify"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^l2-[0-9]{4}$" },
+        "set": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "part": { "type": "integer", "enum": [2] },
+        "status": { "enum": ["active", "retired"] },
+        "question": { "type": "string", "minLength": 8, "description": "Câu người thứ nhất nói (nội dung nghe, không in ra khi làm bài)" },
+        "responses": {
+          "type": "object",
+          "required": ["A", "B", "C"],
+          "additionalProperties": false,
+          "properties": {
+            "A": { "type": "string", "minLength": 2 },
+            "B": { "type": "string", "minLength": 2 },
+            "C": { "type": "string", "minLength": 2 }
+          }
+        },
+        "answer": { "enum": ["A", "B", "C"] },
+        "errorType": {
+          "enum": [
+            "wh-who", "wh-what", "wh-where", "wh-when", "wh-why", "wh-how",
+            "yes-no", "tag-question", "choice", "statement", "request-suggestion", "indirect"
+          ],
+          "description": "Dạng câu hỏi — dùng chung tên trường với Part 5 để thống kê lỗ hổng theo dạng"
+        },
+        "explanation": { "type": "string", "minLength": 20, "description": "Giải thích bằng tiếng Việt" },
+        "trap": { "type": "string", "description": "Vì sao các phương án sai lại hấp dẫn" },
+        "audio": {
+          "type": "object",
+          "required": ["question", "A", "B", "C"],
+          "additionalProperties": false,
+          "properties": {
+            "question": { "$ref": "#/$defs/audioPath" },
+            "A": { "$ref": "#/$defs/audioPath" },
+            "B": { "$ref": "#/$defs/audioPath" },
+            "C": { "$ref": "#/$defs/audioPath" }
+          }
+        },
+        "voices": {
+          "type": "object",
+          "required": ["question", "responses"],
+          "additionalProperties": false,
+          "properties": {
+            "question": { "type": "string", "minLength": 1 },
+            "responses": { "type": "string", "minLength": 1 }
+          }
+        },
+        "gen": {
+          "type": "object",
+          "required": ["model", "promptVersion", "batch", "date"],
+          "additionalProperties": false,
+          "properties": {
+            "model": { "type": "string", "minLength": 1 },
+            "promptVersion": { "type": "string", "minLength": 1 },
+            "batch": { "type": "string", "minLength": 1 },
+            "date": { "type": "string", "format": "date" }
+          }
+        },
+        "verify": {
+          "type": "object",
+          "required": ["model", "answer", "agreed"],
+          "additionalProperties": false,
+          "properties": {
+            "model": { "type": "string", "minLength": 1 },
+            "answer": { "enum": ["A", "B", "C"] },
+            "agreed": { "const": true }
+          }
+        }
+      }
+    }
+  }
+}

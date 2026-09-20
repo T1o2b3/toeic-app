@@ -81,3 +81,22 @@ export async function loadOptionalDeck(deck, fetchImpl = fetch) {
     return null;
   }
 }
+
+/**
+ * Tải bộ câu nghe Part 2. Thiếu file thì trả bộ rỗng — app vẫn chạy được khi chưa sinh xong âm thanh.
+ * Mỗi câu chỉ chứa ĐƯỜNG DẪN tới file MP3 (public/audio/); file âm thanh được tải khi phát, không phải lúc mở app.
+ * @param {string} [set]
+ * @param {typeof fetch} [fetchImpl]
+ * @returns {Promise<{set: string, part: number, entries: object[]}>}
+ */
+export async function loadListeningBank(set = 'part2', fetchImpl = fetch) {
+  const empty = { set, part: 2, entries: [] };
+  try {
+    const response = await fetchImpl(`/content/listening-${set}.json`);
+    if (!response.ok) return empty;
+    const data = await response.json();
+    return Array.isArray(data?.entries) ? data : empty;
+  } catch {
+    return empty;
+  }
+}

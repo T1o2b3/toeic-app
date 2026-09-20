@@ -240,6 +240,38 @@ phủ sóng từ vựng Part 5 — mới thấy NAWL đóng góp 1 từ. Ghi l�
 - **Chưa làm (cố ý, ràng buộc #8):** biến danh sách "chưa có trong deck" thành thẻ học — cần một bước pipeline
   đọc file xuất dữ liệu rồi sinh deck `my-words` (D04 đã chừa chỗ ở `OPTIONAL_DECKS`). Ghi vào Backlog.
 
+**D35. Luyện nghe Part 2: pipeline âm thanh (M8) + màn luyện nghe (M9); chốt Q1 (âm thanh để chung repo).**
+- **Vì sao Part 2 trước:** TOEIC Listening chiếm nửa bài thi mà app chưa có gì cho phần nghe. Part 2 (hỏi - đáp ngắn)
+  là phần rẻ nhất để làm đúng: 4 đoạn ngắn mỗi câu, không cần bảng biểu, đủ để dựng toàn bộ đường ống âm thanh
+  (sinh → lưu → phát → offline) mà Part 3–4 sẽ dùng lại.
+- **Nguồn giọng:** `edge-tts` (giọng đọc của Edge, miễn phí, không key) — thoả ràng buộc #1. Là dịch vụ KHÔNG chính
+  thức của Microsoft, có thể đổi/chặn bất cứ lúc nào. Cách giảm rủi ro: **file MP3 đã sinh được commit vào repo**,
+  app KHÔNG phụ thuộc dịch vụ này lúc chạy (ràng buộc #2 tương tự AI); chỉ pipeline mới cần, chạy trên máy Huy.
+  5 giọng xoay vòng (Mỹ nam/nữ, Anh nam/nữ, Úc nữ); người hỏi và người đáp luôn khác giọng.
+- **Q1 chốt: âm thanh để CHUNG repo** (`public/audio/`, ~85 KB mỗi câu, tức ~6 MB cho 72 câu). Đổi sang bucket riêng
+  (Cloudflare R2) khi repo quá ~100 MB hoặc khi thêm Part 3–4. Tên file = hash(giọng + lời) nên đổi lời hay giọng thì
+  ra file mới, không đè file cũ (D16); pipeline tự xoá file mồ côi.
+- **Giọng tổng hợp khác giọng người thật:** ít ngập ngừng, ít giọng vùng miền và nhiễu nền hơn đề thật. Luyện được
+  kỹ năng nghe hiểu và bẫy âm/lặp từ, nhưng KHÔNG thay được việc nghe đề thật ở giai đoạn thi thử (M15).
+- **Nội dung:** vẫn kiểm định 2 bước như Part 5 (D12) — model B tự giải không thấy đáp án, lệch hoặc "quá dễ" thì loại.
+  Prompt (part2-v2) ép mỗi câu có bẫy gần âm/lặp từ, một câu đáp trả lời câu hỏi khác, và đáp án đúng tự nhiên/gián tiếp.
+- **Bài học: xoay vị trí đáp án làm hỏng lời giải thích.** AI ra đề dồn đáp án vào B nên pipeline xoay chỗ các câu đáp
+  cho chia đều A/B/C — nhưng lời giải thích AI viết còn nhắc chữ cái ("đáp án B", "câu A"), sau khi xoay thì SAI
+  (lần chạy đầu: hiện ✔A mà giải thích nói B). Sửa ở gốc: prompt v2 cấm nhắc chữ cái, bộ lọc `mentionsChoiceLetter`
+  loại bản thảo vi phạm, và bản v1 đã bỏ đi sinh lại. Không sửa bằng cách thay chữ cái trong văn bản (dễ sót).
+- **Trải nghiệm làm bài:** chỉ thấy ba nút A/B/C, không có chữ (đúng bài thi). Nút chọn KHOÁ tới khi nghe hết một lượt
+  (câu hỏi + 3 câu đáp). Tốc độ 0.75× / 1× / 1.25× (giữ cao độ). Trả lời xong mới hiện transcript, giải thích, và cho
+  gạt từ lạ (D34). Lượt 10 câu (nghe mỏi nhanh hơn đọc). Kết quả ghi bằng cùng sự kiện `question.answered` nên thống kê
+  lỗ hổng theo dạng câu dùng chung với Part 5; trường `errorType` giữ nguyên tên để tái dùng code.
+- **Ràng buộc của iPhone quyết định thiết kế bộ phát** (`src/ui/audio-player.js`): (1) chỉ MỘT phần tử Audio cho cả
+  chuỗi; (2) TẢI TRƯỚC mọi đoạn thành blob khi câu hiện ra, để chạm nút Nghe thì `audio.play()` gọi được đồng bộ — nếu
+  phải `await fetch` trước, Safari coi là hết thao tác chạm và chặn; (3) phát từ blob thay vì URL nên tránh request
+  Range (Safari đòi, cache offline không lưu được 206).
+- **Offline:** âm thanh KHÔNG nhét vào precache (hàng MB, tải hết lúc cài app quá nặng); service worker dùng CacheFirst
+  cho `/audio/`, lưu dần khi nghe. Câu chưa nghe lần nào thì offline chưa nghe được — chấp nhận, vì học từng lượt.
+- **Chưa làm (ràng buộc #8):** Part 3–4 (hội thoại/bài nói, cần bảng biểu và nhiều giọng trong một đoạn), đọc trước câu
+  hỏi có giờ (M10), dictation câu nghe sai (M11). Ghi âm thanh thuần từng phần nên đường ống này dùng lại được.
+
 ## Câu hỏi còn mở
-- Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng? Quyết khi ước lượng được dung lượng thực.
+- ~~Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng?~~ → **Đã giải quyết, xem D35** (chung repo, xét lại khi ~100 MB).
 - ~~Q2 (trước M2): xác nhận license của TSL 1.2 và NGSL.~~ → **Đã giải quyết, xem D18.**

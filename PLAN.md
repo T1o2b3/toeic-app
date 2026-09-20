@@ -64,8 +64,11 @@ toeic-app/
   Xong khi: Huy dùng MVP học thật 1 phiên trên mỗi thiết bị.
 
 ## Giai đoạn 2 — Luyện nghe (tuần 2–4, ~10 giờ)
-- [ ] M8. Pipeline audio: script hội thoại (có filler), edge-tts 4 giọng, MP3 mono, hash tên file; quyết Q1.
-- [ ] M9. Part 2 (lượt nghe ngắn) + điều chỉnh tốc độ, nghe lại.
+- [x] M8. Pipeline audio: script hội thoại (có filler), edge-tts 4 giọng, MP3 mono, hash tên file; quyết Q1.
+  ✅ 2026-09-20 (phần Part 2): 58 câu qua kiểm định 2 bước, 232 đoạn MP3 (5,2 MB), 5 giọng Mỹ/Anh/Úc; Q1 chốt ở D35.
+  Còn lại cho Part 3–4: hội thoại nhiều giọng trong một đoạn — dùng lại `pipeline/lib/tts.js`.
+- [x] M9. Part 2 (lượt nghe ngắn) + điều chỉnh tốc độ, nghe lại.
+  ✅ 2026-09-20: màn `#/listen`, tốc độ 0.75×/1×/1.25×, chỉ A/B/C không chữ, nút chọn khoá tới khi nghe hết, transcript sau khi trả lời, cache offline dần.
 - [ ] M10. Part 3–4: đọc trước câu hỏi có giờ, transcript đánh dấu câu chứa đáp án, bảng/biểu đơn giản bằng HTML.
 - [ ] M11. Dictation câu nghe sai.
 

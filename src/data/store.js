@@ -10,7 +10,7 @@ import { reduceQuizState } from '../logic/quiz.js';
 import { reduceCaptured, buildWordIndex } from '../logic/capture.js';
 import { openDb, appendEvents, readAllEvents } from './db.js';
 import { getDeviceId } from './device.js';
-import { loadAllVocabDecks, loadQuestionBank } from './content.js';
+import { loadAllVocabDecks, loadQuestionBank, loadListeningBank } from './content.js';
 
 /**
  * Tạo store và nạp dữ liệu ban đầu.
@@ -21,9 +21,10 @@ import { loadAllVocabDecks, loadQuestionBank } from './content.js';
  */
 export async function createStore({ factory, fetchImpl } = {}) {
   const db = await openDb(factory);
-  const [vocab, questionBank] = await Promise.all([
+  const [vocab, questionBank, listeningBank] = await Promise.all([
     loadAllVocabDecks(fetchImpl),
     loadQuestionBank(undefined, fetchImpl),
+    loadListeningBank(undefined, fetchImpl),
   ]);
   const deviceId = getDeviceId();
 
@@ -43,6 +44,8 @@ export async function createStore({ factory, fetchImpl } = {}) {
     decks: vocab.decks,
     entries: vocab.entries,
     questions: questionBank.entries,
+    /** Câu nghe Part 2 (M9). Trạng thái làm bài dùng chung `quizStates` với Part 5 vì cùng khoá theo questionId. */
+    listening: listeningBank.entries,
     deviceId,
     get states() { return states; },
     get quizStates() { return quizStates; },

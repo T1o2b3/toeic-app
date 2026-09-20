@@ -55,6 +55,19 @@ Huy báo: phân loại chỉ chọn được 1 trong 4, không xem lại đượ
   loại lỗi giữa logic và màn hình mà test logic thuần không thấy. **`validate:content` giờ kiểm cả BSL.**
   `audit:vocab -- --deck bsl` soi deck BSL. **343 test pass.**
 
+## Phiên 2026-09-20 — M8 + M9 (luyện nghe Part 2) — XONG, đã lưu
+- **M8 pipeline âm thanh:** `npm run build:listening` sinh câu hỏi-đáp Part 2 (kiểm định chéo 2 model như D12), cân bằng
+  đáp án A/B/C, tạo MP3 bằng edge-tts (venv riêng `pipeline/.venv`, đã gitignore). **58/72 câu** đạt, 232 đoạn, 5,2 MB.
+  Lô cuối bị dừng vì model dự phòng trả JSON hỏng → chạy lại đúng lệnh cũ là tiếp tục tới 72 (cache đã lưu).
+- **M9 màn luyện nghe:** `#/listen` (nút "Luyện nghe Part 2" ở màn chính). Chỉ thấy A/B/C, nút chọn khoá tới khi nghe hết;
+  tốc độ 0.75/1/1.25; xong mới hiện transcript + giải thích + gạt từ lạ. Xem **D35**.
+- **Lỗi bắt được giữa chừng:** xoay đáp án làm sai lời giải thích AI viết ("đáp án B"). Sửa ở gốc bằng prompt v2 +
+  bộ lọc, bản v1 bỏ đi sinh lại. Kiểm tra bản cuối: 0/58 câu nhắc chữ cái, đáp án A=20 B=19 C=19.
+- `validate:content` giờ kiểm cả bộ câu nghe VÀ mọi file MP3 được tham chiếu phải tồn tại.
+- **CHƯA thử nghe thật trên iPhone/Mac** — jsdom dùng bộ phát giả. Huy nghe thử: có ra tiếng khi chạm "Nghe câu này"
+  không, nghe hết mới chọn được không, tốc độ 0.75× có méo giọng không, bật máy bay rồi nghe lại câu đã nghe.
+- **485 test pass** (thêm: audio-player, listen, tts, prompt-listening, listening-assemble, ui-listen).
+
 ## Phiên 2026-09-19 (đêm, cuối) — Gạt từ lạ lúc làm Part 5 (D34) — XONG
 Huy đề xuất: gặp từ lạ khi làm bài ngoài từ vựng thì kéo thả vào danh sách cần học, không hiện nghĩa.
 - **Part 5:** mỗi từ trong câu chạm/kéo được; khay "Cần học" dưới câu hỏi. Từ trong phương án A–D chỉ gạt

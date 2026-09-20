@@ -33,11 +33,31 @@ const QUESTIONS = {
   }],
 };
 
+const clip = (n) => `audio/${String(n).padStart(16, '0')}.mp3`;
+const LISTENING = {
+  set: 'part2', part: 2, version: 1,
+  entries: [
+    { id: 'l2-0001', question: 'Where should I send the signed contract?', answer: 'B', errorType: 'wh-where',
+      responses: { A: 'I sent it yesterday.', B: 'Ms. Park in legal has the address.', C: 'It was a long contract.' },
+      explanation: 'Câu hỏi Where, câu đáp chỉ người giữ địa chỉ.', trap: 'Câu đáp lặp lại từ contract.' },
+    { id: 'l2-0002', question: 'Who is responsible for the quarterly audit?', answer: 'C', errorType: 'wh-who',
+      responses: { A: 'By the end of the week.', B: 'The audit was very long.', C: 'Ask the finance director.' },
+      explanation: 'Câu hỏi Who, câu đáp chỉ chức danh.', trap: 'Câu đáp nói về thời gian.' },
+    { id: 'l2-0003', question: 'Could you print these reports for the meeting?', answer: 'A', errorType: 'request-suggestion',
+      responses: { A: 'Sure, how many copies?', B: 'The meeting room is full.', C: 'I prefer coffee.' },
+      explanation: 'Lời đề nghị, câu đáp đồng ý và hỏi lại số bản.', trap: 'Câu đáp lặp lại từ meeting.' },
+  ].map((item, i) => ({
+    ...item, set: 'part2-core', part: 2, status: 'active',
+    audio: { question: clip(i * 4 + 1), A: clip(i * 4 + 2), B: clip(i * 4 + 3), C: clip(i * 4 + 4) },
+  })),
+};
+
 /** @returns {Promise<object>} store, root và các hàm thao tác/đọc màn hình */
 export async function bootApp() {
   const fetchImpl = async (url) => {
     const data = String(url).includes('vocab-toeic-tsl') ? DECK
-      : String(url).includes('questions-part5') ? QUESTIONS : null;
+      : String(url).includes('questions-part5') ? QUESTIONS
+      : String(url).includes('listening-part2') ? LISTENING : null;
     return data ? { ok: true, status: 200, json: async () => data } : { ok: false, status: 404 };
   };
   const store = await createStore({ factory: new IDBFactory(), fetchImpl });

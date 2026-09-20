@@ -7,6 +7,7 @@ import {
   normalizeShowMeaning, DEFAULT_SHOW_MEANING,
   normalizeTier, DEFAULT_TIER,
 } from '../logic/prefs.js';
+import { normalizeSpeed, DEFAULT_SPEED } from '../logic/listen.js';
 
 const ROUND_SIZE_KEY = 'toeic-app.quizRoundSize';
 
@@ -83,6 +84,32 @@ export function getTier(allowed) {
 export function setTier(tier, allowed) {
   try {
     localStorage.setItem(TIER_KEY, normalizeTier(tier, allowed));
+  } catch {
+    // Không lưu được thì thôi, lần sau dùng mặc định.
+  }
+}
+
+const LISTEN_SPEED_KEY = 'toeic-app.listenSpeed';
+
+/**
+ * Tốc độ phát của bài nghe.
+ * @returns {number}
+ */
+export function getListenSpeed() {
+  try {
+    return normalizeSpeed(localStorage.getItem(LISTEN_SPEED_KEY));
+  } catch {
+    return DEFAULT_SPEED;
+  }
+}
+
+/**
+ * Đổi tốc độ phát.
+ * @param {number} speed
+ */
+export function setListenSpeed(speed) {
+  try {
+    localStorage.setItem(LISTEN_SPEED_KEY, String(normalizeSpeed(speed)));
   } catch {
     // Không lưu được thì thôi, lần sau dùng mặc định.
   }

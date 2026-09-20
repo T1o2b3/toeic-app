@@ -227,3 +227,15 @@ button.tray-add { background: var(--accent); color: #fff; border-color: var(--ac
 .option-capture .chips { margin-top: 0.25rem; }
 .word-head.static { padding: 0.65rem 0; }
 a.ext-link { font-size: 0.8rem; color: var(--accent); }
+
+/* Luyện nghe Part 2 (M9) */
+button.listen-play { text-align: center; font-size: 1.1rem; padding: 1rem; margin-bottom: 0.75rem; }
+.card.big .chooser { justify-content: center; margin: 0; }
+button.listen-opt { min-height: 3.25rem; align-items: center; }
+button.listen-opt .letter { font-size: 1.3rem; }
+button.listen-opt:disabled { opacity: 0.55; cursor: default; }
+button.listen-opt.now { border-color: var(--accent); background: #eef6f1; }
+.transcript-line { display: flex; gap: 0.6rem; align-items: baseline; padding: 0.25rem 0; }
+.transcript-line .letter { font-weight: 700; color: var(--muted); min-width: 1.2rem; }
+.transcript-line .stem { flex: 1; font-size: 0.95rem; }
+.transcript-line.correct .letter { color: var(--good); }

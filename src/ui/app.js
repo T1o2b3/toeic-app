@@ -11,6 +11,7 @@ import { renderQuiz, handleQuizKey, resetQuiz } from './quiz-screen.js';
 import { renderSync, resetSync } from './sync-screen.js';
 import { renderWords, resetWords } from './words-screen.js';
 import { renderPractice, handlePracticeKey, resetPractice } from './practice-screen.js';
+import { renderListen, handleListenKey, resetListen } from './listen-screen.js';
 
 const SCREENS = {
   home: renderHome,
@@ -21,6 +22,7 @@ const SCREENS = {
   sync: renderSync,
   words: renderWords,
   practice: renderPractice,
+  listen: renderListen,
 };
 
 const KEY_HANDLERS = {
@@ -28,6 +30,7 @@ const KEY_HANDLERS = {
   review: handleReviewKey,
   quiz: handleQuizKey,
   practice: handlePracticeKey,
+  listen: handleListenKey,
 };
 
 /**
@@ -48,7 +51,7 @@ export function mountApp(root, store) {
   };
 
   startRouter((route) => {
-    if (route.name !== current.name) { resetTriage(); resetReview(); resetQuiz(); resetSync(); resetWords(); resetPractice(); }
+    if (route.name !== current.name) { resetTriage(); resetReview(); resetQuiz(); resetSync(); resetWords(); resetPractice(); resetListen(); }
     current = route;
     draw();
   });

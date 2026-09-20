@@ -14,7 +14,8 @@
     "validate:content": "node pipeline/validate-content.js",
     "audit:vocab": "node pipeline/audit-vocab.js",
     "build:questions": "node --env-file=.env pipeline/build-questions.js",
-    "audit:coverage": "node pipeline/coverage-part5.js"
+    "audit:coverage": "node pipeline/coverage-part5.js",
+    "build:listening": "node --env-file=.env pipeline/build-listening.js"
   },
   "devDependencies": {
     "ajv": "^8.20.0",

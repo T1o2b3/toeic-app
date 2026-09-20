@@ -6,6 +6,7 @@ import { countUntriaged, reviewQueue, weakWords } from '../logic/vocab-state.js'
 import { LEVEL_ORDER, LEVEL_INFO, countByLevel } from '../logic/vocab-levels.js';
 import { estimateSessionTime, summarizeQueue } from '../logic/format.js';
 import { quizQueue, accuracyByErrorType } from '../logic/quiz.js';
+import { LISTEN_ROUND_SIZE, estimateMinutes } from '../logic/listen.js';
 import { planToday, describePlan } from '../logic/today.js';
 import { buildExport, exportFileName } from '../logic/export.js';
 import { isSupabaseConfigured } from '../data/supabase.js';
@@ -156,6 +157,28 @@ export function renderHome(store) {
       sections.push(el('div', { class: 'gaps' }, [
         el('div', { class: 'gaps-title', text: 'Lỗ hổng theo loại kiến thức' }),
         ...weakTypes.map((row) => el('div', { class: 'gap-row' }, [
+          el('span', { text: row.errorType }),
+          el('span', { class: 'gap-value', text: `${Math.round(row.accuracy * 100)}% đúng (${row.attempts} câu)` }),
+        ])),
+      ]));
+    }
+  }
+
+  if (store.listening.length > 0) {
+    const round = quizQueue(store.listening, store.quizStates, { size: LISTEN_ROUND_SIZE });
+    sections.push(
+      el('button', { class: 'secondary', onClick: () => goTo('/listen') }, [
+        el('span', { text: 'Luyện nghe Part 2' }),
+        el('small', { text: `${round.length} câu · ~${estimateMinutes(round.length)} phút · nên đeo tai nghe` }),
+      ]),
+    );
+    const weakListening = accuracyByErrorType(store.listening, store.quizStates)
+      .filter((row) => row.attempts >= 3 && row.accuracy < 0.8)
+      .slice(0, 3);
+    if (weakListening.length > 0) {
+      sections.push(el('div', { class: 'gaps' }, [
+        el('div', { class: 'gaps-title', text: 'Lỗ hổng phần nghe' }),
+        ...weakListening.map((row) => el('div', { class: 'gap-row' }, [
           el('span', { text: row.errorType }),
           el('span', { class: 'gap-value', text: `${Math.round(row.accuracy * 100)}% đúng (${row.attempts} câu)` }),
         ])),

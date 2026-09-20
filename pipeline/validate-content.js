@@ -11,7 +11,14 @@ const FILES = [
   { file: 'public/content/vocab-toeic-tsl.json', schema: 'schemas/vocab.schema.json', label: 'từ vựng' },
   { file: 'public/content/vocab-toeic-bsl.json', schema: 'schemas/vocab.schema.json', label: 'từ vựng' },
   { file: 'public/content/questions-part5.json', schema: 'schemas/question.schema.json', label: 'câu hỏi Part 5' },
+  { file: 'public/content/listening-part2.json', schema: 'schemas/listening.schema.json', label: 'câu nghe Part 2' },
 ];
+/** Các đường dẫn âm thanh được câu nghe tham chiếu nhưng không có trong public/. */
+function missingAudioFiles(bank) {
+  const paths = bank.entries.flatMap((entry) => Object.values(entry.audio));
+  return [...new Set(paths)].filter((p) => !existsSync(new URL(`public/${p}`, ROOT).pathname));
+}
+
 let failed = false;
 let checked = 0;
 
@@ -35,6 +42,14 @@ for (const { file: relative, schema, label } of FILES) {
 
   const { valid, errors } = validate(deck);
   const duplicates = findDuplicateIds(deck);
+
+  // Câu nghe: mọi file âm thanh được tham chiếu phải tồn tại, nếu không app có câu không ra tiếng.
+  const missingAudio = valid && deck.part === 2 ? missingAudioFiles(deck) : [];
+  if (missingAudio.length > 0) {
+    failed = true;
+    console.error(`✗ ${relative}: thiếu ${missingAudio.length} file âm thanh (vd ${missingAudio.slice(0, 3).join(', ')})`);
+    continue;
+  }
 
   if (valid && duplicates.length === 0) {
     const extra = deck.attribution ? ` (${deck.attribution.license})` : '';

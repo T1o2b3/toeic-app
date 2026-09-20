@@ -43,6 +43,17 @@ export default defineConfig({
         // Deck từ vựng ~1,4 MB, vượt ngưỡng mặc định 2 MB khi thêm ngân hàng câu hỏi.
         maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
         cleanupOutdatedCaches: true,
+        // Âm thanh KHÔNG nhét vào precache (hàng MB, tải hết lúc cài app là quá nặng): lưu dần khi nghe.
+        // Bộ phát tải trọn file (không dùng Range) nên nhận về 200 và lưu được; nghe lại/offline đọc từ đây.
+        runtimeCaching: [{
+          urlPattern: ({ url }) => url.pathname.startsWith('/audio/'),
+          handler: 'CacheFirst',
+          options: {
+            cacheName: 'toeic-audio',
+            expiration: { maxEntries: 800 },
+            cacheableResponse: { statuses: [200] },
+          },
+        }],
       },
     }),
   ],
