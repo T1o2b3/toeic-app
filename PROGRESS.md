@@ -82,10 +82,17 @@ nhanh hơn 01:43", gạt từ "successfully" vào danh sách học ngon.
 
 **3. Góp ý thứ ba (mô tả giao diện đề thi thật) — CHƯA làm, đang đối chiếu.** Xem mục "Đối chiếu với đề thật".
 
-### Dọn nốt refactor (kế hoạch 1A/1B/1C ở cuối file) — ĐANG LÀM
-- **1A** đang làm dở: đã tạo `pipeline/lib/cli.js` (`projectPath`, `today`, `flagValue`, `flagNumber`,
-  `hasFlag`) nhưng **CHƯA nối vào 4 script** — file mới chưa được commit cùng hai việc trên.
-- 1B, 1C chưa bắt đầu.
+### Dọn nốt refactor (kế hoạch 1A/1B/1C ở cuối file)
+- **1A XONG** — `pipeline/lib/cli.js` (`projectPath`, `today`, `flagValue`, `flagNumber`, `hasFlag`) + 8 test.
+  Nối vào **cả 7 script** pipeline, không chỉ 4 script build: `audit-vocab` (cùng kiểu đọc cờ `--deck`),
+  `coverage-part5` và `validate-content` (cùng cách tìm gốc project). Bớt 73 dòng chép tay, thêm 54.
+  - Làm đúng như kế hoạch dặn: **gom "đọc MỘT cờ", KHÔNG gom thành một `parseArgs` chung** — mỗi script có bộ
+    cờ riêng, mặc định của `--target` ở `build-sets` còn đổi theo `--part`.
+  - `today` là HÀM chứ không phải hằng: pipeline chạy vài giờ có thể vắt qua nửa đêm, mỗi lô nên mang đúng ngày của nó.
+  - **Đã chạy thật** (local có `.env`): `validate:content` (8 file nội dung + mọi MP3 tham chiếu) · `audit:vocab -- --deck bsl`
+    (đọc đúng deck 1161 từ) · `audit:coverage` · `build-sets --part 9` và `--variant bogus` báo lỗi đúng, không gọi AI.
+    Ba script build chưa chạy thật (tốn hạn mức AI) — phần đường dẫn của chúng dùng chung hàm đã chạy ở trên.
+- 1B (gom khối sinh âm thanh), 1C (gộp listen/quiz) chưa bắt đầu.
 
 ## Phiên 2026-09-20 (khuya) — Soát codebase + refactor DRY — XONG giai đoạn A & B, ĐÃ MERGE VÀO MAIN
 

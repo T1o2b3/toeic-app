@@ -20,11 +20,10 @@ import { openCache } from './lib/cache.js';
 import { createValidator } from './lib/validate-deck.js';
 import { synthesize, runLimited } from './lib/tts.js';
 import { removeOrphanAudio } from './lib/audio-files.js';
+import { projectPath, today, flagValue, flagNumber, hasFlag } from './lib/cli.js';
 
-const ROOT = new URL('..', import.meta.url);
-const path = (relative) => new URL(relative, ROOT).pathname;
-const PUBLIC = path('public/');
-const EDGE_TTS = path('pipeline/.venv/bin/edge-tts');
+const PUBLIC = projectPath('public/');
+const EDGE_TTS = projectPath('pipeline/.venv/bin/edge-tts');
 
 /** Chủ đề gợi ý để các bộ trong cùng lô không trùng ý. Xoay theo số bộ đã có. */
 const TOPICS = [
@@ -36,24 +35,22 @@ const TOPICS = [
 ];
 
 function parseArgs(argv) {
-  const value = (flag, fallback) => { const i = argv.indexOf(flag); return i === -1 ? fallback : argv[i + 1]; };
-  const part = Number.parseInt(value('--part', ''), 10);
+  const part = flagNumber(argv, '--part', NaN);
   if (![3, 4, 6, 7].includes(part)) throw new Error('Cần --part 3|4|6|7');
-  const variant = part === 7 ? value('--variant', 'single') : undefined;
+  const variant = part === 7 ? flagValue(argv, '--variant', 'single') : undefined;
   if (part === 7 && !['single', 'double', 'triple'].includes(variant)) throw new Error('--variant phải là single|double|triple');
   const defaults = { 3: 13, 4: 10, 6: 4, 7: { single: 10, double: 2, triple: 3 }[variant] };
   const batchDefaults = { 3: 5, 4: 5, 6: 4, 7: { single: 5, double: 2, triple: 2 }[variant] };
   return {
     part, variant,
-    target: Number.parseInt(value('--target', String(defaults[part])), 10),
-    batchSize: Number.parseInt(value('--batch-size', String(batchDefaults[part])), 10),
-    generate: !argv.includes('--no-generate'),
+    target: flagNumber(argv, '--target', defaults[part]),
+    batchSize: flagNumber(argv, '--batch-size', batchDefaults[part]),
+    generate: !hasFlag(argv, '--no-generate'),
   };
 }
 
 /** Sinh + kiểm định tới đủ mục tiêu (đếm theo dạng) hoặc hết hạn mức. */
 async function generate({ part, variant, target, batchSize, cache }) {
-  const today = new Date().toISOString().slice(0, 10);
   const pair = createModelPair();
   const ofVariant = () => Object.values(cache.snapshot()).filter((s) => (part !== 7 || s.kind === variant));
   console.log(`Part ${part}${variant ? ` (${variant})` : ''}: đã có ${ofVariant().length} bộ. Mục tiêu: ${target}.`);
@@ -103,7 +100,7 @@ async function generate({ part, variant, target, batchSize, cache }) {
         ...(item.script ? { script: item.script.map((t) => ({ speaker: String(t.speaker).trim(), text: String(t.text).trim() })) } : {}),
         ...(item.passages ? { passages: item.passages.map((p) => ({ label: String(p.label ?? 'Document').trim(), text: String(p.text).trim() })) } : {}),
         questions: item.questions,
-        gen: { model: writer.model, promptVersion: SET_PROMPT_VERSION, batch: today, date: today },
+        gen: { model: writer.model, promptVersion: SET_PROMPT_VERSION, batch: today(), date: today() },
         verify: { model: solver.model, agreed: true },
       });
     }
@@ -122,7 +119,7 @@ const defaultKind = (part) => ({ 3: 'conversation', 4: 'talk', 6: 'text-completi
 
 async function main() {
   const { part, variant, target, batchSize, generate: shouldGenerate } = parseArgs(process.argv.slice(2));
-  const cache = openCache(path(`pipeline/.cache/sets-part${part}.json`));
+  const cache = openCache(projectPath(`pipeline/.cache/sets-part${part}.json`));
   if (shouldGenerate) await generate({ part, variant, target, batchSize, cache });
 
   // Ghi file: mọi bộ trong cache (Part 7 gồm cả ba dạng), sắp theo id. Giọng/đáp án gán theo thứ tự nên id phải ổn định.
@@ -155,15 +152,15 @@ async function main() {
   }
 
   const bank = { set: `part${part}-core`, part, version: 1, entries: assembled.map((a) => a.entry) };
-  const { valid, errors } = createValidator(path('schemas/set.schema.json'))(bank);
+  const { valid, errors } = createValidator(projectPath('schemas/set.schema.json'))(bank);
   if (!valid) {
     console.error('Bộ KHÔNG hợp lệ, không ghi file:');
     for (const error of errors.slice(0, 20)) console.error('  -', error);
     process.exitCode = 1;
     return;
   }
-  mkdirSync(path('public/content'), { recursive: true });
-  writeFileSync(path(`public/content/sets-part${part}.json`), `${JSON.stringify(bank, null, 2)}\n`);
+  mkdirSync(projectPath('public/content'), { recursive: true });
+  writeFileSync(projectPath(`public/content/sets-part${part}.json`), `${JSON.stringify(bank, null, 2)}\n`);
   const questionCount = bank.entries.reduce((s, e) => s + e.questions.length, 0);
   console.log(`Đã ghi ${bank.entries.length} bộ (${questionCount} câu) vào public/content/sets-part${part}.json`);
 

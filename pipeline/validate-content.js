@@ -5,8 +5,8 @@
  */
 import { readFileSync, existsSync } from 'node:fs';
 import { createValidator, findDuplicateIds } from './lib/validate-deck.js';
+import { projectPath } from './lib/cli.js';
 
-const ROOT = new URL('..', import.meta.url);
 const FILES = [
   { file: 'public/content/vocab-toeic-tsl.json', schema: 'schemas/vocab.schema.json', label: 'từ vựng' },
   { file: 'public/content/vocab-toeic-bsl.json', schema: 'schemas/vocab.schema.json', label: 'từ vựng' },
@@ -24,7 +24,7 @@ function missingAudioFiles(bank) {
     if (!entry.audio) return [];
     return Array.isArray(entry.audio.clips) ? entry.audio.clips : Object.values(entry.audio);
   });
-  return [...new Set(paths)].filter((p) => !existsSync(new URL(`public/${p}`, ROOT).pathname));
+  return [...new Set(paths)].filter((p) => !existsSync(projectPath(`public/${p}`)));
 }
 
 /**
@@ -39,8 +39,8 @@ let failed = false;
 let checked = 0;
 
 for (const { file: relative, schema, label } of FILES) {
-  const validate = createValidator(new URL(schema, ROOT));
-  const filePath = new URL(relative, ROOT).pathname;
+  const validate = createValidator(projectPath(schema));
+  const filePath = projectPath(relative);
   if (!existsSync(filePath)) {
     console.log(`- ${relative}: chưa có (bỏ qua)`);
     continue;

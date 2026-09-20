@@ -19,28 +19,23 @@ import { createGeminiProvider, withRetry, sleep, isDailyQuotaError, DEFAULT_GEMI
 import { fetchIpaManyWiktionary } from './lib/ipa-wiktionary.js';
 import { openCache, chunk, readCachedAi } from './lib/cache.js';
 import { createDeckValidator, findDuplicateIds } from './lib/validate-deck.js';
-
-const ROOT = new URL('..', import.meta.url);
-const path = (relative) => new URL(relative, ROOT).pathname;
+import { projectPath, today, flagValue, flagNumber, hasFlag } from './lib/cli.js';
 
 /**
  * Đọc tham số dòng lệnh.
  * @param {string[]} argv
  */
 function parseArgs(argv) {
-  const limitFlag = argv.indexOf('--limit');
-  const batchFlag = argv.indexOf('--batch-size');
-  const listFlag = argv.indexOf('--list');
-  const name = listFlag === -1 ? 'tsl' : argv[listFlag + 1];
+  const name = flagValue(argv, '--list', 'tsl');
   const list = WORDLISTS[name];
   if (!list) {
     throw new Error(`--list không hợp lệ: "${name}". Chọn một trong: ${Object.keys(WORDLISTS).join(', ')}`);
   }
   return {
     list,
-    limit: limitFlag === -1 ? Infinity : Number.parseInt(argv[limitFlag + 1], 10),
-    batchSize: batchFlag === -1 ? 50 : Number.parseInt(argv[batchFlag + 1], 10),
-    withIpa: !argv.includes('--no-ipa'),
+    limit: flagNumber(argv, '--limit', Infinity),
+    batchSize: flagNumber(argv, '--batch-size', 50),
+    withIpa: !hasFlag(argv, '--no-ipa'),
   };
 }
 
@@ -50,12 +45,12 @@ function parseArgs(argv) {
  * @returns {Array<{word: string, rank: number}>}
  */
 function readWords(list) {
-  const words = parseTslCsv(readFileSync(path(list.csv), 'utf8'), { rankColumn: list.rankColumn });
+  const words = parseTslCsv(readFileSync(projectPath(list.csv), 'utf8'), { rankColumn: list.rankColumn });
   if (!list.excludeFrom) return words;
 
   const base = WORDLISTS[list.excludeFrom];
   const seen = new Set(
-    parseTslCsv(readFileSync(path(base.csv), 'utf8'), { rankColumn: base.rankColumn })
+    parseTslCsv(readFileSync(projectPath(base.csv), 'utf8'), { rankColumn: base.rankColumn })
       .map((w) => w.word),
   );
   const kept = words.filter((w) => !seen.has(w.word));
@@ -70,14 +65,13 @@ async function main() {
   const words = Number.isFinite(limit) ? allWords.slice(0, limit) : allWords;
   console.log(`${list.attribution.source}: ${allWords.length} từ cần sinh, phiên này xử lý ${words.length} từ.`);
 
-  const aiCache = openCache(path(list.aiCache));
-  const ipaCache = openCache(path(list.ipaCache));
+  const aiCache = openCache(projectPath(list.aiCache));
+  const ipaCache = openCache(projectPath(list.ipaCache));
   const todo = words.filter((w) => !aiCache.has(w.word));
   console.log(`Đã có sẵn trong cache: ${words.length - todo.length} từ. Cần gọi AI: ${todo.length} từ.`);
 
   const models = (process.env.GEMINI_MODELS ?? DEFAULT_GEMINI_MODELS.join(','))
     .split(',').map((m) => m.trim()).filter(Boolean);
-  const today = new Date().toISOString().slice(0, 10);
 
   if (todo.length > 0) {
     const batches = chunk(todo, batchSize);
@@ -95,7 +89,7 @@ async function main() {
           const text = await withRetry(() => provider.generate(buildVocabPrompt(batch)));
           const { matched, missing } = matchVocabResponse(batch, parseVocabResponse(text));
           for (const item of matched) {
-            aiCache.set(item.word, { ai: item.ai, model: provider.model, promptVersion: VOCAB_PROMPT_VERSION, date: today });
+            aiCache.set(item.word, { ai: item.ai, model: provider.model, promptVersion: VOCAB_PROMPT_VERSION, date: today() });
           }
           aiCache.save();
           console.log(`${label} [${provider.model}]: nhận ${matched.length}/${batch.length} từ${missing.length ? ` (thiếu ${missing.length})` : ''}`);
@@ -187,8 +181,8 @@ async function main() {
     return;
   }
 
-  mkdirSync(path('public/content'), { recursive: true });
-  writeFileSync(path(list.output), `${JSON.stringify(deck, null, 2)}\n`);
+  mkdirSync(projectPath('public/content'), { recursive: true });
+  writeFileSync(projectPath(list.output), `${JSON.stringify(deck, null, 2)}\n`);
   console.log(`\nĐã ghi ${entries.length} từ vào ${list.output}`);
   if (skipped.length) {
     console.log(`Bỏ qua ${skipped.length} từ do dữ liệu AI thiếu:`);

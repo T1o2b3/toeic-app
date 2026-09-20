@@ -7,11 +7,11 @@
  * Không sửa gì, chỉ đọc và báo cáo. Mục đích: phát hiện lô kém để gỡ theo gen.model (D13).
  */
 import { readFileSync } from 'node:fs';
+import { projectPath, flagValue } from './lib/cli.js';
 
 const args = process.argv.slice(2);
-const deckFlag = args.indexOf('--deck');
-const deckName = deckFlag === -1 ? 'tsl' : args[deckFlag + 1];
-const DECK = new URL(`../public/content/vocab-toeic-${deckName}.json`, import.meta.url).pathname;
+const deckName = flagValue(args, '--deck', 'tsl');
+const DECK = projectPath(`public/content/vocab-toeic-${deckName}.json`);
 const sampleSize = Number.parseInt(args.find((a) => /^\d+$/.test(a)), 10) || 30;
 
 const deck = JSON.parse(readFileSync(DECK, 'utf8'));

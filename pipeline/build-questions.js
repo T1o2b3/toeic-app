@@ -16,20 +16,14 @@ import { sleep } from './lib/ai-provider.js';
 import { createModelPair, aiStep, QUOTA_MESSAGE } from './lib/model-pair.js';
 import { openCache } from './lib/cache.js';
 import { createValidator } from './lib/validate-deck.js';
+import { projectPath, today, flagNumber } from './lib/cli.js';
 
-const ROOT = new URL('..', import.meta.url);
-const path = (relative) => new URL(relative, ROOT).pathname;
-
-const OUTPUT = path('public/content/questions-part5.json');
-const CACHE = path('pipeline/.cache/questions-part5.json');
-const VOCAB = path('public/content/vocab-toeic-tsl.json');
+const OUTPUT = projectPath('public/content/questions-part5.json');
+const CACHE = projectPath('pipeline/.cache/questions-part5.json');
+const VOCAB = projectPath('public/content/vocab-toeic-tsl.json');
 
 function parseArgs(argv) {
-  const get = (flag, fallback) => {
-    const index = argv.indexOf(flag);
-    return index === -1 ? fallback : Number.parseInt(argv[index + 1], 10);
-  };
-  return { target: get('--target', 200), batchSize: get('--batch-size', 20) };
+  return { target: flagNumber(argv, '--target', 200), batchSize: flagNumber(argv, '--batch-size', 20) };
 }
 
 /** Lấy ngẫu nhiên một ít từ trong deck để câu hỏi bám sát từ vựng đang học. */
@@ -53,7 +47,6 @@ function pickErrorTypes(counts, howMany = 4) {
 async function main() {
   const { target, batchSize } = parseArgs(process.argv.slice(2));
   const cache = openCache(CACHE);
-  const today = new Date().toISOString().slice(0, 10);
 
   const pair = createModelPair();
   console.log(`Đã có sẵn: ${cache.size()} câu. Mục tiêu: ${target} câu.`);
@@ -114,7 +107,7 @@ async function main() {
         errorType: ERROR_TYPES.includes(question.errorType) ? question.errorType : 'vocabulary',
         explanation: String(question.explanation ?? '').trim(),
         ...(question.trap ? { trap: String(question.trap).trim() } : {}),
-        gen: { model: writer.model, promptVersion: QUESTION_PROMPT_VERSION, batch: today, date: today },
+        gen: { model: writer.model, promptVersion: QUESTION_PROMPT_VERSION, batch: today(), date: today() },
         verify: { model: solver.model, answer: solvedAnswer, agreed: true },
       });
     }
@@ -138,7 +131,7 @@ async function main() {
   }
 
   const bank = { set: 'part5-core', part: 5, version: 1, entries };
-  const validate = createValidator(path('schemas/question.schema.json'));
+  const validate = createValidator(projectPath('schemas/question.schema.json'));
   const { valid, errors } = validate(bank);
   if (!valid) {
     console.error('Bộ câu hỏi KHÔNG hợp lệ, không ghi file:');
@@ -147,7 +140,7 @@ async function main() {
     return;
   }
 
-  mkdirSync(path('public/content'), { recursive: true });
+  mkdirSync(projectPath('public/content'), { recursive: true });
   writeFileSync(OUTPUT, `${JSON.stringify(bank, null, 2)}\n`);
   console.log(`\nĐã ghi ${entries.length} câu vào public/content/questions-part5.json`);
 }

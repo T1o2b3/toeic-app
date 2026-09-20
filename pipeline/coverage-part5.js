@@ -7,8 +7,9 @@
  * Không sửa gì, chỉ đọc và báo cáo.
  */
 import { readFileSync, existsSync } from 'node:fs';
+import { projectPath } from './lib/cli.js';
 
-const CONTENT = new URL('../public/content/', import.meta.url).pathname;
+const CONTENT = projectPath('public/content/');
 const read = (name) => JSON.parse(readFileSync(`${CONTENT}${name}`, 'utf8'));
 
 const questions = read('questions-part5.json').entries

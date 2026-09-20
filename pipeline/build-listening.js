@@ -22,21 +22,19 @@ import { createValidator } from './lib/validate-deck.js';
 import { assembleEntry } from './lib/listening-assemble.js';
 import { synthesize, runLimited } from './lib/tts.js';
 import { removeOrphanAudio } from './lib/audio-files.js';
+import { projectPath, today, flagNumber, hasFlag } from './lib/cli.js';
 
-const ROOT = new URL('..', import.meta.url);
-const path = (relative) => new URL(relative, ROOT).pathname;
-
-const OUTPUT = path('public/content/listening-part2.json');
-const CACHE = path('pipeline/.cache/listening-part2.json');
-const PUBLIC = path('public/');
-const EDGE_TTS = path('pipeline/.venv/bin/edge-tts');
+const OUTPUT = projectPath('public/content/listening-part2.json');
+const CACHE = projectPath('pipeline/.cache/listening-part2.json');
+const PUBLIC = projectPath('public/');
+const EDGE_TTS = projectPath('pipeline/.venv/bin/edge-tts');
 
 function parseArgs(argv) {
-  const num = (flag, fallback) => {
-    const index = argv.indexOf(flag);
-    return index === -1 ? fallback : Number.parseInt(argv[index + 1], 10);
+  return {
+    target: flagNumber(argv, '--target', 72),
+    batchSize: flagNumber(argv, '--batch-size', 24),
+    generate: !hasFlag(argv, '--no-generate'),
   };
-  return { target: num('--target', 72), batchSize: num('--batch-size', 24), generate: !argv.includes('--no-generate') };
 }
 
 /** Chọn các dạng câu còn ít nhất, để bộ câu phủ đều. */
@@ -46,7 +44,6 @@ function pickTypes(counts, howMany = 6) {
 
 /** Sinh + kiểm định cho tới đủ mục tiêu hoặc hết hạn mức. Trả về khi xong hoặc phải dừng. */
 async function generate({ target, batchSize, cache }) {
-  const today = new Date().toISOString().slice(0, 10);
   const pair = createModelPair();
   console.log(`Đã có sẵn: ${cache.size()} câu. Mục tiêu: ${target} câu.`);
 
@@ -95,7 +92,7 @@ async function generate({ target, batchSize, cache }) {
         errorType: PART2_TYPES.includes(question.errorType) ? question.errorType : 'wh-what',
         explanation: String(question.explanation ?? '').trim(),
         ...(question.trap ? { trap: String(question.trap).trim() } : {}),
-        gen: { model: writer.model, promptVersion: PART2_PROMPT_VERSION, batch: today, date: today },
+        gen: { model: writer.model, promptVersion: PART2_PROMPT_VERSION, batch: today(), date: today() },
         verify: { model: solver.model, answer: solvedAnswer, agreed: true },
       });
     }
@@ -149,7 +146,7 @@ async function main() {
   }
 
   const bank = { set: 'part2-core', part: 2, version: 1, entries: assembled.map((a) => a.entry) };
-  const { valid, errors } = createValidator(path('schemas/listening.schema.json'))(bank);
+  const { valid, errors } = createValidator(projectPath('schemas/listening.schema.json'))(bank);
   if (!valid) {
     console.error('Bộ câu nghe KHÔNG hợp lệ, không ghi file:');
     for (const error of errors.slice(0, 20)) console.error('  -', error);
@@ -157,7 +154,7 @@ async function main() {
     return;
   }
 
-  mkdirSync(path('public/content'), { recursive: true });
+  mkdirSync(projectPath('public/content'), { recursive: true });
   writeFileSync(OUTPUT, `${JSON.stringify(bank, null, 2)}\n`);
   console.log(`Đã ghi ${bank.entries.length} câu vào public/content/listening-part2.json`);
 
