@@ -129,3 +129,7 @@ button.pal.current { outline: 2px solid var(--fg); outline-offset: 1px; }
 .rev { font-size: 0.85rem; padding: 0.1rem 0; color: var(--fg); }
 .rev.correct { color: var(--good); font-weight: 600; }
 .rev.wrong { color: var(--again); }
+
+/* Kết quả thi thử: số liệu trung tính (màu đỏ của .gap-value dành cho danh sách lỗ hổng, không dùng cho điểm số) */
+.gap-value.plain { color: var(--fg); }
+.wrong-list { margin: 0.75rem 0 1rem; }

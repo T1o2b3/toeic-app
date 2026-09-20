@@ -58,7 +58,7 @@
         "status": { "enum": ["active", "retired"] },
         "kind": { "enum": ["conversation", "talk", "text-completion", "single", "double", "triple"] },
         "title": { "type": "string" },
-        "script": { "type": "array", "minItems": 2, "items": { "$ref": "#/$defs/turn" } },
+        "script": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/turn" } },
         "audio": {
           "type": "object", "required": ["clips", "voices"], "additionalProperties": false,
           "properties": {

@@ -55,6 +55,21 @@ Huy báo: phân loại chỉ chọn được 1 trong 4, không xem lại đượ
   loại lỗi giữa logic và màn hình mà test logic thuần không thấy. **`validate:content` giờ kiểm cả BSL.**
   `audit:vocab -- --deck bsl` soi deck BSL. **343 test pass.**
 
+## Phiên 2026-09-20 (chiều) — Đủ nội dung cho đề 194 câu + thi thử đủ bộ — XONG, đã lưu
+Huy giao: "đẩy nhanh các phần ngoài Part 5 để có đề 194/200". 194 = 200 trừ 6 câu Part 1 (cần ảnh).
+- **Nội dung mới** (kiểm định chéo 2 model như D12; bộ chỉ đạt khi MỌI câu khớp): Part 3 = 13 bộ/39 câu · Part 4 = 10 bộ/30 câu ·
+  Part 6 = 4 bộ/16 câu · Part 7 = 20 bộ/59 câu (đơn/đôi/ba) · Part 2 = 72 câu. **Dựng thử bằng dữ liệu thật ra đúng đề 194 câu**
+  (25·39·30·30·16·54), 120 phút, không trùng câu. Âm thanh: 375 file MP3 (13 MB), giọng Mỹ/Anh/Úc/Canada theo giới tính người nói.
+- **Kiến trúc chung** (D37): một schema `set.schema.json`, một pipeline `npm run build:sets -- --part N [--variant single|double|triple]`,
+  một màn `#/sets?part=N`, thống kê theo kỹ năng Nghe/Đọc. Dashboard đổi "Part 5/Nghe Part 2" → "Đọc/Nghe".
+- **Thi thử `#/exam`** (D38, M15): đề đủ / chỉ Nghe / chỉ Đọc / từng Part, tính giờ (đồng hồ, tự nộp khi hết giờ), danh sách câu,
+  kết quả theo Part + xem lại câu sai. Chấm SỐ CÂU ĐÚNG, không quy đổi điểm. Ghi nhật ký một lần khi nộp.
+- **Dashboard mới** (D36): ba số đầu trang thay số sự kiện thô (học tuần này/mục tiêu 90 phút · từ nhớ vững · đúng ở bài thi).
+- **Lỗi thật bắt được giữa chừng** (đều có test canh): dọn âm thanh mồ côi xoá nhầm Part 3/4 · schema đòi ≥ 2 lượt nói làm Part 4 bị
+  chặn khi ghi · giờ thi dài hơn đề thật khi Part 7 vượt 1 câu · đổi Part trong màn luyện làm dính lượt cũ · màu đỏ của "lỗ hổng"
+  dùng nhầm cho điểm số ở màn kết quả (phát hiện bằng ảnh chụp màn hình thật).
+- **Chưa thử nghe thật trên thiết bị** — xem "Bước tiếp theo" mục 1. **677 test pass** (thêm: sets, exam, set-check, ui-sets, ui-exam...).
+
 ## Phiên 2026-09-20 — M8 + M9 (luyện nghe Part 2) — XONG, đã lưu
 - **M8 pipeline âm thanh:** `npm run build:listening` sinh câu hỏi-đáp Part 2 (kiểm định chéo 2 model như D12), cân bằng
   đáp án A/B/C, tạo MP3 bằng edge-tts (venv riêng `pipeline/.venv`, đã gitignore). **58/72 câu** đạt, 232 đoạn, 5,2 MB.
@@ -155,11 +170,19 @@ khi chưa có SMTP riêng).
 
 ## Bước tiếp theo (cụ thể)
 
-1. **Huy thử "gạt từ lạ" khi làm Part 5** (D34) trên Mac (kéo thả) và iPhone (chạm) rồi báo cảm nhận. Nếu
-   thấy nên có: deck `my-words` biến từ chưa có trong deck thành thẻ học (đang ở Backlog trong PLAN.md).
-2. Chạy lại `npm run build:vocab` khi hạn mức AI đặt lại (nửa đêm giờ Thái Bình Dương) để bù 3 từ TSL còn
-   thiếu (3/1250) và ~70 từ chưa có IPA. Nhớ: chạy các deck **nối tiếp**, không song song (D33).
-3. M5: Huy cấu hình Supabase (hướng dẫn ở mục "VIỆC CỦA HUY") để bật đồng bộ Mac ↔ iPhone.
+1. **Huy thử trên máy thật** (mọi thứ dưới đây mới chạy bằng jsdom + bộ phát âm thanh GIẢ, chưa nghe thử thật):
+   - iPhone: chạm "Nghe" ở Part 2/3/4 có ra tiếng không; nghe hết mới chọn được (Part 2); bật máy bay rồi nghe lại
+     câu đã nghe; tốc độ 0.75× có méo giọng không.
+   - Thi thử `#/exam` → "Riêng Part 6" (ngắn nhất, 12 phút) để thử cả vòng: làm → danh sách câu → nộp → xem lại câu sai.
+   - Kéo thả từ lạ vào khay "Cần học" trên Mac; chạm-rồi-bấm trên iPhone (D34).
+   - M5: đăng nhập + "Đồng bộ ngay" trên hai máy (Supabase và biến môi trường Cloudflare đã có sẵn, đã kiểm tra).
+2. **Đa dạng đề thi thử:** Part 3 / 4 / 6 mới đủ ĐÚNG MỘT đề (13 / 10 / 4 bộ) nên mỗi lần "Đề đủ" chỉ đổi thứ tự bộ, không đổi
+   nội dung; Part 7 có 20 bộ (59 câu, dư ~5); Part 2 (72) và Part 5 (200) đa dạng hơn. Muốn 3 đề khác nhau: sinh thêm gấp ~3 lần
+   (`npm run build:sets -- --part N --target M`, chạy các Part NỐI TIẾP không song song vì cùng hạn mức AI).
+3. **M16:** làm dở rồi tiếp trên máy khác — hiện thoát giữa bài thi là mất bài (D38).
+4. M10 còn dở: bảng/biểu trong Part 3, đánh dấu câu chứa đáp án trong transcript. M11 (dictation câu nghe sai) chưa làm.
+5. Sinh bù: 3 từ TSL còn thiếu và ~70 từ chưa có IPA — `npm run build:vocab` (chạy đơn lẻ, xem D33).
+6. M18 (GitHub Actions ping Supabase + sao lưu hằng tuần) cần Huy tạo secret trên GitHub.
 
 ## Vướng mắc / câu hỏi mở
 - Q1 (Giai đoạn 2): audio để chung repo hay bucket riêng — chưa tới lúc quyết.

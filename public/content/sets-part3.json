@@ -1,0 +1,1328 @@
+{
+  "set": "part3-core",
+  "part": 3,
+  "version": 1,
+  "entries": [
+    {
+      "id": "p3-0001",
+      "set": "part3-core",
+      "part": 3,
+      "status": "active",
+      "kind": "conversation",
+      "title": "Office Equipment Repair",
+      "script": [
+        {
+          "speaker": "Woman",
+          "text": "Hi, Steve. The heavy-duty plotter in the design room is acting up again. It's leaving dark streaks across the blueprints."
+        },
+        {
+          "speaker": "Man",
+          "text": "Oh, no. We just had the rollers replaced last week. Let me check the maintenance log... Well, actually, it says here the technician only cleaned the optical sensor, they didn't replace any parts."
+        },
+        {
+          "speaker": "Woman",
+          "text": "Really? But we paid for a full overhaul! We have a major presentation tomorrow morning, and we need those high-res prints."
+        },
+        {
+          "speaker": "Man",
+          "text": "Right. I'll call the service center immediately and demand an emergency visit. In the meantime, could you try sending the files to the marketing department's printer?"
+        },
+        {
+          "speaker": "Woman",
+          "text": "I would, but their network is down today. I guess I'll have to copy the files to a flash drive and walk over there."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p3-0001-1",
+          "stem": "Why is the woman talking to the man?",
+          "options": {
+            "A": "To report a recurring issue with a machine.",
+            "B": "To request a refund for a faulty repair.",
+            "C": "To ask for help installing a new printer.",
+            "D": "To complain about the marketing department's network."
+          },
+          "answer": "A",
+          "errorType": "purpose",
+          "explanation": "Người phụ nữ bắt đầu cuộc đối thoại bằng cách thông báo rằng máy vẽ trong phòng thiết kế lại gặp trục trặc và để lại các vệt đen trên bản vẽ.",
+          "trap": "Người nghe dễ bị lừa chọn phương án yêu cầu hoàn tiền vì người phụ nữ có nhắc đến việc đã trả tiền cho một đợt đại tu toàn bộ nhưng không được thực hiện đúng."
+        },
+        {
+          "id": "p3-0001-2",
+          "stem": "What does the man imply about the previous maintenance service?",
+          "options": {
+            "A": "It was completed ahead of schedule.",
+            "B": "The work performed did not match what was expected.",
+            "C": "It was done free of charge.",
+            "D": "It caused the network outage."
+          },
+          "answer": "B",
+          "errorType": "inference",
+          "explanation": "Người đàn ông kiểm tra nhật ký bảo trì và nhận ra kỹ thuật viên chỉ vệ sinh cảm biến quang học chứ không thay thế linh kiện nào, trong khi người phụ nữ khẳng định họ đã trả tiền cho một đợt đại tu toàn bộ.",
+          "trap": "Phương án liên quan đến sự cố mạng dễ gây nhầm lẫn vì chi tiết mạng bị hỏng được nhắc đến ngay sau đó, nhưng nó thuộc về phòng marketing chứ không liên quan đến dịch vụ bảo trì."
+        },
+        {
+          "id": "p3-0001-3",
+          "stem": "What will the woman do next?",
+          "options": {
+            "A": "Call the repair technician.",
+            "B": "Contact the marketing department manager.",
+            "C": "Transfer some data to a portable storage device.",
+            "D": "Print the blueprints on the design room plotter."
+          },
+          "answer": "C",
+          "errorType": "next-action",
+          "explanation": "Ở lượt nói cuối cùng, người phụ nữ quyết định sẽ sao chép các tệp tin vào ổ cứng di động (flash drive) để mang sang phòng marketing in nhờ.",
+          "trap": "Người nghe dễ chọn phương án gọi cho kỹ thuật viên sửa chữa vì đây là hành động được đề xuất trong cuộc thoại, nhưng người thực hiện việc đó là người đàn ông chứ không phải người phụ nữ."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      },
+      "audio": {
+        "clips": [
+          "audio/e3b9be4abad44584.mp3",
+          "audio/a0d96bef3d76d534.mp3",
+          "audio/4333ff2d2f99d4ee.mp3",
+          "audio/3ae4af83050afd15.mp3",
+          "audio/a696fd170da17f7e.mp3"
+        ],
+        "voices": {
+          "Woman": "en-US-JennyNeural",
+          "Man": "en-US-GuyNeural"
+        }
+      }
+    },
+    {
+      "id": "p3-0002",
+      "set": "part3-core",
+      "part": 3,
+      "status": "active",
+      "kind": "conversation",
+      "title": "Hiring and Interviews",
+      "script": [
+        {
+          "speaker": "Man",
+          "text": "So, what did you think of the last candidate for the senior developer position, Sarah?"
+        },
+        {
+          "speaker": "Woman",
+          "text": "Well, his portfolio is impressive, but honestly, his answers during the technical round were a bit... superficial. He struggled to explain how he'd handle server scalability."
+        },
+        {
+          "speaker": "Man",
+          "text": "I noticed that too. However, his references highly praised his leadership skills, which we desperately need for the new team."
+        },
+        {
+          "speaker": "Woman",
+          "text": "True, but without strong technical foundations, he might struggle to earn the developers' respect. Let's look at the other applicant, Maya."
+        },
+        {
+          "speaker": "Man",
+          "text": "Actually, Maya just emailed me to withdraw her application. She accepted another offer."
+        },
+        {
+          "speaker": "Woman",
+          "text": "Oh, that's a shame. In that case, let's invite the first candidate back for a second, more targeted interview focusing on system architecture."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p3-0002-1",
+          "stem": "What is the main topic of the conversation?",
+          "options": {
+            "A": "Planning a technical training session.",
+            "B": "Negotiating a job offer.",
+            "C": "Resolving a conflict among developers.",
+            "D": "Evaluating a potential employee."
+          },
+          "answer": "D",
+          "errorType": "gist",
+          "explanation": "Hai người nói chuyện đang thảo luận và đánh giá các ứng viên cho vị trí lập trình viên cao cấp.",
+          "trap": "Phương án thương lượng lời mời nhận việc dễ gây bẫy vì có chi tiết ứng viên khác đã nhận một lời mời làm việc khác, nhưng đây không phải chủ đề chính của cuộc đối thoại."
+        },
+        {
+          "id": "p3-0002-2",
+          "stem": "What is suggested about Maya?",
+          "options": {
+            "A": "She was a highly competitive candidate in the job market.",
+            "B": "She lacked the necessary leadership experience.",
+            "C": "She withdrew because of a low salary offer.",
+            "D": "She was the woman's preferred choice."
+          },
+          "answer": "A",
+          "errorType": "inference",
+          "explanation": "Chi tiết Maya rút hồ sơ vì đã đồng ý nhận một lời mời làm việc khác cho thấy cô ấy là một ứng viên rất thu hút và có sức cạnh tranh cao trên thị trường tuyển dụng.",
+          "trap": "Người nghe dễ suy diễn rằng cô ấy là lựa chọn ưu tiên của người phụ nữ do người phụ nữ tỏ ra tiếc nuối, nhưng trong bài không có thông tin nào khẳng định cô ấy được đánh giá cao hơn ứng viên thứ nhất."
+        },
+        {
+          "id": "p3-0002-3",
+          "stem": "What does the woman mean when she says, \"True, but without strong technical foundations, he might struggle to earn the developers' respect\"?",
+          "options": {
+            "A": "She wants to demote the current developers.",
+            "B": "She believes technical expertise is crucial for the leadership role.",
+            "C": "She thinks the candidate should apply for a junior role.",
+            "D": "She is concerned about the candidate's communication skills."
+          },
+          "answer": "B",
+          "errorType": "speaker-intent",
+          "explanation": "Người phụ nữ muốn nhấn mạnh rằng dù ứng viên có khả năng lãnh đạo tốt, anh ta vẫn cần có nền tảng kỹ thuật vững chắc để có thể thuyết phục và nhận được sự tôn trọng từ các lập trình viên dưới quyền.",
+          "trap": "Phương án lo ngại về kỹ năng giao tiếp dễ đánh lừa người nghe vì cụm từ 'earn respect' liên quan đến mối quan hệ giữa người với người, nhưng thực chất cốt lõi vấn đề người phụ nữ lo ngại là kiến thức kỹ thuật."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      },
+      "audio": {
+        "clips": [
+          "audio/354be575f6b35870.mp3",
+          "audio/6d8702ecc474c67c.mp3",
+          "audio/f5e43f56486d6c56.mp3",
+          "audio/a9d92df3e667a293.mp3",
+          "audio/6e78e5d49b99d896.mp3",
+          "audio/c969beff67accb94.mp3"
+        ],
+        "voices": {
+          "Man": "en-GB-RyanNeural",
+          "Woman": "en-GB-SoniaNeural"
+        }
+      }
+    },
+    {
+      "id": "p3-0003",
+      "set": "part3-core",
+      "part": 3,
+      "status": "active",
+      "kind": "conversation",
+      "title": "A Delayed Shipment",
+      "script": [
+        {
+          "speaker": "Woman",
+          "text": "Mark, have the promotional banners for the annual gala arrived yet? The event is this Thursday."
+        },
+        {
+          "speaker": "Man",
+          "text": "Let me check the tracking number... Oh, it says here they're still stuck at the customs facility in Chicago. There's a weather delay."
+        },
+        {
+          "speaker": "Woman",
+          "text": "This is a disaster! We can't host the gala without the main sponsor's logos on display."
+        },
+        {
+          "speaker": "Man",
+          "text": "Don't panic. I'll contact the shipping company to see if we can pay for an expedited customs clearance."
+        },
+        {
+          "speaker": "Woman",
+          "text": "Wait, even with expedited clearance, it might not make it by Thursday. Actually, let's call a local print shop. We have the high-resolution design files, right?"
+        },
+        {
+          "speaker": "Man",
+          "text": "Yes, on our shared drive. I'll download them now and get a quote from the local printer down the street."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p3-0003-1",
+          "stem": "Why is the woman concerned?",
+          "options": {
+            "A": "The budget for the gala has been exceeded.",
+            "B": "The sponsor's logos are incorrect.",
+            "C": "Materials for an upcoming event are delayed.",
+            "D": "The local print shop is closed."
+          },
+          "answer": "C",
+          "errorType": "purpose",
+          "explanation": "Người phụ nữ lo lắng vì các biểu ngữ quảng cáo cho buổi dạ tiệc thường niên vào thứ Năm tuần này vẫn chưa được giao tới.",
+          "trap": "Phương án logo nhà tài trợ bị sai dễ gây nhầm lẫn vì người phụ nữ có nhắc đến việc không thể tổ chức tiệc nếu thiếu logo của nhà tài trợ chính, nhưng vấn đề là thiếu biểu ngữ chứ không phải logo bị sai."
+        },
+        {
+          "id": "p3-0003-2",
+          "stem": "What is causing the delay in the shipment?",
+          "options": {
+            "A": "Incorrect customs documentation.",
+            "B": "A strike by shipping employees.",
+            "C": "An unpaid expedited shipping fee.",
+            "D": "Adverse weather conditions."
+          },
+          "answer": "D",
+          "errorType": "detail",
+          "explanation": "Người đàn ông kiểm tra mã vận đơn và thông báo rằng hàng hóa đang bị kẹt tại cơ quan hải quan do thời tiết xấu (weather delay).",
+          "trap": "Người nghe dễ chọn phương án liên quan đến thủ tục hải quan hoặc phí vận chuyển nhanh do các từ khóa 'customs' và 'expedited' được lặp lại nhiều lần trong đoạn hội thoại."
+        },
+        {
+          "id": "p3-0003-3",
+          "stem": "What will the man do next?",
+          "options": {
+            "A": "Obtain a price estimate from a nearby business.",
+            "B": "Call the customs facility in Chicago.",
+            "C": "Upload design files to a shared drive.",
+            "D": "Contact the main sponsor."
+          },
+          "answer": "A",
+          "errorType": "next-action",
+          "explanation": "Ở lượt nói cuối cùng, người đàn ông đồng ý với phương án mới và nói rằng anh ấy sẽ tải các tệp thiết kế xuống và lấy báo giá từ tiệm in địa phương ngay dưới phố.",
+          "trap": "Phương án tải tệp thiết kế lên ổ đĩa chung dễ gây bẫy vì từ khóa 'shared drive' và 'download' xuất hiện, nhưng thực tế các tệp đã có sẵn trên ổ đĩa chung và anh ấy chỉ cần tải xuống để mang đi in."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      },
+      "audio": {
+        "clips": [
+          "audio/50c407562d4ce03b.mp3",
+          "audio/e9f86055be0a0495.mp3",
+          "audio/ba6861bcd6593e1a.mp3",
+          "audio/bd99d15984c3786c.mp3",
+          "audio/ef6dda329f2d5580.mp3",
+          "audio/5c0ff5b657ebc310.mp3"
+        ],
+        "voices": {
+          "Woman": "en-AU-NatashaNeural",
+          "Man": "en-CA-LiamNeural"
+        }
+      }
+    },
+    {
+      "id": "p3-0004",
+      "set": "part3-core",
+      "part": 3,
+      "status": "active",
+      "kind": "conversation",
+      "title": "Business Travel Booking",
+      "script": [
+        {
+          "speaker": "Woman",
+          "text": "David, did you book the flights for our trip to the Tokyo tech expo next month?"
+        },
+        {
+          "speaker": "Man",
+          "text": "I was just about to, but the corporate travel portal is showing that direct flights are completely sold out for our travel dates."
+        },
+        {
+          "speaker": "Woman",
+          "text": "Oh, no. A layover will add at least six hours to the trip, and we need to be fresh for the opening keynote."
+        },
+        {
+          "speaker": "Man",
+          "text": "Well, we could fly out a day earlier, on Tuesday instead of Wednesday. The hotel rates are reasonable, and there are direct flights available."
+        },
+        {
+          "speaker": "Woman",
+          "text": "That sounds like a good plan, but let me check our department's budget first. Extra hotel nights require approval from the director."
+        },
+        {
+          "speaker": "Man",
+          "text": "I'll hold off on booking then. Let me know as soon as you get the green light."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p3-0004-1",
+          "stem": "What problem are the speakers discussing?",
+          "options": {
+            "A": "A sudden increase in hotel rates.",
+            "B": "Limited availability of direct flights.",
+            "C": "A scheduling conflict with a keynote speaker.",
+            "D": "An expired corporate travel portal account."
+          },
+          "answer": "B",
+          "errorType": "gist",
+          "explanation": "Người đàn ông thông báo rằng các chuyến bay thẳng đến Tokyo vào ngày họ dự định đi đã hoàn toàn hết vé, dẫn đến việc họ phải tìm phương án thay thế.",
+          "trap": "Phương án giá khách sạn tăng đột ngột dễ đánh lừa vì có từ khóa 'hotel rates', nhưng thực tế người đàn ông nói giá phòng vẫn ở mức hợp lý."
+        },
+        {
+          "id": "p3-0004-2",
+          "stem": "Why does the woman hesitate to change the departure date?",
+          "options": {
+            "A": "She has another meeting scheduled for Tuesday.",
+            "B": "She dislikes long layovers.",
+            "C": "It might lead to unauthorized expenses.",
+            "D": "She is worried about missing the opening keynote."
+          },
+          "answer": "C",
+          "errorType": "inference",
+          "explanation": "Người phụ nữ ngần ngại vì việc đi sớm hơn một ngày sẽ phát sinh thêm chi phí phòng khách sạn và việc này cần phải có sự phê duyệt từ giám đốc bộ phận.",
+          "trap": "Người nghe dễ nhầm sang phương án lo ngại về việc quá cảnh lâu hoặc bỏ lỡ bài phát biểu khai mạc, nhưng đó là lý do họ không muốn chọn chuyến bay có điểm dừng, chứ không phải lý do cô ấy do dự khi đổi ngày bay sớm hơn."
+        },
+        {
+          "id": "p3-0004-3",
+          "stem": "What does the man mean when he says, \"I'll hold off on booking then\"?",
+          "options": {
+            "A": "He wants the woman to book the flights herself.",
+            "B": "He is going to cancel the trip entirely.",
+            "C": "He will look for alternative airlines in the meantime.",
+            "D": "He will wait for the woman's confirmation before finalizing the travel plans."
+          },
+          "answer": "D",
+          "errorType": "speaker-intent",
+          "explanation": "Cụm từ 'hold off on booking' kết hợp với câu tiếp theo 'Let me know as soon as you get the green light' thể hiện ý định của người đàn ông là sẽ tạm hoãn việc đặt vé cho đến khi người phụ nữ kiểm tra xong ngân sách và đồng ý.",
+          "trap": "Phương án tìm kiếm các hãng hàng không khác dễ gây bẫy vì người nghe có thể nghĩ anh ấy sẽ tiếp tục tìm kiếm vé máy bay trong lúc chờ đợi, nhưng thực tế anh ấy sẽ dừng mọi hoạt động đặt vé."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      },
+      "audio": {
+        "clips": [
+          "audio/e8c7c1f4cc27e385.mp3",
+          "audio/8dcfdc66a9aaa978.mp3",
+          "audio/75cc76281c293270.mp3",
+          "audio/e85b706bb33850a2.mp3",
+          "audio/f0c2d347d23f0e4f.mp3",
+          "audio/68a6a136c7ee03db.mp3"
+        ],
+        "voices": {
+          "Woman": "en-CA-ClaraNeural",
+          "Man": "en-US-GuyNeural"
+        }
+      }
+    },
+    {
+      "id": "p3-0005",
+      "set": "part3-core",
+      "part": 3,
+      "status": "active",
+      "kind": "conversation",
+      "title": "Budget Approval",
+      "script": [
+        {
+          "speaker": "Man",
+          "text": "Sarah, did the board approve our marketing budget for the new software launch?"
+        },
+        {
+          "speaker": "Woman",
+          "text": "Well, yes and no. They approved the overall amount, but they want us to reallocate funds. Specifically, they think we're spending too much on print ads."
+        },
+        {
+          "speaker": "Man",
+          "text": "But print ads in trade journals are crucial for reaching corporate clients! Did they suggest where to put that money instead?"
+        },
+        {
+          "speaker": "Woman",
+          "text": "Actually, they want us to boost our social media campaign. They believe it has a higher return on investment."
+        },
+        {
+          "speaker": "Man",
+          "text": "I see their point, but we can't just abandon print. Let me draft a compromise proposal."
+        },
+        {
+          "speaker": "Woman",
+          "text": "Great. I'll schedule a follow-up meeting with the CFO for Thursday afternoon to present it."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p3-0005-1",
+          "stem": "What is the main topic of the conversation?",
+          "options": {
+            "A": "A revision of a promotional spending plan.",
+            "B": "The launch date of a new software product.",
+            "C": "A hiring plan for the marketing department.",
+            "D": "The results of a social media campaign."
+          },
+          "answer": "A",
+          "errorType": "gist",
+          "explanation": "Đoạn hội thoại xoay quanh việc ban giám đốc yêu cầu phân bổ lại ngân sách tiếp thị cho chiến dịch ra mắt sản phẩm mới.",
+          "trap": "Phương án ngày ra mắt phần mềm mới sử dụng từ khóa có trong bài nhưng không phải là chủ đề thảo luận chính."
+        },
+        {
+          "id": "p3-0005-2",
+          "stem": "What does the man mean when he says, \"I see their point, but we can't just abandon print\"?",
+          "options": {
+            "A": "He disagrees entirely with the board's marketing strategy.",
+            "B": "He believes a mix of advertising methods is necessary.",
+            "C": "He wants to cancel the social media campaign.",
+            "D": "He thinks print ads are cheaper than digital ads."
+          },
+          "answer": "B",
+          "errorType": "speaker-intent",
+          "explanation": "Người đàn ông hiểu góc nhìn của ban giám đốc nhưng vẫn muốn giữ quảng cáo in ấn, thể hiện qua việc anh ta đề xuất viết một bản đề xuất thỏa hiệp kết hợp cả hai.",
+          "trap": "Phương án không đồng ý hoàn toàn với chiến lược tiếp thị là một sự suy diễn quá mức và mang tính tiêu cực hơn so với ý định thực tế của người nói."
+        },
+        {
+          "id": "p3-0005-3",
+          "stem": "What will the woman do next?",
+          "options": {
+            "A": "Draft a new budget proposal.",
+            "B": "Contact trade journals for ad rates.",
+            "C": "Arrange a meeting with a financial officer.",
+            "D": "Launch the software product."
+          },
+          "answer": "C",
+          "errorType": "next-action",
+          "explanation": "Người phụ nữ nói rằng cô ấy sẽ lên lịch một cuộc họp tiếp theo với Giám đốc tài chính (CFO) vào chiều thứ Năm.",
+          "trap": "Phương án soạn thảo đề xuất ngân sách mới là việc của người đàn ông chứ không phải của người phụ nữ."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      },
+      "audio": {
+        "clips": [
+          "audio/6d988dc455702f3a.mp3",
+          "audio/cf328a735cc021d9.mp3",
+          "audio/10725e9e2d757aff.mp3",
+          "audio/c7cda73eea18a431.mp3",
+          "audio/2cf2bc9d11571fc7.mp3",
+          "audio/e037f036653c087c.mp3"
+        ],
+        "voices": {
+          "Man": "en-GB-RyanNeural",
+          "Woman": "en-US-JennyNeural"
+        }
+      }
+    },
+    {
+      "id": "p3-0006",
+      "set": "part3-core",
+      "part": 3,
+      "status": "active",
+      "kind": "conversation",
+      "title": "Facility Maintenance Notice",
+      "script": [
+        {
+          "speaker": "Man",
+          "text": "Excuse me, Lisa. Did you see the email about the elevator maintenance scheduled for tomorrow?"
+        },
+        {
+          "speaker": "Woman",
+          "text": "Yes, I did. They're shutting down both elevators in the main lobby from 9 AM to 3 PM."
+        },
+        {
+          "speaker": "Man",
+          "text": "That's going to be a huge problem. We have a client visiting at 10 AM, and our office is on the eighth floor."
+        },
+        {
+          "speaker": "Woman",
+          "text": "Oh, right! Mr. Henderson is coming. Well, actually, there is a freight elevator at the back of the building. It's normally for deliveries, but we might be able to use it."
+        },
+        {
+          "speaker": "Man",
+          "text": "Let me check with the facilities manager to see if we can get permission for tomorrow morning."
+        },
+        {
+          "speaker": "Woman",
+          "text": "Good idea. If not, we'll have to move the meeting to the ground-floor conference room."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p3-0006-1",
+          "stem": "What is the main subject of the conversation?",
+          "options": {
+            "A": "A scheduled power outage in the building.",
+            "B": "An upcoming client presentation.",
+            "C": "A relocation of the company's main office.",
+            "D": "The temporary unavailability of building elevators."
+          },
+          "answer": "D",
+          "errorType": "gist",
+          "explanation": "Hai người nói chuyện về việc bảo trì thang máy vào ngày mai khiến cả hai thang máy ở sảnh chính bị ngừng hoạt động.",
+          "trap": "Phương án về buổi thuyết trình sắp tới của khách hàng là chi tiết phụ được đưa ra để giải quyết hậu quả của việc bảo trì thang máy chứ không phải chủ đề chính."
+        },
+        {
+          "id": "p3-0006-2",
+          "stem": "What can be inferred about Mr. Henderson?",
+          "options": {
+            "A": "He is an important visitor to the company.",
+            "B": "He is a new employee in the facilities department.",
+            "C": "He will perform the elevator maintenance.",
+            "D": "He prefers using the stairs to the eighth floor."
+          },
+          "answer": "A",
+          "errorType": "inference",
+          "explanation": "Người đàn ông nhắc đến việc có một khách hàng ghé thăm và người phụ nữ xác nhận đó là ông Henderson, cho thấy ông là một vị khách quan trọng cần được chuẩn bị đón tiếp chu đáo.",
+          "trap": "Phương án ông Henderson thích đi cầu thang bộ lên tầng tám là một suy đoán vô căn cứ dựa trên việc văn phòng nằm ở tầng tám và thang máy bị hỏng."
+        },
+        {
+          "id": "p3-0006-3",
+          "stem": "What will the man do next?",
+          "options": {
+            "A": "Email the client to reschedule the meeting.",
+            "B": "Contact the facilities manager.",
+            "C": "Reserve the ground-floor conference room.",
+            "D": "Inspect the freight elevator at the back."
+          },
+          "answer": "B",
+          "errorType": "next-action",
+          "explanation": "Người đàn ông nói rằng anh ta sẽ kiểm tra với quản lý tòa nhà để xin phép sử dụng thang máy chở hàng.",
+          "trap": "Phương án đặt phòng họp ở tầng trệt là phương án dự phòng thứ hai mà người phụ nữ đề xuất nếu việc xin phép quản lý tòa nhà không thành công."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      },
+      "audio": {
+        "clips": [
+          "audio/7f0702b01ec41eb1.mp3",
+          "audio/b8a7efa673cd0eb0.mp3",
+          "audio/9314c536b5bc0fc6.mp3",
+          "audio/9739ddacffe163ff.mp3",
+          "audio/cb31d5c7efe8ab36.mp3",
+          "audio/a042aadc0a4835c5.mp3"
+        ],
+        "voices": {
+          "Man": "en-CA-LiamNeural",
+          "Woman": "en-GB-SoniaNeural"
+        }
+      }
+    },
+    {
+      "id": "p3-0007",
+      "set": "part3-core",
+      "part": 3,
+      "status": "active",
+      "kind": "conversation",
+      "title": "Smartwatch Launch Adjustment",
+      "script": [
+        {
+          "speaker": "Woman",
+          "text": "Hey Marcus, did you see the final prototype for our new Aura smartwatch? The launch is scheduled for next month."
+        },
+        {
+          "speaker": "Man",
+          "text": "Yes, but actually, the battery life isn't meeting our target. We might have to push the release back to November."
+        },
+        {
+          "speaker": "Woman",
+          "text": "Oh, that's a problem. The marketing campaign is already locked in for October. We can't just cancel those ad slots."
+        },
+        {
+          "speaker": "Man",
+          "text": "Well, let me check... what if we pivot the campaign to focus on pre-orders instead? We could offer an early-bird discount."
+        },
+        {
+          "speaker": "Woman",
+          "text": "That could work. It buys the engineering team another month. I'll contact the PR agency to adjust the press release."
+        },
+        {
+          "speaker": "Man",
+          "text": "Great. I'll draft the updated proposal for the board's approval right away."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p3-0007-1",
+          "stem": "What is the main purpose of the conversation?",
+          "options": {
+            "A": "To design a new marketing campaign for a watch.",
+            "B": "To approve a budget increase for engineering.",
+            "C": "To adjust promotional plans due to a technical issue.",
+            "D": "To cancel an advertising contract with an agency."
+          },
+          "answer": "C",
+          "errorType": "purpose",
+          "explanation": "Người nói thảo luận về việc lùi lịch ra mắt sản phẩm đồng hồ thông minh do lỗi pin và điều chỉnh kế hoạch quảng bá sang dạng đặt trước. Điều này khớp với việc thay đổi kế hoạch quảng cáo vì sự cố kỹ thuật.",
+          "trap": "Chi tiết về việc hủy các vị trí quảng cáo dễ khiến người nghe chọn nhầm phương án hủy hợp đồng quảng cáo, dù thực tế họ chỉ điều chỉnh nội dung quảng cáo."
+        },
+        {
+          "id": "p3-0007-2",
+          "stem": "What is implied about the Aura smartwatch?",
+          "options": {
+            "A": "It is already available for pre-order.",
+            "B": "It has been canceled entirely.",
+            "C": "It is cheaper than previous models.",
+            "D": "Its current performance does not meet expectations."
+          },
+          "answer": "D",
+          "errorType": "inference",
+          "explanation": "Người đàn ông nói rằng thời lượng pin của sản phẩm không đạt mục tiêu đề ra. Điều này ngụ ý hiệu suất hiện tại của thiết bị chưa đáp ứng được kỳ vọng.",
+          "trap": "Cụm từ đặt trước được nhắc đến trong cuộc thoại dễ làm người nghe chọn nhầm phương án sản phẩm đã sẵn sàng để đặt trước, trong khi họ mới chỉ đang lên kế hoạch."
+        },
+        {
+          "id": "p3-0007-3",
+          "stem": "What will the man do next?",
+          "options": {
+            "A": "Prepare a revised plan for executive review.",
+            "B": "Contact the PR agency.",
+            "C": "Redesign the smartwatch battery.",
+            "D": "Book advertising slots."
+          },
+          "answer": "A",
+          "errorType": "next-action",
+          "explanation": "Ở lượt nói cuối cùng, người đàn ông nói sẽ soạn thảo bản đề xuất cập nhật để trình ban giám đốc phê duyệt ngay lập tức. Hành động này tương đương với việc chuẩn bị kế hoạch sửa đổi để cấp trên xem xét.",
+          "trap": "Người nghe có thể nhầm lẫn với việc liên hệ đại lý PR, vốn là nhiệm vụ mà người phụ nữ tự nhận sẽ thực hiện."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      },
+      "audio": {
+        "clips": [
+          "audio/c00d8ee311f8a8a1.mp3",
+          "audio/16a522e9adbf7d76.mp3",
+          "audio/02d60bd9fa2abe96.mp3",
+          "audio/11ec51ae67540ab7.mp3",
+          "audio/b3feb163835e4b36.mp3",
+          "audio/6c006776e086ccc5.mp3"
+        ],
+        "voices": {
+          "Woman": "en-AU-NatashaNeural",
+          "Man": "en-US-GuyNeural"
+        }
+      }
+    },
+    {
+      "id": "p3-0008",
+      "set": "part3-core",
+      "part": 3,
+      "status": "active",
+      "kind": "conversation",
+      "title": "Facility Maintenance Relocation",
+      "script": [
+        {
+          "speaker": "Man",
+          "text": "Pardon the interruption, Sarah. I just received a notice that the HVAC system on this floor will be shut down for maintenance all day Friday."
+        },
+        {
+          "speaker": "Woman",
+          "text": "Friday? But we have the regional managers visiting for the quarterly review. The conference room will be unbearable without air conditioning."
+        },
+        {
+          "speaker": "Man",
+          "text": "Well, actually, let me check the schedule... Yes, the fifth-floor conference room is vacant. The HVAC maintenance is only for floors one to three."
+        },
+        {
+          "speaker": "Woman",
+          "text": "Oh, thank goodness. But wait, we already set up the presentation equipment in our current room."
+        },
+        {
+          "speaker": "Man",
+          "text": "Don't worry. I'll ask the IT support team to help us relocate the projector and laptops tomorrow afternoon."
+        },
+        {
+          "speaker": "Woman",
+          "text": "Perfect. I'll send an email to the regional managers updating them on the new room number."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p3-0008-1",
+          "stem": "What is the main topic of the conversation?",
+          "options": {
+            "A": "Upgrading the office's presentation equipment.",
+            "B": "Relocating an upcoming meeting due to maintenance.",
+            "C": "Scheduling a quarterly review with regional managers.",
+            "D": "Repairing the air conditioning on the fifth floor."
+          },
+          "answer": "B",
+          "errorType": "gist",
+          "explanation": "Cuộc đối thoại xoay quanh việc hệ thống điều hòa bảo trì vào thứ Sáu, trùng lịch họp với quản lý vùng, dẫn đến việc họ phải chuyển phòng họp lên tầng năm. Do đó, chủ đề chính là chuyển địa điểm họp do bảo trì.",
+          "trap": "Việc nhắc đến thiết bị trình chiếu dễ khiến người nghe chọn nhầm phương án nâng cấp thiết bị văn phòng."
+        },
+        {
+          "id": "p3-0008-2",
+          "stem": "What does the woman imply when she says, 'But wait, we already set up the presentation equipment in our current room'?",
+          "options": {
+            "A": "She thinks the equipment is malfunctioning.",
+            "B": "She wants to cancel the quarterly review.",
+            "C": "She is concerned about the effort required to move.",
+            "D": "She prefers to hold the meeting without technology."
+          },
+          "answer": "C",
+          "errorType": "speaker-intent",
+          "explanation": "Khi người phụ nữ lo lắng về việc thiết bị trình chiếu đã được lắp đặt sẵn ở phòng cũ, cô ấy đang e ngại về công sức và thời gian cần thiết để di chuyển mọi thứ sang phòng mới.",
+          "trap": "Việc nhắc đến thiết bị có thể khiến người nghe hiểu sai theo nghĩa đen là thiết bị đang bị hỏng hoặc cô ấy muốn hủy cuộc họp."
+        },
+        {
+          "id": "p3-0008-3",
+          "stem": "What will the woman do next?",
+          "options": {
+            "A": "Request assistance from the IT department.",
+            "B": "Postpone the maintenance work.",
+            "C": "Reserve the fifth-floor conference room.",
+            "D": "Notify the visitors about a location change."
+          },
+          "answer": "D",
+          "errorType": "next-action",
+          "explanation": "Người phụ nữ nói sẽ gửi email cho các quản lý vùng để cập nhật số phòng mới. Điều này tương ứng với việc thông báo cho khách mời về sự thay đổi địa điểm.",
+          "trap": "Người nghe dễ chọn nhầm phương án liên hệ bộ phận IT, vốn là việc người đàn ông sẽ làm vào chiều mai."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      },
+      "audio": {
+        "clips": [
+          "audio/db35e36e394034e6.mp3",
+          "audio/bea6f00776b9c17f.mp3",
+          "audio/a0c759c32d1e6587.mp3",
+          "audio/a3bfcdbf32e8dc13.mp3",
+          "audio/6ef27170d476b86c.mp3",
+          "audio/5ea9aa50798be2c1.mp3"
+        ],
+        "voices": {
+          "Man": "en-GB-RyanNeural",
+          "Woman": "en-CA-ClaraNeural"
+        }
+      }
+    },
+    {
+      "id": "p3-0009",
+      "set": "part3-core",
+      "part": 3,
+      "status": "active",
+      "kind": "conversation",
+      "title": "Employee Training Session Conflict",
+      "script": [
+        {
+          "speaker": "Woman",
+          "text": "Hi David, are you ready for the training session on the new billing software tomorrow morning?"
+        },
+        {
+          "speaker": "Man",
+          "text": "Actually, I just realized I have a client call at ten, right when the session starts. Is there an afternoon session?"
+        },
+        {
+          "speaker": "Woman",
+          "text": "Unfortunately, no. The trainer is only booked for the morning. But wait, they are repeating the exact same workshop next Tuesday."
+        },
+        {
+          "speaker": "Man",
+          "text": "Next Tuesday? Let me check my calendar... Ah, I'm visiting our branch office in Boston all day Tuesday."
+        },
+        {
+          "speaker": "Woman",
+          "text": "Well, the trainer mentioned they would record the session for remote employees. I can ask if they'll share the video link."
+        },
+        {
+          "speaker": "Man",
+          "text": "That would be perfect. I can watch it on the train to Boston. Let me know what they say."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p3-0009-1",
+          "stem": "Why does the man speak with the woman?",
+          "options": {
+            "A": "To resolve a scheduling conflict with a training event.",
+            "B": "To request a business trip to Boston.",
+            "C": "To complain about the new billing software.",
+            "D": "To schedule a meeting with a client."
+          },
+          "answer": "A",
+          "errorType": "purpose",
+          "explanation": "Người đàn ông chủ động hỏi người phụ nữ về buổi đào tạo vì anh có cuộc gọi với khách hàng trùng giờ và muốn tìm giải pháp thay thế. Mục đích là giải quyết xung đột lịch trình.",
+          "trap": "Chi tiết về chuyến đi Boston hoặc cuộc gọi khách hàng dễ làm người nghe nhầm lẫn đó là mục đích chính của cuộc trò chuyện."
+        },
+        {
+          "id": "p3-0009-2",
+          "stem": "Why is the man unable to attend the session next Tuesday?",
+          "options": {
+            "A": "He has a client call at ten o'clock.",
+            "B": "He will be traveling to another company location.",
+            "C": "He needs to conduct a training workshop.",
+            "D": "He is taking a personal day off."
+          },
+          "answer": "B",
+          "errorType": "detail",
+          "explanation": "Người đàn ông giải thích rằng anh ấy sẽ đi công tác tại văn phòng chi nhánh ở Boston cả ngày thứ Ba tuần tới. Do đó, anh ấy không thể tham gia buổi học bù.",
+          "trap": "Chi tiết cuộc gọi khách hàng lúc mười giờ là lý do của ngày mai, không phải của thứ Ba tuần tới, dễ gây nhầm lẫn cho người nghe không chú ý mốc thời gian."
+        },
+        {
+          "id": "p3-0009-3",
+          "stem": "What will the woman do next?",
+          "options": {
+            "A": "Register the man for Tuesday's workshop.",
+            "B": "Reschedule the client call for the man.",
+            "C": "Inquire about the availability of a recorded session.",
+            "D": "Send the man a train ticket to Boston."
+          },
+          "answer": "C",
+          "errorType": "next-action",
+          "explanation": "Người phụ nữ đề xuất sẽ hỏi xem người đào tạo có thể chia sẻ đường dẫn video ghi lại buổi học hay không. Hành động tiếp theo của cô là hỏi về tính khả dụng của bản ghi âm/ghi hình này.",
+          "trap": "Người nghe có thể chọn nhầm phương án đăng ký lớp học thứ Ba vì đó là phương án được nhắc đến trước khi bị bác bỏ do trùng lịch đi Boston."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      },
+      "audio": {
+        "clips": [
+          "audio/5489dcf53fb8125e.mp3",
+          "audio/066134c6abdb9a02.mp3",
+          "audio/e3c5612374c34bad.mp3",
+          "audio/5c25384019471a7a.mp3",
+          "audio/f43811ab394e58b1.mp3",
+          "audio/35f824461b4e69a1.mp3"
+        ],
+        "voices": {
+          "Woman": "en-US-JennyNeural",
+          "Man": "en-CA-LiamNeural"
+        }
+      }
+    },
+    {
+      "id": "p3-0010",
+      "set": "part3-core",
+      "part": 3,
+      "status": "active",
+      "kind": "conversation",
+      "title": "Catering Order Modification",
+      "script": [
+        {
+          "speaker": "Man",
+          "text": "Thanks for calling Bistro Catering. This is Chef Thomas. How can I help you with your order for the corporate luncheon?"
+        },
+        {
+          "speaker": "Woman",
+          "text": "Hi, I need to modify our order for this Thursday. We just found out one of our VIP clients has a severe nut allergy."
+        },
+        {
+          "speaker": "Man",
+          "text": "I see. Well, actually, our signature chicken salad contains walnuts. We can substitute it with a classic Caesar salad instead."
+        },
+        {
+          "speaker": "Woman",
+          "text": "That sounds safe, but we already ordered a vegetarian pasta. Adding Caesar salad might be too many salads. Can we do a fruit platter?"
+        },
+        {
+          "speaker": "Man",
+          "text": "Absolutely. I'll replace the chicken salad with a seasonal fruit platter. The price difference is minimal, so I'll just waive it."
+        },
+        {
+          "speaker": "Woman",
+          "text": "That's very generous. Please send me the updated invoice so I can submit it to our accounting department."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p3-0010-1",
+          "stem": "Why is the woman calling the restaurant?",
+          "options": {
+            "A": "To complain about the price of a catering service.",
+            "B": "To cancel a reservation for a corporate luncheon.",
+            "C": "To request a recipe for a signature salad.",
+            "D": "To adjust a food order due to dietary restrictions."
+          },
+          "answer": "D",
+          "errorType": "purpose",
+          "explanation": "Người phụ nữ gọi điện để thay đổi thực đơn tiệc trưa của công ty vì một khách hàng VIP bị dị ứng nghiêm trọng với các loại hạt. Mục đích là điều chỉnh món ăn theo yêu cầu ăn kiêng.",
+          "trap": "Việc nhắc đến hóa đơn hoặc giá cả ở cuối cuộc thoại có thể khiến người nghe nhầm lẫn mục đích gọi điện ban đầu là để phàn nàn về chi phí."
+        },
+        {
+          "id": "p3-0010-2",
+          "stem": "What will be included in the order instead of the chicken salad?",
+          "options": {
+            "A": "A selection of fresh fruits.",
+            "B": "A classic Caesar salad.",
+            "C": "A vegetarian pasta dish.",
+            "D": "A nut-free chicken dish."
+          },
+          "answer": "A",
+          "errorType": "detail",
+          "explanation": "Sau khi từ chối món salad Caesar, người phụ nữ đề xuất đĩa trái cây và đầu bếp đã đồng ý thay thế món salad gà bằng đĩa trái cây theo mùa này.",
+          "trap": "Salad Caesar là phương án được đầu bếp gợi ý đầu tiên nhưng bị từ chối vì sợ quá nhiều salad, dễ lừa người nghe chọn nhầm nếu không nghe hết đoạn hội thoại."
+        },
+        {
+          "id": "p3-0010-3",
+          "stem": "What does the woman ask the man to do?",
+          "options": {
+            "A": "Waive the entire cost of the catering.",
+            "B": "Provide a revised billing document.",
+            "C": "Deliver the food to the accounting department.",
+            "D": "Call her VIP client directly."
+          },
+          "answer": "B",
+          "errorType": "next-action",
+          "explanation": "Người phụ nữ yêu cầu người đàn ông gửi hóa đơn đã cập nhật để cô nộp cho bộ phận kế toán. Điều này tương ứng với việc cung cấp tài liệu thanh toán đã sửa đổi.",
+          "trap": "Chi tiết miễn phí khoản chênh lệch nhỏ dễ khiến người nghe nhầm rằng cô ấy yêu cầu miễn phí toàn bộ dịch vụ tiệc."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      },
+      "audio": {
+        "clips": [
+          "audio/a1371ea0daee6342.mp3",
+          "audio/1546bac4a2bfd124.mp3",
+          "audio/fdd5ee70af96ad00.mp3",
+          "audio/3822b6c878a8b207.mp3",
+          "audio/432632fdb6f7605c.mp3",
+          "audio/b7190b3dc014b897.mp3"
+        ],
+        "voices": {
+          "Man": "en-US-GuyNeural",
+          "Woman": "en-GB-SoniaNeural"
+        }
+      }
+    },
+    {
+      "id": "p3-0011",
+      "set": "part3-core",
+      "part": 3,
+      "status": "active",
+      "kind": "conversation",
+      "title": "Software Update Compatibility Issue",
+      "script": [
+        {
+          "speaker": "Woman",
+          "text": "Did you manage to install the new database patch on the server last night?"
+        },
+        {
+          "speaker": "Man",
+          "text": "Well, actually, I started it, but the system flagged a compatibility error with our legacy accounting tool. So, I had to roll it back."
+        },
+        {
+          "speaker": "Woman",
+          "text": "Oh, that's problematic. The finance team needs that update to run their quarterly audits tomorrow."
+        },
+        {
+          "speaker": "Man",
+          "text": "I know. Let me check... Ah, the software vendor just released a hotfix for legacy integrations. I can apply that first, but it'll take about an hour to test."
+        },
+        {
+          "speaker": "Woman",
+          "text": "Go ahead with that. In the meantime, I'll contact the finance director to let her know there might be a slight delay."
+        },
+        {
+          "speaker": "Man",
+          "text": "Sounds good. I'll ping you as soon as the test environment is stable."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p3-0011-1",
+          "stem": "Why is the woman concerned about the software delay?",
+          "options": {
+            "A": "The software vendor charged an unexpected fee for a hotfix.",
+            "B": "The legacy accounting tool has completely stopped functioning.",
+            "C": "A department requires the updated system for an upcoming review.",
+            "D": "The server backup failed during the rollback process."
+          },
+          "answer": "C",
+          "errorType": "purpose",
+          "explanation": "Người phụ nữ giải thích rằng bộ phận tài chính cần bản cập nhật này để thực hiện kiểm toán quý vào ngày mai, do đó việc trì hoãn sẽ ảnh hưởng đến công việc của họ.",
+          "trap": "Phương án đề cập đến việc nhà cung cấp tính thêm phí dễ gây nhầm lẫn vì đoạn hội thoại có nhắc đến việc nhà cung cấp phát hành bản vá lỗi, nhưng không hề nói đến chi phí phát sinh."
+        },
+        {
+          "id": "p3-0011-2",
+          "stem": "What is implied about the software update?",
+          "options": {
+            "A": "It is the first update the company has done this year.",
+            "B": "It will require purchasing entirely new accounting software.",
+            "C": "It was designed specifically for the finance department.",
+            "D": "It was originally scheduled to be completed yesterday."
+          },
+          "answer": "D",
+          "errorType": "inference",
+          "explanation": "Người phụ nữ hỏi người đàn ông có cài đặt được bản vá vào tối qua không, và người đàn ông trả lời là đã bắt đầu nhưng phải khôi phục lại, chứng tỏ việc cài đặt được lên lịch hoàn thành vào tối hôm trước nhưng thất bại.",
+          "trap": "Lựa chọn nói rằng hệ thống kế toán cũ ngừng hoạt động hoàn toàn rất dễ bẫy người nghe vì đoạn dịch có nhắc đến lỗi tương thích với công cụ này, nhưng thực tế nó không bị hỏng."
+        },
+        {
+          "id": "p3-0011-3",
+          "stem": "What will the woman do next?",
+          "options": {
+            "A": "Inform a department head about a potential schedule shift.",
+            "B": "Install a hotfix on the server.",
+            "C": "Run a quarterly audit.",
+            "D": "Test the stability of the legacy tool."
+          },
+          "answer": "A",
+          "errorType": "next-action",
+          "explanation": "Người phụ nữ nói rằng cô ấy sẽ liên hệ với giám đốc tài chính để thông báo về khả năng chậm trễ, tương ứng với việc báo cho trưởng bộ phận về sự thay đổi lịch trình.",
+          "trap": "Phương án thực hiện kiểm toán quý dễ gây nhầm lẫn vì đây là nhiệm vụ của phòng tài chính vào ngày mai, không phải việc người phụ nữ sẽ làm ngay sau cuộc gọi."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      },
+      "audio": {
+        "clips": [
+          "audio/7b9983467e9a3392.mp3",
+          "audio/a877762685cd7c30.mp3",
+          "audio/bf80f06128eeb480.mp3",
+          "audio/4cbbaa00fb216aea.mp3",
+          "audio/8ed2eb75881efab1.mp3",
+          "audio/3a11f39e8857d59a.mp3"
+        ],
+        "voices": {
+          "Woman": "en-AU-NatashaNeural",
+          "Man": "en-GB-RyanNeural"
+        }
+      }
+    },
+    {
+      "id": "p3-0012",
+      "set": "part3-core",
+      "part": 3,
+      "status": "active",
+      "kind": "conversation",
+      "title": "Conference Registration and Group Discount",
+      "script": [
+        {
+          "speaker": "Man",
+          "text": "Hi Sarah, have you finalized the registrations for the annual tech summit next month? The early-bird discount ends today."
+        },
+        {
+          "speaker": "Woman",
+          "text": "Well, I was about to, but then Mr. Henderson decided he wants to send two more junior developers from his team."
+        },
+        {
+          "speaker": "Man",
+          "text": "Oh, really? But our department's travel budget is already stretched thin. We can't afford four full-price passes."
+        },
+        {
+          "speaker": "Woman",
+          "text": "Actually, let me check their website... Oh, look! They offer a group rate for five or more attendees. It's even cheaper than the early-bird price per person."
+        },
+        {
+          "speaker": "Man",
+          "text": "That's perfect. But wait, we only have four people now. Who else can we invite to meet the threshold?"
+        },
+        {
+          "speaker": "Woman",
+          "text": "I'll ask the marketing team if anyone wants to join. I'll get back to you in ten minutes."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p3-0012-1",
+          "stem": "What are the speakers mainly discussing?",
+          "options": {
+            "A": "A marketing campaign for an upcoming tech summit.",
+            "B": "Strategies to minimize attendance costs for an event.",
+            "C": "Changes to the company's annual travel policy.",
+            "D": "The selection process for junior developers."
+          },
+          "answer": "B",
+          "errorType": "gist",
+          "explanation": "Cả hai người nói đang tìm cách đăng ký tham gia hội nghị cho nhiều nhân viên hơn nhưng phải tối ưu hóa chi phí trong giới hạn ngân sách eo hẹp bằng cách tận dụng các ưu đãi giảm giá.",
+          "trap": "Phương án về chiến dịch marketing cho hội nghị công nghệ dễ đánh lừa người nghe do có chứa các từ khóa xuất hiện trong bài như marketing và hội nghị công nghệ."
+        },
+        {
+          "id": "p3-0012-2",
+          "stem": "What does the woman mean when she says, \"Actually, let me check their website\"?",
+          "options": {
+            "A": "She is verifying the deadline for the early-bird discount.",
+            "B": "She needs to confirm the location of the summit.",
+            "C": "She wants to find an alternative pricing option.",
+            "D": "She wants to see if registration is still open."
+          },
+          "answer": "C",
+          "errorType": "speaker-intent",
+          "explanation": "Người phụ nữ đề xuất kiểm tra trang web ngay sau khi người đàn ông lo ngại về ngân sách eo hẹp, nhằm mục đích tìm kiếm các phương án giá cả khác như giá ưu đãi nhóm.",
+          "trap": "Lựa chọn xác nhận hạn chót của vé sớm dễ gây nhầm lẫn vì trước đó người đàn ông đã khẳng định hạn chót là hôm nay, nên việc kiểm tra không phải để xác minh điều này nữa."
+        },
+        {
+          "id": "p3-0012-3",
+          "stem": "What will the woman do next?",
+          "options": {
+            "A": "Register four people for the conference immediately.",
+            "B": "Request a budget increase from Mr. Henderson.",
+            "C": "Email the event organizers for a discount code.",
+            "D": "Contact another department to find an additional attendee."
+          },
+          "answer": "D",
+          "errorType": "next-action",
+          "explanation": "Người phụ nữ cho biết cô ấy sẽ hỏi phòng marketing xem có ai muốn tham gia cùng không để đủ số lượng 5 người nhận ưu đãi nhóm.",
+          "trap": "Phương án đăng ký ngay lập tức cho bốn người rất dễ đánh lừa vì họ đang có bốn người, nhưng họ sẽ không đăng ký ngay mà phải tìm thêm người thứ năm để được giảm giá sâu hơn."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      },
+      "audio": {
+        "clips": [
+          "audio/999bb936989df0bb.mp3",
+          "audio/ef98dd89332300e6.mp3",
+          "audio/2887364e177877ad.mp3",
+          "audio/6996c0474bddf914.mp3",
+          "audio/11a625d3d4e7e491.mp3",
+          "audio/803b1e27a7f4f006.mp3"
+        ],
+        "voices": {
+          "Man": "en-CA-LiamNeural",
+          "Woman": "en-CA-ClaraNeural"
+        }
+      }
+    },
+    {
+      "id": "p3-0013",
+      "set": "part3-core",
+      "part": 3,
+      "status": "active",
+      "kind": "conversation",
+      "title": "Expense Report Billing Code Error",
+      "script": [
+        {
+          "speaker": "Woman",
+          "text": "Excuse me, David. I'm reviewing your expense report for the Chicago trip, and there's an issue with this client dinner receipt."
+        },
+        {
+          "speaker": "Man",
+          "text": "Oh, really? I thought I itemized everything correctly. Is there a missing receipt?"
+        },
+        {
+          "speaker": "Woman",
+          "text": "No, we have the receipt, but you charged it to the general marketing account instead of the specific client relations fund. Our system automatically flagged it."
+        },
+        {
+          "speaker": "Man",
+          "text": "Ah, my mistake. I must have selected the wrong billing code from the drop-down menu. Can I just edit the submitted report?"
+        },
+        {
+          "speaker": "Woman",
+          "text": "Actually, once it's flagged, it's locked. I'll have to reject it in the portal, which will send it back to your draft folder."
+        },
+        {
+          "speaker": "Man",
+          "text": "Got it. I'll look out for the notification, correct the code, and resubmit it right away."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p3-0013-1",
+          "stem": "What is the specific problem with the man's expense report?",
+          "options": {
+            "A": "An incorrect billing category was selected.",
+            "B": "A receipt for a client dinner was missing.",
+            "C": "The total amount exceeded the travel budget.",
+            "D": "It was submitted past the monthly deadline."
+          },
+          "answer": "A",
+          "errorType": "detail",
+          "explanation": "Người phụ nữ chỉ ra rằng người đàn ông đã tính chi phí vào tài khoản marketing chung thay vì quỹ quan hệ khách hàng, tức là chọn sai danh mục thanh toán.",
+          "trap": "Lựa chọn nói rằng thiếu hóa đơn bữa tối với khách hàng rất dễ bẫy người nghe vì người đàn ông có hỏi về việc này, nhưng người phụ nữ đã phủ nhận ngay lập tức."
+        },
+        {
+          "id": "p3-0013-2",
+          "stem": "What does the woman mean when she says, \"Actually, once it's flagged, it's locked\"?",
+          "options": {
+            "A": "The system has experienced a technical malfunction.",
+            "B": "The man cannot make changes to the current submission directly.",
+            "C": "The expense report has already been approved.",
+            "D": "She is unable to access the report on her computer."
+          },
+          "answer": "B",
+          "errorType": "speaker-intent",
+          "explanation": "Người phụ nữ giải thích rằng khi báo cáo đã bị hệ thống gắn cờ cảnh báo thì nó sẽ bị khóa, nghĩa là người đàn ông không thể trực tiếp chỉnh sửa bản nộp hiện tại mà cô phải từ chối nó trước.",
+          "trap": "Phương án cho rằng hệ thống bị lỗi kỹ thuật dễ gây nhầm lẫn vì có từ khóa khóa hệ thống, nhưng thực tế đây là quy trình bảo mật tự động bình thường."
+        },
+        {
+          "id": "p3-0013-3",
+          "stem": "What will the woman do next?",
+          "options": {
+            "A": "Manually change the billing code for the client dinner.",
+            "B": "Contact the IT department to unlock the system.",
+            "C": "Send the report back to the man's drafts.",
+            "D": "Approve the other expenses from the Chicago trip."
+          },
+          "answer": "C",
+          "errorType": "next-action",
+          "explanation": "Người phụ nữ nói rằng cô ấy sẽ từ chối báo cáo trên cổng thông tin để chuyển nó về thư mục nháp của người đàn ông, giúp anh ta có thể sửa đổi.",
+          "trap": "Lựa chọn tự tay sửa mã thanh toán dễ đánh lừa vì đây là hành động khắc phục lỗi, nhưng người phụ nữ không thể làm việc này mà người đàn ông phải tự sửa trong bản nháp của mình."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      },
+      "audio": {
+        "clips": [
+          "audio/3b1dc4252367eb5b.mp3",
+          "audio/fe921f8e9acba4e9.mp3",
+          "audio/1029975ea87aa005.mp3",
+          "audio/5eb2232c7aab40d1.mp3",
+          "audio/55c7f11858259481.mp3",
+          "audio/ed39ba8be1208dd6.mp3"
+        ],
+        "voices": {
+          "Woman": "en-US-JennyNeural",
+          "Man": "en-US-GuyNeural"
+        }
+      }
+    }
+  ]
+}

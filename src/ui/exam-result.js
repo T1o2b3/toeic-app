@@ -13,7 +13,7 @@ export function renderResult(result, onAgain) {
 
   const partRows = Object.entries(score.byPart).map(([part, x]) => el('div', { class: 'gap-row' }, [
     el('span', { text: PART_LABEL[Number(part.slice(4))] }),
-    el('span', { class: 'gap-value', text: `${x.correct}/${x.total}${x.answered < x.total ? ` (bỏ ${x.total - x.answered})` : ''} · ${x.total === 0 ? 0 : Math.round((x.correct / x.total) * 100)}%` }),
+    el('span', { class: 'gap-value plain', text: `${x.correct}/${x.total}${x.answered < x.total ? ` (bỏ ${x.total - x.answered})` : ''} · ${x.total === 0 ? 0 : Math.round((x.correct / x.total) * 100)}%` }),
   ]));
 
   return el('div', {}, [
@@ -37,7 +37,7 @@ export function renderResult(result, onAgain) {
 
 const skillLine = (label, x) => el('div', { class: 'gap-row' }, [
   el('span', { text: label }),
-  el('span', { class: 'gap-value', text: `${x.correct}/${x.total}` }),
+  el('span', { class: 'gap-value plain', text: `${x.correct}/${x.total}` }),
 ]);
 
 /** Các câu sai / bỏ trống, mỗi câu mở ra xem đề, đáp án bạn chọn, đáp án đúng và giải thích. */

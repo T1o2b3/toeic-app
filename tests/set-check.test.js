@@ -165,6 +165,9 @@ describe('assembleSet', () => {
     expect(validate({ set: 'part3-core', part: 3, version: 1, entries: [p3] }).valid).toBe(true);
     const p6 = assembleSet({ id: 'p6-0001', part: 6, kind: 'text-completion', ...blanks(), ...base }, { part: 6, index: 0, questionOffset: 0 }).entry;
     expect(validate({ set: 'part6-core', part: 6, version: 1, entries: [p6] }).valid).toBe(true);
+    // Part 4 (bài nói MỘT người): script một lượt vẫn hợp lệ — lỗi thật đã gặp khi schema đòi tối thiểu 2 lượt
+    const talk = assembleSet({ id: 'p4-0001', part: 4, kind: 'talk', title: 'Announcement', script: [{ speaker: 'Speaker', text: words(80) }], questions: conversation().questions, ...base }, { part: 4, index: 0, questionOffset: 0 }).entry;
+    expect(validate({ set: 'part4-core', part: 4, version: 1, entries: [talk] }).valid).toBe(true);
     // Part 3 mà thiếu âm thanh, hoặc Part 6 mà có script: schema phải từ chối
     expect(validate({ set: 'part3-core', part: 3, version: 1, entries: [{ ...p3, audio: undefined }] }).valid).toBe(false);
     expect(validate({ set: 'part6-core', part: 6, version: 1, entries: [{ ...p6, script: p3.script }] }).valid).toBe(false);

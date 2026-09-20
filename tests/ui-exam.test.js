@@ -120,6 +120,12 @@ describe('làm bài Part 6 (bộ 4 câu)', () => {
     expect(wrong.textContent).toContain('✓ đáp án đúng');
   });
 
+  it('số liệu ở màn kết quả dùng màu trung tính, không dùng màu "lỗ hổng" (đỏ) cho điểm số', () => {
+    const values = [...root.querySelectorAll('.gap-value')];
+    expect(values.length).toBeGreaterThan(0);
+    expect(values.every((v) => v.classList.contains('plain'))).toBe(true);
+  });
+
   it('câu đã làm trong thi thử được tính vào thống kê (trạng thái câu hỏi)', () => {
     expect(store.quizStates.get('p6-0001-1').attempts).toBe(1);
     expect(store.quizStates.get('p6-0001-3')).toBeUndefined();          // câu bỏ trống thì không ghi

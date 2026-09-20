@@ -1,0 +1,767 @@
+{
+  "set": "part4-core",
+  "part": 4,
+  "version": 1,
+  "entries": [
+    {
+      "id": "p4-0001",
+      "set": "part4-core",
+      "part": 4,
+      "status": "active",
+      "kind": "talk",
+      "title": "Office Printer Malfunction",
+      "script": [
+        {
+          "speaker": "Speaker",
+          "text": "Hi everyone, this is Marcus from IT. I'm calling about the main network printer on the third floor. It’s been jamming constantly since this morning, and we’ve discovered a faulty roller mechanism. I’ve already contacted the manufacturer, and a technician is scheduled to arrive tomorrow morning at nine. In the meantime, please do not attempt to clear any paper jams yourself, as this might damage the internal sensors further. For any urgent print jobs today, please redirect them to the second-floor device. I'll send an email notification once the repairs are fully completed. Thanks for your cooperation."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p4-0001-1",
+          "stem": "Why is the speaker making the announcement?",
+          "options": {
+            "A": "To report a malfunction and provide alternative instructions.",
+            "B": "To announce the arrival of new office hardware.",
+            "C": "To train staff on how to clear printer paper jams.",
+            "D": "To request budget approval for a technician visit."
+          },
+          "answer": "A",
+          "errorType": "purpose",
+          "explanation": "Người nói thông báo về việc máy in bị kẹt giấy liên tục và hướng dẫn nhân viên chuyển sang dùng máy ở tầng hai. Do đó, mục đích là báo cáo sự cố và đưa ra phương án thay thế.",
+          "trap": "Phương án nhắc đến việc đào tạo nhân viên tự sửa máy dễ gây nhầm lẫn vì trong bài có cụm từ \"clear paper jams\", nhưng thực tế người nói yêu cầu nhân viên không được tự ý sửa."
+        },
+        {
+          "id": "p4-0001-2",
+          "stem": "What is mentioned about the technician?",
+          "options": {
+            "A": "He has already fixed the internal sensors.",
+            "B": "He will service the equipment the following day.",
+            "C": "He is currently on the third floor.",
+            "D": "He needs to be paid in cash upon arrival."
+          },
+          "answer": "B",
+          "errorType": "detail",
+          "explanation": "Đoạn băng cho biết kỹ thuật viên được hẹn đến vào \"tomorrow morning\" (sáng mai), tương đương với cụm từ \"the following day\" (ngày hôm sau).",
+          "trap": "Phương án nói kỹ thuật viên đang ở tầng ba dễ lừa người nghe vì tầng ba là nơi đặt chiếc máy in bị hỏng được nhắc đến ở đầu bài."
+        },
+        {
+          "id": "p4-0001-3",
+          "stem": "What are listeners instructed to do next for immediate printing needs?",
+          "options": {
+            "A": "Contact Marcus directly via email.",
+            "B": "Attempt to manually reset the printer.",
+            "C": "Use a machine located on a different level.",
+            "D": "Wait until nine tomorrow morning."
+          },
+          "answer": "C",
+          "errorType": "next-action",
+          "explanation": "Người nói yêu cầu nhân viên chuyển các tài liệu cần in gấp sang \"second-floor device\" (thiết bị ở tầng hai), tức là sử dụng máy ở một tầng khác.",
+          "trap": "Phương án khuyên liên hệ trực tiếp với Marcus qua email dễ gây nhầm lẫn vì Marcus là người nói và có đề cập đến việc gửi email sau khi sửa xong, chứ không phải để giải quyết việc in ấn ngay lập tức."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      },
+      "audio": {
+        "clips": [
+          "audio/b108b8eede711ec8.mp3"
+        ],
+        "voices": {
+          "Speaker": "en-US-GuyNeural"
+        }
+      }
+    },
+    {
+      "id": "p4-0002",
+      "set": "part4-core",
+      "part": 4,
+      "status": "active",
+      "kind": "talk",
+      "title": "Marketing Candidate Evaluation",
+      "script": [
+        {
+          "speaker": "Speaker",
+          "text": "Good morning, team. As you know, we are interviewing candidates for the senior marketing role this afternoon. The hiring committee has shortlisted three excellent prospects. I want to remind everyone that we are looking for someone who can immediately spearhead our digital transition, not just manage daily campaigns. I've placed their portfolios in the shared drive. Please review them before our pre-interview briefing at one o'clock. Oh, and one more thing—the second candidate, Sarah Jenkins, requested a remote interview due to a sudden flight cancellation, so we will be using the conference room's video link for her session. Let's meet in Room 4B ten minutes early to set up the connection."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p4-0002-1",
+          "stem": "What is the main focus of the talk?",
+          "options": {
+            "A": "A change in marketing campaign strategies.",
+            "B": "Troubleshooting a video conferencing system.",
+            "C": "Feedback on recent portfolio submissions.",
+            "D": "Preparations for evaluating job applicants."
+          },
+          "answer": "D",
+          "errorType": "gist",
+          "explanation": "Người nói thảo luận về việc chuẩn bị phỏng vấn ba ứng viên cho vị trí marketing vào chiều nay và yêu cầu xem trước hồ sơ của họ.",
+          "trap": "Phương án về việc thay đổi chiến dịch marketing dễ đánh lừa vì có chứa từ khóa \"marketing campaign\" được nhắc đến trong bài nói."
+        },
+        {
+          "id": "p4-0002-2",
+          "stem": "What is implied about the ideal candidate for the position?",
+          "options": {
+            "A": "They must possess strong leadership in technological adaptation.",
+            "B": "They need to have extensive experience in flight logistics.",
+            "C": "They must be willing to relocate immediately.",
+            "D": "They should have designed the portfolios in the shared drive."
+          },
+          "answer": "A",
+          "errorType": "inference",
+          "explanation": "Người nói nhấn mạnh họ cần một người có thể \"spearhead our digital transition\" (dẫn dắt quá trình chuyển đổi số), tương đương với khả năng lãnh đạo trong việc thích ứng công nghệ.",
+          "trap": "Phương án yêu cầu kinh nghiệm về logistics bay dễ gây nhầm lẫn do người nghe bắt gặp từ \"flight cancellation\" trong bài."
+        },
+        {
+          "id": "p4-0002-3",
+          "stem": "What does the speaker mean when she says, 'Oh, and one more thing'?",
+          "options": {
+            "A": "She forgot to mention the location of the portfolios.",
+            "B": "She wants to introduce an unexpected change in the schedule format.",
+            "C": "She is correcting an error she made earlier.",
+            "D": "She wants to emphasize the importance of punctuality."
+          },
+          "answer": "B",
+          "errorType": "speaker-intent",
+          "explanation": "Cụm từ này được dùng để thu hút sự chú ý trước khi thông báo rằng ứng viên thứ hai sẽ phỏng vấn trực tuyến thay vì trực tiếp do hủy chuyến bay, tức là một sự thay đổi về hình thức lịch trình.",
+          "trap": "Phương án cho rằng người nói quên vị trí của hồ sơ dễ đánh lừa vì cụm từ này thường dùng khi sực nhớ ra điều gì đó, nhưng thực tế vị trí hồ sơ đã được nói rõ trước đó."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      },
+      "audio": {
+        "clips": [
+          "audio/40d6e26a872b8c5f.mp3"
+        ],
+        "voices": {
+          "Speaker": "en-GB-SoniaNeural"
+        }
+      }
+    },
+    {
+      "id": "p4-0003",
+      "set": "part4-core",
+      "part": 4,
+      "status": "active",
+      "kind": "talk",
+      "title": "Delayed Office Furniture Shipment",
+      "script": [
+        {
+          "speaker": "Speaker",
+          "text": "Hello, Mr. Vance. This is Clara from Apex Logistics. I'm calling regarding your order of customized office desks, shipment number 4092. Unfortunately, due to severe weather conditions at the port of departure, the cargo vessel was delayed by forty-eight hours. Consequently, your delivery will not arrive this Thursday as originally scheduled. We now expect it to reach your warehouse next Tuesday, October fourteenth. We sincerely apologize for this inconvenience. To make up for this delay, we are waiving the expedited shipping fee. Please reply to this message or call me back to confirm if someone will be available at your loading dock on Tuesday morning to receive the freight."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p4-0003-1",
+          "stem": "Why is the speaker calling?",
+          "options": {
+            "A": "To request payment for an expedited shipping fee.",
+            "B": "To report damage to customized office furniture.",
+            "C": "To notify a customer of a postponement in delivery.",
+            "D": "To reschedule a pickup at a loading dock."
+          },
+          "answer": "C",
+          "errorType": "purpose",
+          "explanation": "Người nói gọi điện để thông báo rằng đơn hàng bàn làm việc sẽ không đến đúng hẹn vào thứ Năm mà bị lùi lại vào thứ Ba tuần sau.",
+          "trap": "Phương án yêu cầu thanh toán phí vận chuyển nhanh dễ gây nhầm lẫn vì người nói có đề cập đến \"expedited shipping fee\", nhưng thực chất là họ đang miễn phí khoản này để đền bù."
+        },
+        {
+          "id": "p4-0003-2",
+          "stem": "What caused the delay of the shipment?",
+          "options": {
+            "A": "A clerical error in the shipment number.",
+            "B": "A labor strike by the warehouse staff.",
+            "C": "Mechanical failure of the cargo vessel.",
+            "D": "Adverse meteorological events at the port."
+          },
+          "answer": "D",
+          "errorType": "detail",
+          "explanation": "Người nói giải thích nguyên nhân chậm trễ là do \"severe weather conditions at the port\" (thời tiết khắc nghiệt tại cảng), được diễn đạt lại thành các hiện tượng khí tượng bất lợi.",
+          "trap": "Phương án lỗi kỹ thuật của tàu vận chuyển dễ đánh lừa vì người nghe nghe thấy từ \"cargo vessel\" và dễ suy diễn tàu bị hỏng."
+        },
+        {
+          "id": "p4-0003-3",
+          "stem": "What is the listener asked to do?",
+          "options": {
+            "A": "Verify staff availability for the rescheduled arrival.",
+            "B": "Pay an additional fee for Tuesday delivery.",
+            "C": "Track the vessel using a new shipment number.",
+            "D": "Inspect the customized desks for damage."
+          },
+          "answer": "A",
+          "errorType": "next-action",
+          "explanation": "Người nói yêu cầu khách hàng phản hồi để xác nhận xem có ai ở khu vực nhận hàng vào sáng thứ Ba hay không, tức là kiểm tra sự có mặt của nhân viên.",
+          "trap": "Phương án kiểm tra bàn xem có hỏng hóc không dễ gây nhầm lẫn vì hàng hóa là bàn làm việc, nhưng việc kiểm tra này chưa được yêu cầu trong cuộc gọi."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      },
+      "audio": {
+        "clips": [
+          "audio/399d75b17042bffc.mp3"
+        ],
+        "voices": {
+          "Speaker": "en-CA-LiamNeural"
+        }
+      }
+    },
+    {
+      "id": "p4-0004",
+      "set": "part4-core",
+      "part": 4,
+      "status": "active",
+      "kind": "talk",
+      "title": "Client Meeting Reschedule",
+      "script": [
+        {
+          "speaker": "Speaker",
+          "text": "Hi, David, it's Elena. I just got off the phone with our client, Mr. Tanaka from Kyoto Enterprises. He deeply apologizes, but an urgent board meeting has come up, and he needs to push back our Friday afternoon consultation. He asked if we could meet next Monday instead. I know you have a site visit scheduled for Monday morning, but perhaps we could propose Monday at three PM? That should give you enough time to get back to the office. Please check your calendar and let me know if this slot works for you. If it does, I will send Mr. Tanaka an updated calendar invitation right away. Thanks!"
+        }
+      ],
+      "questions": [
+        {
+          "id": "p4-0004-1",
+          "stem": "What is the primary purpose of the message?",
+          "options": {
+            "A": "To cancel an upcoming trip to Kyoto Enterprises.",
+            "B": "To propose an alternative time for a client discussion.",
+            "C": "To request assistance with a board meeting presentation.",
+            "D": "To reschedule a site visit on Monday morning."
+          },
+          "answer": "B",
+          "errorType": "purpose",
+          "explanation": "Người nói gọi điện để thông báo khách hàng muốn lùi lịch họp thứ Sáu và đề xuất một khung giờ mới vào chiều thứ Hai.",
+          "trap": "Phương án hủy chuyến đi đến Kyoto dễ đánh lừa vì người nghe nghe thấy tên công ty là \"Kyoto Enterprises\" và dễ suy diễn có chuyến đi bị hủy."
+        },
+        {
+          "id": "p4-0004-2",
+          "stem": "What is implied about David's schedule on Monday?",
+          "options": {
+            "A": "He is entirely unavailable the whole day.",
+            "B": "He has to host a board meeting in the afternoon.",
+            "C": "He will be out of the office during the forenoon.",
+            "D": "He needs to travel to Japan."
+          },
+          "answer": "C",
+          "errorType": "inference",
+          "explanation": "Người nói đề cập rằng David có một \"site visit scheduled for Monday morning\" (lịch khảo sát thực địa vào sáng thứ Hai), nghĩa là anh ấy sẽ không ở văn phòng vào buổi sáng (forenoon).",
+          "trap": "Phương án hoàn toàn bận cả ngày dễ lừa người nghe vì người nói vẫn đề xuất họp vào lúc 3 giờ chiều sau khi David quay lại văn phòng."
+        },
+        {
+          "id": "p4-0004-3",
+          "stem": "What will Elena do if David agrees to the proposed time?",
+          "options": {
+            "A": "Cancel David's morning site visit.",
+            "B": "Call Mr. Tanaka to apologize for David's absence.",
+            "C": "Book a flight to Kyoto for Monday afternoon.",
+            "D": "Dispatch a revised meeting request to the client."
+          },
+          "answer": "D",
+          "errorType": "next-action",
+          "explanation": "Người nói khẳng định nếu David đồng ý với khung giờ đề xuất, cô ấy sẽ gửi ngay một lời mời cập nhật trên lịch cho khách hàng (Mr. Tanaka).",
+          "trap": "Phương án hủy chuyến khảo sát thực địa của David dễ gây nhầm lẫn vì chuyến đi này diễn ra vào buổi sáng, trong khi cuộc họp mới được đề xuất vào buổi chiều nên không cần hủy."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      },
+      "audio": {
+        "clips": [
+          "audio/abaad9ebb34fcbf5.mp3"
+        ],
+        "voices": {
+          "Speaker": "en-CA-ClaraNeural"
+        }
+      }
+    },
+    {
+      "id": "p4-0005",
+      "set": "part4-core",
+      "part": 4,
+      "status": "active",
+      "kind": "talk",
+      "title": "Corporate Travel Policy Reminders",
+      "script": [
+        {
+          "speaker": "Speaker",
+          "text": "Attention, department heads. As we prepare for the annual European trade expo in Munich next month, I want to remind you of our updated corporate travel policy. To qualify for full reimbursement, all flights and hotel accommodations must be booked through our approved agency, GlobeTravel, using the corporate portal. Do not book directly on commercial websites. Furthermore, economy class is mandatory for any flights under six hours. I've uploaded the step-by-step booking guide and the budget allocation sheet to the company intranet. Please ensure your team members review these guidelines before submitting their itineraries to me for final approval by Friday."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p4-0005-1",
+          "stem": "What is the talk mainly about?",
+          "options": {
+            "A": "Regulations regarding corporate trip reservations.",
+            "B": "Itinerary details for an upcoming European trade expo.",
+            "C": "Budget cuts for international marketing departments.",
+            "D": "A demonstration of a new intranet portal."
+          },
+          "answer": "A",
+          "errorType": "gist",
+          "explanation": "Bài nói tập trung vào việc nhắc nhở các trưởng bộ phận về quy định đặt vé máy bay và khách sạn khi đi công tác nước ngoài.",
+          "trap": "Phương án về chi tiết lịch trình triển lãm thương mại dễ đánh lừa vì bài nói có nhắc đến \"European trade expo in Munich\"."
+        },
+        {
+          "id": "p4-0005-2",
+          "stem": "According to the speaker, how can employees secure full reimbursement?",
+          "options": {
+            "A": "By submitting receipts directly to the finance department.",
+            "B": "By reserving travel arrangements via a designated agency.",
+            "C": "By choosing commercial websites with the lowest rates.",
+            "D": "By booking business class flights for all trips."
+          },
+          "answer": "B",
+          "errorType": "detail",
+          "explanation": "Quy định nêu rõ để được hoàn tiền đầy đủ, nhân viên phải đặt qua đại lý được phê duyệt là \"GlobeTravel\", tương đương với một đơn vị được chỉ định.",
+          "trap": "Phương án đặt qua các trang web thương mại có giá thấp nhất dễ gây nhầm lẫn vì thông thường mọi người nghĩ giá rẻ sẽ được duyệt, nhưng bài nói cấm đặt trực tiếp trên các trang web này."
+        },
+        {
+          "id": "p4-0005-3",
+          "stem": "What should department heads have their teams do next?",
+          "options": {
+            "A": "Register for the Munich trade expo immediately.",
+            "B": "Contact GlobeTravel to modify their existing flights.",
+            "C": "Examine the policy documents on the intranet.",
+            "D": "Draft a budget allocation sheet for next year."
+          },
+          "answer": "C",
+          "errorType": "next-action",
+          "explanation": "Người nói yêu cầu các trưởng bộ phận đảm bảo nhân viên của họ xem kỹ các hướng dẫn đặt phòng và ngân sách đã được tải lên mạng nội bộ.",
+          "trap": "Phương án đăng ký tham gia triển lãm ngay lập tức dễ lừa người nghe vì triển lãm là lý do của chuyến đi, nhưng việc đăng ký không phải là bước tiếp theo được yêu cầu cho nhân viên."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      },
+      "audio": {
+        "clips": [
+          "audio/78000bd5c4a7a471.mp3"
+        ],
+        "voices": {
+          "Speaker": "en-GB-RyanNeural"
+        }
+      }
+    },
+    {
+      "id": "p4-0006",
+      "set": "part4-core",
+      "part": 4,
+      "status": "active",
+      "kind": "talk",
+      "title": "Budget Approval Announcement",
+      "script": [
+        {
+          "speaker": "Speaker",
+          "text": "Hi everyone, I have some great news regarding our department's proposal for the upcoming fiscal year. The board of directors has officially signed off on our expansion budget. Yes, including the additional funding we requested for the digital marketing campaign. I know we were all anxious about whether they'd approve the software upgrades, but they did. However, there's a catch. We need to submit a revised timeline by Friday to show how we plan to roll out these new tools without disrupting current client projects. I want everyone to look over their current schedules today. We'll meet tomorrow morning to piece this timeline together."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p4-0006-1",
+          "stem": "Why is the speaker addressing the staff?",
+          "options": {
+            "A": "To request additional marketing funds.",
+            "B": "To complain about a delayed software upgrade.",
+            "C": "To schedule a client project meeting.",
+            "D": "To announce a financial decision."
+          },
+          "answer": "D",
+          "errorType": "purpose",
+          "explanation": "Người nói thông báo rằng ban giám đốc đã chính thức phê duyệt ngân sách mở rộng cho phòng ban. Do đó, mục đích chính là thông báo về một quyết định tài chính.",
+          "trap": "Lựa chọn nhắc đến việc yêu cầu thêm quỹ tiếp thị dễ gây nhầm lẫn vì trong bài có từ 'marketing campaign', nhưng thực tế khoản này đã được duyệt chứ không phải đang yêu cầu."
+        },
+        {
+          "id": "p4-0006-2",
+          "stem": "What condition is attached to the approval?",
+          "options": {
+            "A": "A modified project schedule must be provided.",
+            "B": "The digital marketing campaign must be shortened.",
+            "C": "Staff must work overtime on Friday.",
+            "D": "Current client projects must be put on hold."
+          },
+          "answer": "A",
+          "errorType": "detail",
+          "explanation": "Người nói yêu cầu nhóm phải nộp một dòng thời gian đã được sửa đổi trước thứ Sáu để chỉ ra cách triển khai công cụ mới mà không ảnh hưởng đến dự án hiện tại.",
+          "trap": "Lựa chọn về việc tạm dừng các dự án của khách hàng dễ đánh lừa vì sử dụng từ 'client projects', nhưng bài nói yêu cầu không được gây gián đoạn các dự án này."
+        },
+        {
+          "id": "p4-0006-3",
+          "stem": "What does the speaker ask the listeners to do today?",
+          "options": {
+            "A": "Draft a new software proposal.",
+            "B": "Review their individual workloads.",
+            "C": "Attend a meeting with the board.",
+            "D": "Submit a revised budget."
+          },
+          "answer": "B",
+          "errorType": "next-action",
+          "explanation": "Người nói yêu cầu mọi người xem xét lại lịch trình hiện tại của họ trong ngày hôm nay trước khi họp vào sáng mai.",
+          "trap": "Lựa chọn về việc họp với ban giám đốc dễ gây nhầm lẫn vì ban giám đốc được nhắc đến ở đầu bài, nhưng cuộc họp ngày mai là nội bộ nhóm."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      },
+      "audio": {
+        "clips": [
+          "audio/9b52a16b38efe46f.mp3"
+        ],
+        "voices": {
+          "Speaker": "en-GB-SoniaNeural"
+        }
+      }
+    },
+    {
+      "id": "p4-0007",
+      "set": "part4-core",
+      "part": 4,
+      "status": "active",
+      "kind": "talk",
+      "title": "Product Launch Advertisement",
+      "script": [
+        {
+          "speaker": "Speaker",
+          "text": "Are you tired of smartwatches that run out of battery before your workday even ends? At ChronoTech, we've solved that. Today, we're thrilled to introduce the Aero-5, our most advanced wearable yet. Featuring our patented solar-charging glass, the Aero-5 boasts an unprecedented thirty-day battery life. It's not just about power, though. It also tracks your stress levels and sleep quality with medical-grade accuracy. Pre-orders open on our website at midnight tonight, and early birds will receive a complimentary leather strap. Don't wait, because stock for the initial release is extremely limited. Head over to chronotech.com now to register for an email alert."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p4-0007-1",
+          "stem": "What is the main subject of the advertisement?",
+          "options": {
+            "A": "A medical tracking software.",
+            "B": "A sale on watch accessories.",
+            "C": "A new electronic device.",
+            "D": "A website redesign."
+          },
+          "answer": "C",
+          "errorType": "gist",
+          "explanation": "Bài quảng cáo giới thiệu sản phẩm Aero-5, được mô tả là thiết bị đeo tay tiên tiến nhất của họ, tức là một thiết bị điện tử mới.",
+          "trap": "Lựa chọn về phần mềm theo dõi y tế dễ gây nhầm lẫn vì bài nói có đề cập đến tính năng đo lường với độ chính xác chuẩn y khoa."
+        },
+        {
+          "id": "p4-0007-2",
+          "stem": "What is implied about the Aero-5?",
+          "options": {
+            "A": "It is the most expensive smartwatch on the market.",
+            "B": "It requires a specialized charger sold separately.",
+            "C": "It is designed primarily for medical professionals.",
+            "D": "It is highly anticipated and may sell out quickly."
+          },
+          "answer": "D",
+          "errorType": "inference",
+          "explanation": "Người nói cảnh báo rằng số lượng sản phẩm cho đợt mở bán đầu tiên cực kỳ giới hạn, ngụ ý sản phẩm có thể nhanh chóng hết hàng.",
+          "trap": "Lựa chọn về việc thiết bị này đắt nhất thị trường dễ đánh lừa người nghe vì từ 'most advanced' thường bị suy diễn quá đà thành đắt nhất."
+        },
+        {
+          "id": "p4-0007-3",
+          "stem": "What are listeners encouraged to do immediately?",
+          "options": {
+            "A": "Sign up for notifications online.",
+            "B": "Pre-order the product.",
+            "C": "Purchase a leather strap.",
+            "D": "Visit a local retail store."
+          },
+          "answer": "A",
+          "errorType": "next-action",
+          "explanation": "Người nói kêu gọi người nghe truy cập trang web ngay bây giờ để đăng ký nhận thông báo qua email.",
+          "trap": "Lựa chọn đặt hàng trước dễ gây nhầm lẫn vì hoạt động đặt hàng trước chỉ bắt đầu vào nửa đêm nay chứ không phải ngay lập tức."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      },
+      "audio": {
+        "clips": [
+          "audio/e9505cc78e1c43c9.mp3"
+        ],
+        "voices": {
+          "Speaker": "en-US-GuyNeural"
+        }
+      }
+    },
+    {
+      "id": "p4-0008",
+      "set": "part4-core",
+      "part": 4,
+      "status": "active",
+      "kind": "talk",
+      "title": "Facility Maintenance Notice",
+      "script": [
+        {
+          "speaker": "Speaker",
+          "text": "Attention all employees. Please be aware that the main parking garage will undergo resurfacing starting this Thursday at 6:00 PM. The entire structure will be closed throughout the weekend to allow the sealant to dry properly. It will reopen on Monday morning. During this period, please park your vehicles in the overflow lot behind Building B. Security guards will be stationed there to guide you. Also, keep in mind that the shuttle service to the main entrance will run every ten minutes instead of the usual twenty to accommodate the extra distance. Please plan your arrival accordingly on Friday morning to avoid being late for your shifts."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p4-0008-1",
+          "stem": "What is the purpose of the announcement?",
+          "options": {
+            "A": "To announce changes to security protocols.",
+            "B": "To inform staff about temporary parking adjustments.",
+            "C": "To recruit drivers for the shuttle service.",
+            "D": "To report a delay in building construction."
+          },
+          "answer": "B",
+          "errorType": "purpose",
+          "explanation": "Bài thông báo tập trung vào việc bãi đỗ xe chính sẽ bị đóng cửa để bảo trì và hướng dẫn nhân viên chuyển sang đỗ ở bãi phụ.",
+          "trap": "Lựa chọn về việc tuyển tài xế xe đưa đón dễ gây nhầm lẫn vì bài nói có đề cập đến việc tăng tần suất của dịch vụ xe đưa đón."
+        },
+        {
+          "id": "p4-0008-2",
+          "stem": "What will happen on Friday morning?",
+          "options": {
+            "A": "The main parking garage will reopen.",
+            "B": "Employees must work from home.",
+            "C": "Shuttle buses will operate more frequently.",
+            "D": "Building B will be closed for maintenance."
+          },
+          "answer": "C",
+          "errorType": "detail",
+          "explanation": "Bài nói cho biết dịch vụ xe đưa đón sẽ chạy mỗi 10 phút một chuyến thay vì 20 phút như thường lệ, nghĩa là tần suất hoạt động tăng lên.",
+          "trap": "Lựa chọn về việc bãi đỗ xe chính mở cửa lại dễ gây nhầm lẫn vì thứ Sáu là ngày bắt đầu đóng cửa hoàn toàn, bãi xe chỉ mở lại vào thứ Hai."
+        },
+        {
+          "id": "p4-0008-3",
+          "stem": "What are employees advised to do?",
+          "options": {
+            "A": "Contact security for a parking permit.",
+            "B": "Register for the shuttle service online.",
+            "C": "Reschedule their weekend shifts.",
+            "D": "Arrive earlier than usual on Friday."
+          },
+          "answer": "D",
+          "errorType": "next-action",
+          "explanation": "Người nói khuyên nhân viên nên lên kế hoạch đến nơi phù hợp vào sáng thứ Sáu để tránh bị trễ giờ làm, ngụ ý họ nên đi sớm hơn bình thường.",
+          "trap": "Lựa chọn về việc đăng ký dịch vụ xe đưa đón trực tuyến dễ đánh lừa vì xe đưa đón được nhắc đến nhiều lần, nhưng không có yêu cầu đăng ký nào."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      },
+      "audio": {
+        "clips": [
+          "audio/eb5dc11a87ef49ff.mp3"
+        ],
+        "voices": {
+          "Speaker": "en-CA-ClaraNeural"
+        }
+      }
+    },
+    {
+      "id": "p4-0009",
+      "set": "part4-core",
+      "part": 4,
+      "status": "active",
+      "kind": "talk",
+      "title": "Employee Training Session",
+      "script": [
+        {
+          "speaker": "Speaker",
+          "text": "Welcome to the training session for our new customer relationship management system, ClientFlow. This software will replace our old database starting next month. Today, we'll focus on the automated invoicing feature, which should cut your administrative workload in half. I know learning new technology can be frustrating, but trust me, this is a game-changer. Before we log into the test accounts, I need everyone to sign the attendance sheet circulating around the room. If you don't sign it, HR won't credit you for completing this mandatory training. Once you've signed, please open the training manual on your desk to page five."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p4-0009-1",
+          "stem": "What is the main topic of the session?",
+          "options": {
+            "A": "Operating a new software program.",
+            "B": "Developing a marketing strategy.",
+            "C": "Updating employee HR files.",
+            "D": "Reducing administrative staff."
+          },
+          "answer": "A",
+          "errorType": "gist",
+          "explanation": "Người nói giới thiệu buổi đào tạo về hệ thống quản lý quan hệ khách hàng mới có tên ClientFlow, tức là một chương trình phần mềm mới.",
+          "trap": "Lựa chọn về việc cập nhật hồ sơ nhân sự dễ gây nhầm lẫn vì có nhắc đến bộ phận nhân sự liên quan đến việc điểm danh."
+        },
+        {
+          "id": "p4-0009-2",
+          "stem": "Why does the speaker say, 'this is a game-changer'?",
+          "options": {
+            "A": "To justify the high cost of the software.",
+            "B": "To motivate employees to embrace the new system.",
+            "C": "To explain a new company policy on gaming.",
+            "D": "To suggest that the training will be fun."
+          },
+          "answer": "B",
+          "errorType": "speaker-intent",
+          "explanation": "Người nói thừa nhận việc học công nghệ mới có thể gây nản lòng nhưng khẳng định hệ thống này là một bước ngoặt lớn để động viên nhân viên chấp nhận nó.",
+          "trap": "Lựa chọn giải thích chính sách chơi game dễ đánh lừa những ai hiểu nghĩa đen của cụm từ mà không đặt vào ngữ cảnh công việc."
+        },
+        {
+          "id": "p4-0009-3",
+          "stem": "What must the listeners do first?",
+          "options": {
+            "A": "Log into their personal accounts.",
+            "B": "Turn to page five of a manual.",
+            "C": "Write their names on a document.",
+            "D": "Contact the HR department."
+          },
+          "answer": "C",
+          "errorType": "next-action",
+          "explanation": "Người nói yêu cầu mọi người ký vào tờ điểm danh đang được chuyền quanh phòng trước khi đăng nhập vào tài khoản thử nghiệm.",
+          "trap": "Lựa chọn mở sách hướng dẫn trang số năm dễ gây nhầm lẫn vì đây là hành động tiếp theo sau khi đã ký tên."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      },
+      "audio": {
+        "clips": [
+          "audio/df7fbd17a569d701.mp3"
+        ],
+        "voices": {
+          "Speaker": "en-CA-LiamNeural"
+        }
+      }
+    },
+    {
+      "id": "p4-0010",
+      "set": "part4-core",
+      "part": 4,
+      "status": "active",
+      "kind": "talk",
+      "title": "Restaurant Catering Order",
+      "script": [
+        {
+          "speaker": "Speaker",
+          "text": "Hello, this is Marcus from Bella Italia Catering. I'm calling regarding your order for the corporate luncheon this Thursday. We've finalized the menu, but we ran into an issue with the seafood supplier. Unfortunately, the fresh salmon you requested won't be available in the quantity you need. To make up for this, we can substitute it with our signature sea bass at no extra charge, or we can prepare a vegetarian lasagna instead. Please let me know your preference as soon as possible. I've sent the updated invoice to your email, but I won't process the final payment until we confirm this change. Please give me a call back by 3:00 PM today."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p4-0010-1",
+          "stem": "Why is the speaker calling?",
+          "options": {
+            "A": "To request payment for a catering order.",
+            "B": "To cancel a scheduled luncheon.",
+            "C": "To complain about a supplier's delivery.",
+            "D": "To propose alternatives for a menu item."
+          },
+          "answer": "D",
+          "errorType": "purpose",
+          "explanation": "Người nói gọi điện để thông báo về việc thiếu hụt cá hồi và đề xuất thay thế bằng cá chẽm hoặc lasagna chay.",
+          "trap": "Lựa chọn yêu cầu thanh toán dễ gây nhầm lẫn vì người nói có nhắc đến việc đã gửi hóa đơn cập nhật qua email."
+        },
+        {
+          "id": "p4-0010-2",
+          "stem": "What does the speaker offer to do?",
+          "options": {
+            "A": "Provide a premium dish without increasing the price.",
+            "B": "Deliver the order earlier than planned.",
+            "C": "Waive the entire cost of the catering service.",
+            "D": "Source the salmon from another vendor."
+          },
+          "answer": "A",
+          "errorType": "detail",
+          "explanation": "Người nói đề xuất thay thế cá hồi bằng món cá chẽm đặc trưng của nhà hàng mà không tính thêm phí.",
+          "trap": "Lựa chọn miễn phí toàn bộ chi phí tiệc dễ gây nhầm lẫn vì ưu đãi không tính thêm phí chỉ áp dụng cho món thay thế chứ không phải toàn bộ đơn hàng."
+        },
+        {
+          "id": "p4-0010-3",
+          "stem": "What is the listener expected to do this afternoon?",
+          "options": {
+            "A": "Review and sign a physical contract.",
+            "B": "Contact the caterer to make a choice.",
+            "C": "Submit a new payment online.",
+            "D": "Email a list of dietary restrictions."
+          },
+          "answer": "B",
+          "errorType": "next-action",
+          "explanation": "Người nói yêu cầu khách hàng gọi lại trước 3 giờ chiều nay để cho biết lựa chọn thay thế món ăn của họ.",
+          "trap": "Lựa chọn thanh toán trực tuyến dễ đánh lừa vì hóa đơn đã được gửi, nhưng người nói nhấn mạnh sẽ không xử lý thanh toán cho đến khi xác nhận thay đổi."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      },
+      "audio": {
+        "clips": [
+          "audio/73cba049ccee2012.mp3"
+        ],
+        "voices": {
+          "Speaker": "en-GB-SoniaNeural"
+        }
+      }
+    }
+  ]
+}

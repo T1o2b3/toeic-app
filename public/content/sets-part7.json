@@ -1054,6 +1054,332 @@
         "model": "gemini-flash-lite-latest",
         "agreed": true
       }
+    },
+    {
+      "id": "p7-0016",
+      "set": "part7-core",
+      "part": 7,
+      "status": "active",
+      "kind": "single",
+      "title": "Press Release",
+      "passages": [
+        {
+          "label": "Press Release",
+          "text": "FOR IMMEDIATE RELEASE\n\nGreenSprout Market to Open Historic District Branch\n\nBOSTON—October 12—GreenSprout Market, the premier organic grocer renowned for its farm-to-table supply chain, has officially announced the grand opening of its seventh regional branch on November 1. Located in the meticulously restored Old Tannery building on Mercer Street, the new site blends historical architecture with state-of-the-art eco-friendly refrigeration systems.\n\nTo celebrate, GreenSprout will host a ribbon-cutting ceremony at 9:00 A.M., featuring complimentary tastings curated by local chefs. Unlike our suburban locations, this urban boutique format will place a heavier emphasis on ready-to-eat artisanal meals, catering to the bustling lifestyle of downtown professionals. Additionally, the first 100 patrons will receive a limited-edition canvas tote bag and a voucher redeemable for a discount on future organic produce purchases. Ample underground parking, a rarity in the Mercer district, will be free for customers during their first hour of shopping."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p7-0016-1",
+          "stem": "What is the main purpose of the press release?",
+          "options": {
+            "A": "To recruit local chefs for an upcoming culinary event.",
+            "B": "To announce the launch of a new retail location.",
+            "C": "To promote a discount voucher for online grocery shopping.",
+            "D": "To publicize the restoration of a historic landmark."
+          },
+          "answer": "B",
+          "errorType": "purpose",
+          "explanation": "Văn bản thông báo về việc khai trương chi nhánh thứ bảy của GreenSprout Market tại tòa nhà Old Tannery vào ngày 1 tháng 11.",
+          "trap": "Chi tiết về việc phục chế tòa nhà lịch sử được nhắc đến nhưng chỉ là bối cảnh cho địa điểm mới chứ không phải mục đích chính của thông cáo."
+        },
+        {
+          "id": "p7-0016-2",
+          "stem": "What is implied about the Mercer Street location?",
+          "options": {
+            "A": "It has more parking spaces than any other GreenSprout branch.",
+            "B": "It is the first branch to feature eco-friendly refrigeration.",
+            "C": "It offers a product selection tailored to busy commuters.",
+            "D": "It will charge for parking after the first two hours."
+          },
+          "answer": "C",
+          "errorType": "inference",
+          "explanation": "Đoạn văn nêu rõ định dạng cửa hàng nhỏ ở đô thị này tập trung nhiều hơn vào các bữa ăn chế biến sẵn để phục vụ lối sống bận rộn của giới chuyên môn tại trung tâm thành phố.",
+          "trap": "Việc đỗ xe miễn phí trong giờ đầu tiên được đề cập, nhưng phương án nói về việc tính phí sau hai giờ là suy diễn quá đà không có căn cứ."
+        },
+        {
+          "id": "p7-0016-3",
+          "stem": "What can the first 100 customers expect to receive?",
+          "options": {
+            "A": "Free parking for the entire grand opening day.",
+            "B": "A complimentary meal prepared by a local chef.",
+            "C": "A selection of organic produce at no cost.",
+            "D": "A reusable shopping bag and a promotional coupon."
+          },
+          "answer": "D",
+          "errorType": "detail",
+          "explanation": "Văn bản nêu rõ 100 khách hàng đầu tiên sẽ nhận được một túi vải canvas phiên bản giới hạn và một phiếu giảm giá cho các lần mua nông sản hữu cơ trong tương lai.",
+          "trap": "Các món ăn thử miễn phí do đầu bếp địa phương chuẩn bị dành cho tất cả mọi người tham gia buổi lễ, không chỉ giới hạn cho 100 khách hàng đầu tiên."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p7-0017",
+      "set": "part7-core",
+      "part": 7,
+      "status": "active",
+      "kind": "single",
+      "title": "Internal Memorandum",
+      "passages": [
+        {
+          "label": "Internal Memorandum",
+          "text": "MEMORANDUM\n\nTO: All Staff\nFROM: Facilities & Security Directorate\nDATE: May 14\nSUBJECT: Implementation of Biometric Access Control\n\nIn our continuous effort to bolster workplace safety and safeguard proprietary research, the company will transition to a dual-factor biometric access system starting June 1. Consequently, all existing magnetic keycards will be deactivated at midnight on May 31.\n\nTo facilitate a seamless transition, employees must visit the Security Office in Room 204 to have their fingerprints scanned and new smart-badges issued. Registration will be conducted alphabetically by last name according to the schedule below:\n- A to L: May 18–20, 9:00 A.M. to 4:00 P.M.\n- M to Z: May 21–23, 9:00 A.M. to 4:00 P.M.\n\nTemporary contractors and vendors must be registered separately by their respective department heads. Please note that after June 1, security personnel will not grant manual entry to anyone without a valid smart-badge, regardless of tenure. We appreciate your cooperation in prioritizing our facility's integrity."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p7-0017-1",
+          "stem": "When will the current entry cards stop functioning?",
+          "options": {
+            "A": "At the end of the day on May 31.",
+            "B": "On the morning of June 1.",
+            "C": "After May 23.",
+            "D": "During the registration period."
+          },
+          "answer": "A",
+          "errorType": "detail",
+          "explanation": "Bản ghi nhớ nêu rõ tất cả các thẻ từ hiện tại sẽ bị vô hiệu hóa vào nửa đêm ngày 31 tháng 5.",
+          "trap": "Phương án nói về sáng ngày 1 tháng 6 dễ gây nhầm lẫn vì hệ thống mới bắt đầu hoạt động từ ngày này, nhưng việc vô hiệu hóa thẻ cũ diễn ra chính xác vào cuối ngày 31 tháng 5."
+        },
+        {
+          "id": "p7-0017-2",
+          "stem": "What is indicated about the new security policy?",
+          "options": {
+            "A": "Department heads must issue badges to their own team members.",
+            "B": "Long-term employees are not exempt from the new badge requirement.",
+            "C": "Fingerprint data will be deleted after the smart-badges are printed.",
+            "D": "Contractors can register for their badges at Room 204 anytime."
+          },
+          "answer": "B",
+          "errorType": "inference",
+          "explanation": "Đoạn cuối khẳng định nhân viên an ninh sẽ không cho phép vào cửa thủ công đối với bất kỳ ai không có thẻ thông minh, bất kể thâm niên làm việc.",
+          "trap": "Trưởng bộ phận chỉ đăng ký riêng cho nhà thầu tạm thời và nhà cung cấp, chứ không tự cấp thẻ cho nhân viên của mình."
+        },
+        {
+          "id": "p7-0017-3",
+          "stem": "The word 'bolster' in paragraph 1 is closest in meaning to",
+          "options": {
+            "A": "publicize",
+            "B": "evaluate",
+            "C": "strengthen",
+            "D": "restore"
+          },
+          "answer": "C",
+          "errorType": "reference",
+          "explanation": "Trong ngữ cảnh 'bolster workplace safety' (tăng cường an toàn nơi làm việc), từ 'bolster' có nghĩa là củng cố hoặc làm cho mạnh mẽ hơn, tương đương với 'strengthen'.",
+          "trap": "Từ 'evaluate' (đánh giá) hoặc 'restore' (khôi phục) có vẻ liên quan đến quy trình an ninh nhưng không khớp với nghĩa làm tăng cường mức độ an toàn hiện tại."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p7-0018",
+      "set": "part7-core",
+      "part": 7,
+      "status": "active",
+      "kind": "single",
+      "title": "Email",
+      "passages": [
+        {
+          "label": "Email",
+          "text": "Subject: Your Feedback: Apex Tech Summit 2024\nDate: November 15\nFrom: events@apexsummit.org\nTo: registered_attendees@list.apexsummit.org\n\nDear Attendee,\n\nThank you for participating in the Apex Tech Summit last week. With over 1,200 delegates, this year’s event was our most successful yet. To ensure we continue delivering high-caliber programming, we request ten minutes of your time to complete our post-event questionnaire.\n\nAs a token of our appreciation, respondents who submit the survey by November 22 will be entered into a drawing to win one of three complimentary passes to next year’s summit in Chicago, valued at $850 each.\n\nWe are particularly interested in your thoughts on the newly introduced interactive workshops compared to the traditional panel discussions. Your insights will directly shape the agenda for Apex 2025. Please click the link below to share your experience:\n\n[Start Survey Link]\n\nShould you encounter any technical difficulties accessing the form, please contact our support team at support@apexsummit.org.\n\nWarm regards,\n\nThe Apex Organizing Committee"
+        }
+      ],
+      "questions": [
+        {
+          "id": "p7-0018-1",
+          "stem": "Why was the email sent?",
+          "options": {
+            "A": "To promote early-bird ticket sales for next year's summit.",
+            "B": "To resolve technical issues with a registration website.",
+            "C": "To recruit speakers for interactive workshops in Chicago.",
+            "D": "To gather evaluations on a recently concluded conference."
+          },
+          "answer": "D",
+          "errorType": "purpose",
+          "explanation": "Email được gửi nhằm mục đích thu thập ý kiến phản hồi của người tham dự về hội nghị Apex Tech Summit vừa diễn ra thông qua một bảng khảo sát.",
+          "trap": "Việc bán vé hoặc thông tin về hội nghị năm tới tại Chicago được nhắc đến như một phần thưởng khuyến khích làm khảo sát, chứ không phải mục đích chính của email này."
+        },
+        {
+          "id": "p7-0018-2",
+          "stem": "What is NOT mentioned as a detail of the survey incentive?",
+          "options": {
+            "A": "Every respondent is guaranteed a discounted pass for next year.",
+            "B": "The deadline for submission is November 22.",
+            "C": "The prize drawing features three complimentary passes.",
+            "D": "The value of each grand prize is eight hundred and fifty dollars."
+          },
+          "answer": "A",
+          "errorType": "not-stated",
+          "explanation": "Văn bản chỉ ra rằng người hoàn thành khảo sát sẽ được tham gia bốc thăm trúng thưởng một trong ba vé miễn phí, chứ không đảm bảo mọi người đều được giảm giá vé.",
+          "trap": "Thời hạn ngày 22 tháng 11, số lượng 3 vé miễn phí và giá trị 850 USD đều được nêu rõ trong đoạn văn nên không thể chọn các phương án này."
+        },
+        {
+          "id": "p7-0018-3",
+          "stem": "What is true about the Apex Tech Summit 2024?",
+          "options": {
+            "A": "It was held in Chicago.",
+            "B": "It featured a new format of sessions alongside traditional panels.",
+            "C": "It had fewer than one thousand attendees.",
+            "D": "It was plagued by technical difficulties during the presentations."
+          },
+          "answer": "B",
+          "errorType": "inference",
+          "explanation": "Đoạn văn đề cập đến các hội thảo tương tác mới được giới thiệu bên cạnh các buổi thảo luận nhóm truyền thống, cho thấy sự thay đổi trong định dạng chương trình.",
+          "trap": "Chicago là địa điểm của hội nghị năm sau, không phải nơi tổ chức hội nghị năm nay vừa diễn ra."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p7-0019",
+      "set": "part7-core",
+      "part": 7,
+      "status": "active",
+      "kind": "single",
+      "title": "Group Chat",
+      "passages": [
+        {
+          "label": "Group Chat",
+          "text": "Logistics Team Chat (October 5)\n\nMarcus Vance (8:15 A.M.):\nHi team, just a reminder that the annual physical inventory count for Warehouse B starts at 9:00 A.M. today. We need to reconcile the physical stock of the XT-500 processors with the digital ledger.\n\nSarah Jenkins (8:22 A.M.):\nMarcus, I’ve already run a preliminary scan on Aisle 4. The system shows 450 units of XT-500, but my physical count only yielded 412. That’s a significant discrepancy. Has anyone checked the pending outbound shipments?\n\nDave Miller (8:30 A.M.):\nAh, that explains it. I processed an emergency order of 38 units for the Denver branch late last night. The courier picked them up at 11:00 P.M., but I haven't updated the database yet because the system was undergoing scheduled maintenance.\n\nMarcus Vance (8:35 A.M.):\nThanks, Dave. That accounts for the exact difference. Please update the system immediately so Sarah can finalize the audit. Sarah, once that’s cleared, please proceed to the XT-600 batch in Aisle 5."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p7-0019-1",
+          "stem": "Why was there a discrepancy in the inventory count?",
+          "options": {
+            "A": "A batch of processors was misplaced in Aisle 5.",
+            "B": "The digital ledger was corrupted during system maintenance.",
+            "C": "Some items were shipped out before the database was updated.",
+            "D": "Thirty-eight units of XT-500 were damaged during transit."
+          },
+          "answer": "C",
+          "errorType": "detail",
+          "explanation": "Dave giải thích rằng anh ấy đã xử lý đơn hàng khẩn cấp gồm 38 đơn vị cho chi nhánh Denver vào đêm muộn nhưng chưa cập nhật lên hệ thống do hệ thống đang bảo trì.",
+          "trap": "Hệ thống bảo trì được nhắc đến nhưng không phải là nguyên nhân làm hỏng dữ liệu, mà chỉ là lý do khiến Dave chưa thể cập nhật số lượng hàng đã xuất đi."
+        },
+        {
+          "id": "p7-0019-2",
+          "stem": "What will Sarah Jenkins most likely do next?",
+          "options": {
+            "A": "Contact the Denver branch to confirm receipt of the shipment.",
+            "B": "Manually update the digital ledger for Aisle 4.",
+            "C": "Postpone the inventory count until the system maintenance is finished.",
+            "D": "Verify the stock levels of a different product model."
+          },
+          "answer": "D",
+          "errorType": "inference",
+          "explanation": "Marcus yêu cầu Sarah tiếp tục kiểm tra lô hàng XT-600 ở Lối đi số 5 sau khi chênh lệch của dòng XT-500 được giải quyết, đây là một mẫu sản phẩm khác.",
+          "trap": "Việc cập nhật hệ thống cho Lối đi số 4 là nhiệm vụ của Dave chứ không phải của Sarah."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p7-0020",
+      "set": "part7-core",
+      "part": 7,
+      "status": "active",
+      "kind": "single",
+      "title": "Internal Announcement",
+      "passages": [
+        {
+          "label": "Internal Announcement",
+          "text": "Vanguard Financial Group\nStaff Announcement\n\nWe are pleased to announce the promotion of Dr. Elena Rostova to the position of Director of Business Intelligence, effective November 1.\n\nSince joining Vanguard five years ago as a Senior Data Analyst, Dr. Rostova has been instrumental in refining our predictive analytics framework. Her leadership during last year’s transition to cloud-based data warehousing minimized operational downtime and saved the firm over $1.2 million. In her new role, Dr. Rostova will oversee a team of fifteen analysts and spearhead our upcoming machine-learning integration initiative.\n\nPrior to her tenure at Vanguard, Dr. Rostova served as a quantitative researcher at Apex Capital and earned her Ph.D. in Applied Statistics from Boston University. She will succeed Arthur Pendelton, who is retiring after two decades of dedicated service. Please join us in the main conference room this Friday at 4:00 P.M. for a reception to celebrate Dr. Rostova’s promotion and to wish Arthur a happy retirement."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p7-0020-1",
+          "stem": "What is the main focus of the announcement?",
+          "options": {
+            "A": "A leadership transition within a department.",
+            "B": "The launch of a cloud-based data system.",
+            "C": "A recruitment drive for quantitative researchers.",
+            "D": "The financial performance of Vanguard Financial Group."
+          },
+          "answer": "A",
+          "errorType": "gist",
+          "explanation": "Thông báo tập trung vào việc thăng chức của Tiến sĩ Elena Rostova lên vị trí Giám đốc và việc nghỉ hưu của Arthur Pendelton, tức là sự chuyển giao lãnh đạo trong bộ phận.",
+          "trap": "Việc chuyển đổi sang hệ thống lưu trữ đám mây được nhắc đến như một thành tựu trong quá khứ của Elena chứ không phải là chủ đề chính của thông báo này."
+        },
+        {
+          "id": "p7-0020-2",
+          "stem": "What is mentioned as one of Dr. Rostova’s achievements?",
+          "options": {
+            "A": "Completing her doctoral degree while working at Vanguard.",
+            "B": "Reducing costs during a system migration.",
+            "C": "Recruiting fifteen analysts for the business intelligence team.",
+            "D": "Developing a machine-learning initiative for Apex Capital."
+          },
+          "answer": "B",
+          "errorType": "detail",
+          "explanation": "Văn bản nêu rõ sự dẫn dắt của Tiến sĩ Rostova trong quá trình chuyển đổi sang lưu trữ dữ liệu đám mây năm ngoái đã giúp giảm thiểu thời gian ngừng hoạt động và tiết kiệm cho công ty hơn 1,2 triệu USD.",
+          "trap": "Cô ấy đã có bằng Tiến sĩ trước khi làm việc tại Vanguard, chứ không phải hoàn thành nó trong thời gian làm việc tại đây."
+        },
+        {
+          "id": "p7-0020-3",
+          "stem": "What will happen at the event this Friday?",
+          "options": {
+            "A": "Dr. Rostova will deliver a presentation on machine learning.",
+            "B": "Arthur Pendelton will receive a lifetime achievement award.",
+            "C": "Two colleagues will be honored simultaneously.",
+            "D": "New data analysts will be introduced to the staff."
+          },
+          "answer": "C",
+          "errorType": "inference",
+          "explanation": "Buổi tiệc vào thứ Sáu tuần này được tổ chức để vừa chúc mừng sự thăng chức của Tiến sĩ Rostova vừa chúc Arthur nghỉ hưu vui vẻ, tức là vinh danh cả hai người cùng lúc.",
+          "trap": "Sáng kiến tích hợp máy học là nhiệm vụ mới của Elena trong vai trò mới, không phải là chủ đề của bài thuyết trình tại buổi tiệc này."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
     }
   ]
 }
