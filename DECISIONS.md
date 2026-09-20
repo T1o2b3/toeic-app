@@ -378,6 +378,16 @@ phủ sóng từ vựng Part 5 — mới thấy NAWL đóng góp 1 từ. Ghi l�
 - Part 5 và Part 2 vẫn chấm ngay: mỗi câu độc lập, chấm ngay không lộ gì cho câu sau.
 - Thi thử không đổi: vốn đã không lộ gì cho tới khi nộp.
 
+**D43. Điều hướng: cột bên trái trên máy tính, thanh dưới đáy trên điện thoại.**
+- **Huy yêu cầu ngày 2026-09-20:** "kéo mục lục sang bên trái như một trang web thực thụ".
+- Cùng MỘT `<nav>`, chỉ CSS đổi chỗ ở ngưỡng 62rem (≈992px): dưới ngưỡng giữ nguyên thanh đáy đã chọn ở D36
+  (hợp ngón tay trên iPhone/PWA), trên ngưỡng thành cột cố định bên trái có tên app.
+- **Bốn mục: Tổng quan · Từ vựng · Bài thi · Sao lưu.** Tra từ gộp vào Từ vựng (D36 để riêng một tab, nhưng
+  nó là một việc của phần từ vựng chứ không ngang hàng), Sao lưu/đồng bộ lên menu thay vì nằm trong màn chính.
+- Trong phiên học, thanh ĐÁY vẫn ẩn (vướng hàng nút chấm dính đáy) nhưng cột trái thì hiện — màn rộng không
+  thiếu chỗ. Đánh dấu bằng lớp `in-session` thay cho thuộc tính `hidden` (hidden là ẩn ở MỌI khổ màn hình).
+- Nội dung nới từ 34rem lên 44rem trên màn rộng, riêng màn làm bài (có `.split`) lên 66rem.
+
 ## Câu hỏi còn mở
 - ~~Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng?~~ → **Đã giải quyết, xem D35** (chung repo, xét lại khi ~100 MB).
 - ~~Q2 (trước M2): xác nhận license của TSL 1.2 và NGSL.~~ → **Đã giải quyết, xem D18.**

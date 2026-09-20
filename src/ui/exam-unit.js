@@ -11,13 +11,10 @@
  */
 import { el } from './dom.js';
 import { splitBlanks } from '../logic/part5.js';
-import { optionList, splitPane } from './blocks.js';
+import { optionList, splitPane, questionLabel } from './blocks.js';
 
 const LETTERS4 = ['A', 'B', 'C', 'D'];
 const LETTERS3 = ['A', 'B', 'C'];
-
-/** Đề của câu Part 6 chỉ là "Blank [1]" — đề thật không in dòng này, chỉ in 4 phương án. */
-const BLANK_STEM = /^\s*Blank\s*\[\d+\]\s*$/i;
 
 /** Nút Nghe của một đơn vị âm thanh. */
 function renderPlay(ctx, label) {
@@ -88,16 +85,10 @@ export function renderUnit(unit, ctx, numbers = new Map()) {
         el('div', { class: 'stem' }, renderBlanks(passage.text, part === 'part6' ? numberList : [])),
       ]));
 
-  return splitPane(material, unit.questions.map((question, i) => {
-    const number = numberList[i] ?? i + 1;
-    const plain = BLANK_STEM.test(question.stem);
-    return el('section', { class: 'set-q' }, [
-      el('div', { class: 'set-q-stem' }, plain
-        ? [el('span', { class: 'q-no', text: `Câu ${number}` })]
-        : [el('span', { class: 'q-no inline', text: `${number}.` }), ` ${question.stem}`]),
-      optionList({ letters: LETTERS4, textOf: (l) => question.options[l], picked: ctx.answers[question.id], onPick: (l) => ctx.pick(question.id, l) }),
-    ]);
-  }));
+  return splitPane(material, unit.questions.map((question, i) => el('section', { class: 'set-q' }, [
+    questionLabel(question, numberList[i] ?? i + 1),
+    optionList({ letters: LETTERS4, textOf: (l) => question.options[l], picked: ctx.answers[question.id], onPick: (l) => ctx.pick(question.id, l) }),
+  ])));
 }
 
 /** Mô tả một câu để xem lại sau bài thi: đề + phương án (Part 2 là chữ nghe được). */

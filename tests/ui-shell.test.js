@@ -23,35 +23,30 @@ beforeAll(async () => {
   ({ store, root, tick, go, key, text, click } = await bootApp());
 });
 
-describe('thanh tab dưới đáy', () => {
-  it('có 4 tab và tô sáng đúng tab ở mỗi màn (kể cả màn con)', async () => {
+describe('điều hướng chính: cột trái trên máy tính, thanh đáy trên điện thoại (D43)', () => {
+  it('có 4 mục và tô sáng đúng mục ở mỗi màn (kể cả màn con); Tra từ nằm trong Từ vựng', async () => {
     await go('#/');
-    expect(nav().hidden).toBe(false);
+    expect(nav().classList.contains('in-session')).toBe(false);
     expect(tabs().map((t) => t.replace(/^\S+\s*/, '')).length).toBe(4);
     expect(nav().textContent).toContain('Tổng quan');
     expect(activeTab()).toContain('Tổng quan');
-    for (const [hash, label] of [['#/vocab', 'Từ vựng'], ['#/words', 'Từ vựng'], ['#/exams', 'Bài thi'], ['#/lookup', 'Tra từ']]) {
+    for (const [hash, label] of [['#/vocab', 'Từ vựng'], ['#/words', 'Từ vựng'], ['#/lookup', 'Từ vựng'], ['#/exams', 'Bài thi'], ['#/sync', 'Sao lưu']]) {
       await go(hash);
       expect(activeTab(), hash).toContain(label);
     }
   });
 
-  it('mỗi tab trỏ đúng địa chỉ', () => {
-    expect([...nav().querySelectorAll('a.tab')].map((a) => a.getAttribute('href'))).toEqual(['#/', '#/vocab', '#/exams', '#/lookup']);
+  it('mỗi mục trỏ đúng địa chỉ; có tên app ở đầu cột (chỉ hiện trên màn rộng)', () => {
+    expect([...nav().querySelectorAll('a.tab')].map((a) => a.getAttribute('href'))).toEqual(['#/', '#/vocab', '#/exams', '#/sync']);
+    expect(nav().querySelector('.nav-brand').textContent).toBe('TOEIC 950');
   });
 
-  it('ẩn hẳn khi đang trong phiên học (cần cả màn hình, có nút chấm dính đáy)', async () => {
-    for (const hash of ['#/triage', '#/review', '#/practice', '#/quiz', '#/listen']) {
+  it('phiên học: ẩn thanh ĐÁY (vướng hàng nút chấm) — cột trái thì CSS vẫn cho hiện', async () => {
+    for (const hash of ['#/triage', '#/review', '#/practice', '#/quiz', '#/listen', '#/sets?part=6', '#/exam']) {
       await go(hash);
-      expect(nav().hidden, hash).toBe(true);
+      expect(nav().classList.contains('in-session'), hash).toBe(true);
       expect(document.body.classList.contains('has-tabbar'), hash).toBe(false);
     }
-  });
-
-  it('màn Đồng bộ vẫn có thanh tab nhưng không tô tab nào', async () => {
-    await go('#/sync');
-    expect(nav().hidden).toBe(false);
-    expect(activeTab()).toBeNull();
   });
 
   it('thanh tab nằm ngoài #app nên vẽ lại màn không làm nó nháy', async () => {

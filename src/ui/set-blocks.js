@@ -8,7 +8,7 @@
 import { el } from './dom.js';
 import { gradeSetAnswer } from '../logic/sets.js';
 import { renderStem } from './capture-tray.js';
-import { optionList, noticeCard } from './blocks.js';
+import { optionList, noticeCard, questionLabel } from './blocks.js';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
 
@@ -24,10 +24,7 @@ const LETTERS = ['A', 'B', 'C', 'D'];
 export function renderQuestion(question, index, picked, onPick, revealed) {
   const result = revealed && picked ? gradeSetAnswer(question, picked) : null;
   const blocks = [
-    el('div', { class: 'set-q-stem' }, [
-      el('span', { class: 'q-no inline', text: `${index + 1}.` }),
-      ` ${question.stem}`,
-    ]),
+    questionLabel(question, index + 1),
     // Chưa chấm thì đổi đáp án thoải mái; chấm rồi thì khoá và mới lộ đúng/sai.
     optionList({
       letters: LETTERS, textOf: (l) => question.options[l], picked,

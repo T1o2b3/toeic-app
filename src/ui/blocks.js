@@ -54,6 +54,28 @@ export function optionList({
 }
 
 /**
+ * Đề của câu Part 6 trong dữ liệu chỉ là "Blank [1]" — đề thật không in dòng này, vì chỗ trống đã nằm
+ * trong đoạn văn rồi. In ra sẽ thừa và khó đọc.
+ */
+const BLANK_STEM = /^\s*Blank\s*\[\d+\]\s*$/i;
+
+/**
+ * Dòng đề của một câu, kèm số hiệu. Câu không có đề riêng (Part 6) thì chỉ hiện số.
+ * @param {{stem: string}} question
+ * @param {number|string} number
+ * @returns {HTMLElement}
+ */
+export function questionLabel(question, number) {
+  if (BLANK_STEM.test(question.stem ?? '')) {
+    return el('div', { class: 'set-q-stem' }, [el('span', { class: 'q-no', text: `Câu ${number}` })]);
+  }
+  return el('div', { class: 'set-q-stem' }, [
+    el('span', { class: 'q-no inline', text: `${number}.` }),
+    ` ${question.stem}`,
+  ]);
+}
+
+/**
  * Bố cục hai cột (D41): tài liệu bên trái, câu hỏi và phương án bên phải.
  * Trên điện thoại CSS xếp dọc lại, tài liệu lên trước.
  * @param {Array<Node|string>} material

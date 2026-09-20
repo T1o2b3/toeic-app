@@ -41,7 +41,7 @@ describe('màn chọn chế độ', () => {
     expect(text()).toContain('Chỉ phần Nghe');
     expect(text()).toContain('Riêng Part 6');
     expect(text()).toMatch(/thiếu \d+ câu so với đề thật/);
-    expect(nav().hidden).toBe(true);
+    expect(nav().classList.contains('in-session')).toBe(true);
   });
 
   it('phần chưa có câu hỏi nào (Part 4) bị vô hiệu', () => {

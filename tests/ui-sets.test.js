@@ -50,7 +50,7 @@ describe('Part 6: đọc đoạn văn rồi trả lời từng chỗ trống', (
     expect(text()).not.toContain('[1]');
     expect(root.querySelector('.split-material').textContent).toContain('Dear staff');
     expect(root.querySelector('.split-questions').querySelectorAll('.set-q')).toHaveLength(4);
-    expect(document.querySelector('nav.tabbar').hidden).toBe(true);
+    expect(document.querySelector('nav.tabbar').classList.contains('in-session')).toBe(true);
     expect(root.querySelector('.tray')).not.toBeNull();
     expect(text()).toContain('còn 1 bộ');
   });

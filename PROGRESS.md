@@ -74,7 +74,12 @@ Huy giao 4 việc + 3 bổ sung giữa phiên. Xem **D39–D42**.
   **4 bản sao** của dãy nút chọn đáp án và 2 bản sao bố cục hai cột. Quy tắc mới trong CLAUDE.md.
 - **Nới hạn mức file 300 → 450 (D40)** theo yêu cầu của Huy.
 - **Lỗi nội dung thật:** `p5-0079` không có chỗ trống → đã `retired`; pipeline và `validate:content` nay đều chặn.
-- **735 test pass** (thêm: part5, score, ui-quiz, phases/numbering trong exam).
+- **Menu bên trái (D43):** trên máy tính là cột cố định bên trái (Tổng quan · Từ vựng · Bài thi · Sao lưu),
+  trên iPhone vẫn là thanh đáy như cũ. Tra từ gộp vào Từ vựng; Sao lưu/đồng bộ lên menu.
+- **Đã xem bằng ảnh chụp trình duyệt thật** (Chromium 1440×900 và 390×844): Part 5, Part 6, Part 7, thi thử,
+  màn chính — bố cục hai cột và menu đúng ý. Bắt được hai lỗi nhờ nhìn: nhãn câu Part 6 in thừa "Blank [1]",
+  và nội dung quá hẹp trên màn rộng.
+- **734 test pass** (thêm: part5, score, ui-quiz, phases/numbering trong exam).
 
 ## Phiên 2026-09-20 (chiều) — Đủ nội dung cho đề 194 câu + thi thử đủ bộ — XONG, đã lưu
 Huy giao: "đẩy nhanh các phần ngoài Part 5 để có đề 194/200". 194 = 200 trừ 6 câu Part 1 (cần ảnh).
