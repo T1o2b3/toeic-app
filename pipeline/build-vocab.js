@@ -11,8 +11,8 @@
  *
  * Chạy lại nhiều lần được: từ nào đã có trong pipeline/.cache/ thì không gọi AI lại.
  */
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
-import { parseTslCsv, WORDLISTS } from './lib/wordlists.js';
+import { writeFileSync, mkdirSync } from 'node:fs';
+import { parseTslCsv, readWordlistCsv, WORDLISTS } from './lib/wordlists.js';
 import { buildEntry } from './lib/vocab-entry.js';
 import { buildVocabPrompt, parseVocabResponse, matchVocabResponse, VOCAB_PROMPT_VERSION } from './lib/prompt-vocab.js';
 import { createGeminiProvider, withRetry, sleep, isDailyQuotaError, DEFAULT_GEMINI_MODELS } from './lib/ai-provider.js';
@@ -45,12 +45,12 @@ function parseArgs(argv) {
  * @returns {Array<{word: string, rank: number}>}
  */
 function readWords(list) {
-  const words = parseTslCsv(readFileSync(projectPath(list.csv), 'utf8'), { rankColumn: list.rankColumn });
+  const words = parseTslCsv(readWordlistCsv(projectPath(list.csv)), { rankColumn: list.rankColumn });
   if (!list.excludeFrom) return words;
 
   const base = WORDLISTS[list.excludeFrom];
   const seen = new Set(
-    parseTslCsv(readFileSync(projectPath(base.csv), 'utf8'), { rankColumn: base.rankColumn })
+    parseTslCsv(readWordlistCsv(projectPath(base.csv)), { rankColumn: base.rankColumn })
       .map((w) => w.word),
   );
   const kept = words.filter((w) => !seen.has(w.word));

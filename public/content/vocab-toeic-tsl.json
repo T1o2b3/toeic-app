@@ -1021,6 +1021,45 @@
       ]
     },
     {
+      "id": "tsl-0026",
+      "deck": "toeic-tsl",
+      "status": "active",
+      "word": "résumé",
+      "rank": 26,
+      "pos": [
+        "noun"
+      ],
+      "vi": "bản lý lịch, sơ yếu lý lịch",
+      "examples": [
+        {
+          "en": "Please submit your updated résumé and a cover letter to the hiring manager.",
+          "vi": "Vui lòng nộp sơ yếu lý lịch cập nhật và thư xin việc cho quản lý tuyển dụng."
+        },
+        {
+          "en": "The human resources department reviewed over one hundred résumés for the position.",
+          "vi": "Bộ phận nhân sự đã xem xét hơn một trăm hồ sơ lý lịch cho vị trí này."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "vocab-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "ipa": "/ˈɹɛz.ə.meɪ/",
+      "note": "Tránh nhầm lẫn danh từ 'résumé' (sơ yếu lý lịch) với động từ 'resume' (bắt đầu lại).",
+      "collocations": [
+        "submit a résumé",
+        "updated résumé",
+        "outstanding résumé"
+      ],
+      "synonyms": [
+        "curriculum vitae",
+        "CV",
+        "profile"
+      ]
+    },
+    {
       "id": "tsl-0027",
       "deck": "toeic-tsl",
       "status": "active",
@@ -4125,6 +4164,45 @@
       ],
       "synonyms": [
         "anniversary"
+      ]
+    },
+    {
+      "id": "tsl-0105",
+      "deck": "toeic-tsl",
+      "status": "active",
+      "word": "café",
+      "rank": 105,
+      "pos": [
+        "noun"
+      ],
+      "vi": "quán cà phê, tiệm ăn nhẹ",
+      "examples": [
+        {
+          "en": "The networking event will take place at the café across from the headquarters.",
+          "vi": "Sự kiện kết nối mạng lưới sẽ diễn ra tại quán cà phê đối diện trụ sở chính."
+        },
+        {
+          "en": "Employees often gather at the office café during their afternoon breaks.",
+          "vi": "Nhân viên thường tụ tập tại quán cà phê văn phòng trong giờ nghỉ chiều."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "vocab-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "ipa": "/ˌkæˈfeɪ/",
+      "note": "Phân biệt 'café' (quán cà phê - nơi chốn) với 'coffee' (cà phê - đồ uống).",
+      "collocations": [
+        "sidewalk café",
+        "office café",
+        "local café"
+      ],
+      "synonyms": [
+        "coffeehouse",
+        "bistro",
+        "cafeteria"
       ]
     },
     {
@@ -28508,6 +28586,48 @@
         "waste",
         "splurge",
         "squander"
+      ]
+    },
+    {
+      "id": "tsl-0714",
+      "deck": "toeic-tsl",
+      "status": "active",
+      "word": "entrée",
+      "rank": 714,
+      "pos": [
+        "noun"
+      ],
+      "vi": "món ăn chính trong bữa ăn",
+      "examples": [
+        {
+          "en": "The catering menu features a variety of vegetarian entrées for the banquet.",
+          "vi": "Thực đơn tiệc cung cấp nhiều món ăn chính chay cho bữa tiệc."
+        },
+        {
+          "en": "Please select your preferred entrée when you RSVP for the annual dinner.",
+          "vi": "Vui lòng chọn món ăn chính ưa thích của bạn khi xác nhận tham dự tiệc tối thường niên."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "vocab-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "ipa": "/ˈɒntɹeɪ/",
+      "note": "Trong tiếng Anh-Mỹ (thường gặp trong TOEIC), 'entrée' là món chính, khác với tiếng Anh-Anh nghĩa là món khai vị.",
+      "collocations": [
+        "vegetarian entrée",
+        "main entrée",
+        "select an entrée"
+      ],
+      "synonyms": [
+        "main course",
+        "main dish"
+      ],
+      "antonyms": [
+        "appetizer",
+        "starter"
       ]
     },
     {

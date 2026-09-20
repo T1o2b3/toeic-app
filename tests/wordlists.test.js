@@ -1,8 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
-import {
-  parseTslCsv, makeVocabId, TSL_ATTRIBUTION, BSL_ATTRIBUTION, NOT_WORDS, WORDLISTS,
-} from '../pipeline/lib/wordlists.js';
+import { parseTslCsv, makeVocabId, TSL_ATTRIBUTION, BSL_ATTRIBUTION, NOT_WORDS, WORDLISTS, readWordlistCsv } from '../pipeline/lib/wordlists.js';
+import { projectPath } from '../pipeline/lib/cli.js';
 
 const CSV = `Word,TSL Rank,SFI,U
 mister,1,71.28,1342.2
@@ -135,5 +134,21 @@ describe('WORDLISTS', () => {
     expect(BSL_ATTRIBUTION.license).toBe('CC BY-SA 4.0');
     expect(TSL_ATTRIBUTION.license).toBe('CC BY-SA 4.0');
     expect(WORDLISTS.bsl.excludeFrom).toBe('tsl');
+  });
+});
+
+describe('readWordlistCsv', () => {
+  it('đọc đúng từ có dấu trong file Latin-1 (3 từ TSL trước đây không sinh được vì lỗi này)', () => {
+    const words = parseTslCsv(readWordlistCsv(projectPath(WORDLISTS.tsl.csv)), { rankColumn: WORDLISTS.tsl.rankColumn });
+    expect(words).toHaveLength(1250);
+    const accented = words.filter((w) => /[^\x00-\x7F]/.test(w.word));
+    expect(accented.map((w) => w.word)).toEqual(['résumé', 'café', 'entrée']);
+    expect(accented.every((w) => !w.word.includes('�'))).toBe(true);   // không còn ký tự thay thế
+  });
+
+  it('file UTF-8 thật (BSL) KHÔNG bị đọc nhầm thành Latin-1', () => {
+    const words = parseTslCsv(readWordlistCsv(projectPath(WORDLISTS.bsl.csv)), { rankColumn: WORDLISTS.bsl.rankColumn });
+    expect(words.length).toBeGreaterThan(1000);
+    expect(words.every((w) => !w.word.includes('�'))).toBe(true);
   });
 });

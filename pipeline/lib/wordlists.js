@@ -6,6 +6,8 @@
  */
 
 /** Ghi công bắt buộc kèm mọi deck sinh từ danh sách này. */
+import { readFileSync } from 'node:fs';
+
 export const TSL_ATTRIBUTION = Object.freeze({
   source: 'TOEIC Service List (TSL) 1.2',
   authors: 'Browne, C. & Culligan, B. (2013)',
@@ -111,4 +113,25 @@ export function makeVocabId(rank, prefix = 'tsl') {
   }
   if (!/^[a-z]{2,5}$/.test(prefix)) throw new Error(`tiền tố id không hợp lệ: ${prefix}`);
   return `${prefix}-${String(rank).padStart(4, '0')}`;
+}
+
+/**
+ * Đọc file CSV danh sách từ, tự nhận mã hoá.
+ *
+ * `TSL_12_stats.csv` là **Latin-1**, không phải UTF-8: byte `0xE9` là "é" trong `résumé`. Đọc nhầm thành
+ * UTF-8 thì ra ký tự thay thế (U+FFFD) và từ đó KHÔNG BAO GIỜ sinh được — AI nhận chuỗi rác "r?sum?" nên
+ * không trả về gì khớp, pipeline chỉ báo "nhận 0/3 từ" chứ không chỉ ra nguyên nhân. Ba từ thiếu của TSL
+ * (`résumé`, `café`, `entrée`) đều là lỗi này, không phải AI kém.
+ *
+ * Thử UTF-8 nghiêm ngặt trước rồi mới lùi về windows-1252, để file UTF-8 thật (BSL) không bị đọc sai.
+ * @param {string} path
+ * @returns {string}
+ */
+export function readWordlistCsv(path) {
+  const buffer = readFileSync(path);
+  try {
+    return new TextDecoder('utf-8', { fatal: true }).decode(buffer);
+  } catch {
+    return new TextDecoder('windows-1252').decode(buffer);
+  }
 }

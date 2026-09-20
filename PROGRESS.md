@@ -121,6 +121,18 @@ nhanh hơn 01:43", gạt từ "successfully" vào danh sách học ngon.
   Màn Tra từ gõ cả cụm nay báo đúng lý do thay vì "gõ thêm chữ cái".
 - **Đã tắt 3 server dev của project khác** (`project_linalg`, `project_kmap` chiếm cổng 5173–5176).
   Huy cho phép tự tắt từ nay, đã ghi vào CLAUDE.md.
+- **Deck TSL đủ 1250/1250 từ lần đầu tiên** — hoá ra 3 từ "AI không sinh được" bấy lâu là **lỗi mã hoá file**:
+  `TSL_12_stats.csv` là Latin-1 (byte `0xE9` = "é"), đọc bằng UTF-8 nên `résumé` thành `r?sum?`; AI nhận
+  chuỗi rác nên không trả về gì khớp, pipeline chỉ báo "nhận 0/3 từ" chứ không chỉ ra nguyên nhân.
+  `readWordlistCsv` nay thử UTF-8 nghiêm ngặt rồi mới lùi về windows-1252. Sinh lại: nhận **3/3**.
+  Thêm đúng `tsl-0026 résumé` · `tsl-0105 café` · `tsl-0714 entrée` (id lấy theo RANK nên lấp vào ba chỗ
+  trống sẵn có) — **không mục cũ nào bị sửa hay xoá**, đúng ràng buộc #6. Cả ba đều có IPA.
+- **IPA còn thiếu: ĐÃ ĐO, QUYẾT ĐỊNH KHÔNG LÀM.** 152 từ thiếu IPA (TSL 71 + BSL 81) đều được cache ghi
+  `null` = Wiktionary chắc chắn không có (đúng quy tắc #4), nên **chạy lại pipeline không bao giờ bù được** —
+  ghi chú cũ "chạy lại sẽ tự tra tiếp" là SAI. Đo thử: chỉ **21/152** từ theo được sang biến thể chính tả
+  (`traveler→traveller`, `jewelry→jewellery`), và vài đích trong đó còn là lối viết cổ (`distributor→distributour`).
+  131 từ còn lại (`quarterly`, `upcoming`, `photocopier`…) là từ phái sinh/ghép, trang Wiktionary KHÔNG có
+  mục phát âm nào. 21 từ trên 2411 = 0,9% deck → không đáng viết thêm bộ theo biến thể chính tả.
 - **Kiểm branch** (`git fetch --prune` + `git branch -r --no-merged main`): không có nhánh nào chưa merge.
   Nhánh `claude/redesign-part-5-toeic-fm73hx` đã nằm trong `main` (merge e516a76) — còn sót trên GitHub,
   xoá được nếu Huy muốn. Quy tắc kiểm branch thường xuyên đã vào CLAUDE.md.
@@ -430,7 +442,9 @@ Ba script (`build:questions`, `build:listening`, `build:sets`) vừa đổi sang
    làm bài, mà ít dữ liệu thì nhận xét chỉ ra câu chung chung. Phần đo đạc làm trước, AI viết lời khuyên sau.
 4. M10 còn dở (bảng/biểu Part 3, đánh dấu câu chứa đáp án trong transcript) — **PLAN.md đang đánh dấu `[x]`
    nhưng thực tế chưa xong; Huy xác nhận giúp là tính xong hay để mở.** M11 (dictation) chưa làm.
-5. Sinh bù: 3 từ TSL còn thiếu và ~70 từ chưa có IPA — `npm run build:vocab` (chạy đơn lẻ, xem D33).
+5. ~~Sinh bù 3 từ TSL còn thiếu và ~70 từ chưa có IPA~~ — **XONG/ĐÃ KHÉP LẠI 2026-09-20**: 3 từ là lỗi mã
+   hoá file CSV, đã sửa và deck nay đủ 1250/1250. Còn 152 từ thiếu IPA thì Wiktionary vốn không có (đã đo,
+   chỉ 21 từ cứu được) → **đừng chạy lại `build:vocab` để mong bù IPA, không có tác dụng.**
 6. M18 (GitHub Actions ping Supabase + sao lưu hằng tuần) cần Huy tạo secret trên GitHub.
 
 ## Vướng mắc / câu hỏi mở
