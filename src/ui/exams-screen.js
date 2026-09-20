@@ -9,6 +9,7 @@ import { examOverview, weakestTypes } from '../logic/dashboard.js';
 import { getRoundSize, setRoundSize } from '../data/prefs.js';
 import { PART5_TARGET_SECONDS } from '../logic/part5.js';
 import { latestEstimate, formatBand, GOAL_SCORE } from '../logic/score.js';
+import { SKILL_LABEL } from '../logic/exam-time.js';
 import { ROUND_SIZES } from '../logic/prefs.js';
 import { renderAccuracyBars } from './dashboard-charts.js';
 import { SET_PARTS, PART_LABEL, SET_ROUND_SIZE, setQueue, countAvailableSets, estimateSetMinutes, questionsBySkill } from '../logic/sets.js';
@@ -26,7 +27,7 @@ function renderLastScore(last) {
   const { estimate } = last;
   const line = estimate.complete
     ? `${estimate.total.point} điểm (${formatBand(estimate.total)}) · còn ${GOAL_SCORE - estimate.total.point} điểm nữa tới mục tiêu`
-    : estimate.sections.map((s) => `${s.skill === 'listening' ? 'Nghe' : 'Đọc'} ${s.point} (${formatBand(s)})`).join(' · ');
+    : estimate.sections.map((s) => `${SKILL_LABEL[s.skill]} ${s.point} (${formatBand(s)})`).join(' · ');
   return el('div', { class: 'gaps' }, [
     el('div', { class: 'gaps-title', text: 'Bài thi gần nhất — điểm ước lượng' }),
     el('div', { class: 'gap-row' }, [

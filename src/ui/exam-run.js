@@ -11,7 +11,7 @@ import { renderUnit } from './exam-unit.js';
 import { confirmCard, noticeCard } from './blocks.js';
 
 /** "câu 101" hoặc "câu 131–134". */
-export function unitRange(unit, numbers) {
+function unitRange(unit, numbers) {
   const list = unit.questions.map((q) => numbers.get(q.id)).filter((n) => Number.isInteger(n));
   if (list.length === 0) return '';
   const first = Math.min(...list);

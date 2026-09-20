@@ -38,6 +38,10 @@ Claude Code tự đọc file này ở đầu mọi phiên. Mọi quy tắc ở �
 - **Hàm sinh ra phải dùng được ở NHIỀU nơi** (Huy, 2026-09-20). Đừng đẻ một đống hàm phụ chỉ để rút ngắn một file:
   hàm chỉ gọi đúng một chỗ thì viết thẳng tại chỗ. Thấy hai nơi làm cùng một việc thì gom lại ngay, kể cả đang làm dở
   việc khác — vừa làm vừa refactor. Các khối giao diện dùng chung nằm ở `src/ui/blocks.js`.
+- **Trước khi tạo BẤT KỲ file nào, tự hỏi ba câu** (Huy, 2026-09-20): nội dung này có bị trùng chỗ khác không?
+  đã có helper sẵn chưa? có nhét được vào module đang có thay vì đẻ file mới không? (DRY)
+- **Tự đánh giá code trước khi commit** (Huy, 2026-09-20): đọc lại diff như người review — helper mới có thật sự
+  dùng ở ≥ 2 nơi không, có import thừa không, hành vi người dùng thấy có đổi ngoài ý muốn không. Rồi mới commit/push.
 - Code và tên biến bằng tiếng Anh; tài liệu `.md` bằng tiếng Việt.
 - Commit theo dạng `type: mô tả ngắn` với type ∈ feat, fix, test, docs, chore, refactor, content.
 
@@ -95,7 +99,7 @@ không xếp hàng chờ.
 ## Checklist cuối MỖI bước con (làm đủ, không bỏ bước)
 
 1. `npm test` pass.
-2. `bash scripts/check_file_sizes.sh .` — không file nào > 300 dòng.
+2. `bash scripts/check_file_sizes.sh .` — không file nào > 450 dòng (D40).
 3. **`bash scripts/check_processes.sh` — tắt mọi tiến trình nền không còn cần** (máy chủ dev bật để xem
    thử rồi quên tắt là lỗi đã xảy ra; nó chạy tới khi bị tắt, không tự dừng).
 4. Cập nhật `PROGRESS.md`: vừa xong gì, bước tiếp theo cụ thể, vướng mắc.

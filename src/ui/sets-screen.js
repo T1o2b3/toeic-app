@@ -14,12 +14,12 @@ import {
   SET_PARTS, SET_ROUND_SIZE, PART_LABEL, setQueue, gradeSetAnswer, nextUnanswered,
 } from '../logic/sets.js';
 import { roundProgress } from '../logic/round.js';
-import { SPEEDS, turnSequence, audioUrl } from '../logic/listen.js';
-import { getListenSpeed, setListenSpeed } from '../data/prefs.js';
-import { createPlayer } from './audio-player.js';
+import { turnSequence, audioUrl } from '../logic/listen.js';
+import { getListenSpeed } from '../data/prefs.js';
+import { createPlayerSlot } from './audio-player.js';
 import { renderStem, renderTray, resetCapture } from './capture-tray.js';
 import { renderQuestion, renderTranscript, renderHold } from './set-blocks.js';
-import { splitPane } from './blocks.js';
+import { splitPane, backLink, backButton, speedChooser, letterFromKey } from './blocks.js';
 import { createEvent } from '../logic/events.js';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
@@ -36,16 +36,11 @@ let heard = false;
 let playError = null;
 let recorded = false;         // đã ghi nhật ký cho bộ này chưa (chỉ ghi MỘT lần, khi trả lời hết)
 
-let makePlayer = () => createPlayer();
-let player = null;
+const slot = createPlayerSlot();
+const getPlayer = () => slot.get();
 
 /** Tiêm bộ phát giả khi test (jsdom không phát được âm thanh). */
-export function setSetsPlayerFactory(factory) {
-  player?.dispose();
-  player = null;
-  makePlayer = factory;
-}
-const getPlayer = () => (player ??= makePlayer());
+export const setSetsPlayerFactory = (factory) => slot.setFactory(factory);
 
 const isListening = () => part === 3 || part === 4;
 
@@ -82,7 +77,7 @@ export function renderSets(store, params) {
     return el('div', {}, [
       el('h1', { text: PART_LABEL[part] }),
       el('p', { class: 'empty', text: `Chưa có bộ đề nào. Chạy pipeline: npm run build:sets -- --part ${part}` }),
-      el('button', { class: 'secondary', onClick: () => goTo('/exams') }, [el('span', { text: 'Về mục Bài thi' })]),
+      backButton('exams'),
     ]);
   }
 
@@ -94,7 +89,7 @@ export function renderSets(store, params) {
       el('p', { class: 'empty', text: count > 0
         ? `Đã làm ${count} bộ. Câu nào sai sẽ quay lại ở lượt sau.`
         : 'Đã làm hết các bộ hiện có.' }),
-      el('button', { class: 'primary', onClick: () => goTo('/exams') }, [el('span', { text: 'Về mục Bài thi' })]),
+      backButton('exams', { primary: true }),
     ]);
   }
 
@@ -135,7 +130,7 @@ export function renderSets(store, params) {
 
   return el('div', {}, [
     el('div', { class: 'topbar' }, [
-      el('button', { class: 'link', text: '← Bài thi', onClick: () => goTo('/exams') }),
+      backLink('exams'),
       el('span', { class: 'progress', text: `còn ${remaining} bộ · ${PART_LABEL[part]}` }),
     ]),
     el('h1', { class: 'set-title', text: set.title || PART_LABEL[part] }),
@@ -162,19 +157,12 @@ function renderPassages(store, set) {
 
 /** Nút Nghe + tốc độ. Câu hỏi hiện ngay bên dưới (xem trước như đề thật). */
 function renderListenCard(store, set) {
-  const speed = getListenSpeed();
   return el('div', { class: 'card big' }, [
     el('button', { class: 'primary listen-play', onClick: () => play(store, set) }, [
       el('span', { text: playing ? '🔊 Đang phát…' : heard ? '▶ Nghe lại' : '▶ Nghe đoạn này' }),
       el('small', { text: 'phím Space' }),
     ]),
-    el('div', { class: 'chooser' }, [
-      el('span', { class: 'chooser-label', text: 'Tốc độ' }),
-      ...SPEEDS.map((option) => el('button', {
-        class: option === speed ? 'chip-btn active' : 'chip-btn', text: `${option}×`,
-        onClick: () => { setListenSpeed(option); store.refresh(); },
-      })),
-    ]),
+    speedChooser(store),
     playError ? el('div', { class: 'warn', text: playError }) : '',
   ]);
 }
@@ -283,16 +271,13 @@ export function handleSetsKey(store, event) {
   }
   const question = nextUnanswered(set, answers);
   if (!question) return;
-  const byNumber = LETTERS[Number.parseInt(event.key, 10) - 1];
-  const byLetter = LETTERS.includes(event.key.toUpperCase?.()) ? event.key.toUpperCase() : null;
-  const letter = byNumber ?? byLetter;
+  const letter = letterFromKey(event, LETTERS);
   if (letter) pick(store, set, question, letter);
 }
 
 /** Đặt lại khi rời màn. */
 export function resetSets() {
-  player?.dispose();
-  player = null;
+  slot.dispose();
   part = null;
   seenParam = undefined;
   doneThisRound = new Set();

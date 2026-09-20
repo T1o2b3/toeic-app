@@ -23,10 +23,10 @@ export const LEVEL_ORDER = Object.freeze([
 
 /** Nhãn hiện trên nút và trong thống kê. */
 export const LEVEL_INFO = Object.freeze({
-  [LEVELS.UNKNOWN]:  { label: 'Không biết',    hint: 'chưa gặp bao giờ',                key: '1' },
-  [LEVELS.CONTEXT]:  { label: 'Đoán được',     hint: 'gặp rồi, đoán nghĩa theo ngữ cảnh', key: '2' },
-  [LEVELS.SPELLING]: { label: 'Quên chính tả', hint: 'hiểu nghĩa nhưng không tự viết ra được', key: '3' },
-  [LEVELS.FLUENT]:   { label: 'Thành thạo',    hint: 'tự dùng được — bỏ qua từ này',    key: '4' },
+  [LEVELS.UNKNOWN]:  { label: 'Không biết',    hint: 'chưa gặp bao giờ',                key: '1', css: 'again' },
+  [LEVELS.CONTEXT]:  { label: 'Đoán được',     hint: 'gặp rồi, đoán nghĩa theo ngữ cảnh', key: '2', css: 'hard' },
+  [LEVELS.SPELLING]: { label: 'Quên chính tả', hint: 'hiểu nghĩa nhưng không tự viết ra được', key: '3', css: 'good' },
+  [LEVELS.FLUENT]:   { label: 'Thành thạo',    hint: 'tự dùng được — bỏ qua từ này',    key: '4', css: 'easy' },
 });
 
 /**

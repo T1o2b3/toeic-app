@@ -160,7 +160,7 @@ export function questionNumber(index) {
 
 /** Chỗ trống in trong đề thật là một dãy gạch nối dài. */
 export const BLANK_TEXT = '-------';
-export const BLANK_PATTERN = /-{2,}|_{2,}/;
+const BLANK_PATTERN = /-{2,}|_{2,}/;
 
 /**
  * Câu có chỗ trống không. Câu thiếu chỗ trống là câu HỎNG (không điền vào đâu được) — validator chặn.

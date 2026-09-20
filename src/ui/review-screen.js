@@ -3,13 +3,14 @@
  * Mỗi nút chấm hiện luôn lần ôn kế tiếp (RESEARCH.md R3), phím tắt 1-4 và Space (R4).
  */
 import { el, goTo } from './dom.js';
+import { backButton, backLink } from './blocks.js';
 import { reviewQueue, reviewCounts } from '../logic/vocab-state.js';
 import { reviewProgress } from '../logic/round.js';
 import { TIER_ORDER, filterByTier } from '../logic/deck-tiers.js';
 import { getTier } from '../data/prefs.js';
 import { previewIntervals, GRADES } from '../logic/scheduler.js';
 import { formatDuration } from '../logic/format.js';
-import { renderWordBack } from './word-detail.js';
+import { renderWordBack, renderWordHead } from './word-detail.js';
 
 /** Hạn mức từ MỚI mỗi lượt — không nhồi quá nhiều thứ mới một lúc (D03). */
 const NEW_PER_ROUND = 10;
@@ -73,15 +74,13 @@ export function renderReview(store) {
   const { entry, state } = item;
 
   const front = el('div', { class: 'card big' }, [
-    el('div', { class: 'word', text: entry.word }),
-    entry.ipa ? el('div', { class: 'ipa', text: entry.ipa }) : '',
-    el('div', { class: 'pos', text: (entry.pos ?? []).join(' · ') }),
+    ...renderWordHead(entry),
     state.lapses > 0 ? el('div', { class: 'warn', text: `Đã quên ${state.lapses} lần` }) : '',
   ]);
 
   const children = [
     el('div', { class: 'topbar' }, [
-      el('button', { class: 'link', text: '← Từ vựng', onClick: () => goTo('/vocab') }),
+      backLink('vocab'),
       el('span', { class: 'progress', text: `còn ${remaining} thẻ` }),
     ]),
     front,
@@ -124,7 +123,7 @@ function renderDone(store, counts) {
           el('small', { text: 'phần còn lại của phiên hôm nay' }),
         ])
       : '',
-    el('button', { class: 'secondary', onClick: () => goTo('/vocab') }, [el('span', { text: 'Về mục Từ vựng' })]),
+    backButton('vocab'),
   ]);
 }
 

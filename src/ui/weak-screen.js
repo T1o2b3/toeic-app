@@ -1,7 +1,8 @@
 /**
  * Danh sách từ hay sai — chỗ Huy nhìn thấy lỗ hổng của mình.
  */
-import { el, goTo } from './dom.js';
+import { el } from './dom.js';
+import { backButton, backLink } from './blocks.js';
 import { weakWords } from '../logic/vocab-state.js';
 
 /**
@@ -16,13 +17,13 @@ export function renderWeak(store) {
     return el('div', {}, [
       el('h1', { text: 'Từ hay sai' }),
       el('p', { class: 'empty', text: 'Chưa có từ nào bị quên. Ôn thêm vài phiên rồi quay lại.' }),
-      el('button', { class: 'secondary', onClick: () => goTo('/vocab') }, [el('span', { text: 'Về mục Từ vựng' })]),
+      backButton('vocab'),
     ]);
   }
 
   return el('div', {}, [
     el('div', { class: 'topbar' }, [
-      el('button', { class: 'link', text: '← Từ vựng', onClick: () => goTo('/vocab') }),
+      backLink('vocab'),
       el('span', { class: 'progress', text: `${weak.length} từ` }),
     ]),
     el('h1', { text: 'Từ hay sai' }),

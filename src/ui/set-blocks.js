@@ -8,7 +8,7 @@
 import { el } from './dom.js';
 import { gradeSetAnswer } from '../logic/sets.js';
 import { renderStem } from './capture-tray.js';
-import { optionList, noticeCard, questionLabel } from './blocks.js';
+import { optionList, noticeCard, questionLabel, verdictLine, explanationCard } from './blocks.js';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
 
@@ -32,13 +32,7 @@ export function renderQuestion(question, index, picked, onPick, revealed) {
     }),
   ];
   if (result) {
-    blocks.push(
-      el('div', { class: `verdict ${result.correct ? 'ok' : 'no'}`, text: result.correct ? 'Đúng' : `Sai — đáp án là ${question.answer}` }),
-      el('div', { class: 'card back' }, [
-        el('div', { class: 'meaning', text: question.explanation }),
-        question.trap ? el('div', { class: 'note', text: question.trap }) : '',
-      ]),
-    );
+    blocks.push(verdictLine(result, question.answer), explanationCard(question));
   }
   return el('section', { class: 'set-q' }, blocks);
 }

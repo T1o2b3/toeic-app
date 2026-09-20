@@ -24,8 +24,8 @@ export function skillSeconds(form, skill) {
   return Math.round(SKILL_MINUTES[skill] * 60 * Math.min(1, have / full));
 }
 
-/** Nhãn của kỹ năng. */
-export const SKILL_LABEL = Object.freeze({ listening: 'Phần Nghe', reading: 'Phần Đọc' });
+/** Tên kỹ năng, dùng chung cho mọi nơi (màn kết quả, mục Bài thi, tên phần trong bài thi). */
+export const SKILL_LABEL = Object.freeze({ listening: 'Nghe', reading: 'Đọc' });
 
 /**
  * Chia đề thành các PHẦN TÍNH GIỜ RIÊNG, đúng như đề thật: Nghe 45 phút, hết giờ mới sang Đọc 75 phút,
@@ -43,7 +43,7 @@ export function examPhases(form) {
     if (sections.length === 0) continue;
     const unitCount = sections.reduce((n, s) => n + s.units.length, 0);
     phases.push({
-      skill, label: SKILL_LABEL[skill], seconds: skillSeconds(form, skill),
+      skill, label: `Phần ${SKILL_LABEL[skill]}`, seconds: skillSeconds(form, skill),
       from, to: from + unitCount,
       questionCount: sections.reduce((n, s) => n + s.questionCount, 0),
     });

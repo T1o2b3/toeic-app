@@ -4,7 +4,8 @@
  * Màn phân loại chỉ lướt một chiều; đây là chỗ duy nhất nhìn được toàn bộ những gì đã chấm —
  * kể cả các từ "thành thạo" vốn bị loại khỏi hàng đợi học nên không bao giờ hiện lại ở đâu khác.
  */
-import { el, goTo } from './dom.js';
+import { el } from './dom.js';
+import { backLink } from './blocks.js';
 import { LEVEL_ORDER, LEVEL_INFO, payloadForLevel } from '../logic/vocab-levels.js';
 import {
   FILTERS, FILTER_ORDER, normalizeFilter, filterWords, countByFilter, fold,
@@ -16,7 +17,6 @@ import { renderWordBack } from './word-detail.js';
 const PAGE_SIZE = 40;
 
 /** Cùng bảng màu với màn phân loại để nhìn là nhận ra mức. */
-const LEVEL_CLASS = { unknown: 'again', context: 'hard', spelling: 'good', fluent: 'easy' };
 
 const FILTER_LABEL = {
   [FILTERS.ALL]: 'Tất cả',
@@ -59,7 +59,7 @@ export function renderWords(store, params) {
 
   return el('div', {}, [
     el('div', { class: 'topbar' }, [
-      el('button', { class: 'link', text: '← Từ vựng', onClick: () => goTo('/vocab') }),
+      backLink('vocab'),
       el('span', { class: 'progress', text: `${counts[FILTERS.ALL]} từ trong kho` }),
     ]),
     el('h1', { text: 'Kho từ vựng' }),
@@ -148,7 +148,7 @@ function renderRow(store, entry, refill) {
       el('strong', { text: entry.word }),
       state?.bookmarked ? el('span', { class: 'star', text: '★' }) : '',
       el('span', {
-        class: level ? `lvl ${LEVEL_CLASS[level]}` : 'lvl none',
+        class: level ? `lvl ${LEVEL_INFO[level].css}` : 'lvl none',
         text: level ? LEVEL_INFO[level].label : 'chưa phân loại',
       }),
     ]),
@@ -167,7 +167,7 @@ function renderDetail(store, entry, state, level) {
     renderWordBack(entry),
     el('div', { class: 'gaps-title', text: 'Bạn dùng được từ này tới mức nào?' }),
     el('div', { class: 'level-picker' }, LEVEL_ORDER.map((option) => el('button', {
-      class: `grade ${LEVEL_CLASS[option]}${option === level ? ' chosen' : ''}`,
+      class: `grade ${LEVEL_INFO[option].css}${option === level ? ' chosen' : ''}`,
       onClick: () => setLevel(store, entry, level, option),
     }, [
       el('span', { text: LEVEL_INFO[option].label }),

@@ -9,7 +9,6 @@ import { normalizeWord, planCapture } from '../logic/capture.js';
 import { LEVEL_INFO } from '../logic/vocab-levels.js';
 import { renderWordBack } from './word-detail.js';
 
-const LEVEL_CLASS = { unknown: 'again', context: 'hard', spelling: 'good', fluent: 'easy' };
 const EXAMPLES = ['amend', 'ngân sách', 'raised', 'deadline'];
 
 // Trạng thái riêng của màn (giữ ngoài DOM vì ghi sự kiện sẽ vẽ lại cả màn).
@@ -97,7 +96,7 @@ function renderRow(store, entry, score, open, refill) {
     el('span', { class: 'wh-main' }, [
       el('strong', { text: entry.word }),
       entry.ipa ? el('span', { class: 'ipa-inline', text: entry.ipa }) : '',
-      el('span', { class: level ? `lvl ${LEVEL_CLASS[level]}` : 'lvl none', text: level ? LEVEL_INFO[level].label : 'chưa học' }),
+      el('span', { class: level ? `lvl ${LEVEL_INFO[level].css}` : 'lvl none', text: level ? LEVEL_INFO[level].label : 'chưa học' }),
     ]),
     el('small', { text: `${entry.vi}${score < MATCH.PREFIX ? ` · ${MATCH_LABEL[score]}` : ''}` }),
   ]);

@@ -8,14 +8,13 @@
  * Chỉ ghi vào nhật ký KHI NỘP (một lần, gói gọn): `question.answered` cho mỗi câu đã trả lời (thêm mode: 'exam')
  * và một `exam.finished` tóm tắt. Vì vậy thoát giữa chừng thì mất bài — làm dở rồi tiếp trên máy khác là M16.
  */
-import { el, goTo } from './dom.js';
 import { buildExamForm, formUnits, scoreExam, examSummaryPayload } from '../logic/exam.js';
 import { examPhases, numberQuestions, formatClock } from '../logic/exam-time.js';
 import { estimateScore } from '../logic/score.js';
 import { clipSequence, turnSequence, audioUrl } from '../logic/listen.js';
 import { getListenSpeed } from '../data/prefs.js';
 import { createEvent } from '../logic/events.js';
-import { createPlayer } from './audio-player.js';
+import { createPlayerSlot } from './audio-player.js';
 import { renderRunning, phaseNotice } from './exam-run.js';
 import { renderResult } from './exam-result.js';
 import { renderSetup } from './exam-setup.js';
@@ -43,16 +42,11 @@ let playing = false;
 let heard = {};              // id đơn vị → số lần đã nghe
 let playError = null;
 
-let makePlayer = () => createPlayer();
-let player = null;
-const getPlayer = () => (player ??= makePlayer());
+const slot = createPlayerSlot();
+const getPlayer = () => slot.get();
 
 /** Tiêm bộ phát giả khi test. */
-export function setExamPlayerFactory(factory) {
-  player?.dispose();
-  player = null;
-  makePlayer = factory;
-}
+export const setExamPlayerFactory = (factory) => slot.setFactory(factory);
 
 /** Ngân hàng câu hỏi gom từ store, đúng dạng buildExamForm cần. */
 const banksOf = (store) => ({ part2: store.listening, part5: store.questions, sets: store.sets });
@@ -274,7 +268,6 @@ function reset() {
 
 /** Đặt lại khi rời màn (bài đang làm dở bị bỏ — xem ghi chú đầu file). */
 export function resetExam() {
-  player?.dispose();
-  player = null;
+  slot.dispose();
   reset();
 }

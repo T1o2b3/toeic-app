@@ -257,3 +257,22 @@ describe('Tra từ', () => {
     expect(root.querySelector('input').value).toBe('');
   });
 });
+
+describe('nút quay về mục (dùng chung blocks.js)', () => {
+  it('màn học trỏ về đúng mục: Part 5 → Bài thi, ôn chủ động → Từ vựng', async () => {
+    await go('#/quiz');
+    expect(text()).toContain('← Bài thi');
+    await go('#/practice');
+    expect(text()).toContain('← Từ vựng');
+  });
+
+  it('màn "hết từ" của kho từ hay sai có nút Về mục Từ vựng', async () => {
+    await go('#/weak');
+    expect(text()).toContain('Về mục Từ vựng');
+  });
+
+  it('màn hết câu của Part 5 có nút về mục Bài thi', async () => {
+    await go('#/listen');
+    expect(text()).toMatch(/← Bài thi|Về mục Bài thi/);
+  });
+});

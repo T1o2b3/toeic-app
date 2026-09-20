@@ -13,7 +13,7 @@
 import { el } from './dom.js';
 
 /** Mỗi mục và các màn thuộc về nó (để tô sáng đúng mục khi đang ở màn con). */
-export const TABS = Object.freeze([
+const TABS = Object.freeze([
   { key: 'home', label: 'Tổng quan', icon: '◔', href: '#/', screens: ['home'] },
   { key: 'vocab', label: 'Từ vựng', icon: 'Aa', href: '#/vocab', screens: ['vocab', 'words', 'weak', 'lookup'] },
   { key: 'exams', label: 'Bài thi', icon: '✎', href: '#/exams', screens: ['exams'] },
@@ -21,14 +21,14 @@ export const TABS = Object.freeze([
 ]);
 
 /** Màn phiên học: ẩn thanh dưới đáy. Màn lạ không có trong TABS lẫn danh sách này thì vẫn hiện, không tô mục nào. */
-export const SESSION_SCREENS = Object.freeze(['triage', 'review', 'practice', 'quiz', 'listen', 'sets', 'exam']);
+const SESSION_SCREENS = Object.freeze(['triage', 'review', 'practice', 'quiz', 'listen', 'sets', 'exam']);
 
 /**
  * Mục nào đang sáng.
  * @param {string} screen
  * @returns {string|null}
  */
-export function activeTab(screen) {
+function activeTab(screen) {
   return TABS.find((tab) => tab.screens.includes(screen))?.key ?? null;
 }
 
@@ -37,7 +37,7 @@ export function activeTab(screen) {
  * @param {string} screen
  * @returns {boolean}
  */
-export function showTabBar(screen) {
+function showTabBar(screen) {
   return !SESSION_SCREENS.includes(screen);
 }
 

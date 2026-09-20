@@ -11,12 +11,12 @@
  * Nhịp: đề thật cho ~20 giây/câu (30 câu trong ~10 phút) để còn giờ cho Part 6 và 7. Màn này đo thời gian
  * từng câu và nói nhịp sau khi trả lời — nhắc, không ép.
  */
-import { el, goTo } from './dom.js';
+import { el } from './dom.js';
 import { gradeAnswer } from '../logic/quiz.js';
 import { composeRound, questionNumber, groupBreakdown, pace, PART5_GROUPS, PART5_COUNT } from '../logic/part5.js';
 import { roundProgress } from '../logic/round.js';
 import { renderStem, renderTray, renderOptionCapture, resetCapture } from './capture-tray.js';
-import { optionList, splitPane } from './blocks.js';
+import { optionList, splitPane, backLink, backButton, verdictLine, explanationCard, letterFromKey } from './blocks.js';
 import { getRoundSize } from '../data/prefs.js';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
@@ -51,7 +51,7 @@ export function renderQuiz(store) {
     return el('div', {}, [
       el('h1', { text: 'Luyện Part 5' }),
       el('p', { class: 'empty', text: 'Chưa có câu hỏi nào. Chạy pipeline sinh câu trước đã.' }),
-      el('button', { class: 'secondary', onClick: () => goTo('/exams') }, [el('span', { text: 'Về mục Bài thi' })]),
+      backButton('exams'),
     ]);
   }
 
@@ -87,15 +87,12 @@ export function renderQuiz(store) {
   if (result) {
     const spent = pace(results.at(-1)?.seconds ?? 0);
     right.push(
-      el('div', { class: `verdict ${result.correct ? 'ok' : 'no'}`, text: result.correct ? 'Đúng' : `Sai — đáp án là ${question.answer}` }),
+      verdictLine(result, question.answer),
       el('div', { class: 'gap-row' }, [
         el('span', { class: 'chip', text: groupLabel(question.errorType) }),
         el('span', { class: spent.onPace ? 'gap-value plain' : 'gap-value', text: spent.label }),
       ]),
-      el('div', { class: 'card back' }, [
-        el('div', { class: 'meaning', text: question.explanation }),
-        question.trap ? el('div', { class: 'note', text: question.trap }) : '',
-      ]),
+      explanationCard(question),
       renderOptionCapture(store, question),
       el('div', { class: 'actions' }, [
         el('button', { class: 'primary', onClick: () => next(store) }, [
@@ -113,7 +110,7 @@ export function renderQuiz(store) {
 
   return el('div', {}, [
     el('div', { class: 'topbar' }, [
-      el('button', { class: 'link', text: '← Bài thi', onClick: () => goTo('/exams') }),
+      backLink('exams'),
       el('span', { class: 'progress', text: `còn ${remaining} câu · Part 5` }),
     ]),
     splitPane(material, right),
@@ -156,7 +153,7 @@ function renderSummary(store) {
     ]),
     el('p', { class: 'footnote left', text: 'Câu nào sai sẽ được ưu tiên quay lại ở lượt sau.' }),
     el('button', { class: 'primary', onClick: () => { newRound(store); } }, [el('span', { text: 'Lượt mới' })]),
-    el('button', { class: 'secondary', onClick: () => goTo('/exams') }, [el('span', { text: 'Về mục Bài thi' })]),
+    backButton('exams'),
   ]);
 }
 
@@ -217,9 +214,7 @@ export function handleQuizKey(store, event) {
     return;
   }
 
-  const byNumber = LETTERS[Number.parseInt(event.key, 10) - 1];
-  const byLetter = LETTERS.includes(event.key.toUpperCase?.()) ? event.key.toUpperCase() : null;
-  const letter = byNumber ?? byLetter;
+  const letter = letterFromKey(event, LETTERS);
   if (letter) answer(store, question, letter);
 }
 

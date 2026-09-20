@@ -10,15 +10,16 @@
  * thường, không dùng màu của chuỗi. Màu khai báo trong style.css (--viz-*).
  */
 import { el } from './dom.js';
+import { SKILL_LABEL } from '../logic/exam-time.js';
 import { LEVEL_INFO } from '../logic/vocab-levels.js';
 
 const WEEKDAY = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
 
 /** Ba chuỗi của biểu đồ hoạt động: khoá trong dữ liệu, nhãn, biến màu. Thứ tự cố định, không xoay vòng. */
-export const SERIES = Object.freeze([
+const SERIES = Object.freeze([
   { key: 'vocab', label: 'Từ vựng', color: 'var(--viz-s1)' },
-  { key: 'reading', label: 'Đọc', color: 'var(--viz-s2)' },
-  { key: 'listening', label: 'Nghe', color: 'var(--viz-s3)' },
+  { key: 'reading', label: SKILL_LABEL.reading, color: 'var(--viz-s2)' },
+  { key: 'listening', label: SKILL_LABEL.listening, color: 'var(--viz-s3)' },
 ]);
 
 /** Nhãn ngắn "T3 20/9" cho một cột. */

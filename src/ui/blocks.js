@@ -1,11 +1,13 @@
 /**
- * Các khối giao diện DÙNG CHUNG cho mọi màn làm bài (Part 2, 3, 4, 5, 6, 7 và thi thử).
+ * Các khối giao diện DÙNG CHUNG cho nhiều màn: làm bài (Part 2–7, thi thử), điều hướng về mục, chấm điểm.
  *
  * Lý do gom về đây: trước đó "dãy nút chọn đáp án" có BỐN bản gần giống nhau (luyện Part 5, luyện bộ,
  * luyện nghe, thi thử) và "bố cục hai cột" có hai bản. Sửa một chỗ thì ba chỗ kia lệch đi.
  * Quy tắc từ 2026-09-20: hàm sinh ra phải dùng được ở nhiều nơi, không đẻ hàm chỉ để rút ngắn một file.
  */
-import { el } from './dom.js';
+import { el, goTo } from './dom.js';
+import { SPEEDS } from '../logic/listen.js';
+import { getListenSpeed, setListenSpeed } from '../data/prefs.js';
 
 /**
  * Dãy nút chọn đáp án.
@@ -121,5 +123,88 @@ export function confirmCard({ message, warn, confirmLabel, onConfirm, onCancel, 
       el('button', { class: 'secondary', onClick: onCancel }, [el('span', { text: cancelLabel })]),
       el('button', { class: 'primary', onClick: onConfirm }, [el('span', { text: confirmLabel })]),
     ]),
+  ]);
+}
+
+/** Hai mục lớn mà các màn học quay về. Nhãn viết một lần ở đây, không rải chuỗi khắp nơi. */
+export const SECTIONS = Object.freeze({
+  exams: { label: 'Bài thi', path: '/exams' },
+  vocab: { label: 'Từ vựng', path: '/vocab' },
+});
+
+/**
+ * Link "← Bài thi" / "← Từ vựng" ở góc trên các màn học.
+ * @param {string} section - khoá trong SECTIONS
+ * @returns {HTMLElement}
+ */
+export function backLink(section) {
+  const { label, path } = SECTIONS[section];
+  return el('button', { class: 'link', text: `← ${label}`, onClick: () => goTo(path) });
+}
+
+/**
+ * Nút "Về mục Bài thi" / "Về mục Từ vựng" ở cuối các màn học.
+ * @param {string} section - khoá trong SECTIONS
+ * @param {{primary?: boolean}} [options]
+ * @returns {HTMLElement}
+ */
+export function backButton(section, { primary = false } = {}) {
+  const { label, path } = SECTIONS[section];
+  return el('button', { class: primary ? 'primary' : 'secondary', onClick: () => goTo(path) }, [
+    el('span', { text: `Về mục ${label}` }),
+  ]);
+}
+
+/**
+ * Dòng "Đúng" / "Sai — đáp án là B".
+ * @param {{correct: boolean}} result
+ * @param {string} answer
+ * @returns {HTMLElement}
+ */
+export function verdictLine(result, answer) {
+  return el('div', {
+    class: `verdict ${result.correct ? 'ok' : 'no'}`,
+    text: result.correct ? 'Đúng' : `Sai — đáp án là ${answer}`,
+  });
+}
+
+/**
+ * Thẻ giải thích sau khi chấm: lời giải tiếng Việt + vì sao các phương án sai lại hấp dẫn.
+ * @param {{explanation: string, trap?: string}} question
+ * @returns {HTMLElement}
+ */
+export function explanationCard(question) {
+  return el('div', { class: 'card back' }, [
+    el('div', { class: 'meaning', text: question.explanation }),
+    question.trap ? el('div', { class: 'note', text: question.trap }) : '',
+  ]);
+}
+
+/**
+ * Phím vừa bấm ứng với phương án nào: nhận cả số (1–4) lẫn chữ cái (A–D).
+ * @param {KeyboardEvent} event
+ * @param {string[]} letters
+ * @returns {string|null}
+ */
+export function letterFromKey(event, letters) {
+  const byNumber = letters[Number.parseInt(event.key, 10) - 1];
+  const upper = event.key.toUpperCase?.();
+  return byNumber ?? (letters.includes(upper) ? upper : null);
+}
+
+/**
+ * Hàng chọn tốc độ phát (0.75× / 1× / 1.25×). Lưu theo từng máy.
+ * @param {object} store
+ * @returns {HTMLElement}
+ */
+export function speedChooser(store) {
+  const speed = getListenSpeed();
+  return el('div', { class: 'chooser' }, [
+    el('span', { class: 'chooser-label', text: 'Tốc độ' }),
+    ...SPEEDS.map((option) => el('button', {
+      class: option === speed ? 'chip-btn active' : 'chip-btn',
+      text: `${option}×`,
+      onClick: () => { setListenSpeed(option); store.refresh(); },
+    })),
   ]);
 }

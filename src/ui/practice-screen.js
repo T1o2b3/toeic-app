@@ -5,11 +5,12 @@
  * → tổng kết. Không đụng lịch ôn; chỉ riêng từ đã chấm "thành thạo" mà quên thì bị hạ mức
  * (xem src/logic/practice.js để biết vì sao).
  */
-import { el, goTo } from './dom.js';
+import { el } from './dom.js';
+import { backButton, backLink } from './blocks.js';
 import {
   POOLS, POOL_ORDER, POOL_INFO, PRACTICE_SIZE, countPools, pickRound, eventForResult,
 } from '../logic/practice.js';
-import { renderWordBack } from './word-detail.js';
+import { renderWordBack, renderWordHead } from './word-detail.js';
 
 // Danh sách từ của lượt được chốt một lần lúc bắt đầu và giữ nguyên tới hết lượt.
 let pool = null;      // nhóm đang ôn; null = đang ở màn chọn nhóm
@@ -35,7 +36,7 @@ function renderPick(store) {
 
   return el('div', {}, [
     el('div', { class: 'topbar' }, [
-      el('button', { class: 'link', text: '← Từ vựng', onClick: () => goTo('/vocab') }),
+      backLink('vocab'),
     ]),
     el('h1', { text: 'Ôn chủ động' }),
     el('p', { class: 'subtitle', text: `Tự chọn nhóm từ để kiểm tra trí nhớ, mỗi lượt ${PRACTICE_SIZE} từ. Không làm đổi lịch ôn.` }),
@@ -75,9 +76,7 @@ function renderCard(store, entry) {
       el('span', { class: 'progress', text: `còn ${left} từ · ${POOL_INFO[pool].label}` }),
     ]),
     el('div', { class: 'card big' }, [
-      el('div', { class: 'word', text: entry.word }),
-      entry.ipa ? el('div', { class: 'ipa', text: entry.ipa }) : '',
-      el('div', { class: 'pos', text: (entry.pos ?? []).join(' · ') }),
+      ...renderWordHead(entry),
       el('div', { class: 'hint', text: fluentPool
         ? 'Bạn chấm từ này là thành thạo — còn nhớ nghĩa không?'
         : 'Còn nhớ nghĩa của từ này không?' }),
@@ -138,7 +137,7 @@ function renderSummary(store, byId) {
     el('button', { class: 'secondary', onClick: () => { resetPractice(); store.refresh(); } }, [
       el('span', { text: 'Chọn nhóm khác' }),
     ]),
-    el('button', { class: 'secondary', onClick: () => goTo('/vocab') }, [el('span', { text: 'Về mục Từ vựng' })]),
+    backButton('vocab'),
   );
   return el('div', {}, sections);
 }

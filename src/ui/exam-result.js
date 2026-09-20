@@ -4,13 +4,12 @@
  * Điểm luôn đi kèm một KHOẢNG và chữ "ước lượng" — không bao giờ hiện một con số trần trụi:
  * câu hỏi do AI ra nên độ khó chưa hiệu chuẩn theo đề thật (xem đầu src/logic/score.js).
  */
-import { el, goTo } from './dom.js';
+import { el } from './dom.js';
+import { backButton } from './blocks.js';
 import { PART_LABEL } from '../logic/sets.js';
-import { formatClock } from '../logic/exam-time.js';
+import { formatClock, SKILL_LABEL } from '../logic/exam-time.js';
 import { GOAL_SCORE, formatBand } from '../logic/score.js';
 import { describeQuestion } from './exam-unit.js';
-
-const SKILL_LABEL = { listening: 'Nghe', reading: 'Đọc' };
 
 export function renderResult(result, onAgain) {
   const { score, estimate, seconds, timedOut } = result;
@@ -27,7 +26,7 @@ export function renderResult(result, onAgain) {
     el('div', { class: 'gaps' }, [el('div', { class: 'gaps-title', text: 'Theo từng phần' }), ...partRows]),
     renderWrong(score),
     el('button', { class: 'primary', onClick: onAgain }, [el('span', { text: 'Làm đề khác' })]),
-    el('button', { class: 'secondary', onClick: () => goTo('/exams') }, [el('span', { text: 'Về mục Bài thi' })]),
+    backButton('exams'),
   ]);
 }
 
