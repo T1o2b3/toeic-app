@@ -91,6 +91,7 @@ toeic-app/
 - [ ] M17. Trang ngữ pháp & từ nối (tra cứu + liên kết câu từng sai).
 - [ ] M18. GitHub Actions: ping Supabase chống tạm dừng + backup hằng tuần.
 - [ ] M19. Deck từ vựng đời thường (NGSL / chủ đề đời sống).
+- [ ] M20. Bản nhận xét điểm mạnh/yếu + cách luyện (đo đạc trước, AI viết lời khuyên trong pipeline — D44; chi tiết ở Backlog).
 - Liên tục: chạy pipeline bổ sung nội dung ~30 phút/tuần khi cần.
 
 ## Tổng ước tính
@@ -98,7 +99,7 @@ toeic-app/
 
 ## Backlog (ý tưởng chưa lên lịch)
 - ~~Ước lượng "mức sẵn sàng thi"~~ → **đã làm 2026-09-20, xem D39** (điểm ước lượng 10–990 kèm khoảng dao động).
-- **M19 — Bản nhận xét điểm mạnh/điểm yếu + cách luyện** (Huy đề xuất 2026-09-20). **Huy đã chốt: đường 2 —
+- **M20 — Bản nhận xét điểm mạnh/điểm yếu + cách luyện** (Huy đề xuất 2026-09-20). **Huy đã chốt: đường 2 —
   chạy AI trong pipeline, KHÔNG gọi API lúc app chạy (D44).** Ba đường đã cân nhắc: Huy nói "chạy API đánh giá", nhưng **ràng buộc #2 cấm gọi AI lúc app chạy** (DECISIONS.md D02:
   app phải chạy offline, không có khoá API trong frontend, không tốn tiền/hạn mức khi dùng). Ba đường đi:
   1. **Không cần AI** — app tự tính từ nhật ký: tỉ lệ đúng theo 12 dạng câu Part 5, theo kỹ năng, theo Part,

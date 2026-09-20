@@ -388,8 +388,8 @@ phủ sóng từ vựng Part 5 — mới thấy NAWL đóng góp 1 từ. Ghi l�
   thiếu chỗ. Đánh dấu bằng lớp `in-session` thay cho thuộc tính `hidden` (hidden là ẩn ở MỌI khổ màn hình).
 - Nội dung nới từ 34rem lên 44rem trên màn rộng, riêng màn làm bài (có `.split`) lên 66rem.
 
-**D44. Bản nhận xét điểm mạnh/yếu chạy AI trong PIPELINE, không gọi API lúc app chạy (M19).**
-- **Huy chốt ngày 2026-09-20**, sau khi Claude nêu ba đường (xem PLAN.md M19). Chọn đường 2 → **ràng buộc #2
+**D44. Bản nhận xét điểm mạnh/yếu chạy AI trong PIPELINE, không gọi API lúc app chạy (M20).**
+- **Huy chốt ngày 2026-09-20**, sau khi Claude nêu ba đường (xem PLAN.md M20). Chọn đường 2 → **ràng buộc #2
   giữ nguyên**, không phải sửa gì: app vẫn chạy offline, không có khoá API trong frontend, không tốn hạn mức khi dùng.
 - **Hình dung luồng:** Huy bấm "Xuất dữ liệu" (đã có) → chạy `npm run advise` trên máy → script đọc nhật ký,
   tự tính phần đo đạc (tỉ lệ đúng theo 12 dạng Part 5, theo kỹ năng, theo Part, nhịp làm bài, từ hay quên),

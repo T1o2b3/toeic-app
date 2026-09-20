@@ -145,7 +145,7 @@ Huy giao 4 việc + 3 bổ sung giữa phiên. Xem **D39–D42**.
 
 ### CẦN HUY CHỐT — việc thứ 6 Huy nhắc (API đánh giá điểm mạnh/yếu)
 Huy nói "sau cập nhật thêm mục nữa là chạy api đánh giá điểm mạnh điểm yếu, những điểm cần luyện và cách luyện".
-Việc này **đụng ràng buộc #2** (không gọi AI lúc app chạy) nên tôi CHƯA làm, đã ghi thành **M19 trong PLAN.md**
+Việc này **đụng ràng buộc #2** (không gọi AI lúc app chạy) nên tôi CHƯA làm, đã ghi thành **M20 trong PLAN.md**
 với ba đường đi. Tóm tắt để Huy chọn:
 1. **Không cần AI** — app tự tính từ nhật ký (yếu dạng nào, nhịp chậm chỗ nào) rồi khớp bảng lời khuyên viết sẵn.
    Offline, miễn phí, làm được ngay. *Claude đề xuất đường này trước.*
