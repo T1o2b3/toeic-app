@@ -1,0 +1,1059 @@
+{
+  "set": "part7-core",
+  "part": 7,
+  "version": 1,
+  "entries": [
+    {
+      "id": "p7-0001",
+      "set": "part7-core",
+      "part": 7,
+      "status": "active",
+      "kind": "single",
+      "title": "Office Equipment Repair",
+      "passages": [
+        {
+          "label": "Service Request Confirmation",
+          "text": "From: TechFix Solutions <support@techfix.com>\nTo: Sarah Jenkins <s.jenkins@innovate.co>\nDate: October 14\nSubject: Repair Request #8829 - Industrial Printer\n\nDear Ms. Jenkins,\n\nWe have received your request regarding the malfunction of your office’s primary industrial printer. Our technician, Mr. Marcus Thorne, is scheduled to arrive at your facility on Wednesday, October 16, between 9:00 A.M. and 11:00 A.M. to conduct a thorough inspection.\n\nPlease ensure that the device is powered on and accessible to our staff upon arrival. Should the repair require replacement parts that are not currently in our inventory, there may be a delay in restoring full functionality. In such an event, we will provide a temporary loaner unit at no additional cost to minimize disruption to your operations. We appreciate your patience as we work to resolve this issue.\n\nBest regards,\nTechFix Solutions"
+        }
+      ],
+      "questions": [
+        {
+          "id": "p7-0001-1",
+          "stem": "What is mentioned about the repair process?",
+          "options": {
+            "A": "The company might provide substitute equipment if needed.",
+            "B": "The technician will bring all necessary spare parts.",
+            "C": "The client must pay an extra fee for the loaner unit.",
+            "D": "The inspection will take place in the afternoon."
+          },
+          "answer": "A",
+          "errorType": "detail",
+          "explanation": "The text states that if replacement parts are unavailable, a temporary loaner unit will be provided at no extra cost.",
+          "trap": "The text mentions parts might be missing, but it does not guarantee the technician will have them, and it explicitly denies the extra fee mentioned in another option."
+        },
+        {
+          "id": "p7-0001-2",
+          "stem": "What is implied about the printer?",
+          "options": {
+            "A": "It is a portable model used by various departments.",
+            "B": "It is essential for the daily business activities.",
+            "C": "It has been malfunctioning for over a month.",
+            "D": "It was recently purchased from TechFix Solutions."
+          },
+          "answer": "B",
+          "errorType": "inference",
+          "explanation": "The email describes it as the 'primary' printer and mentions providing a loaner to 'minimize disruption,' implying it is critical for operations.",
+          "trap": "The text calls it 'primary' but does not specify that it was bought from this specific vendor or how long it has been broken."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p7-0002",
+      "set": "part7-core",
+      "part": 7,
+      "status": "active",
+      "kind": "single",
+      "title": "A Delayed Shipment",
+      "passages": [
+        {
+          "label": "Customer Notification",
+          "text": "Dear Valued Customer,\n\nWe are writing to inform you that your recent order #9921, containing office supplies, has been delayed due to an unexpected supply chain disruption at our regional distribution center. While we strive to maintain our promised delivery timelines, we are currently experiencing a backlog that has pushed your expected arrival date from October 20 to October 25.\n\nWe understand the inconvenience this may cause your office. As a gesture of our commitment to your satisfaction, we have applied a 15% discount to your original invoice. You will receive an updated confirmation email once your package has been dispatched from our facility. We apologize for this oversight and are taking steps to prevent similar occurrences in the future. Thank you for your continued loyalty.\n\nSincerely,\nLogistics Team, Office Depot Express"
+        }
+      ],
+      "questions": [
+        {
+          "id": "p7-0002-1",
+          "stem": "What does the word 'backlog' in the first paragraph mean?",
+          "options": {
+            "A": "A collection of returned items.",
+            "B": "A shortage of raw materials.",
+            "C": "A delay in processing pending orders.",
+            "D": "A system error in the billing department."
+          },
+          "answer": "C",
+          "errorType": "reference",
+          "explanation": "In this context, 'backlog' refers to the accumulation of unfulfilled orders that have caused the delay.",
+          "trap": "The term is often associated with production shortages, but here it refers to the accumulation of orders waiting to be shipped."
+        },
+        {
+          "id": "p7-0002-2",
+          "stem": "What will the customer receive?",
+          "options": {
+            "A": "A full refund for the delayed order.",
+            "B": "A new shipment of office supplies immediately.",
+            "C": "A discount on their next purchase.",
+            "D": "A notification once the items are sent."
+          },
+          "answer": "D",
+          "errorType": "detail",
+          "explanation": "The text explicitly states that the customer will receive an updated confirmation email once the package is dispatched.",
+          "trap": "The text mentions a 15% discount on the current invoice, not a future one, and it does not offer a full refund."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p7-0003",
+      "set": "part7-core",
+      "part": 7,
+      "status": "active",
+      "kind": "single",
+      "title": "A Client Meeting Reschedule",
+      "passages": [
+        {
+          "label": "Email Correspondence",
+          "text": "From: David Chen <d.chen@consulting.com>\nTo: Elena Rodriguez <e.rodriguez@client.com>\nSubject: Rescheduling our meeting\n\nDear Ms. Rodriguez,\n\nI am writing to request a change to our meeting scheduled for Thursday at 2:00 P.M. Unfortunately, an urgent matter has arisen that requires my presence at our headquarters in Chicago. I apologize for any inconvenience this may cause you, as I know your schedule is quite demanding.\n\nWould you be available to meet on Friday at 10:00 A.M. instead? If that time does not work for you, I am also free on Monday morning between 9:00 A.M. and 12:00 P.M. Please let me know which option suits you best, or feel free to suggest an alternative time. I look forward to our discussion regarding the Q4 marketing strategy.\n\nBest regards,\nDavid Chen"
+        }
+      ],
+      "questions": [
+        {
+          "id": "p7-0003-1",
+          "stem": "Why did David Chen send the email?",
+          "options": {
+            "A": "To propose a new time for the upcoming appointment.",
+            "B": "To confirm the venue for the Q4 meeting.",
+            "C": "To inform the client about a change in strategy.",
+            "D": "To cancel the meeting due to a lack of preparation."
+          },
+          "answer": "A",
+          "errorType": "purpose",
+          "explanation": "The primary goal of the email is to request a reschedule because the sender has to travel to headquarters.",
+          "trap": "The sender mentions the Q4 marketing strategy, but that is the topic of the meeting, not the reason for the email."
+        },
+        {
+          "id": "p7-0003-2",
+          "stem": "What is implied about the meeting?",
+          "options": {
+            "A": "It was originally planned to be held in Chicago.",
+            "B": "It involves a discussion about future business plans.",
+            "C": "It is the first time the two parties are meeting.",
+            "D": "It must be held on a Monday."
+          },
+          "answer": "B",
+          "errorType": "inference",
+          "explanation": "The email mentions discussing the 'Q4 marketing strategy,' which is a future business plan.",
+          "trap": "The sender mentions going to Chicago, but it does not say the meeting was supposed to be there, and it does not suggest it is their first meeting."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p7-0004",
+      "set": "part7-core",
+      "part": 7,
+      "status": "active",
+      "kind": "single",
+      "title": "Email - Client Meeting Reschedule",
+      "passages": [
+        {
+          "label": "Email",
+          "text": "From: Julian Thorne <j.thorne@apexconsult.com>\nTo: Sarah Jenkins <s.jenkins@globex.com>\nDate: October 12\nSubject: Rescheduling our Q4 strategy session\n\nDear Sarah,\n\nI am writing to request a shift in our scheduled strategy meeting for this Thursday. Due to an unforeseen conflict with a regional board review that has been moved to the same time slot, I will be unable to attend our 2:00 P.M. session. \n\nI understand that your calendar is quite packed for the remainder of the week. However, if you have any flexibility on Friday morning before 11:00 A.M., I would appreciate the opportunity to connect then. Alternatively, I am wide open next Tuesday afternoon. Please let me know if either of these options aligns with your schedule, or if you would prefer to delegate this meeting to your lead analyst, Marcus, who is already briefed on the project. I apologize for any inconvenience this sudden change may cause.\n\nBest regards,\nJulian Thorne"
+        }
+      ],
+      "questions": [
+        {
+          "id": "p7-0004-1",
+          "stem": "Why did Julian Thorne send this email?",
+          "options": {
+            "A": "To inform Sarah about a new board review policy.",
+            "B": "To introduce Marcus as the new lead analyst for the project.",
+            "C": "To request a change in the timing of a planned appointment.",
+            "D": "To cancel the Q4 strategy session indefinitely."
+          },
+          "answer": "C",
+          "errorType": "purpose",
+          "explanation": "The sender explicitly asks to shift the meeting time due to a scheduling conflict.",
+          "trap": "Mentioning the board review or the analyst might distract the reader, but they are supporting details, not the main reason for the email."
+        },
+        {
+          "id": "p7-0004-2",
+          "stem": "What is implied about Sarah Jenkins?",
+          "options": {
+            "A": "She is the one who requested the board review.",
+            "B": "She prefers to meet on Tuesday afternoons.",
+            "C": "She has already met with Marcus to discuss the project.",
+            "D": "She has a very busy work schedule."
+          },
+          "answer": "D",
+          "errorType": "inference",
+          "explanation": "The sender acknowledges that her calendar is quite packed, implying she is very busy.",
+          "trap": "The text mentions Tuesday afternoon as an option, but it does not state her preference."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p7-0005",
+      "set": "part7-core",
+      "part": 7,
+      "status": "active",
+      "kind": "single",
+      "title": "Business Travel Booking",
+      "passages": [
+        {
+          "label": "Travel Confirmation",
+          "text": "SkyHigh Travel Agency\nBooking Reference: SH-99281\n\nDear Mr. Henderson,\n\nWe are pleased to confirm your travel arrangements for the upcoming industry conference in Singapore. Your flight, SQ442, is scheduled to depart on November 15 at 9:00 P.M. Please note that the airline requires all international passengers to arrive at the terminal at least three hours before departure for document verification. \n\nRegarding your accommodation, the Grand Plaza Hotel has confirmed your reservation for three nights. While your company policy typically covers standard rooms, we have secured a complimentary upgrade to a deluxe suite as part of the conference partnership program. Please present your corporate identification card at the check-in desk to ensure the billing is routed directly to your firm. Airport transfer services have been arranged; a driver will meet you at the arrivals hall holding a sign with your name. We wish you a productive trip.\n\nRegards,\nSkyHigh Support Team"
+        }
+      ],
+      "questions": [
+        {
+          "id": "p7-0005-1",
+          "stem": "What must Mr. Henderson do to ensure his company is billed correctly?",
+          "options": {
+            "A": "Provide his corporate ID during the hotel check-in process.",
+            "B": "Submit his receipt to the accounting department upon return.",
+            "C": "Contact the hotel to confirm the partnership program.",
+            "D": "Pay the bill upfront and request a reimbursement."
+          },
+          "answer": "A",
+          "errorType": "detail",
+          "explanation": "The text states that presenting the corporate ID at the check-in desk ensures the billing is routed to his firm.",
+          "trap": "Reimbursement or submitting receipts are common business practices but are not mentioned in this specific document."
+        },
+        {
+          "id": "p7-0005-2",
+          "stem": "What is NOT mentioned as part of the travel arrangements?",
+          "options": {
+            "A": "Airport transportation services.",
+            "B": "The cost of the flight upgrade.",
+            "C": "The duration of the hotel stay.",
+            "D": "The specific time for the flight departure."
+          },
+          "answer": "B",
+          "errorType": "not-stated",
+          "explanation": "The document mentions a room upgrade, but no information regarding the cost or upgrade of the flight is provided.",
+          "trap": "The text mentions an upgrade for the hotel, which might lead the reader to assume a flight upgrade is also discussed."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p7-0006",
+      "set": "part7-core",
+      "part": 7,
+      "status": "active",
+      "kind": "single",
+      "title": "Budget Approval",
+      "passages": [
+        {
+          "label": "Memo",
+          "text": "To: All Department Heads\nFrom: Finance Department\nDate: November 2\nSubject: Q1 Budget Allocation\n\nFollowing the executive board meeting held yesterday, the Finance Department has finalized the budget allocations for the first quarter of the upcoming year. We have reviewed all submitted proposals and have approved the majority of requests, with the exception of the marketing department’s request for additional social media advertising funds, which remains under review pending further data on ROI.\n\nAll departments are expected to adhere strictly to the approved figures. Any requests for budget adjustments must be submitted via the online portal by the 15th of this month. Please note that the Finance Department will be hosting a brief webinar on November 20 to explain the new expense reporting software that will be mandatory for all staff starting in January. It is essential that at least one representative from each department attends this session to ensure a smooth transition. We appreciate your cooperation in maintaining our fiscal responsibility goals."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p7-0006-1",
+          "stem": "What is the main purpose of the webinar?",
+          "options": {
+            "A": "To discuss the rejection of the marketing budget.",
+            "B": "To review the quarterly ROI data.",
+            "C": "To train staff on a new financial reporting tool.",
+            "D": "To collect budget adjustment requests."
+          },
+          "answer": "C",
+          "errorType": "purpose",
+          "explanation": "The text states the webinar is to explain the new expense reporting software that will be mandatory.",
+          "trap": "The text mentions budget adjustments and marketing, but these are separate topics from the webinar's purpose."
+        },
+        {
+          "id": "p7-0006-2",
+          "stem": "The word 'adhere' in the second paragraph is closest in meaning to:",
+          "options": {
+            "A": "Modify.",
+            "B": "Create.",
+            "C": "Ignore.",
+            "D": "Follow."
+          },
+          "answer": "D",
+          "errorType": "reference",
+          "explanation": "Adhere to the figures means to follow or comply with the set budget limits.",
+          "trap": "Modify is a distractor because the text mentions 'adjustments' elsewhere, but 'adhere' is the opposite of changing."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p7-0007",
+      "set": "part7-core",
+      "part": 7,
+      "status": "active",
+      "kind": "single",
+      "title": "Product Launch",
+      "passages": [
+        {
+          "label": "Press Release",
+          "text": "FOR IMMEDIATE RELEASE\n\nTechNova Solutions is proud to announce the launch of its latest innovation, the 'Zenith Tablet,' scheduled to hit retail shelves on December 1st. Designed for professionals on the go, the Zenith features a revolutionary battery life of up to 24 hours and a lightweight titanium frame. \n\n'We believe this device will redefine the mobile workspace,' said CEO Elena Rodriguez. 'Our engineers have spent two years perfecting the interface to ensure that multitasking is more intuitive than ever.' \n\nTo celebrate the launch, the first 500 customers who purchase the device at our flagship store in downtown Seattle will receive a complimentary protective leather case and a stylus. Pre-orders are currently being accepted through our official website, with early-bird discounts available until November 25. We encourage interested customers to visit our website for full technical specifications and a list of authorized retailers."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p7-0007-1",
+          "stem": "What is true about the Zenith Tablet?",
+          "options": {
+            "A": "It will be available for purchase at the end of the year.",
+            "B": "It is made of a heavy-duty steel material.",
+            "C": "It is designed primarily for home entertainment.",
+            "D": "It has a battery that lasts for two full days."
+          },
+          "answer": "A",
+          "errorType": "detail",
+          "explanation": "The launch date is December 1st, which is at the end of the year.",
+          "trap": "The battery life is 24 hours (one day), not two days, and the material is titanium, not steel."
+        },
+        {
+          "id": "p7-0007-2",
+          "stem": "What can be inferred about the pre-order process?",
+          "options": {
+            "A": "Customers must visit the Seattle store to pre-order.",
+            "B": "The early-bird discount is available for a limited time.",
+            "C": "The tablet will be sold exclusively through the company website.",
+            "D": "The leather case is included with all pre-orders."
+          },
+          "answer": "B",
+          "errorType": "inference",
+          "explanation": "The text states that early-bird discounts are available until November 25, implying a time-limited offer.",
+          "trap": "The leather case is only for the first 500 customers at the Seattle store, not for all pre-orders."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p7-0008",
+      "set": "part7-core",
+      "part": 7,
+      "status": "active",
+      "kind": "single",
+      "title": "Facility Maintenance Notice",
+      "passages": [
+        {
+          "label": "Notice",
+          "text": "FACILITY MAINTENANCE ALERT\n\nDear Employees,\n\nPlease be advised that the building management will be conducting essential maintenance on the HVAC system throughout the main office building this coming weekend. \n\nWork is scheduled to begin at 6:00 P.M. on Friday, November 10, and is expected to conclude by 6:00 A.M. on Monday, November 13. During this period, the air conditioning and heating systems will be completely deactivated. Consequently, the building will be inaccessible to all personnel to ensure safety and efficiency. \n\nIf you have any critical files or equipment that you will require over the weekend, please ensure you retrieve them before 5:30 P.M. on Friday. Security personnel have been instructed to deny entry to anyone without prior written authorization from the Facilities Manager. We apologize for the temporary disruption and appreciate your cooperation in helping us upgrade our infrastructure to provide a more comfortable working environment for everyone."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p7-0008-1",
+          "stem": "What is the main topic of this notice?",
+          "options": {
+            "A": "A change in office security protocols.",
+            "B": "A new schedule for the maintenance staff.",
+            "C": "A temporary closure due to system upgrades.",
+            "D": "A request for feedback on the building's temperature."
+          },
+          "answer": "C",
+          "errorType": "gist",
+          "explanation": "The notice informs staff about maintenance work that requires the building to be closed.",
+          "trap": "Security is mentioned, but it is a consequence of the closure, not the main topic."
+        },
+        {
+          "id": "p7-0008-2",
+          "stem": "What are employees advised to do?",
+          "options": {
+            "A": "Contact the Facilities Manager for weekend work permits.",
+            "B": "Report to the security desk on Monday morning.",
+            "C": "Work from home during the entire month of November.",
+            "D": "Collect necessary items before the building closes on Friday."
+          },
+          "answer": "D",
+          "errorType": "detail",
+          "explanation": "The notice explicitly tells employees to retrieve critical files or equipment before 5:30 P.M. on Friday.",
+          "trap": "While permits are mentioned, they are for exceptions, not a general recommendation for all employees."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p7-0009",
+      "set": "part7-core",
+      "part": 7,
+      "status": "active",
+      "kind": "single",
+      "title": "Internal Memo",
+      "passages": [
+        {
+          "label": "MEMORANDUM",
+          "text": "To: All Department Heads\nFrom: Sarah Jenkins, HR Director\nDate: October 12\nSubject: Mandatory Leadership Workshop\n\nAs we prepare for our Q4 expansion, it is imperative that our management team remains aligned with our core operational strategies. Consequently, we are organizing a mandatory two-day leadership workshop scheduled for November 5th and 6th at the Grand Plaza Hotel. \n\nThe sessions will focus on cross-departmental communication and conflict resolution. Attendance is compulsory for all department heads; however, if you have a pre-existing commitment that cannot be rescheduled, you must submit a formal exemption request to my office by October 20th. Please note that failure to attend without an approved exemption will be reflected in your annual performance review. \n\nLunch will be provided on both days, catering to various dietary restrictions. Please update your profile on the employee portal to include any specific food allergies or preferences by no later than the deadline mentioned above. We look forward to your active participation in fostering a more cohesive leadership culture."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p7-0009-1",
+          "stem": "What is the primary purpose of this memorandum?",
+          "options": {
+            "A": "To notify management of a required training event.",
+            "B": "To announce a change in the company's Q4 operational strategy.",
+            "C": "To solicit feedback regarding the upcoming expansion plans.",
+            "D": "To provide instructions on how to request a performance review."
+          },
+          "answer": "A",
+          "errorType": "purpose",
+          "explanation": "The document serves to inform department heads about a mandatory leadership workshop and the requirements associated with it.",
+          "trap": "The document mentions operational strategy and performance reviews, but these are context or consequences, not the main reason for the communication."
+        },
+        {
+          "id": "p7-0009-2",
+          "stem": "What is mentioned regarding the attendance policy?",
+          "options": {
+            "A": "Managers may send a delegate if they are unavailable.",
+            "B": "Unexcused absences will have a negative impact on professional evaluations.",
+            "C": "Absences must be reported to the HR office by the end of October.",
+            "D": "Participants are required to pay for their own meals during the workshop."
+          },
+          "answer": "B",
+          "errorType": "detail",
+          "explanation": "The text states that missing the event without an approved exemption will be reflected in the annual performance review.",
+          "trap": "The text mentions an October 20th deadline, not the end of October, and does not mention sending delegates."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p7-0010",
+      "set": "part7-core",
+      "part": 7,
+      "status": "active",
+      "kind": "single",
+      "title": "Catering Order Confirmation",
+      "passages": [
+        {
+          "label": "ORDER CONFIRMATION #88291",
+          "text": "Dear Mr. Henderson,\n\nThank you for choosing Bistro Express for your corporate catering needs. We have received your order for the upcoming board meeting on October 25th. \n\nYour order includes thirty assorted gourmet sandwiches, two large garden salads, and our signature fruit platter. We have noted your request for the delivery to be made at 11:30 A.M. to the executive boardroom on the 15th floor. Please ensure that the building security is notified of our arrival, as our delivery personnel do not have access to the service elevator without prior authorization. \n\nRegarding your request for gluten-free options, we have substituted the standard bread with our house-made quinoa-based rolls at no additional cost. Please review the attached invoice to ensure all details are accurate. Should you need to modify your order, please contact our support team at least 48 hours before the delivery date. We appreciate your business and look forward to serving you.\n\nBest regards,\nBistro Express Management"
+        }
+      ],
+      "questions": [
+        {
+          "id": "p7-0010-1",
+          "stem": "What is implied about the delivery process?",
+          "options": {
+            "A": "The delivery staff is already familiar with the building's layout.",
+            "B": "The delivery will be delayed if security is not informed.",
+            "C": "The client must take action to facilitate building access.",
+            "D": "The service elevator is the only way to reach the 15th floor."
+          },
+          "answer": "C",
+          "errorType": "inference",
+          "explanation": "The text explicitly asks the client to notify security because the staff lacks authorization to use the elevator, implying the client must intervene to ensure access.",
+          "trap": "While the text mentions the elevator, it does not state it is the only way to reach the floor, only that the staff needs authorization to use it."
+        },
+        {
+          "id": "p7-0010-2",
+          "stem": "Which of the following is NOT stated in the email?",
+          "options": {
+            "A": "The specific items included in the catering order.",
+            "B": "The deadline for making changes to the order.",
+            "C": "The time and location for the scheduled delivery.",
+            "D": "The additional fee charged for gluten-free substitutions."
+          },
+          "answer": "D",
+          "errorType": "not-stated",
+          "explanation": "The email explicitly mentions that the gluten-free substitution is provided at no additional cost, making the claim of an additional fee incorrect.",
+          "trap": "The text mentions gluten-free options and costs, which might lead a reader to assume there is a fee, but the text explicitly says there is none."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p7-0011",
+      "set": "part7-core",
+      "part": 7,
+      "status": "active",
+      "kind": "double",
+      "title": "ApexFlow Software Migration and Support Request",
+      "passages": [
+        {
+          "label": "Internal Announcement",
+          "text": "Please be advised that the IT Department will initiate the company-wide migration to ApexFlow 4.0 on Friday, October 12th. To prevent data loss, all users currently operating on the legacy ApexFlow 3.2 system must perform a complete backup of their local databases before 5:00 PM on Thursday. The upgraded platform introduces automated invoicing and real-time inventory tracking. However, please note that the legacy 'Custom Reports' plugin will no longer be supported post-migration. Employees who require advanced analytical reporting capabilities must submit a formal request for the 'DataWeave' add-on through the IT portal by October 10th to ensure uninterrupted workflow. Installation of this add-on requires manual administrative privileges."
+        },
+        {
+          "label": "Email",
+          "text": "To: IT Support\nFrom: Marcus Vance (Sales Dept)\nDate: October 11th\nSubject: Post-migration access\n\nHi IT Team,\n\nI was out of the office on a business trip until this morning and unfortunately missed the deadline to request the alternative reporting tool mentioned in your announcement last week. Since my department heavily relies on generating weekly sales summaries, which we compile every Monday morning, could you please expedite the installation of the DataWeave add-on for my workstation? My employee ID is MV-409. I have already backed up my local database as instructed before the system lock tonight. Thank you for your assistance.\n\nBest regards,\nMarcus Vance"
+        }
+      ],
+      "questions": [
+        {
+          "id": "p7-0011-1",
+          "stem": "Why does Mr. Vance write to the IT Support team?",
+          "options": {
+            "A": "To ask for an expedited software add-on installation.",
+            "B": "To request an extension for backing up his files.",
+            "C": "To report a bug in the ApexFlow 4.0 system.",
+            "D": "To complain about the removal of the custom reports plugin."
+          },
+          "answer": "A",
+          "errorType": "purpose",
+          "explanation": "Người viết gửi email để yêu cầu bộ phận hỗ trợ kỹ thuật đẩy nhanh tiến độ cài đặt công cụ bổ sung DataWeave cho máy làm việc của mình vì ông đã bỏ lỡ hạn chót đăng ký trước đó.",
+          "trap": "Người đọc dễ bị thu hút bởi phương án phàn nàn về việc gỡ bỏ plugin cũ do thấy người viết nhắc đến việc phòng ban của mình phụ thuộc nhiều vào báo cáo, nhưng thực tế ông chỉ muốn giải quyết nhanh việc cài đặt công cụ mới."
+        },
+        {
+          "id": "p7-0011-2",
+          "stem": "According to the announcement, what is a feature of the new ApexFlow 4.0?",
+          "options": {
+            "A": "It includes a built-in custom reports plugin.",
+            "B": "It offers real-time tracking of inventory.",
+            "C": "It automatically backs up local databases.",
+            "D": "It was released on Thursday, October 11th."
+          },
+          "answer": "B",
+          "errorType": "detail",
+          "explanation": "Thông báo nội bộ nêu rõ hệ thống mới nâng cấp sẽ giới thiệu tính năng tự động hóa hóa đơn và theo dõi kho hàng theo thời gian thực.",
+          "trap": "Phương án tự động sao lưu dữ liệu dễ gây nhầm lẫn vì tài liệu có nhắc đến việc sao lưu, nhưng đó là yêu cầu người dùng phải tự thực hiện thủ công trước thời hạn."
+        },
+        {
+          "id": "p7-0011-3",
+          "stem": "By what date was Mr. Vance supposed to submit his initial request for the new reporting tool?",
+          "options": {
+            "A": "October 11th",
+            "B": "October 12th",
+            "C": "October 10th",
+            "D": "October 5th"
+          },
+          "answer": "C",
+          "errorType": "cross-reference",
+          "explanation": "Thông báo đầu tiên yêu cầu nhân viên phải gửi yêu cầu cài đặt DataWeave trước ngày 10 tháng 10. Trong email gửi ngày 11 tháng 10, Marcus thừa nhận ông đã bỏ lỡ hạn chót này.",
+          "trap": "Ngày 11 tháng 10 là ngày Marcus gửi email và ngày 12 tháng 10 là ngày hệ thống bắt đầu nâng cấp, dễ khiến người đọc chọn nhầm nếu không đối chiếu kỹ mốc thời gian yêu cầu trong thông báo."
+        },
+        {
+          "id": "p7-0011-4",
+          "stem": "What is implied about Mr. Vance?",
+          "options": {
+            "A": "He failed to back up his local database.",
+            "B": "He is a member of the IT Support department.",
+            "C": "He was in the office on October 10th.",
+            "D": "He will need to generate sales summaries on October 15th."
+          },
+          "answer": "D",
+          "errorType": "inference",
+          "explanation": "Hệ thống được nâng cấp vào thứ Sáu, ngày 12 tháng 10. Marcus cho biết bộ phận của ông tạo báo cáo doanh số vào mỗi sáng thứ Hai hàng tuần, tức là thứ Hai tiếp theo rơi vào ngày 15 tháng 10.",
+          "trap": "Phương án nói Marcus ở văn phòng ngày 10 tháng 10 là sai vì ông nói rõ mình đi công tác và vắng mặt cho đến tận sáng ngày 11 tháng 10."
+        },
+        {
+          "id": "p7-0011-5",
+          "stem": "Which tool will Mr. Vance most likely use for his upcoming weekly sales summaries?",
+          "options": {
+            "A": "DataWeave",
+            "B": "ApexFlow 3.2",
+            "C": "Custom Reports plugin",
+            "D": "Excel spreadsheets"
+          },
+          "answer": "A",
+          "errorType": "cross-reference",
+          "explanation": "Thông báo cho biết plugin báo cáo cũ sẽ không còn được hỗ trợ và người dùng cần tính năng báo cáo nâng cao phải chuyển sang DataWeave. Marcus viết thư để xin cài đặt gấp DataWeave nhằm phục vụ việc làm báo cáo doanh số.",
+          "trap": "Plugin báo cáo cũ (Custom Reports) là công cụ trước đây phòng của ông hay dùng, nhưng do hệ thống nâng cấp nên công cụ này không còn khả dụng."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p7-0012",
+      "set": "part7-core",
+      "part": 7,
+      "status": "active",
+      "kind": "double",
+      "title": "Green Tech Summit Registration and Cancellation",
+      "passages": [
+        {
+          "label": "Webpage",
+          "text": "Annual Green Tech Summit (November 14-16, Seattle)\n\nRegistration Tiers:\n- Early Bird (Ends Sept 15): $450 (Includes all sessions & gala dinner).\n- Regular (Sept 16 - Oct 31): $550 (Sessions only; Gala dinner ticket sold separately for $75).\n- Late (Nov 1 onwards): $650 (Sessions only; Gala dinner subject to availability).\n\nGroup Discount: 10% off for 5 or more registrants from the same organization (must register simultaneously).\n\nCancellation Policy: Full refund minus a $50 processing fee for cancellations made before October 15. No refunds will be issued for cancellations requested after this date."
+        },
+        {
+          "label": "Email",
+          "text": "To: registration@greentechsummit.org\nFrom: Clara Higgins (HR Manager, BioSphere Solutions)\nDate: October 18th\nSubject: Registration Adjustment\n\nDear Registrar,\n\nOur company registered a group of six employees for the upcoming summit on October 10th under the group discount. Unfortunately, due to an urgent product launch conflict, one of our engineers, Dr. Aris Thorne, can no longer attend. We would like to cancel his registration.\n\nSince we are past the full refund window, we understand there might be limitations, but we hope to secure a partial refund. Additionally, could you confirm if the remaining five attendees are still eligible for the group discount rate we originally paid? \n\nThank you,\nClara Higgins"
+        }
+      ],
+      "questions": [
+        {
+          "id": "p7-0012-1",
+          "stem": "Why does Ms. Higgins contact the registration office?",
+          "options": {
+            "A": "To register a group of six employees for the summit.",
+            "B": "To request a registration cancellation and clarify refund terms.",
+            "C": "To purchase additional tickets for the gala dinner.",
+            "D": "To change the dates of her company's attendance."
+          },
+          "answer": "B",
+          "errorType": "purpose",
+          "explanation": "Clara Higgins viết thư để yêu cầu hủy đăng ký cho một kỹ sư của công ty và hỏi về khả năng nhận lại một phần tiền hoàn lại cũng như xác nhận lại mức chiết khấu nhóm.",
+          "trap": "Người đọc có thể nhầm lẫn với phương án đăng ký cho sáu người vì email có đề cập đến con số này, nhưng đó là giao dịch đã thực hiện trong quá khứ chứ không phải mục đích của email hiện tại."
+        },
+        {
+          "id": "p7-0012-2",
+          "stem": "Based on the webpage and the email, what was the base registration rate (before discount) per person paid by BioSphere Solutions?",
+          "options": {
+            "A": "$450",
+            "B": "$650",
+            "C": "$550",
+            "D": "$495"
+          },
+          "answer": "C",
+          "errorType": "cross-reference",
+          "explanation": "Email cho biết công ty đăng ký vào ngày 10 tháng 10. Đối chiếu với trang web, ngày này nằm trong khoảng từ 16 tháng 9 đến 31 tháng 10, tương ứng với mức giá thông thường (Regular) là 550 đô la Mỹ.",
+          "trap": "Mức giá 450 đô la Mỹ là giá đăng ký sớm kết thúc vào ngày 15 tháng 9, dễ gây nhầm lẫn nếu người đọc không kiểm tra mốc ngày đăng ký trong email."
+        },
+        {
+          "id": "p7-0012-3",
+          "stem": "According to the cancellation policy, what refund is Dr. Thorne eligible for?",
+          "options": {
+            "A": "A full refund of $550.",
+            "B": "A partial refund of $500.",
+            "C": "A refund of the gala dinner ticket only.",
+            "D": "No refund at all."
+          },
+          "answer": "D",
+          "errorType": "cross-reference",
+          "explanation": "Trang web quy định không hoàn tiền cho các yêu cầu hủy sau ngày 15 tháng 10. Email của Clara được gửi vào ngày 18 tháng 10, do đó trường hợp hủy này không được hoàn tiền.",
+          "trap": "Người đọc dễ chọn phương án hoàn tiền một phần trị giá 500 đô la Mỹ do nhầm lẫn với điều khoản trừ phí xử lý 50 đô la Mỹ áp dụng trước ngày 15 tháng 10."
+        },
+        {
+          "id": "p7-0012-4",
+          "stem": "What is implied about the remaining five attendees from BioSphere Solutions?",
+          "options": {
+            "A": "They will not be allowed to attend the gala dinner unless they pay extra.",
+            "B": "They registered before the Early Bird deadline.",
+            "C": "They will lose their group discount because of Dr. Thorne's cancellation.",
+            "D": "They are all chemical engineers."
+          },
+          "answer": "A",
+          "errorType": "inference",
+          "explanation": "Nhóm này đăng ký ở phân khúc Regular, vốn chỉ bao gồm các buổi hội thảo và không bao gồm vé ăn tối gala (phải mua riêng với giá 75 đô la Mỹ). Do đó, họ phải trả thêm tiền nếu muốn tham gia tiệc gala.",
+          "trap": "Phương án nói họ sẽ mất chiết khấu nhóm là một cái bẫy tinh vi, nhưng thực tế sau khi giảm một người thì nhóm vẫn còn năm người, vừa đủ số lượng tối thiểu để hưởng ưu đãi nhóm theo quy định trên trang web."
+        },
+        {
+          "id": "p7-0012-5",
+          "stem": "What is NOT stated as a condition for registration or discounts?",
+          "options": {
+            "A": "Group discounts require registering all members at the same time.",
+            "B": "Late registrants are guaranteed a seat at the gala dinner.",
+            "C": "Cancellations before October 15 incur a processing fee.",
+            "D": "The Early Bird rate includes access to all sessions."
+          },
+          "answer": "B",
+          "errorType": "not-stated",
+          "explanation": "Trang web nêu rõ đối với những người đăng ký muộn (Late), vé ăn tối gala sẽ tùy thuộc vào tình trạng sẵn có chứ không được đảm bảo chắc chắn.",
+          "trap": "Điều khoản về phí xử lý khi hủy trước ngày 15 tháng 10 là thông tin chính xác có trong bài nên không thể chọn làm đáp án cho câu hỏi loại trừ."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p7-0013",
+      "set": "part7-core",
+      "part": 7,
+      "status": "active",
+      "kind": "triple",
+      "title": "A supplier contract renewal evaluation process",
+      "passages": [
+        {
+          "label": "Procurement Department Announcement",
+          "text": "As our current agreements with office supply vendors expire on September 30, the Procurement Committee is evaluating renewal proposals. To optimize budget efficiency, we are prioritizing suppliers offering bulk discounts of at least 10% on paper products and free shipping for orders exceeding $500. Additionally, any vendor with a history of late deliveries (more than twice in the past fiscal year) will not be considered for contract extension. Final decisions will be announced on September 15."
+        },
+        {
+          "label": "Email from Zenith Office Solutions",
+          "text": "To: Clara Higgins <c.higgins@novatech.com>\nFrom: Robert Chen <r.chen@zenithoffice.com>\nDate: September 4\nSubject: Contract Renewal Proposal - Zenith Office Solutions\n\nDear Ms. Higgins,\nIn response to your upcoming contract expiration, Zenith Office Solutions is pleased to submit our renewal proposal. We value our partnership with NovaTech. We are offering a 12% discount on all bulk paper orders and have waived our standard delivery fee for any purchase over $450. Over the past year, we have upgraded our logistics network to ensure absolute punctuality. Our records show only one delayed shipment to your warehouse last November. We hope to continue our collaboration.\nSincerely,\nRobert Chen"
+        },
+        {
+          "label": "Vendor Performance Log (Q1-Q4)",
+          "text": "Vendor: Zenith Office Solutions\nContract Start: October 1\n\nDelivery History (Past Fiscal Year):\n- October 12: On time\n- November 18: Delayed (Weather issue - 2 days late)\n- February 5: On time\n- April 14: Delayed (Logistics error - 1 day late)\n- June 22: On time\n- August 30: Delayed (Warehouse strike - 3 days late)\n\nNotes:\nOverall quality rating: 4.8/5.0. Total spend: $12,500."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p7-0013-1",
+          "stem": "What is the primary purpose of Mr. Chen's email?",
+          "options": {
+            "A": "To request an extension on a delivery deadline.",
+            "B": "To apologize for multiple delayed shipments.",
+            "C": "To propose terms for renewing a business agreement.",
+            "D": "To negotiate a higher price for paper products."
+          },
+          "answer": "C",
+          "errorType": "purpose",
+          "explanation": "Người gửi đại diện cho nhà cung cấp gửi email để đề xuất các điều khoản gia hạn hợp đồng mới trước khi hợp đồng hiện tại hết hạn vào cuối tháng.",
+          "trap": "Phương án xin lỗi vì giao hàng trễ nhiều lần dễ gây nhầm lẫn vì email có nhắc đến việc cải thiện mạng lưới vận chuyển và một lần giao hàng trễ, nhưng đó không phải mục đích chính của email."
+        },
+        {
+          "id": "p7-0013-2",
+          "stem": "How does Zenith Office Solutions' shipping offer compare to NovaTech's minimum requirement for free shipping?",
+          "options": {
+            "A": "It requires a higher minimum spending amount by $50.",
+            "B": "It matches NovaTech's required threshold exactly.",
+            "C": "It does not offer free shipping under any circumstances.",
+            "D": "It is more favorable to NovaTech by $50."
+          },
+          "answer": "D",
+          "errorType": "cross-reference",
+          "explanation": "Tài liệu thứ nhất yêu cầu nhà cung cấp miễn phí vận chuyển cho đơn hàng trên 500 USD. Tài liệu thứ hai cho biết Zenith miễn phí vận chuyển cho đơn hàng trên 450 USD. Do đó, ưu đãi của Zenith có lợi hơn cho NovaTech 50 USD vì ngưỡng được miễn phí vận chuyển thấp hơn.",
+          "trap": "Phương án yêu cầu chi tiêu cao hơn 50 USD dễ gây nhầm lẫn nếu người đọc tính toán ngược hoặc không hiểu từ có lợi hơn."
+        },
+        {
+          "id": "p7-0013-3",
+          "stem": "Based on the documents, why will Zenith Office Solutions most likely NOT be selected for a contract renewal?",
+          "options": {
+            "A": "It had more than two delayed deliveries in the past fiscal year.",
+            "B": "Its bulk discount on paper products is below the 10% requirement.",
+            "C": "It failed to submit its proposal before the September 15 deadline.",
+            "D": "Its overall quality rating fell below the company's minimum standard."
+          },
+          "answer": "A",
+          "errorType": "cross-reference",
+          "explanation": "Tài liệu thứ nhất nêu rõ nhà cung cấp nào trễ hẹn giao hàng hơn 2 lần trong năm tài chính qua sẽ không được gia hạn. Tài liệu thứ ba cho thấy Zenith đã trễ hẹn 3 lần (tháng 11, tháng 4 và tháng 8).",
+          "trap": "Phương án chiết khấu dưới 10% là sai vì Zenith đề xuất chiết khấu 12%, đạt yêu cầu tối thiểu 10% của NovaTech."
+        },
+        {
+          "id": "p7-0013-4",
+          "stem": "What discrepancy exists between Mr. Chen's email and NovaTech's internal records?",
+          "options": {
+            "A": "The date when the current contract is set to expire.",
+            "B": "The number of delayed shipments during the past year.",
+            "C": "The percentage of the discount offered on paper products.",
+            "D": "The total amount spent on office supplies."
+          },
+          "answer": "B",
+          "errorType": "cross-reference",
+          "explanation": "Trong email, người gửi khẳng định hệ thống của họ chỉ ghi nhận một đơn hàng bị trễ vào tháng 11 năm ngoái. Tuy nhiên, nhật ký nội bộ của NovaTech ghi nhận tới 3 lần giao hàng trễ.",
+          "trap": "Phương án về ngày hết hạn hợp đồng là sai vì cả hai bên đều thống nhất hợp đồng sắp hết hạn vào cuối tháng 9."
+        },
+        {
+          "id": "p7-0013-5",
+          "stem": "Which of the following is NOT mentioned as a criterion for NovaTech's contract renewal?",
+          "options": {
+            "A": "A minimum bulk discount on paper products.",
+            "B": "Free shipping for orders over a certain amount.",
+            "C": "A minimum overall quality rating of 4.5.",
+            "D": "A limit on the number of late deliveries."
+          },
+          "answer": "C",
+          "errorType": "not-stated",
+          "explanation": "Tài liệu thứ nhất liệt kê các tiêu chí: chiết khấu mua sỉ tối thiểu 10%, miễn phí vận chuyển cho đơn trên 500 USD, và không trễ quá 2 lần. Không có tiêu chí nào nhắc đến điểm đánh giá chất lượng tối thiểu là 4.5.",
+          "trap": "Phương án giới hạn số lần giao hàng trễ dễ bị chọn nhầm vì đây là một tiêu chí cực kỳ quan trọng được nhắc đến trực tiếp trong văn bản."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p7-0014",
+      "set": "part7-core",
+      "part": 7,
+      "status": "active",
+      "kind": "triple",
+      "title": "Supplier Contract Renewal - Apex Logistics & PackSmart Inc.",
+      "passages": [
+        {
+          "label": "Procurement Department Announcement",
+          "text": "Apex Logistics is reviewing its annual packaging supply contracts. Under our updated Green Initiative, all vendors must guarantee that at least 40% of materials are biodegradable starting Q3. Currently, our primary supplier, PackSmart Inc., provides standard cardboard under Contract #A-204, expiring June 30. To be eligible for renewal, PackSmart must submit an upgraded product catalog and compliance certificate by May 15. Failure to do so will result in an open bidding process for other eco-certified suppliers."
+        },
+        {
+          "label": "Email from PackSmart Inc.",
+          "text": "Subject: Contract #A-204 Renewal Inquiry\nDate: May 12\nDear Ms. Vance,\nRegarding the upcoming expiration of Contract #A-204, PackSmart is excited to continue our partnership. We have finalized our new 'Eco-Shield' line, which boasts 50% biodegradable post-consumer recycled content. I have attached our updated catalog and the certification from the Green Standards Alliance. However, due to the specialized manufacturing process for Eco-Shield, our unit price will increase by 8%. We hope Apex Logistics finds this acceptable given your new environmental mandates.\nBest regards,\nMarcus Brody, Account Manager"
+        },
+        {
+          "label": "Internal Memo",
+          "text": "To: Procurement Team\nFrom: Sarah Vance, Director\nDate: Monday, May 17\nSubject: Packaging Supplier Decision\nWe have reviewed PackSmart's submission for Contract #A-204. While their Eco-Shield line meets our sustainability threshold, the proposed 8% price hike exceeds our budget variance limit of 5%. I negotiated with Marcus Brody yesterday. We agreed on a compromised 4% price increase in exchange for extending the contract term from one year to three years. I need the legal team to draft the revised agreement by this Friday so we can sign it before the current contract lapses at the end of next month."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p7-0014-1",
+          "stem": "What is the primary purpose of the email?",
+          "options": {
+            "A": "To request an extension for a document submission deadline.",
+            "B": "To announce a bidding process for eco-certified suppliers.",
+            "C": "To protest a budget cut imposed by Apex Logistics.",
+            "D": "To propose a new product line for an upcoming contract renewal."
+          },
+          "answer": "D",
+          "errorType": "purpose",
+          "explanation": "Email của Marcus Brody gửi ngày 12 tháng 5 nhằm giới thiệu dòng sản phẩm mới 'Eco-Shield' để đáp ứng yêu cầu gia hạn hợp đồng #A-204 sắp hết hạn.",
+          "trap": "Người đọc dễ nhầm sang việc xin gia hạn hạn chót nộp hồ sơ vì email gửi sát ngày 15 tháng 5, nhưng thực tế anh ta gửi đúng hạn và đính kèm tài liệu luôn."
+        },
+        {
+          "id": "p7-0014-2",
+          "stem": "What is the deadline for the legal team to draft the revised agreement?",
+          "options": {
+            "A": "May 21",
+            "B": "May 15",
+            "C": "May 17",
+            "D": "June 30"
+          },
+          "answer": "A",
+          "errorType": "cross-reference",
+          "explanation": "Bản ghi nhớ được gửi vào thứ Hai, ngày 17 tháng 5 và yêu cầu phòng pháp chế soạn thảo hợp đồng sửa đổi trước thứ Sáu tuần này, tức là ngày 21 tháng 5.",
+          "trap": "Ngày 17 tháng 5 là ngày gửi bản ghi nhớ, dễ bị chọn nhầm nếu người đọc chỉ lướt qua phần ngày tháng ở đầu tài liệu."
+        },
+        {
+          "id": "p7-0014-3",
+          "stem": "What is most likely true about the finalized agreement between Apex Logistics and PackSmart?",
+          "options": {
+            "A": "It will require PackSmart to provide 40% biodegradable materials.",
+            "B": "It will feature a 4% price increase and last for three years.",
+            "C": "It will be signed after an open bidding process.",
+            "D": "It will maintain the exact pricing of the previous contract."
+          },
+          "answer": "B",
+          "errorType": "cross-reference",
+          "explanation": "Trong bản ghi nhớ ngày 17 tháng 5, Sarah Vance cho biết đã đàm phán thành công mức tăng giá 4% (thay vì 8% như đề xuất ban đầu) để đổi lấy việc kéo dài thời hạn hợp đồng lên ba năm.",
+          "trap": "Người đọc có thể chọn mức tăng giá 8% do đây là con số được PackSmart đề xuất chính thức trong email gửi trước đó."
+        },
+        {
+          "id": "p7-0014-4",
+          "stem": "How does PackSmart's 'Eco-Shield' line compare to the requirement set by Apex Logistics?",
+          "options": {
+            "A": "It exactly matches the minimum 40% biodegradable material requirement.",
+            "B": "It fails to meet the requirement by offering only 8% biodegradable materials.",
+            "C": "It exceeds the requirement by containing 50% biodegradable content.",
+            "D": "It is ineligible because it is made of standard cardboard."
+          },
+          "answer": "C",
+          "errorType": "cross-reference",
+          "explanation": "Thông báo của Apex yêu cầu các nhà cung cấp phải đảm bảo ít nhất 40% vật liệu có thể phân hủy sinh học, trong khi email của PackSmart xác nhận dòng sản phẩm Eco-Shield của họ đạt tỷ lệ 50%, tức là vượt mức yêu cầu tối thiểu.",
+          "trap": "Con số 8% xuất hiện trong email dễ khiến người đọc nhầm lẫn là tỷ lệ vật liệu sinh học, nhưng thực tế đó là tỷ lệ tăng giá sản phẩm."
+        },
+        {
+          "id": "p7-0014-5",
+          "stem": "What is implied about Apex Logistics' financial policies?",
+          "options": {
+            "A": "They do not allow any price increases under any circumstances.",
+            "B": "They prioritize environmental compliance over any budget constraints.",
+            "C": "They require all contract renewals to be negotiated down to a 4% increase.",
+            "D": "They permit price increases up to a certain percentage without requiring special approval."
+          },
+          "answer": "D",
+          "errorType": "inference",
+          "explanation": "Bản ghi nhớ của Sarah Vance đề cập rằng mức tăng giá đề xuất 8% vượt quá giới hạn chênh lệch ngân sách là 5%, điều này ngụ ý rằng các mức tăng dưới hoặc bằng 5% nằm trong phạm vi cho phép của chính sách tài chính công ty.",
+          "trap": "Người đọc có thể chọn phương án ưu tiên môi trường hơn ngân sách vì công ty có sáng kiến xanh, nhưng thực tế họ vẫn từ chối mức tăng 8% của PackSmart do vượt ngân sách."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p7-0015",
+      "set": "part7-core",
+      "part": 7,
+      "status": "active",
+      "kind": "triple",
+      "title": "Customer complaint regarding a premium espresso machine and subsequent service resolution",
+      "passages": [
+        {
+          "label": "Online Complaint Submission Form",
+          "text": "Submission Date: October 12\nCustomer: Evelyn Vance (Account #EV-9942)\nProduct: BrewMaster Elite (Model BM-800)\nPurchase Date: September 28\nIssue: I purchased this premium espresso machine expecting top-tier performance. However, after only two weeks of light use, the pressure gauge failed, and water leaked from the steam wand, damaging my wooden countertop. I requested an on-site technician under the 'Platinum Care' warranty, but the automated system scheduled me for November 5. This delay is unacceptable for an $800 appliance. I demand an immediate replacement or a full refund, plus compensation for the countertop damage."
+        },
+        {
+          "label": "Email Response",
+          "text": "To: e.vance@vancemail.com\nFrom: support@brewmaster.com\nDate: October 14\nSubject: Re: Case #BM-77102 - Evelyn Vance\nDear Ms. Vance,\nThank you for contacting BrewMaster Support. We sincerely apologize for the issues with your BM-800 and the scheduling delay. Our Platinum Care service indeed guarantees a technician visit within 48 hours. The November 5 date was generated due to a temporary system glitch affecting accounts registered after October 1.\nWe have expedited your request. Technician Marcus Vance (no relation) will visit your residence on October 16 at 10:00 AM to inspect the unit and assess the collateral damage. Please have your original purchase receipt from our authorized retailer, Kitchen & Beyond, ready for verification.\nSincerely,\nDavid Thorne, Customer Relations Manager"
+        },
+        {
+          "label": "Service Report Summary",
+          "text": "Date: October 17\nTo: David Thorne, Customer Relations Manager\nFrom: Marcus Vance, Senior Technician\nSubject: Inspection Report - Case #BM-77102\nI visited Ms. Vance's residence yesterday. The pressure gauge malfunction was caused by a faulty internal valve, a known issue in the initial batch of the BM-800 series. I replaced the entire unit with a brand-new BM-800 (Batch B, which has the upgraded valve). \nRegarding the countertop, the damage was minor water staining. I applied a professional wood sealant, which fully restored the surface to Ms. Vance's satisfaction. However, because she purchased the unit during Kitchen & Beyond's 'End-of-Summer' clearance event, her receipt shows she paid only $550, not the standard retail price. Thus, she is ineligible for the $100 store credit voucher usually reserved for full-price Platinum Care claimants."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p7-0015-1",
+          "stem": "Why did Mr. Thorne write the email to Ms. Vance?",
+          "options": {
+            "A": "To acknowledge a service error and expedite a resolution.",
+            "B": "To dispute a claim regarding a damaged countertop.",
+            "C": "To inform her that her warranty has been voided.",
+            "D": "To request payment for an upgraded espresso machine model."
+          },
+          "answer": "A",
+          "errorType": "purpose",
+          "explanation": "Người viết xin lỗi vì sự cố kỹ thuật của hệ thống tự động đã lên lịch trễ và thông báo đã cử kỹ thuật viên đến sớm hơn để giải quyết.",
+          "trap": "Phương án đề cập đến việc tranh chấp bồi thường dễ gây nhầm lẫn vì email có nói đến việc đánh giá thiệt hại nhưng mục đích chính vẫn là khắc phục lỗi dịch vụ và đẩy nhanh lịch hẹn."
+        },
+        {
+          "id": "p7-0015-2",
+          "stem": "Why was Ms. Vance initially scheduled for a technician visit on November 5?",
+          "options": {
+            "A": "She purchased her espresso machine after the promotional period ended.",
+            "B": "Her account registration occurred during a system malfunction period.",
+            "C": "She did not register for the Platinum Care warranty in time.",
+            "D": "The technician Marcus Vance was unavailable until November."
+          },
+          "answer": "B",
+          "errorType": "cross-reference",
+          "explanation": "Tài liệu 1 cho biết cô Vance mua máy ngày 28 tháng 9. Tài liệu 2 giải thích lỗi hệ thống ảnh hưởng đến các tài khoản đăng ký sau ngày 1 tháng 10, nghĩa là tài khoản của cô được tạo sau ngày này và gặp lỗi.",
+          "trap": "Phương án nói về việc không đăng ký bảo hành kịp thời dễ đánh lừa vì người đọc có thể nghĩ cô bị xếp lịch muộn do lỗi cá nhân thay vì lỗi hệ thống."
+        },
+        {
+          "id": "p7-0015-3",
+          "stem": "What is implied about the BrewMaster Elite (Model BM-800) purchased by Ms. Vance?",
+          "options": {
+            "A": "It was sold at a discount because it was a refurbished unit.",
+            "B": "It was priced higher than the standard retail price of $800.",
+            "C": "It was part of a production run that contained a manufacturing defect.",
+            "D": "It was damaged during delivery by Kitchen & Beyond."
+          },
+          "answer": "C",
+          "errorType": "cross-reference",
+          "explanation": "Tài liệu 1 cho biết cô mua mẫu BM-800. Tài liệu 3 nêu rõ lỗi đồng hồ áp suất là do van bên trong bị lỗi, một vấn đề đã biết ở lô hàng đầu tiên của dòng máy này.",
+          "trap": "Phương án nói máy bị bán giảm giá vì là hàng tân trang dễ gây nhầm lẫn vì tài liệu 3 có nhắc đến việc cô mua với giá rẻ hơn tại sự kiện xả kho."
+        },
+        {
+          "id": "p7-0015-4",
+          "stem": "What did Marcus Vance do during his visit on October 16?",
+          "options": {
+            "A": "He provided Ms. Vance with a $100 store credit voucher.",
+            "B": "He repaired the faulty internal valve of the original machine.",
+            "C": "He collected the original purchase receipt to take back to the office.",
+            "D": "He restored the damaged wooden surface and replaced the appliance."
+          },
+          "answer": "D",
+          "errorType": "cross-reference",
+          "explanation": "Tài liệu 2 xác định ngày hẹn là ngày 16 tháng 10. Tài liệu 3 (viết ngày 17 tháng 10) báo cáo về công việc ngày hôm trước, xác nhận kỹ thuật viên đã thay thế toàn bộ máy và quét lớp keo bảo vệ mặt bàn gỗ.",
+          "trap": "Phương án nói kỹ thuật viên đưa voucher 100 đô la dễ gây nhầm lẫn vì tài liệu 3 có nhắc đến voucher này nhưng giải thích cô không đủ điều kiện nhận."
+        },
+        {
+          "id": "p7-0015-5",
+          "stem": "According to the documents, what is NOT true about Ms. Vance's situation?",
+          "options": {
+            "A": "She paid the full retail price of $800 for the espresso machine.",
+            "B": "Her kitchen countertop suffered minor water damage.",
+            "C": "She was visited by a technician with the same last name as hers.",
+            "D": "Her issue was resolved to her satisfaction."
+          },
+          "answer": "A",
+          "errorType": "not-stated",
+          "explanation": "Tài liệu 3 chỉ ra rằng hóa đơn của cô cho thấy cô chỉ trả 550 đô la do mua vào dịp xả kho cuối hè, chứ không phải giá bán lẻ thông thường là 800 đô la.",
+          "trap": "Phương án nói về việc vấn đề được giải quyết thỏa đáng dễ bị chọn sai vì ban đầu cô rất tức giận, nhưng báo cáo cuối cùng xác nhận cô đã hài lòng sau khi sửa chữa."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    }
+  ]
+}

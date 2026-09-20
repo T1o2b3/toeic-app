@@ -13,6 +13,7 @@ export const EVENT_TYPES = Object.freeze([
   'vocab.captured',
   'question.answered',
   'question.reported',
+  'exam.finished',
   'session.started',
   'session.ended',
 ]);

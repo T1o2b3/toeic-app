@@ -16,7 +16,7 @@ export const TABS = Object.freeze([
 ]);
 
 /** Màn phiên học: ẩn thanh tab. Màn không có trong TABS lẫn danh sách này (vd sync) thì hiện thanh tab, không tô tab nào. */
-export const SESSION_SCREENS = Object.freeze(['triage', 'review', 'practice', 'quiz', 'listen']);
+export const SESSION_SCREENS = Object.freeze(['triage', 'review', 'practice', 'quiz', 'listen', 'sets', 'exam']);
 
 /**
  * Tab nào đang sáng.

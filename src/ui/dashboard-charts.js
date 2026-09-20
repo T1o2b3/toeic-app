@@ -17,7 +17,7 @@ const WEEKDAY = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
 /** Ba chuỗi của biểu đồ hoạt động: khoá trong dữ liệu, nhãn, biến màu. Thứ tự cố định, không xoay vòng. */
 export const SERIES = Object.freeze([
   { key: 'vocab', label: 'Từ vựng', color: 'var(--viz-s1)' },
-  { key: 'part5', label: 'Part 5', color: 'var(--viz-s2)' },
+  { key: 'reading', label: 'Đọc', color: 'var(--viz-s2)' },
   { key: 'listening', label: 'Nghe', color: 'var(--viz-s3)' },
 ]);
 

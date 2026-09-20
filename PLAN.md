@@ -69,16 +69,20 @@ toeic-app/
   Còn lại cho Part 3–4: hội thoại nhiều giọng trong một đoạn — dùng lại `pipeline/lib/tts.js`.
 - [x] M9. Part 2 (lượt nghe ngắn) + điều chỉnh tốc độ, nghe lại.
   ✅ 2026-09-20: màn `#/listen`, tốc độ 0.75×/1×/1.25×, chỉ A/B/C không chữ, nút chọn khoá tới khi nghe hết, transcript sau khi trả lời, cache offline dần.
-- [ ] M10. Part 3–4: đọc trước câu hỏi có giờ, transcript đánh dấu câu chứa đáp án, bảng/biểu đơn giản bằng HTML.
+- [~] M10. Part 3–4: đọc trước câu hỏi có giờ, transcript đánh dấu câu chứa đáp án, bảng/biểu đơn giản bằng HTML.
 - [ ] M11. Dictation câu nghe sai.
 
 ## Giai đoạn 3 — Đọc mở rộng + phân tích (tuần 5–6, ~7 giờ)
-- [ ] M12. Part 6, Part 7 (single/double/triple), đo thời gian từng câu.
+- [x] M12. Part 6, Part 7 (single/double/triple), đo thời gian từng câu.
+  ✅ 2026-09-20 (nội dung + màn luyện): Part 6 = 4 bộ/16 câu, Part 7 = 15 bộ/45 câu (đơn 10 · đôi 2 · ba 3), qua kiểm định
+  chéo. Còn thiếu để đủ một đề: Part 7 đơn cần ≥ 15 bộ (đang 10). Đo thời gian từng câu: chưa làm.
 - [ ] M13. Chạm từ trong bài đọc/transcript → lưu vào deck `my-words` kèm câu gốc.
 - [ ] M14. Dashboard cơ bản: tỉ lệ đúng theo part và loại lỗi, xu hướng.
 
 ## Giai đoạn 4 — Thi thử (tuần 7–8, ~7 giờ)
-- [ ] M15. Chế độ theo part / theo kỹ năng / full (194 câu); chế độ luyện vs thi; bấm giờ.
+- [x] M15. Chế độ theo part / theo kỹ năng / full (194 câu); chế độ luyện vs thi; bấm giờ.
+  ✅ 2026-09-20: `#/exam` — đề đủ / Nghe / Đọc / từng Part, tính giờ, tự nộp khi hết giờ, kết quả + xem lại câu sai (D38).
+  Phụ thuộc: cần đủ nội dung các Part 3, 4, 7 để dựng đúng ~194 câu (đang sinh nền).
 - [ ] M16. Làm dở trên máy này, tiếp trên máy khác; màn xem lại sau bài.
 
 ## Giai đoạn 5 — Hoàn thiện & mở rộng (tuần 9–10 trở đi, ~6 giờ + liên tục)

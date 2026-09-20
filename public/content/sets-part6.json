@@ -1,0 +1,335 @@
+{
+  "set": "part6-core",
+  "part": 6,
+  "version": 1,
+  "entries": [
+    {
+      "id": "p6-0001",
+      "set": "part6-core",
+      "part": 6,
+      "status": "active",
+      "kind": "text-completion",
+      "title": "Email",
+      "passages": [
+        {
+          "label": "Email",
+          "text": "Dear Mr. Sterling, We regret to inform you that your recent order of custom office furniture, originally scheduled for delivery on October 15, has been delayed. Due to an unexpected supply chain disruption at our manufacturing facility, the production of your ergonomic chairs [1] by the shortage of raw materials. We are working diligently to expedite the process and now expect your shipment to arrive on October 22. We understand that this delay may cause [2] to your scheduled office reopening. [3], we are offering a 15% discount on this order, which will be credited back to your account. [4]. Thank you for your patience and understanding."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p6-0001-1",
+          "stem": "Blank [1]",
+          "options": {
+            "A": "has been severely hindered",
+            "B": "is severely hindering",
+            "C": "severely hindered",
+            "D": "to be severely hindered"
+          },
+          "answer": "A",
+          "errorType": "grammar-in-context",
+          "explanation": "Thì hiện tại hoàn thành thể bị động 'has been severely hindered' là cấu trúc chính xác để diễn tả việc sản xuất ghế bị cản trở bởi sự thiếu hụt nguyên liệu, dẫn đến sự chậm trễ kéo dài đến nay.",
+          "trap": "Phương án chủ động 'severely hindered' dễ đánh lừa người đọc nếu họ chỉ nhìn lướt qua cấu trúc mà không phân tích mối quan hệ bị động giữa việc sản xuất (production) và sự thiếu hụt nguyên liệu (shortage)."
+        },
+        {
+          "id": "p6-0001-2",
+          "stem": "Blank [2]",
+          "options": {
+            "A": "concessions",
+            "B": "disruptions",
+            "C": "oversights",
+            "D": "allowances"
+          },
+          "answer": "B",
+          "errorType": "vocab-in-context",
+          "explanation": "Danh từ 'disruptions' (sự gián đoạn, xáo trộn) kết hợp hoàn hảo với giới từ 'to' tạo thành cụm 'cause disruptions to', phản ánh đúng tác động tiêu cực của việc giao hàng trễ đối với kế hoạch khai trương văn phòng.",
+          "trap": "Từ 'oversights' có vẻ liên quan đến lỗi lầm trong kinh doanh nhưng không đi với cấu trúc 'cause oversights to' và mang nghĩa sai lệch hoàn toàn."
+        },
+        {
+          "id": "p6-0001-3",
+          "stem": "Blank [3]",
+          "options": {
+            "A": "In contrast",
+            "B": "Furthermore",
+            "C": "To compensate",
+            "D": "On the other hand"
+          },
+          "answer": "C",
+          "errorType": "connector-in-context",
+          "explanation": "Động từ nguyên mẫu đóng vai trò trạng ngữ 'To compensate' (Để đền bù/bù đắp) thiết lập mối quan hệ logic nhân quả và mục đích giữa việc gây ra sự bất tiện và việc tặng mã giảm giá 15%.",
+          "trap": "Trạng từ 'Furthermore' dễ bị chọn nếu người đọc nghĩ đơn thuần đây là một thông tin bổ sung, nhưng nó không làm nổi bật được mối quan hệ đền bù cho sự cố đã nêu ở câu trước."
+        },
+        {
+          "id": "p6-0001-4",
+          "stem": "Blank [4]",
+          "options": {
+            "A": "We have successfully processed your refund for the entire purchase amount.",
+            "B": "Please return the damaged items to our local retail store for a full exchange.",
+            "C": "Our manufacturing facility will be permanently closed starting next month.",
+            "D": "A revised tracking number will be emailed to you as soon as the items leave our warehouse."
+          },
+          "answer": "D",
+          "errorType": "sentence-insertion",
+          "explanation": "Câu về việc gửi mã theo dõi đơn hàng mới khi hàng rời kho hoàn toàn khớp với bối cảnh đơn hàng đang bị chậm trễ và chuẩn bị được giao lại vào ngày 22 tháng 10.",
+          "trap": "Phương án hoàn tiền toàn bộ dễ gây nhầm lẫn vì là một cách giải quyết khiếu nại phổ biến, nhưng nó mâu thuẫn trực tiếp với việc chỉ giảm giá 15% và tiếp tục giao hàng đã đề cập ở câu trước."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p6-0002",
+      "set": "part6-core",
+      "part": 6,
+      "status": "active",
+      "kind": "text-completion",
+      "title": "Email",
+      "passages": [
+        {
+          "label": "Email",
+          "text": "Dear Ms. Jenkins, I am writing to request a rescheduling of our upcoming consultation regarding the portfolio merger, currently set for this Friday at 10:00 AM. Unfortunately, an urgent board meeting [1] for that same morning, which I am required to attend. I sincerely apologize for this sudden conflict. I propose that we [2] our meeting to next Monday, October 18, at 2:00 PM. [3], if that time is inconvenient, I am available anytime on Tuesday morning. [4]. I appreciate your understanding and look forward to your response."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p6-0002-1",
+          "stem": "Blank [1]",
+          "options": {
+            "A": "has been called",
+            "B": "is calling",
+            "C": "called",
+            "D": "to call"
+          },
+          "answer": "A",
+          "errorType": "grammar-in-context",
+          "explanation": "Thì hiện tại hoàn thành thể bị động 'has been called' (đã được triệu tập) là chính xác nhất vì cuộc họp hội đồng quản trị được lên lịch bởi ban giám đốc, gây ra ảnh hưởng trực tiếp đến lịch trình hiện tại của người viết.",
+          "trap": "Động từ 'called' ở dạng chủ động dễ bị chọn nhầm nếu người đọc dịch thô là 'cuộc họp gọi' mà không nhận ra chủ ngữ 'board meeting' phải nhận hành động bị động."
+        },
+        {
+          "id": "p6-0002-2",
+          "stem": "Blank [2]",
+          "options": {
+            "A": "dismiss",
+            "B": "defer",
+            "C": "discard",
+            "D": "evade"
+          },
+          "answer": "B",
+          "errorType": "vocab-in-context",
+          "explanation": "Động từ 'defer' mang nghĩa trang trọng là trì hoãn hoặc dời một sự kiện sang thời điểm khác, hoàn toàn phù hợp với văn phong lịch sự khi đề xuất dời lịch họp với đối tác.",
+          "trap": "Từ 'dismiss' có liên quan đến các cuộc họp (giải tán họp) nhưng không dùng với cấu trúc dời lịch sang một ngày cụ thể như 'defer... to next Monday'."
+        },
+        {
+          "id": "p6-0002-3",
+          "stem": "Blank [3]",
+          "options": {
+            "A": "Consequently",
+            "B": "Indeed",
+            "C": "Alternatively",
+            "D": "Accordingly"
+          },
+          "answer": "C",
+          "errorType": "connector-in-context",
+          "explanation": "Trạng từ 'Alternatively' (Hoặc một lựa chọn khác là) được sử dụng một cách chính xác để đưa ra một phương án thời gian thứ hai (sáng thứ Ba) sau khi đã đề xuất phương án thứ nhất (chiều thứ Hai).",
+          "trap": "Từ 'Accordingly' dễ bị chọn nhầm do mang sắc thái trang trọng trong văn phong viết, nhưng nó biểu thị sự phù hợp/đồng thuận với điều đã nói trước đó chứ không dùng để đưa ra lựa chọn thay thế."
+        },
+        {
+          "id": "p6-0002-4",
+          "stem": "Blank [4]",
+          "options": {
+            "A": "I will go ahead and book the flights for our trip on Monday.",
+            "B": "The board meeting has already been cancelled due to a lack of quorum.",
+            "C": "Thank you for hosting such a wonderful dinner last night.",
+            "D": "Please let me know if either of these options works for your schedule."
+          },
+          "answer": "D",
+          "errorType": "sentence-insertion",
+          "explanation": "Câu hỏi ý kiến đối tác về hai lựa chọn thời gian đã đề xuất ở các câu trước ('either of these options') tạo nên sự liên kết mạch lạc tuyệt đối trước khi kết thúc thư.",
+          "trap": "Câu nói về việc đặt vé máy bay cho chuyến đi thứ Hai dễ gây nhầm lẫn vì có chứa từ khóa thời gian trùng khớp ('Monday'), nhưng hoàn toàn lạc đề vì đây là một cuộc họp tư vấn thông thường chứ không phải chuyến công tác."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p6-0003",
+      "set": "part6-core",
+      "part": 6,
+      "status": "active",
+      "kind": "text-completion",
+      "title": "Email",
+      "passages": [
+        {
+          "label": "Email",
+          "text": "Dear Mr. Henderson, I am writing to inform you that the shipment of industrial components scheduled for arrival this Tuesday has been delayed due to unforeseen logistical complications at the port. [1]. We are currently working closely with our freight forwarders to expedite the customs clearance process. [2], we anticipate that the goods will now reach your facility by Friday afternoon. [3]. We sincerely apologize for any disruption this may cause to your production schedule. [4]. Please let us know if you require any additional documentation to update your internal records. We appreciate your patience and continued partnership."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p6-0003-1",
+          "stem": "Blank [1]",
+          "options": {
+            "A": "This issue is beyond our immediate control.",
+            "B": "The cargo remains at the warehouse.",
+            "C": "Our team is monitoring the situation.",
+            "D": "The delivery was expected earlier."
+          },
+          "answer": "A",
+          "errorType": "sentence-insertion",
+          "explanation": "Câu này giải thích lý do tại sao sự chậm trễ xảy ra và tại sao công ty không thể can thiệp ngay lập tức, tạo cầu nối logic cho việc giải thích các bước tiếp theo.",
+          "trap": "Các phương án khác đưa ra thông tin không liên quan hoặc mâu thuẫn với việc hàng hóa đang bị kẹt tại cảng."
+        },
+        {
+          "id": "p6-0003-2",
+          "stem": "Blank [2]",
+          "options": {
+            "A": "Furthermore",
+            "B": "Consequently",
+            "C": "However",
+            "D": "Similarly"
+          },
+          "answer": "B",
+          "errorType": "connector-in-context",
+          "explanation": "Từ nối này chỉ kết quả logic: vì sự chậm trễ đã được giải thích, nên thời gian dự kiến mới được đưa ra.",
+          "trap": "Các từ nối như 'Furthermore' hoặc 'Similarly' không tạo ra quan hệ nhân quả phù hợp với ngữ cảnh thông báo sự thay đổi thời gian."
+        },
+        {
+          "id": "p6-0003-3",
+          "stem": "Blank [3]",
+          "options": {
+            "A": "We have been updating our inventory systems.",
+            "B": "Our staff will be available for support.",
+            "C": "We are committed to resolving this matter promptly.",
+            "D": "The previous schedule was highly efficient."
+          },
+          "answer": "C",
+          "errorType": "sentence-insertion",
+          "explanation": "Câu này khẳng định cam kết của công ty sau khi thông báo về sự cố, giúp trấn an khách hàng.",
+          "trap": "Các câu khác tập trung vào hệ thống nội bộ hoặc nhân sự, không trực tiếp giải quyết nỗi lo của khách hàng về đơn hàng bị trễ."
+        },
+        {
+          "id": "p6-0003-4",
+          "stem": "Blank [4]",
+          "options": {
+            "A": "has been",
+            "B": "is",
+            "C": "had been",
+            "D": "will be"
+          },
+          "answer": "D",
+          "errorType": "grammar-in-context",
+          "explanation": "Cấu trúc câu điều kiện hoặc dự đoán về tương lai cần dùng thì tương lai để diễn tả hành động sẽ xảy ra sau khi sự cố được giải quyết.",
+          "trap": "Thì hiện tại hoặc quá khứ không phù hợp với ngữ cảnh đang nói về một sự kiện chưa xảy ra."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p6-0004",
+      "set": "part6-core",
+      "part": 6,
+      "status": "active",
+      "kind": "text-completion",
+      "title": "Memorandum",
+      "passages": [
+        {
+          "label": "Memorandum",
+          "text": "To: All Project Managers. Subject: Rescheduling Client Consultations. Due to the sudden unavailability of our lead consultant, we must postpone the upcoming strategy meetings originally set for next week. [1]. We understand that this adjustment may conflict with your existing project timelines. [2], we are requesting that you coordinate with your respective clients to propose alternative dates between the 15th and the 20th. [3]. Please ensure that all updated meeting invitations are sent out no later than Wednesday. [4]. Thank you for your flexibility and cooperation in managing these changes effectively."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p6-0004-1",
+          "stem": "Blank [1]",
+          "options": {
+            "A": "This change is unavoidable given the current circumstances.",
+            "B": "The lead consultant is often unavailable.",
+            "C": "We have successfully completed the initial phase.",
+            "D": "The client has already approved the new schedule."
+          },
+          "answer": "A",
+          "errorType": "sentence-insertion",
+          "explanation": "Câu này nhấn mạnh tính cấp thiết và lý do khách quan của việc hoãn lịch họp, phù hợp với giọng văn của một bản ghi nhớ nội bộ.",
+          "trap": "Các câu khác chứa thông tin sai lệch về tình trạng của tư vấn viên hoặc trạng thái của dự án."
+        },
+        {
+          "id": "p6-0004-2",
+          "stem": "Blank [2]",
+          "options": {
+            "A": "In addition",
+            "B": "Therefore",
+            "C": "Instead",
+            "D": "Nevertheless"
+          },
+          "answer": "B",
+          "errorType": "connector-in-context",
+          "explanation": "Vì lịch trình bị thay đổi, hành động tiếp theo là yêu cầu các quản lý dự án sắp xếp lại, tạo quan hệ nhân quả.",
+          "trap": "Các từ nối như 'Nevertheless' tạo ra sự đối lập không cần thiết trong ngữ cảnh này."
+        },
+        {
+          "id": "p6-0004-3",
+          "stem": "Blank [3]",
+          "options": {
+            "A": "facilitate",
+            "B": "negotiate",
+            "C": "accommodate",
+            "D": "terminate"
+          },
+          "answer": "C",
+          "errorType": "vocab-in-context",
+          "explanation": "Từ này có nghĩa là đáp ứng hoặc điều chỉnh cho phù hợp với nhu cầu của khách hàng trong bối cảnh thay đổi lịch trình.",
+          "trap": "Các từ như 'negotiate' hoặc 'terminate' mang nghĩa quá mạnh hoặc không phù hợp với việc sắp xếp lại lịch hẹn."
+        },
+        {
+          "id": "p6-0004-4",
+          "stem": "Blank [4]",
+          "options": {
+            "A": "You are required to submit the reports.",
+            "B": "Our office will remain open during the transition.",
+            "C": "The new consultant will be introduced shortly.",
+            "D": "Your prompt attention to this matter is greatly appreciated."
+          },
+          "answer": "D",
+          "errorType": "sentence-insertion",
+          "explanation": "Câu này là một lời kết thúc chuyên nghiệp, nhấn mạnh tầm quan trọng của việc thực hiện yêu cầu đúng hạn.",
+          "trap": "Các câu khác đưa ra thông tin về báo cáo hoặc nhân sự mới, vốn không liên quan đến việc sắp xếp lại lịch họp."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    }
+  ]
+}

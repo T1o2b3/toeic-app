@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://toeic-app.local/schemas/set.schema.json",
+  "title": "Bộ tài liệu + câu hỏi (Part 3, 4, 6, 7)",
+  "type": "object",
+  "required": ["set", "part", "version", "entries"],
+  "additionalProperties": false,
+  "properties": {
+    "set": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "part": { "type": "integer", "enum": [3, 4, 6, 7] },
+    "version": { "type": "integer", "minimum": 1 },
+    "entries": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/item" } }
+  },
+  "$defs": {
+    "audioPath": { "type": "string", "pattern": "^audio/[0-9a-f]{16}\\.mp3$" },
+    "turn": {
+      "type": "object", "required": ["speaker", "text"], "additionalProperties": false,
+      "properties": { "speaker": { "type": "string", "minLength": 1 }, "text": { "type": "string", "minLength": 3 } }
+    },
+    "passage": {
+      "type": "object", "required": ["label", "text"], "additionalProperties": false,
+      "properties": { "label": { "type": "string", "minLength": 1 }, "text": { "type": "string", "minLength": 30 } }
+    },
+    "question": {
+      "type": "object",
+      "required": ["id", "stem", "options", "answer", "errorType", "explanation"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^p[3467]-[0-9]{4}-[1-5]$" },
+        "stem": { "type": "string", "minLength": 4 },
+        "options": {
+          "type": "object", "required": ["A", "B", "C", "D"], "additionalProperties": false,
+          "properties": {
+            "A": { "type": "string", "minLength": 1 }, "B": { "type": "string", "minLength": 1 },
+            "C": { "type": "string", "minLength": 1 }, "D": { "type": "string", "minLength": 1 }
+          }
+        },
+        "answer": { "enum": ["A", "B", "C", "D"] },
+        "errorType": {
+          "enum": [
+            "gist", "detail", "inference", "purpose", "next-action", "speaker-intent", "reference",
+            "vocab-in-context", "sentence-insertion", "grammar-in-context", "connector-in-context",
+            "not-stated", "cross-reference"
+          ]
+        },
+        "explanation": { "type": "string", "minLength": 20 },
+        "trap": { "type": "string" }
+      }
+    },
+    "item": {
+      "type": "object",
+      "required": ["id", "set", "part", "status", "kind", "questions", "gen", "verify"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^p[3467]-[0-9]{4}$" },
+        "set": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "part": { "type": "integer", "enum": [3, 4, 6, 7] },
+        "status": { "enum": ["active", "retired"] },
+        "kind": { "enum": ["conversation", "talk", "text-completion", "single", "double", "triple"] },
+        "title": { "type": "string" },
+        "script": { "type": "array", "minItems": 2, "items": { "$ref": "#/$defs/turn" } },
+        "audio": {
+          "type": "object", "required": ["clips", "voices"], "additionalProperties": false,
+          "properties": {
+            "clips": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/audioPath" } },
+            "voices": { "type": "object", "additionalProperties": { "type": "string" } }
+          }
+        },
+        "passages": { "type": "array", "minItems": 1, "maxItems": 3, "items": { "$ref": "#/$defs/passage" } },
+        "questions": { "type": "array", "minItems": 2, "maxItems": 5, "items": { "$ref": "#/$defs/question" } },
+        "gen": {
+          "type": "object", "required": ["model", "promptVersion", "batch", "date"], "additionalProperties": false,
+          "properties": {
+            "model": { "type": "string", "minLength": 1 }, "promptVersion": { "type": "string", "minLength": 1 },
+            "batch": { "type": "string", "minLength": 1 }, "date": { "type": "string", "format": "date" }
+          }
+        },
+        "verify": {
+          "type": "object", "required": ["model", "agreed"], "additionalProperties": false,
+          "properties": { "model": { "type": "string", "minLength": 1 }, "agreed": { "const": true } }
+        }
+      },
+      "allOf": [
+        { "if": { "properties": { "part": { "enum": [3, 4] } } },
+          "then": { "required": ["script", "audio"], "not": { "required": ["passages"] } },
+          "else": { "required": ["passages"], "not": { "required": ["script"] } } }
+      ]
+    }
+  }
+}

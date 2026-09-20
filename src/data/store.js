@@ -11,7 +11,8 @@ import { reduceCaptured, buildWordIndex } from '../logic/capture.js';
 import { buildSearchIndex } from '../logic/lookup.js';
 import { openDb, appendEvents, readAllEvents } from './db.js';
 import { getDeviceId } from './device.js';
-import { loadAllVocabDecks, loadQuestionBank, loadListeningBank } from './content.js';
+import { loadAllVocabDecks, loadQuestionBank, loadListeningBank, loadSetBank } from './content.js';
+import { SET_PARTS } from '../logic/sets.js';
 
 /**
  * Tạo store và nạp dữ liệu ban đầu.
@@ -22,11 +23,13 @@ import { loadAllVocabDecks, loadQuestionBank, loadListeningBank } from './conten
  */
 export async function createStore({ factory, fetchImpl } = {}) {
   const db = await openDb(factory);
-  const [vocab, questionBank, listeningBank] = await Promise.all([
+  const [vocab, questionBank, listeningBank, ...setBanks] = await Promise.all([
     loadAllVocabDecks(fetchImpl),
     loadQuestionBank(undefined, fetchImpl),
     loadListeningBank(undefined, fetchImpl),
+    ...SET_PARTS.map((part) => loadSetBank(part, fetchImpl)),
   ]);
+  const sets = Object.fromEntries(SET_PARTS.map((part, i) => [part, setBanks[i]]));
   const deviceId = getDeviceId();
 
   let events = await readAllEvents(db);
@@ -48,6 +51,8 @@ export async function createStore({ factory, fetchImpl } = {}) {
     questions: questionBank.entries,
     /** Câu nghe Part 2 (M9). Trạng thái làm bài dùng chung `quizStates` với Part 5 vì cùng khoá theo questionId. */
     listening: listeningBank.entries,
+    /** Bộ tài liệu + câu hỏi theo Part (3, 4, 6, 7): {3: [...], 4: [...], 6: [...], 7: [...]}. Xem logic/sets.js. */
+    sets,
     deviceId,
     get states() { return states; },
     get quizStates() { return quizStates; },

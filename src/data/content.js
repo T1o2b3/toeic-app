@@ -100,3 +100,21 @@ export async function loadListeningBank(set = 'part2', fetchImpl = fetch) {
     return empty;
   }
 }
+
+/**
+ * Tải một ngân hàng bộ tài liệu + câu hỏi (Part 3, 4, 6, 7). Thiếu file thì trả mảng rỗng — app vẫn chạy
+ * được khi phần đó chưa sinh xong. Âm thanh (Part 3/4) chỉ là đường dẫn, tải khi phát.
+ * @param {number} part
+ * @param {typeof fetch} [fetchImpl]
+ * @returns {Promise<object[]>}
+ */
+export async function loadSetBank(part, fetchImpl = fetch) {
+  try {
+    const response = await fetchImpl(`/content/sets-part${part}.json`);
+    if (!response.ok) return [];
+    const data = await response.json();
+    return Array.isArray(data?.entries) ? data.entries : [];
+  } catch {
+    return [];
+  }
+}

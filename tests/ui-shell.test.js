@@ -108,7 +108,7 @@ describe('dashboard sau khi học', () => {
     await go('#/');
     expect(text()).toContain('Chuỗi 1 ngày');
     const today = root.querySelector('.viz-col.today');
-    expect(today.getAttribute('title')).toMatch(/4 việc \(3 Từ vựng, 1 Part 5\)/);
+    expect(today.getAttribute('title')).toMatch(/4 việc \(3 Từ vựng, 1 Đọc\)/);
     expect(root.querySelector('.viz-cols').getAttribute('aria-label')).toContain('4 việc');
   });
 
@@ -140,7 +140,7 @@ describe('dashboard sau khi học', () => {
 
   it('chú thích có đủ 3 chuỗi bằng chữ', () => {
     const legend = root.querySelector('.viz-legend').textContent;
-    for (const label of ['Từ vựng', 'Part 5', 'Nghe']) expect(legend).toContain(label);
+    for (const label of ['Từ vựng', 'Đọc', 'Nghe']) expect(legend).toContain(label);
   });
 
   it('tiến độ từ vựng: số từ đã phân loại, thanh chỉ vẽ các mức (không có đoạn "chưa phân loại")', () => {
@@ -157,7 +157,7 @@ describe('dashboard sau khi học', () => {
     expect(values.reduce((a, b) => a + b, 0)).toBe(60);
   });
 
-  it('ô Part 5 hiện 100% (1/1), ô Nghe chưa có câu nào', () => {
+  it('ô Đọc hiện 100% (1/1), ô Nghe chưa có câu nào', () => {
     const tiles = [...root.querySelectorAll('.tile')];
     expect(tiles[0].textContent).toContain('100%');
     expect(tiles[1].textContent).toContain('chưa làm câu nào');

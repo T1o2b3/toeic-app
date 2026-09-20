@@ -2148,6 +2148,524 @@
         "question": "en-US-JennyNeural",
         "responses": "en-AU-NatashaNeural"
       }
+    },
+    {
+      "id": "l2-0059",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "You've already finalized the budget proposal for the marketing campaign, haven't you?",
+      "responses": {
+        "A": "No, I prefer the local market.",
+        "B": "Actually, the director asked for some last-minute adjustments.",
+        "C": "About fifteen thousand dollars."
+      },
+      "answer": "B",
+      "errorType": "tag-question",
+      "explanation": "Câu hỏi đuôi xác nhận xem đề xuất ngân sách đã hoàn thành chưa. Câu đáp đúng trả lời gián tiếp rằng thực tế giám đốc vừa yêu cầu điều chỉnh vào phút chót, nghĩa là chưa xong hẳn.",
+      "trap": "Câu đáp chứa từ \"market\" lặp lại âm từ \"marketing\" trong câu hỏi để đánh lừa người nghe. Câu đáp đưa ra số tiền \"fifteen thousand dollars\" là bẫy trả lời cho câu hỏi về chi phí (How much) chứ không phải câu hỏi đuôi xác nhận hành động.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v2",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "B",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/71b79b073186cd5e.mp3",
+        "A": "audio/addc1a9d2074d0b5.mp3",
+        "B": "audio/bd211065350879d8.mp3",
+        "C": "audio/52d3a3eaea1214bc.mp3"
+      },
+      "voices": {
+        "question": "en-GB-RyanNeural",
+        "responses": "en-US-GuyNeural"
+      }
+    },
+    {
+      "id": "l2-0060",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "Why don't we schedule the software demonstration for next Tuesday morning?",
+      "responses": {
+        "A": "Because the presenter was very engaging.",
+        "B": "Yes, I saw the new sign on the door.",
+        "C": "I'll be away on a business trip until Wednesday."
+      },
+      "answer": "C",
+      "errorType": "wh-why",
+      "explanation": "Câu hỏi bắt đầu bằng cụm từ gợi ý lên lịch chạy thử phần mềm. Câu đáp đúng từ chối khéo léo bằng cách nêu lý do bận đi công tác đến tận thứ Tư.",
+      "trap": "Câu đáp bắt đầu bằng \"Because\" dễ đánh lừa người nghe chỉ bắt được từ khóa hỏi lý do, nhưng lại giải thích lý do trong quá khứ thay vì phản hồi một lời gợi ý tương lai. Câu đáp có từ \"sign\" dễ gây nhầm lẫn về mặt âm thanh với các từ liên quan đến trình diễn phần mềm.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v2",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/c73a3eb5661e2e80.mp3",
+        "A": "audio/459e3cf182b02c55.mp3",
+        "B": "audio/2558b46984480ae2.mp3",
+        "C": "audio/447a416d4b69cd20.mp3"
+      },
+      "voices": {
+        "question": "en-AU-NatashaNeural",
+        "responses": "en-GB-SoniaNeural"
+      }
+    },
+    {
+      "id": "l2-0061",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "Would you mind reviewing this draft of the merger press release?",
+      "responses": {
+        "A": "I'm just about to head out for lunch, but I can look at it right after.",
+        "B": "The press conference starts at two o'clock.",
+        "C": "No, I didn't release the document yet."
+      },
+      "answer": "A",
+      "errorType": "request-suggestion",
+      "explanation": "Câu hỏi là lời yêu cầu lịch sự nhờ xem hộ bản thảo thông cáo báo chí. Câu đáp đúng nhận lời một cách tự nhiên, xin phép lùi lại sau giờ ăn trưa.",
+      "trap": "Câu đáp nhắc đến \"press conference\" lặp lại từ \"press\" và trả lời cho câu hỏi thời gian. Câu đáp chứa từ \"release\" lặp lại từ trong câu hỏi và trả lời sai ngữ cảnh về một hành động trong quá khứ.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v2",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "A",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/c6ff85271633a188.mp3",
+        "A": "audio/e6d3fcb51253844b.mp3",
+        "B": "audio/b7615c57f3605b2c.mp3",
+        "C": "audio/45b0b411386e6b89.mp3"
+      },
+      "voices": {
+        "question": "en-US-GuyNeural",
+        "responses": "en-US-JennyNeural"
+      }
+    },
+    {
+      "id": "l2-0062",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "Who should I contact to get authorization for this travel expense?",
+      "responses": {
+        "A": "You can submit the form online.",
+        "B": "The finance director, Sarah, is the one who signs off on those.",
+        "C": "Our travel agent booked the flight."
+      },
+      "answer": "B",
+      "errorType": "wh-who",
+      "explanation": "Câu hỏi yêu cầu tìm người có thẩm quyền phê duyệt chi phí đi lại. Câu đáp đúng chỉ rõ chức danh và tên riêng của người chịu trách nhiệm ký duyệt.",
+      "trap": "Câu đáp về việc nộp đơn trực tuyến trả lời cho câu hỏi phương thức (How). Câu đáp nhắc đến \"travel agent\" lặp lại từ \"travel\" nhưng sai đối tượng cần liên hệ để xin phê duyệt.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v2",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "B",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/a23388cfc12e092e.mp3",
+        "A": "audio/1f08bd6b89159538.mp3",
+        "B": "audio/5d8746c24e2716b5.mp3",
+        "C": "audio/d02d46ca5664f0e6.mp3"
+      },
+      "voices": {
+        "question": "en-GB-SoniaNeural",
+        "responses": "en-GB-RyanNeural"
+      }
+    },
+    {
+      "id": "l2-0063",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "The annual shareholder meeting has been rescheduled, hasn't it?",
+      "responses": {
+        "A": "Yes, I'll be happy to meet them.",
+        "B": "In the grand ballroom downstairs.",
+        "C": "Actually, it's still set for the original date."
+      },
+      "answer": "C",
+      "errorType": "tag-question",
+      "explanation": "Câu hỏi đuôi hỏi để xác nhận xem cuộc họp cổ đông đã bị đổi lịch chưa. Câu đáp đúng đính chính lại thông tin một cách tự nhiên rằng cuộc họp vẫn giữ nguyên ngày cũ.",
+      "trap": "Câu đáp chứa từ \"meet\" lặp lại âm của \"meeting\" nhưng dùng sai ngữ cảnh gặp gỡ ai đó. Câu đáp chỉ địa điểm \"grand ballroom\" là bẫy trả lời cho câu hỏi nơi chốn (Where).",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v2",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/105f899bb6cd71e6.mp3",
+        "A": "audio/d2fe1af0b6bf9491.mp3",
+        "B": "audio/12f5fa72c6591738.mp3",
+        "C": "audio/b838dccaa5d9a63c.mp3"
+      },
+      "voices": {
+        "question": "en-US-JennyNeural",
+        "responses": "en-AU-NatashaNeural"
+      }
+    },
+    {
+      "id": "l2-0064",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "How did you manage to secure such a major contract with the logistics firm?",
+      "responses": {
+        "A": "Through a series of negotiations over several months.",
+        "B": "The security guard is at the front desk.",
+        "C": "It's a very large firm indeed."
+      },
+      "answer": "A",
+      "errorType": "wh-how",
+      "explanation": "Câu hỏi hỏi về cách thức hoặc quá trình đạt được hợp đồng lớn. Câu đáp đúng giải thích phương thức là thông qua chuỗi đàm phán kéo dài nhiều tháng.",
+      "trap": "Câu đáp chứa từ \"security\" đánh lừa bằng âm thanh tương tự từ \"secure\" trong câu hỏi. Câu đáp lặp lại từ \"firm\" nhưng chỉ là câu nhận xét sáo rỗng chứ không trả lời câu hỏi.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v2",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "A",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/d70b54802980447a.mp3",
+        "A": "audio/ab538517ffd086c0.mp3",
+        "B": "audio/010aa1b38b92e9a2.mp3",
+        "C": "audio/4d0c89cc03cd8141.mp3"
+      },
+      "voices": {
+        "question": "en-GB-RyanNeural",
+        "responses": "en-US-GuyNeural"
+      }
+    },
+    {
+      "id": "l2-0065",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "Could you help me set up the projector in the executive boardroom?",
+      "responses": {
+        "A": "The project is going very well, thank you.",
+        "B": "I'm in the middle of a conference call right now.",
+        "C": "It's located on the second floor."
+      },
+      "answer": "B",
+      "errorType": "request-suggestion",
+      "explanation": "Câu hỏi là lời yêu cầu giúp đỡ lắp đặt máy chiếu. Câu đáp đúng từ chối khéo léo bằng cách giải thích mình đang bận họp điện thoại.",
+      "trap": "Câu đáp chứa từ \"project\" dễ gây nhầm lẫn âm thanh với \"projector\" trong câu hỏi. Câu đáp chỉ vị trí \"second floor\" là bẫy trả lời cho câu hỏi nơi chốn (Where).",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v2",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "B",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/f013d85ebbb1b45d.mp3",
+        "A": "audio/cae3a72f65fe9f8f.mp3",
+        "B": "audio/8812c20e3e00148d.mp3",
+        "C": "audio/cc145a408b060a43.mp3"
+      },
+      "voices": {
+        "question": "en-AU-NatashaNeural",
+        "responses": "en-GB-SoniaNeural"
+      }
+    },
+    {
+      "id": "l2-0066",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "Could you tell me when the quarterly sales figures will be released?",
+      "responses": {
+        "A": "About ten percent higher than last year.",
+        "B": "Yes, I can sell you some.",
+        "C": "They are still being audited by the accounting team."
+      },
+      "answer": "C",
+      "errorType": "indirect",
+      "explanation": "Câu hỏi gián tiếp hỏi về thời gian công bố số liệu doanh thu. Câu đáp đúng trả lời gián tiếp rằng số liệu vẫn đang được kiểm toán, ngụ ý chưa có thời gian cụ thể.",
+      "trap": "Câu đáp đưa ra con số phần trăm \"ten percent\" là bẫy trả lời cho câu hỏi về mức độ hoặc số lượng. Câu đáp chứa từ \"sell\" lặp âm với từ \"sales\" trong câu hỏi.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v2",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/11baa8e2d691d917.mp3",
+        "A": "audio/fa128b77c349cd40.mp3",
+        "B": "audio/40846383774cc0a0.mp3",
+        "C": "audio/cf6657b18c45ccc0.mp3"
+      },
+      "voices": {
+        "question": "en-US-GuyNeural",
+        "responses": "en-US-JennyNeural"
+      }
+    },
+    {
+      "id": "l2-0067",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "Whose turn is it to lead the weekly staff meeting this Friday?",
+      "responses": {
+        "A": "I believe it's marked on the calendar in the breakroom.",
+        "B": "Every Friday at nine in the morning.",
+        "C": "No, I didn't turn off the lights."
+      },
+      "answer": "A",
+      "errorType": "wh-who",
+      "explanation": "Câu hỏi hỏi về người chịu trách nhiệm dẫn dắt cuộc họp tuần này. Câu đáp đúng chỉ ra nguồn thông tin gián tiếp là lịch treo ở phòng nghỉ.",
+      "trap": "Câu đáp lặp lại từ \"turn\" nhưng dùng sai nghĩa (tắt đèn) và trả lời dạng Có/Không sai ngữ cảnh. Câu đáp nêu thời gian \"Every Friday\" là bẫy trả lời cho câu hỏi tần suất hoặc thời gian (When).",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v2",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "A",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/91b189ea83a57ad8.mp3",
+        "A": "audio/dca8c4c98923a70d.mp3",
+        "B": "audio/9a485b800f0574e0.mp3",
+        "C": "audio/691b7402ffb81ed5.mp3"
+      },
+      "voices": {
+        "question": "en-GB-SoniaNeural",
+        "responses": "en-GB-RyanNeural"
+      }
+    },
+    {
+      "id": "l2-0068",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "Do you know if the maintenance crew has finished repairing the elevator?",
+      "responses": {
+        "A": "No, the stairs are much faster anyway.",
+        "B": "I just saw someone taking the elevator to the fifth floor.",
+        "C": "There is a crew working on the road outside."
+      },
+      "answer": "B",
+      "errorType": "indirect",
+      "explanation": "Câu hỏi lồng hỏi xem đội bảo trì đã sửa xong thang máy chưa. Câu đáp đúng xác nhận gián tiếp bằng cách nói vừa thấy có người đi thang máy lên tầng năm, chứng tỏ nó đã hoạt động bình thường.",
+      "trap": "Câu đáp nhắc đến \"stairs\" bẫy người nghe liên tưởng đến thang máy hỏng nhưng không trả lời đúng trọng tâm câu hỏi. Câu đáp lặp lại từ \"crew\" nhưng nói về việc làm đường bên ngoài không liên quan.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v2",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "B",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/a048c8d08f025c8a.mp3",
+        "A": "audio/552aaf38e7e1c99a.mp3",
+        "B": "audio/db9e643dbd27298a.mp3",
+        "C": "audio/92b43eebdefefb76.mp3"
+      },
+      "voices": {
+        "question": "en-US-JennyNeural",
+        "responses": "en-AU-NatashaNeural"
+      }
+    },
+    {
+      "id": "l2-0069",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "How soon do you think the shipment of office chairs will arrive?",
+      "responses": {
+        "A": "In the main conference room on the second floor.",
+        "B": "Yes, the department chair is very comfortable.",
+        "C": "Didn't the supplier say they were backordered?"
+      },
+      "answer": "C",
+      "errorType": "wh-when",
+      "explanation": "Câu hỏi hỏi về thời gian khi nào lô hàng ghế văn phòng sẽ đến (\"How soon...\"). Câu đáp đúng phản hồi một cách gián tiếp bằng một câu hỏi ngược lại, chỉ ra rằng nhà cung cấp đã báo hết hàng tạm thời (\"backordered\"), nghĩa là hàng chưa thể đến ngay được.",
+      "trap": "Câu đáp chứa từ \"chair\" lặp lại từ câu hỏi nhưng mang nghĩa khác (trưởng khoa/phòng) và bắt đầu bằng \"Yes\" vốn không phù hợp cho câu hỏi Wh-. Câu đáp chỉ địa điểm trong phòng họp là bẫy trả lời cho câu hỏi \"Where\".",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v2",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/8f10bf5769451f1b.mp3",
+        "A": "audio/3e01ed4073f4236f.mp3",
+        "B": "audio/ac2d0f57f6aef89c.mp3",
+        "C": "audio/6edcebb05f4a68c6.mp3"
+      },
+      "voices": {
+        "question": "en-GB-RyanNeural",
+        "responses": "en-US-GuyNeural"
+      }
+    },
+    {
+      "id": "l2-0070",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "Should we invite the marketing consultants to our strategy meeting tomorrow?",
+      "responses": {
+        "A": "I thought they were already scheduled to attend.",
+        "B": "They charge a very reasonable consulting fee.",
+        "C": "At nine o'clock in the morning."
+      },
+      "answer": "A",
+      "errorType": "yes-no",
+      "explanation": "Câu hỏi đưa ra một đề xuất có nên mời các cố vấn marketing đến cuộc họp ngày mai không (\"Should we invite...\"). Câu đáp đúng trả lời gián tiếp bằng cách cho biết người nói tưởng rằng họ đã được lên lịch tham gia rồi, ngầm hiểu là đồng ý mời hoặc việc đó đã được thực hiện.",
+      "trap": "Câu đáp đề cập đến chi phí tư vấn (\"consulting fee\") sử dụng từ gần giống \"consultants\" trong câu hỏi để gây nhiễu nhưng không trả lời được câu hỏi. Câu đáp chỉ mốc thời gian chín giờ sáng là bẫy trả lời cho câu hỏi \"What time\".",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v2",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "A",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/0f4f0eefa469f22a.mp3",
+        "A": "audio/218c4a35c030ddda.mp3",
+        "B": "audio/30c42aab4f70b374.mp3",
+        "C": "audio/4098bde0fe04de8f.mp3"
+      },
+      "voices": {
+        "question": "en-AU-NatashaNeural",
+        "responses": "en-GB-SoniaNeural"
+      }
+    },
+    {
+      "id": "l2-0071",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "Why hasn't the technical support team updated our database software yet?",
+      "responses": {
+        "A": "You can contact them at extension 402.",
+        "B": "They're waiting for the licensing agreement to be signed.",
+        "C": "Yes, the update is completely free."
+      },
+      "answer": "B",
+      "errorType": "wh-why",
+      "explanation": "Câu hỏi yêu cầu giải thích lý do tại sao đội ngũ kỹ thuật chưa cập nhật phần mềm cơ sở dữ liệu (\"Why hasn't...\"). Câu đáp đúng đưa ra lý do gián tiếp là họ đang chờ thỏa thuận cấp phép được ký kết (\"waiting for the licensing agreement\").",
+      "trap": "Câu đáp bắt đầu bằng \"Yes\" là lỗi cơ bản khi trả lời câu hỏi Wh- và lặp lại từ \"update\". Câu đáp cung cấp số máy lẻ điện thoại là bẫy trả lời cho câu hỏi về cách thức liên lạc (\"How can I contact them\").",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v2",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "B",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/69943ebfd595eaa8.mp3",
+        "A": "audio/11eb2b0f9472afa9.mp3",
+        "B": "audio/7d42fdd6de371288.mp3",
+        "C": "audio/e435aad1a586d0f0.mp3"
+      },
+      "voices": {
+        "question": "en-US-GuyNeural",
+        "responses": "en-US-JennyNeural"
+      }
+    },
+    {
+      "id": "l2-0072",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "How soon will the maintenance crew finish repairing the air conditioning unit in the lobby?",
+      "responses": {
+        "A": "The technician said he would be there by noon.",
+        "B": "I think the condition of the lobby is quite acceptable.",
+        "C": "They are waiting for a spare part from the manufacturer."
+      },
+      "answer": "C",
+      "errorType": "wh-how",
+      "explanation": "Câu hỏi yêu cầu biết thời điểm hoàn thành việc sửa chữa. Câu trả lời giải thích lý do công việc bị trì hoãn, qua đó gián tiếp cho thấy công việc chưa thể xong ngay.",
+      "trap": "Câu đáp nhắc tới thời gian là bẫy trả lời cho câu hỏi When thay vì How soon, trong khi câu đáp chứa từ condition là bẫy lặp âm với từ conditioning trong câu hỏi.",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part2-v2",
+        "batch": "2026-09-20",
+        "date": "2026-09-20"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/4d93c7305b56079c.mp3",
+        "A": "audio/1ae8bb45b1da1cf5.mp3",
+        "B": "audio/51fd7f1df05ea82c.mp3",
+        "C": "audio/946f7136cd0724de.mp3"
+      },
+      "voices": {
+        "question": "en-GB-SoniaNeural",
+        "responses": "en-GB-RyanNeural"
+      }
     }
   ]
 }

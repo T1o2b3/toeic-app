@@ -298,6 +298,41 @@ phủ sóng từ vựng Part 5 — mới thấy NAWL đóng góp 1 từ. Ghi l�
 - **Sửa hành vi cũ lộ ra khi làm dashboard:** nút "15 phút hôm nay" dẫn tới màn ôn thẻ dù kế hoạch chỉ có Part 5 →
   nay đi thẳng tới Part 5; người mới chưa phân loại từ nào được mời phân loại trước.
 
+**D37. Part 3, 4, 6, 7 dùng chung MỘT kiến trúc "bộ tài liệu + câu hỏi" (thay vì bốn bộ code riêng).**
+- **Vì sao gộp:** cả bốn đều là "một tài liệu (hội thoại / bài nói / đoạn văn) + 2–5 câu hỏi". Khác nhau chỉ ở tài liệu:
+  nghe (có âm thanh) hay đọc (có đoạn văn) và cách ra đề. Một schema (`schemas/set.schema.json`), một pipeline
+  (`pipeline/build-sets.js --part N`), một màn luyện (`#/sets?part=N`), một logic (`src/logic/sets.js`).
+- **Mục tiêu:** đủ nội dung cho MỘT đề 194 câu (Part 2: 25 · Part 3: 13 bộ/39 · Part 4: 10 bộ/30 · Part 5: 30 · Part 6: 4 bộ/16 ·
+  Part 7: 54 = đơn 29 + đôi 10 + ba 15). 194 = 200 trừ 6 câu Part 1 vì cần ảnh — không sinh được.
+- **Kiểm định chặt hơn Part 5:** model B tự giải TẤT CẢ câu của bộ; **lệch một câu là loại cả bộ** (giữ lại là giữ lỗi của tài liệu).
+  Trong thực tế Part 6 bị loại ~50% ở lô đầu — chấp nhận, chất lượng quan trọng hơn số lượng.
+- **Bài học từ Part 2 (D35) áp dụng ngay từ đầu:** prompt cấm nhắc chữ cái A–D trong giải thích, bộ lọc `mentionsChoiceLetter`
+  loại bản thảo vi phạm, phương án không được tham chiếu nhau ("cả A và B", "all of the above") — vì pipeline **xoay vị trí
+  đáp án** cho chia đều A/B/C/D (thực đo: 16/15/15/15).
+- **Âm thanh Part 3/4:** mỗi lượt nói một file MP3; giọng theo giới tính người nói (Man/Woman), hai người cùng giới khác
+  giọng, xoay Mỹ/Anh/Úc/Canada. Dùng bộ giọng RIÊNG cho Part 3/4 — không đổi `VOICES` của Part 2 (đổi là đổi giọng cả 72 câu
+  đã phát hành). Thư mục `public/audio/` dùng chung nên **dọn file mồ côi phải xét mọi phần nghe** (`pipeline/lib/audio-files.js`);
+  bản cũ chỉ biết Part 2 và suýt xoá âm thanh Part 3/4.
+- **Trải nghiệm:** bộ nghe cho xem câu hỏi TRƯỚC khi nghe (đề thật in câu hỏi trong tập đề), chữ hội thoại chỉ hiện sau khi
+  trả lời hết; bộ đọc hiện đoạn văn ngay. Mỗi câu chấm + giải thích ngay (chế độ luyện); từng từ gạt được (D34).
+- **Lỗi thật bắt được nhờ test:** đổi Part ngay trong màn luyện (sửa địa chỉ) làm lượt của Part cũ dính sang Part mới.
+- **Thống kê theo KỸ NĂNG:** Nghe = Part 2+3+4, Đọc = Part 5+6+7 (id câu có tiền tố l2-/p3-/p4-/p5-/p6-/p7-). Dashboard đổi
+  từ "Part 5 / Nghe Part 2" sang "Đọc / Nghe" để không bỏ sót phần mới.
+
+**D38. Thi thử đủ bộ (M15): tính giờ, không xem đáp án, chấm SỐ CÂU ĐÚNG, không quy đổi điểm.**
+- **Chế độ:** đề đủ (~194 câu, Nghe 45 + Đọc 75 phút), chỉ Nghe, chỉ Đọc, hoặc riêng từng Part (giờ tính theo tỉ lệ số câu,
+  **chặn ở giờ đề thật** — Part 7 có thể vượt 1 câu vì bộ 2 câu, đã có test).
+- **Dựng đề ngẫu nhiên** từ các ngân hàng (xáo Fisher–Yates, không thiên lệch), Part 7 chia đơn/đôi/ba đúng như đề thật, thiếu
+  dạng nào thì dồn sang bộ đơn. Ngân hàng chưa đủ thì vẫn làm được và **nói rõ thiếu bao nhiêu câu so với đề thật**.
+- **Không quy đổi ra điểm 10–990** (nhắc lại D36): bảng quy đổi đổi theo từng đề chuẩn hoá, và câu hỏi do AI ra nên độ khó
+  không hiệu chuẩn. Kết quả hiện số câu đúng theo từng Part / kỹ năng, thời gian dùng, và xem lại từng câu sai kèm giải thích.
+- **Ghi nhật ký MỘT lần khi nộp:** mỗi câu đã trả lời một `question.answered` (thêm `mode: 'exam'`) + một `exam.finished` tóm tắt,
+  gói trong một lượt `importEvents` (194 lần `record` sẽ vẽ lại màn 194 lần). Câu làm trong thi thử vào thống kê bình thường
+  nên câu sai sẽ quay lại ở luyện tập.
+- **Chưa làm (M16):** làm dở rồi tiếp trên máy khác — hiện thoát giữa chừng là mất bài. Nút chuyển đơn vị, danh sách câu và
+  đồng hồ đã có; còn thiếu lưu tiến độ giữa chừng. Đề thật chỉ phát âm thanh một lần; app cho nghe lại (ghi rõ trên nút) vì
+  bấm nhầm/không phát được trên iPhone sẽ làm hỏng cả bài.
+
 ## Câu hỏi còn mở
 - ~~Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng?~~ → **Đã giải quyết, xem D35** (chung repo, xét lại khi ~100 MB).
 - ~~Q2 (trước M2): xác nhận license của TSL 1.2 và NGSL.~~ → **Đã giải quyết, xem D18.**

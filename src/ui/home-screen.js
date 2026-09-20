@@ -15,6 +15,7 @@ import {
   estimateStudyMinutes, matureTrend, combinedExam, WEEKLY_GOAL_MINUTES, MATURE_DAYS,
 } from '../logic/dashboard.js';
 import { buildExport, exportFileName } from '../logic/export.js';
+import { questionsBySkill } from '../logic/sets.js';
 import { isSupabaseConfigured } from '../data/supabase.js';
 import { getTier } from '../data/prefs.js';
 import { TIER_ORDER, filterByTier } from '../logic/deck-tiers.js';
@@ -156,15 +157,16 @@ function renderVocabPanel(store) {
   ]);
 }
 
-/** Độ chính xác từng phần thi (ô số lớn) + các dạng câu yếu nhất gộp cả hai phần. */
+/** Độ chính xác hai kỹ năng Đọc / Nghe (ô số lớn) + các dạng câu yếu nhất gộp cả hai. */
 function renderExamsPanel(store, events, now) {
+  const bank = questionsBySkill(store);
   const tiles = [
-    examTile('Part 5', examOverview(events, 'part5', now), store.questions.length),
-    examTile('Nghe Part 2', examOverview(events, 'listening', now), store.listening.length),
+    examTile('Đọc (Part 5–7)', examOverview(events, 'reading', now), bank.reading.length),
+    examTile('Nghe (Part 2–4)', examOverview(events, 'listening', now), bank.listening.length),
   ];
   const weak = [
-    ...weakestTypes(store.questions, store.quizStates).map((row) => ({ ...row, part: 'Part 5' })),
-    ...weakestTypes(store.listening, store.quizStates).map((row) => ({ ...row, part: 'Nghe' })),
+    ...weakestTypes(bank.reading, store.quizStates).map((row) => ({ ...row, part: 'Đọc' })),
+    ...weakestTypes(bank.listening, store.quizStates).map((row) => ({ ...row, part: 'Nghe' })),
   ].sort((a, b) => a.accuracy - b.accuracy).slice(0, 4);
 
   return panel('Bài thi', '/exams', [

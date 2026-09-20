@@ -68,3 +68,21 @@ export function canAnswer(heardAll, picked) {
 export function estimateMinutes(count) {
   return Math.max(1, Math.round((count * 30) / 60));
 }
+
+/** Khoảng lặng giữa hai lượt nói trong hội thoại (mili giây). */
+export const GAP_BETWEEN_TURNS_MS = 450;
+
+/**
+ * Trình tự phát một bộ hội thoại / bài nói (Part 3, 4): từng lượt nói xen khoảng lặng ngắn.
+ * `key` là vị trí lượt nói trong `script` để màn hình tô sáng đúng dòng đang phát.
+ * @param {{audio: {clips: string[]}}} set
+ * @returns {Array<{type: 'clip', key: number, src: string}|{type: 'gap', ms: number}>}
+ */
+export function turnSequence(set) {
+  const steps = [];
+  set.audio.clips.forEach((path, index) => {
+    if (index > 0) steps.push({ type: 'gap', ms: GAP_BETWEEN_TURNS_MS });
+    steps.push({ type: 'clip', key: index, src: audioUrl(path) });
+  });
+  return steps;
+}

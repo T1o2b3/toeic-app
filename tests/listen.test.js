@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
-  SPEEDS, DEFAULT_SPEED, normalizeSpeed, audioUrl, clipSequence, canAnswer, estimateMinutes,
+  SPEEDS, DEFAULT_SPEED, normalizeSpeed, audioUrl, clipSequence, canAnswer, estimateMinutes, turnSequence, GAP_BETWEEN_TURNS_MS,
   GAP_AFTER_QUESTION_MS, GAP_BETWEEN_RESPONSES_MS,
 } from '../src/logic/listen.js';
 
@@ -58,5 +58,25 @@ describe('estimateMinutes', () => {
     expect(estimateMinutes(1)).toBe(1);
     expect(estimateMinutes(10)).toBe(5);
     expect(estimateMinutes(0)).toBe(1);
+  });
+});
+
+describe('turnSequence (Part 3/4)', () => {
+  const set = { audio: { clips: ['audio/aaaaaaaaaaaaaaaa.mp3', 'audio/bbbbbbbbbbbbbbbb.mp3', 'audio/cccccccccccccccc.mp3'] } };
+  const steps = turnSequence(set);
+
+  it('phát lần lượt từng lượt nói, xen khoảng lặng, không kết thúc bằng khoảng lặng', () => {
+    expect(steps.map((s) => s.type)).toEqual(['clip', 'gap', 'clip', 'gap', 'clip']);
+    expect(steps.filter((s) => s.type === 'gap').every((s) => s.ms === GAP_BETWEEN_TURNS_MS)).toBe(true);
+  });
+
+  it('key là vị trí lượt nói (để tô sáng dòng đang phát) và src có gốc /', () => {
+    const clips = steps.filter((s) => s.type === 'clip');
+    expect(clips.map((s) => s.key)).toEqual([0, 1, 2]);
+    expect(clips[2].src).toBe('/audio/cccccccccccccccc.mp3');
+  });
+
+  it('bài nói một lượt chỉ có một đoạn, không có khoảng lặng', () => {
+    expect(turnSequence({ audio: { clips: ['audio/aaaaaaaaaaaaaaaa.mp3'] } })).toHaveLength(1);
   });
 });

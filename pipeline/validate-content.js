@@ -12,10 +12,18 @@ const FILES = [
   { file: 'public/content/vocab-toeic-bsl.json', schema: 'schemas/vocab.schema.json', label: 'từ vựng' },
   { file: 'public/content/questions-part5.json', schema: 'schemas/question.schema.json', label: 'câu hỏi Part 5' },
   { file: 'public/content/listening-part2.json', schema: 'schemas/listening.schema.json', label: 'câu nghe Part 2' },
+  { file: 'public/content/sets-part3.json', schema: 'schemas/set.schema.json', label: 'bộ hội thoại Part 3' },
+  { file: 'public/content/sets-part4.json', schema: 'schemas/set.schema.json', label: 'bộ bài nói Part 4' },
+  { file: 'public/content/sets-part6.json', schema: 'schemas/set.schema.json', label: 'bộ điền đoạn Part 6' },
+  { file: 'public/content/sets-part7.json', schema: 'schemas/set.schema.json', label: 'bộ đọc hiểu Part 7' },
 ];
 /** Các đường dẫn âm thanh được câu nghe tham chiếu nhưng không có trong public/. */
 function missingAudioFiles(bank) {
-  const paths = bank.entries.flatMap((entry) => Object.values(entry.audio));
+  // Part 2: audio là {question, A, B, C}; Part 3/4: audio là {clips: [...], voices}.
+  const paths = bank.entries.flatMap((entry) => {
+    if (!entry.audio) return [];
+    return Array.isArray(entry.audio.clips) ? entry.audio.clips : Object.values(entry.audio);
+  });
   return [...new Set(paths)].filter((p) => !existsSync(new URL(`public/${p}`, ROOT).pathname));
 }
 
@@ -44,7 +52,7 @@ for (const { file: relative, schema, label } of FILES) {
   const duplicates = findDuplicateIds(deck);
 
   // Câu nghe: mọi file âm thanh được tham chiếu phải tồn tại, nếu không app có câu không ra tiếng.
-  const missingAudio = valid && deck.part === 2 ? missingAudioFiles(deck) : [];
+  const missingAudio = valid && deck.entries.some((e) => e.audio) ? missingAudioFiles(deck) : [];
   if (missingAudio.length > 0) {
     failed = true;
     console.error(`✗ ${relative}: thiếu ${missingAudio.length} file âm thanh (vd ${missingAudio.slice(0, 3).join(', ')})`);

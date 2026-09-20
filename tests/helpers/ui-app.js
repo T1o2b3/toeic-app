@@ -33,7 +33,7 @@ const QUESTIONS = {
   }],
 };
 
-const clip = (n) => `audio/${String(n).padStart(16, '0')}.mp3`;
+function clip(n) { return `audio/${String(n).padStart(16, '0')}.mp3`; }
 const LISTENING = {
   set: 'part2', part: 2, version: 1,
   entries: [
@@ -52,12 +52,31 @@ const LISTENING = {
   })),
 };
 
+const qs = (id, n, types = ['gist', 'detail', 'inference']) => Array.from({ length: n }, (_, i) => ({
+  id: `${id}-${i + 1}`, stem: `Question ${i + 1} of ${id}?`, answer: 'BCDA'[i % 4], errorType: types[i % types.length],
+  options: { A: `${id} a${i}`, B: `${id} b${i}`, C: `${id} c${i}`, D: `${id} d${i}` },
+  explanation: `Giải thích câu ${i + 1} của bộ ${id}, dựa vào tài liệu.`, trap: `Bẫy của câu ${i + 1}.`,
+}));
+const baseSet = (id, part, kind) => ({ id, set: `part${part}-core`, part, status: 'active', kind, title: `Bộ ${id}`,
+  gen: { model: 'm', promptVersion: 'sets-v1', batch: 'b', date: '2026-09-20' }, verify: { model: 'n', agreed: true } });
+const SETS = {
+  3: [1, 2].map((n) => ({ ...baseSet(`p3-000${n}`, 3, 'conversation'), questions: qs(`p3-000${n}`, 3),
+    script: [{ speaker: 'Woman', text: `Hello Tom, the shipment number ${n} is late again.` }, { speaker: 'Man', text: 'Well, let me check the warehouse records.' }],
+    audio: { clips: [clip(100 + n * 2), clip(101 + n * 2)], voices: { Woman: 'en-US-JennyNeural', Man: 'en-US-GuyNeural' } } })),
+  4: [],
+  6: [{ ...baseSet('p6-0001', 6, 'text-completion'), questions: qs('p6-0001', 4, ['grammar-in-context', 'vocab-in-context', 'connector-in-context', 'sentence-insertion']),
+    passages: [{ label: 'Email', text: 'Dear staff, the ledger [1] updated on Friday and we [2] every report before the deadline. [3] please keep your records [4] and complete.' }] }],
+  7: [{ ...baseSet('p7-0001', 7, 'single'), questions: qs('p7-0001', 2), passages: [{ label: 'Notice', text: 'Notice to all tenants: the elevator will be closed for maintenance on Monday from nine until noon.' }] },
+      { ...baseSet('p7-0002', 7, 'double'), questions: qs('p7-0002', 5, ['detail', 'cross-reference']), passages: [{ label: 'Email', text: 'Hello team, please confirm your attendance at the training session next Tuesday afternoon.' }, { label: 'Reply', text: 'Thanks for the reminder; I will attend but need to leave early at four for a client meeting.' }] }],
+};
+
 /** @returns {Promise<object>} store, root và các hàm thao tác/đọc màn hình */
 export async function bootApp() {
   const fetchImpl = async (url) => {
     const data = String(url).includes('vocab-toeic-tsl') ? DECK
       : String(url).includes('questions-part5') ? QUESTIONS
-      : String(url).includes('listening-part2') ? LISTENING : null;
+      : String(url).includes('listening-part2') ? LISTENING
+      : /sets-part(\d)/.test(String(url)) ? { set: 'x', part: 0, version: 1, entries: SETS[Number(String(url).match(/sets-part(\d)/)[1])] ?? [] } : null;
     return data ? { ok: true, status: 200, json: async () => data } : { ok: false, status: 404 };
   };
   const store = await createStore({ factory: new IDBFactory(), fetchImpl });

@@ -9,7 +9,7 @@
  * thì loại. Bước 3: cân bằng đáp án A/B/C, gán giọng, sinh MP3 (bỏ qua file đã có). Bước 4: validate + ghi.
  * Tiến độ lưu sau MỖI lô (quy tắc số 6): dừng giữa chừng chạy lại là tiếp tục đúng chỗ dở.
  */
-import { writeFileSync, mkdirSync, existsSync, readdirSync, unlinkSync } from 'node:fs';
+import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import {
   buildPart2Prompt, buildPart2VerifyPrompt, part2Key, isWellFormedPart2, PART2_TYPES, PART2_PROMPT_VERSION,
 } from './lib/prompt-listening.js';
@@ -20,6 +20,7 @@ import { openCache } from './lib/cache.js';
 import { createValidator } from './lib/validate-deck.js';
 import { assembleEntry } from './lib/listening-assemble.js';
 import { synthesize, runLimited } from './lib/tts.js';
+import { removeOrphanAudio } from './lib/audio-files.js';
 
 const ROOT = new URL('..', import.meta.url);
 const path = (relative) => new URL(relative, ROOT).pathname;
@@ -175,13 +176,9 @@ async function main() {
   writeFileSync(OUTPUT, `${JSON.stringify(bank, null, 2)}\n`);
   console.log(`Đã ghi ${bank.entries.length} câu vào public/content/listening-part2.json`);
 
-  // Xoá file MP3 không còn câu nào dùng (do đổi lời hoặc sinh lại): repo không phình vì file mồ côi.
-  const used = new Set(clips.map((clip) => clip.path.replace('audio/', '')));
-  let removed = 0;
-  for (const file of readdirSync(`${PUBLIC}audio`)) {
-    if (file.endsWith('.mp3') && !used.has(file)) { unlinkSync(`${PUBLIC}audio/${file}`); removed += 1; }
-  }
-  if (removed > 0) console.log(`Đã xoá ${removed} file âm thanh không còn được dùng.`);
+  // Xoá MP3 không còn file nội dung nghe nào dùng (dùng chung cho Part 2, 3, 4: xem lib/audio-files.js).
+  const removed = removeOrphanAudio(PUBLIC);
+  if (removed.length > 0) console.log(`Đã xoá ${removed.length} file âm thanh không còn được dùng.`);
 }
 
 main().catch((error) => { console.error(error); process.exitCode = 1; });

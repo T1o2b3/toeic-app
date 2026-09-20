@@ -9,6 +9,7 @@ import { examOverview, weakestTypes } from '../logic/dashboard.js';
 import { getRoundSize, setRoundSize } from '../data/prefs.js';
 import { ROUND_SIZES } from '../logic/prefs.js';
 import { renderAccuracyBars } from './dashboard-charts.js';
+import { SET_PARTS, PART_LABEL, SET_ROUND_SIZE, setQueue, countAvailableSets, estimateSetMinutes, questionsBySkill } from '../logic/sets.js';
 
 /** "Đúng 78% trong 7 ngày qua" / "chưa làm câu nào" — dòng phụ trên nút. */
 function accuracyNote(overview) {
@@ -28,6 +29,11 @@ export function renderExams(store) {
     el('h1', { text: 'Bài thi' }),
     el('p', { class: 'subtitle', text: 'Luyện theo từng phần. Làm sai sẽ quay lại ở lượt sau.' }),
   ];
+
+  sections.push(el('button', { class: 'primary', onClick: () => goTo('/exam') }, [
+    el('span', { text: 'Thi thử' }),
+    el('small', { text: 'đề đủ ~194 câu tính giờ (Nghe 45 + Đọc 75 phút), hoặc theo kỹ năng / từng Part' }),
+  ]));
 
   if (store.questions.length > 0) {
     const size = getRoundSize();
@@ -57,11 +63,24 @@ export function renderExams(store) {
     ]));
   }
 
-  if (store.questions.length === 0 && store.listening.length === 0) {
+  // Part 3, 4, 6, 7: mỗi phần một nút nếu đã có bộ đề.
+  for (const p of SET_PARTS) {
+    const bank = store.sets[p];
+    if (bank.length === 0) continue;
+    const round = setQueue(bank, store.quizStates, { size: SET_ROUND_SIZE[p] });
+    const listening = p === 3 || p === 4;
+    sections.push(el('button', { class: 'secondary', onClick: () => goTo(`/sets?part=${p}`) }, [
+      el('span', { text: `Luyện ${PART_LABEL[p].replace(' · ', ' — ')}` }),
+      el('small', { text: `${countAvailableSets(bank, store.quizStates)} bộ · lượt ${round.length} bộ ~${estimateSetMinutes(p, round)} phút · ${accuracyNote(examOverview(events, `part${p}`))}${listening ? ' · nên đeo tai nghe' : ''}` }),
+    ]));
+  }
+
+  if (store.questions.length === 0 && store.listening.length === 0 && SET_PARTS.every((p) => store.sets[p].length === 0)) {
     sections.push(el('p', { class: 'empty', text: 'Chưa có câu hỏi nào. Chạy pipeline sinh câu trước đã.' }));
   }
 
-  const banks = [['Lỗ hổng theo loại kiến thức (Part 5)', store.questions], ['Lỗ hổng phần nghe', store.listening]];
+  const skills = questionsBySkill(store);
+  const banks = [['Lỗ hổng phần đọc (Part 5–7)', skills.reading], ['Lỗ hổng phần nghe (Part 2–4)', skills.listening]];
   for (const [title, bank] of banks) {
     const rows = weakestTypes(bank, store.quizStates).filter((row) => row.accuracy < 0.8);
     if (rows.length === 0) continue;

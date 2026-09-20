@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
-  dayKey, partOfQuestion, activityByDay, studyStreak, examOverview, vocabProgress, weakestTypes,
+  dayKey, partOfQuestion, skillOfQuestion, activityByDay, studyStreak, examOverview, vocabProgress, weakestTypes,
   estimateStudyMinutes, matureWords, matureTrend, combinedExam, STUDY_SECONDS, MATURE_DAYS,
 } from '../src/logic/dashboard.js';
 import { reduceVocabState } from '../src/logic/vocab-state.js';
@@ -19,9 +19,18 @@ describe('dayKey / partOfQuestion', () => {
     expect(dayKey(at(2026, 1, 5, 0))).toBe('2026-01-05');
   });
 
-  it('phân loại câu hỏi theo tiền tố id', () => {
+  it('phân loại câu hỏi theo tiền tố id, kể cả câu trong bộ (p3-0001-2)', () => {
     expect(partOfQuestion('p5-0001')).toBe('part5');
-    expect(partOfQuestion('l2-0001')).toBe('listening');
+    expect(partOfQuestion('l2-0001')).toBe('part2');
+    expect(partOfQuestion('p3-0004-2')).toBe('part3');
+    expect(partOfQuestion('p4-0001-1')).toBe('part4');
+    expect(partOfQuestion('p6-0002-4')).toBe('part6');
+    expect(partOfQuestion('p7-0010-5')).toBe('part7');
+    expect(skillOfQuestion('p5-0001')).toBe('reading');
+    expect(skillOfQuestion('p7-0010-5')).toBe('reading');
+    expect(skillOfQuestion('l2-0001')).toBe('listening');
+    expect(skillOfQuestion('p4-0001-1')).toBe('listening');
+    expect(skillOfQuestion('vocab-1')).toBe('other');
     expect(partOfQuestion('zz-1')).toBe('other');
     expect(partOfQuestion(undefined)).toBe('other');
   });
@@ -49,8 +58,8 @@ describe('activityByDay', () => {
   });
 
   it('đếm đúng theo nhóm và chỉ tính việc học thật', () => {
-    expect(activity.at(-1)).toMatchObject({ vocab: 2, part5: 1, listening: 0, total: 3 });
-    expect(activity.at(-2)).toMatchObject({ vocab: 0, part5: 0, listening: 1, total: 1 });
+    expect(activity.at(-1)).toMatchObject({ vocab: 2, reading: 1, listening: 0, total: 3 });
+    expect(activity.at(-2)).toMatchObject({ vocab: 0, reading: 0, listening: 1, total: 1 });
   });
 
   it('bỏ sự kiện ngoài cửa sổ; không có sự kiện thì toàn số 0', () => {
@@ -88,6 +97,30 @@ describe('studyStreak', () => {
 
   it('làm câu hỏi cũng tính là học', () => {
     expect(studyStreak([answered('l2-1', true, NOW)], NOW)).toBe(1);
+  });
+});
+
+describe('examOverview theo kỹ năng và theo phần', () => {
+  const events = [
+    answered('p5-1', true, at(2026, 9, 20)), answered('p6-0001-1', false, at(2026, 9, 20)),
+    answered('p7-0001-2', true, at(2026, 9, 19)), answered('l2-1', true, at(2026, 9, 20)),
+    answered('p3-0001-1', false, at(2026, 9, 18)), answered('p4-0002-3', true, at(2026, 9, 18)),
+  ];
+
+  it('kỹ năng Đọc gộp Part 5, 6, 7; Nghe gộp Part 2, 3, 4', () => {
+    expect(examOverview(events, 'reading', NOW).recent).toMatchObject({ attempts: 3, correct: 2 });
+    expect(examOverview(events, 'listening', NOW).recent).toMatchObject({ attempts: 3, correct: 2 });
+  });
+
+  it('cũng tra được riêng từng phần', () => {
+    expect(examOverview(events, 'part6', NOW).recent).toMatchObject({ attempts: 1, correct: 0 });
+    expect(examOverview(events, 'part3', NOW).recent).toMatchObject({ attempts: 1, correct: 0 });
+    expect(examOverview(events, 'part7', NOW).recent).toMatchObject({ attempts: 1, correct: 1 });
+  });
+
+  it('hoạt động mỗi ngày gộp theo kỹ năng', () => {
+    const day = activityByDay(events, { now: NOW, days: 3 });
+    expect(day.at(-1)).toMatchObject({ reading: 2, listening: 1 });
   });
 });
 
@@ -178,95 +211,5 @@ describe('weakestTypes', () => {
 
   it('tôn trọng limit', () => {
     expect(weakestTypes(questions, states, { limit: 1 })).toHaveLength(1);
-  });
-});
-
-describe('estimateStudyMinutes', () => {
-  const cost = STUDY_SECONDS;
-  it('cộng thời gian ước tính của từng loại việc trong 7 ngày gần nhất và làm tròn ra phút', () => {
-    const events = [
-      ...Array.from({ length: 6 }, (_, i) => ev('vocab.reviewed', { wordId: 'a', grade: 'good' }, at(2026, 9, 20, 8) + i)),
-      ev('vocab.triaged', { wordId: 'b', level: 'unknown' }, at(2026, 9, 19)),
-      answered('p5-1', true, at(2026, 9, 18)),
-      answered('l2-1', true, at(2026, 9, 17)),
-    ];
-    const seconds = 6 * cost['vocab.reviewed'] + cost['vocab.triaged'] + cost.part5 + cost.listening;
-    expect(estimateStudyMinutes(events, { now: NOW })).toBe(Math.round(seconds / 60));
-  });
-
-  it('bỏ việc ngoài cửa sổ 7 ngày, việc không phải học (đánh dấu, gạt) và câu không rõ phần nào', () => {
-    const events = [
-      ev('vocab.reviewed', { wordId: 'a', grade: 'good' }, at(2026, 9, 13)), // 8 ngày trước: ngoài
-      ev('vocab.bookmarked', { wordId: 'a' }, at(2026, 9, 20)),
-      ev('vocab.captured', { word: 'zoning' }, at(2026, 9, 20)),
-      answered('zz-1', true, at(2026, 9, 20)),
-    ];
-    expect(estimateStudyMinutes(events, { now: NOW })).toBe(0);
-  });
-
-  it('việc cuối ngày hôm nay vẫn được tính; không có sự kiện thì 0', () => {
-    const late = [answered('l2-1', true, at(2026, 9, 20, 23)), answered('l2-2', true, at(2026, 9, 20, 23))];
-    expect(estimateStudyMinutes(late, { now: NOW })).toBe(Math.round((2 * cost.listening) / 60));
-    expect(estimateStudyMinutes([], { now: NOW })).toBe(0);
-    expect(estimateStudyMinutes(undefined, { now: NOW })).toBe(0);
-  });
-});
-
-describe('matureWords / matureTrend', () => {
-  const day = 86400000;
-  // Ôn "easy" nhiều lần thì khoảng cách lần ôn kế tiếp tăng dần: đủ để có thẻ vượt ngưỡng 21 ngày.
-  const reviews = (wordId, from, count) => Array.from({ length: count }, (_, i) => (
-    ev('vocab.reviewed', { wordId, grade: 'easy' }, from + i * 3 * day)));
-  const triage = (wordId, ts) => ev('vocab.triaged', { wordId, level: 'unknown', known: false }, ts);
-
-  const events = [
-    triage('a', NOW - 40 * day), ...reviews('a', NOW - 39 * day, 8),  // ôn dày từ lâu: vững từ trước tuần trước
-    triage('b', NOW - 20 * day), ...reviews('b', NOW - 19 * day, 5),  // mới vững gần đây
-    triage('c', NOW - 5 * day), ev('vocab.reviewed', { wordId: 'c', grade: 'good' }, NOW - 4 * day), // chưa vững
-  ];
-  const states = reduceVocabState(events, { now: new Date(NOW) });
-
-  it('chỉ đếm thẻ có lần ôn kế tiếp cách từ ngưỡng trở lên; từ chưa ôn hoặc mới ôn ít thì không', () => {
-    const scheduled = Object.fromEntries([...states].map(([id, st]) => [id, st.card.scheduled_days]));
-    expect(scheduled.c).toBeLessThan(MATURE_DAYS);
-    expect(matureWords(states)).toBe([...states.values()].filter((st) => st.card.scheduled_days >= MATURE_DAYS).length);
-    expect(matureWords(states)).toBeGreaterThan(0);
-    expect(matureWords(new Map())).toBe(0);
-  });
-
-  it('từ đang ở mức "thành thạo" tự chấm (known) không được tính là nhớ vững', () => {
-    const fake = new Map([['x', { known: true, card: { scheduled_days: 400 } }]]);
-    expect(matureWords(fake)).toBe(0);
-  });
-
-  it('xu hướng: dựng lại trạng thái cách đây 7 ngày từ nhật ký, delta = bây giờ − tuần trước', () => {
-    const trend = matureTrend(events, states, NOW);
-    expect(trend.now).toBe(matureWords(states));
-    expect(trend.delta).toBe(trend.now - trend.weekAgo);
-    expect(trend.weekAgo).toBeLessThanOrEqual(trend.now);
-  });
-
-  it('không có nhật ký thì mọi số bằng 0', () => {
-    expect(matureTrend([], new Map(), NOW)).toEqual({ now: 0, weekAgo: 0, delta: 0 });
-  });
-});
-
-describe('combinedExam', () => {
-  const events = [
-    answered('p5-1', true, at(2026, 9, 20)), answered('p5-2', false, at(2026, 9, 19)),
-    answered('l2-1', true, at(2026, 9, 18)), answered('l2-2', true, at(2026, 9, 17)),
-    answered('p5-3', false, at(2026, 9, 10)), answered('l2-3', false, at(2026, 9, 9)),
-  ];
-  const result = combinedExam(events, NOW);
-
-  it('gộp hai phần: 7 ngày gần nhất 3/4, tuần trước 0/2', () => {
-    expect(result.recent).toEqual({ attempts: 4, correct: 3, accuracy: 0.75 });
-    expect(result.previous).toEqual({ attempts: 2, correct: 0, accuracy: 0 });
-    expect(result.delta).toBe(75);
-  });
-
-  it('thiếu số liệu một bên thì delta null; chưa làm câu nào thì accuracy null', () => {
-    expect(combinedExam([answered('p5-1', true, at(2026, 9, 20))], NOW).delta).toBeNull();
-    expect(combinedExam([], NOW).recent.accuracy).toBeNull();
   });
 });

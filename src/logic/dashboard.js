@@ -36,16 +36,41 @@ function startOfDay(now, back = 0) {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate() - back).getTime();
 }
 
+/** Tiền tố id → phần thi. Câu trong bộ (Part 3/4/6/7) có id dạng p3-0001-2 nên vẫn khớp tiền tố. */
+const PART_PREFIX = Object.freeze({
+  'l2-': 'part2', 'p3-': 'part3', 'p4-': 'part4', 'p5-': 'part5', 'p6-': 'part6', 'p7-': 'part7',
+});
+
+/** Phần thi → kỹ năng. TOEIC Listening = Part 1–4, Reading = Part 5–7. */
+export const SKILL_OF_PART = Object.freeze({
+  part2: 'listening', part3: 'listening', part4: 'listening', part5: 'reading', part6: 'reading', part7: 'reading',
+});
+
 /**
- * Câu hỏi này thuộc phần nào, suy từ tiền tố id (p5-… / l2-…).
+ * Câu hỏi này thuộc phần thi nào, suy từ tiền tố id.
  * @param {unknown} questionId
- * @returns {'part5'|'listening'|'other'}
+ * @returns {'part2'|'part3'|'part4'|'part5'|'part6'|'part7'|'other'}
  */
 export function partOfQuestion(questionId) {
   const id = String(questionId ?? '');
-  if (id.startsWith('p5-')) return 'part5';
-  if (id.startsWith('l2-')) return 'listening';
-  return 'other';
+  const prefix = Object.keys(PART_PREFIX).find((p) => id.startsWith(p));
+  return prefix ? PART_PREFIX[prefix] : 'other';
+}
+
+/**
+ * Câu hỏi này thuộc kỹ năng nào (nghe hay đọc).
+ * @param {unknown} questionId
+ * @returns {'listening'|'reading'|'other'}
+ */
+export function skillOfQuestion(questionId) {
+  return SKILL_OF_PART[partOfQuestion(questionId)] ?? 'other';
+}
+
+/** `which` là một kỹ năng ('reading'|'listening') hay một phần cụ thể ('part5'...)? Trả về hàm khớp id câu hỏi. */
+function matcherFor(which) {
+  return which === 'reading' || which === 'listening'
+    ? (id) => skillOfQuestion(id) === which
+    : (id) => partOfQuestion(id) === which;
 }
 
 /** Các loại sự kiện tính là "một việc học từ vựng". */
@@ -56,14 +81,14 @@ const VOCAB_EVENTS = new Set(['vocab.reviewed', 'vocab.triaged']);
  * Hôm nay và các ngày trống vẫn có mặt (số 0) để biểu đồ có đủ cột, không dồn ngày.
  * @param {Array<{type: string, ts: number, payload: object}>} events
  * @param {{now?: number, days?: number}} [options]
- * @returns {Array<{day: string, ts: number, vocab: number, part5: number, listening: number, total: number}>}
+ * @returns {Array<{day: string, ts: number, vocab: number, reading: number, listening: number, total: number}>}
  */
 export function activityByDay(events, { now = Date.now(), days = 14 } = {}) {
   const buckets = new Map();
   const list = [];
   for (let back = days - 1; back >= 0; back -= 1) {
     const ts = startOfDay(now, back);
-    const bucket = { day: dayKey(ts), ts, vocab: 0, part5: 0, listening: 0, total: 0 };
+    const bucket = { day: dayKey(ts), ts, vocab: 0, reading: 0, listening: 0, total: 0 };
     buckets.set(bucket.day, bucket);
     list.push(bucket);
   }
@@ -73,8 +98,8 @@ export function activityByDay(events, { now = Date.now(), days = 14 } = {}) {
     if (!bucket) continue;
     if (VOCAB_EVENTS.has(event.type)) bucket.vocab += 1;
     else if (event.type === 'question.answered') {
-      const part = partOfQuestion(event.payload?.questionId);
-      if (part !== 'other') bucket[part] += 1;
+      const skill = skillOfQuestion(event.payload?.questionId);
+      if (skill !== 'other') bucket[skill] += 1;
       else continue;
     } else continue;
     bucket.total += 1;
@@ -92,7 +117,7 @@ export function activityByDay(events, { now = Date.now(), days = 14 } = {}) {
 export function studyStreak(events, now = Date.now()) {
   const days = new Set();
   for (const event of events ?? []) {
-    if (VOCAB_EVENTS.has(event.type) || (event.type === 'question.answered' && partOfQuestion(event.payload?.questionId) !== 'other')) {
+    if (VOCAB_EVENTS.has(event.type) || (event.type === 'question.answered' && skillOfQuestion(event.payload?.questionId) !== 'other')) {
       days.add(dayKey(event.ts));
     }
   }
@@ -109,11 +134,12 @@ export function studyStreak(events, now = Date.now()) {
  * Độ chính xác của một phần trong khoảng thời gian [from, to).
  * @returns {{attempts: number, correct: number, accuracy: number|null}} accuracy null khi chưa có câu nào
  */
-function accuracyBetween(events, part, from, to) {
+function accuracyBetween(events, which, from, to) {
+  const matches = matcherFor(which);
   let attempts = 0;
   let correct = 0;
   for (const event of events ?? []) {
-    if (event.type !== 'question.answered' || partOfQuestion(event.payload?.questionId) !== part) continue;
+    if (event.type !== 'question.answered' || !matches(event.payload?.questionId)) continue;
     if (event.ts < from || event.ts >= to) continue;
     attempts += 1;
     if (event.payload.correct === true) correct += 1;
@@ -125,16 +151,16 @@ function accuracyBetween(events, part, from, to) {
  * Tổng quan một phần thi: toàn bộ, 7 ngày gần nhất, và 7 ngày trước đó để so xu hướng.
  * `delta` là chênh lệch điểm phần trăm (7 ngày này − 7 ngày trước), null nếu thiếu số liệu một trong hai bên.
  * @param {Array<object>} events
- * @param {'part5'|'listening'} part
+ * @param {'reading'|'listening'|'part2'|'part3'|'part4'|'part5'|'part6'|'part7'} which - một kỹ năng hoặc một phần cụ thể
  * @param {number} [now]
  */
-export function examOverview(events, part, now = Date.now()) {
+export function examOverview(events, which, now = Date.now()) {
   const weekStart = startOfDay(now, 6);
   const prevStart = startOfDay(now, 13);
   const end = startOfDay(now, -1); // hết ngày hôm nay
-  const all = accuracyBetween(events, part, 0, end);
-  const recent = accuracyBetween(events, part, weekStart, end);
-  const previous = accuracyBetween(events, part, prevStart, weekStart);
+  const all = accuracyBetween(events, which, 0, end);
+  const recent = accuracyBetween(events, which, weekStart, end);
+  const previous = accuracyBetween(events, which, prevStart, weekStart);
   const delta = recent.accuracy !== null && previous.accuracy !== null
     ? Math.round((recent.accuracy - previous.accuracy) * 100)
     : null;
@@ -184,7 +210,10 @@ export function weakestTypes(questions, quizStates, { minAttempts = 3, limit = 4
 
 /** Giây ước tính cho mỗi việc, khớp nhịp thực tế đã dùng ở today.js / màn phân loại. */
 export const STUDY_SECONDS = Object.freeze({
-  'vocab.reviewed': 10, 'vocab.triaged': 4, part5: 25, listening: 35,
+  'vocab.reviewed': 10, 'vocab.triaged': 4,
+  part2: 35,                                  // nghe câu hỏi + 3 câu đáp + chọn
+  part3: 45, part4: 45,                       // phần chia đều cho 3 câu của một đoạn hội thoại/bài nói
+  part5: 25, part6: 45, part7: 60,            // đọc đoạn dài mất nhiều thời gian hơn
 });
 
 /**
@@ -241,13 +270,13 @@ export function matureTrend(events, statesNow, now = Date.now()) {
 }
 
 /**
- * Độ chính xác gộp Part 5 và nghe: 7 ngày gần nhất và 7 ngày trước đó.
+ * Độ chính xác gộp hai kỹ năng Đọc + Nghe (mọi Part): 7 ngày gần nhất và 7 ngày trước đó.
  * @param {Array<object>} events
  * @param {number} [now]
  * @returns {{recent: {attempts: number, correct: number, accuracy: number|null}, previous: {attempts: number, correct: number, accuracy: number|null}, delta: number|null}}
  */
 export function combinedExam(events, now = Date.now()) {
-  const parts = ['part5', 'listening'].map((part) => examOverview(events, part, now));
+  const parts = ['reading', 'listening'].map((skill) => examOverview(events, skill, now));
   const merge = (key) => {
     const attempts = parts.reduce((sum, p) => sum + p[key].attempts, 0);
     const correct = parts.reduce((sum, p) => sum + p[key].correct, 0);
