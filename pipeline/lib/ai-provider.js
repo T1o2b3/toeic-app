@@ -83,7 +83,9 @@ export async function withRetry(task, { retries = 4, baseDelayMs = 2000, wait = 
     } catch (error) {
       lastError = error;
       const status = error?.status;
-      const retriable = status === undefined || status === 429 || status >= 500;
+      // Hết hạn mức NGÀY thì thử lại bao nhiêu lần cũng vẫn hỏng — trả về ngay để bên gọi đổi model.
+      // (Trước đây vẫn lùi 2+4+8+16 giây rồi mới báo, phí gần 30 giây mỗi lô.)
+      const retriable = !isDailyQuotaError(error) && (status === undefined || status === 429 || status >= 500);
       if (!retriable || attempt === retries) break;
       // API tự nói nên chờ bao lâu thì nghe theo, còn không thì lùi gấp đôi mỗi lần.
       const suggested = error?.retryDelayMs;

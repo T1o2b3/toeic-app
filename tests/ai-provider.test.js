@@ -231,3 +231,28 @@ describe('fetchIpaMany', () => {
     expect(fetchImpl).not.toHaveBeenCalled();
   });
 });
+
+describe('withRetry với lỗi hết hạn mức ngày', () => {
+  it('KHÔNG thử lại — thử lại bao nhiêu lần cũng hỏng, chỉ tổ phí gần 30 giây mỗi lô', async () => {
+    const waits = [];
+    let calls = 0;
+    const task = async () => {
+      calls += 1;
+      throw Object.assign(new Error('cạn'), { status: 429, quotaId: 'GenerateRequestsPerDayPerProjectPerModel' });
+    };
+    await expect(withRetry(task, { wait: async (ms) => { waits.push(ms); } })).rejects.toThrow('cạn');
+    expect(calls).toBe(1);
+    expect(waits).toEqual([]);
+  });
+
+  it('vẫn thử lại với lỗi "gửi quá nhanh" (429 theo PHÚT)', async () => {
+    let calls = 0;
+    const task = async () => {
+      calls += 1;
+      if (calls < 3) throw Object.assign(new Error('nhanh quá'), { status: 429, quotaId: 'GenerateRequestsPerMinutePerProject' });
+      return 'xong';
+    };
+    await expect(withRetry(task, { wait: async () => {} })).resolves.toBe('xong');
+    expect(calls).toBe(3);
+  });
+});

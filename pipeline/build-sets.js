@@ -14,7 +14,8 @@ import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { buildSetPrompt, buildSetVerifyPrompt, SET_PROMPT_VERSION } from './lib/prompt-sets.js';
 import { isWellFormedSet, setKey, crossCheckSets, assembleSet } from './lib/set-check.js';
 import { parseVocabResponse } from './lib/prompt-vocab.js';
-import { createGeminiProvider, withRetry, sleep, isDailyQuotaError, DEFAULT_GEMINI_MODELS } from './lib/ai-provider.js';
+import { sleep } from './lib/ai-provider.js';
+import { createModelPair, aiStep, QUOTA_MESSAGE } from './lib/model-pair.js';
 import { openCache } from './lib/cache.js';
 import { createValidator } from './lib/validate-deck.js';
 import { synthesize, runLimited } from './lib/tts.js';
@@ -53,64 +54,45 @@ function parseArgs(argv) {
 /** Sinh + kiểm định tới đủ mục tiêu (đếm theo dạng) hoặc hết hạn mức. */
 async function generate({ part, variant, target, batchSize, cache }) {
   const today = new Date().toISOString().slice(0, 10);
-  const models = (process.env.GEMINI_MODELS ?? DEFAULT_GEMINI_MODELS.join(','))
-    .split(',').map((m) => m.trim()).filter(Boolean);
-  if (models.length < 2) throw new Error('Cần ít nhất 2 model: một để sinh, một để kiểm định (D12)');
-
+  const pair = createModelPair();
   const ofVariant = () => Object.values(cache.snapshot()).filter((s) => (part !== 7 || s.kind === variant));
   console.log(`Part ${part}${variant ? ` (${variant})` : ''}: đã có ${ofVariant().length} bộ. Mục tiêu: ${target}.`);
-  let writerIndex = 0;
-  let solverIndex = 1;
   let stalls = 0;
 
   while (ofVariant().length < target) {
-    if (writerIndex >= models.length || solverIndex >= models.length) {
-      console.log('\nHết hạn mức của các model hôm nay. Chạy lại ngày mai để làm tiếp.');
+    if (pair.exhausted()) {
+      console.log(QUOTA_MESSAGE);
       return;
     }
     if (stalls >= 4) { console.log('\n4 lô liền không thêm được bộ nào — dừng để khỏi đốt hạn mức. Chạy lại sau.'); return; }
 
     const need = Math.min(batchSize, target - ofVariant().length);
-    const writer = createGeminiProvider({ apiKey: process.env.GEMINI_API_KEY, model: models[writerIndex] });
-    const solver = createGeminiProvider({ apiKey: process.env.GEMINI_API_KEY, model: models[solverIndex] });
+    const writer = pair.provider('writer');
+    const solver = pair.provider('solver');
     const offset = cache.size();
     const topics = Array.from({ length: need }, (_, i) => TOPICS[(offset + i) % TOPICS.length]);
 
-    let drafted;
-    try {
-      const text = await withRetry(() => writer.generate(buildSetPrompt({ part, count: need, variant, topics })));
-      drafted = parseVocabResponse(text).filter((item) => isWellFormedSet(part, variant, item));
-    } catch (error) {
-      if (isDailyQuotaError(error)) {
-        console.log(`${writer.model} hết hạn mức ngày → đổi model sinh đề`);
-        writerIndex += 1;
-        if (writerIndex === solverIndex) writerIndex += 1;
-        continue;
-      }
-      console.error(`Sinh đề lỗi: ${error.message.slice(0, 160)}`);
-      stalls += 1;
-      await sleep(4000);
-      continue;
-    }
+    const draft = await aiStep({
+      pair, role: 'writer', provider: writer,
+      run: () => writer.generate(buildSetPrompt({ part, count: need, variant, topics })),
+      parse: (text) => parseVocabResponse(text).filter((item) => isWellFormedSet(part, variant, item)),
+    });
+    if (draft.status === 'quota') continue;
+    if (draft.status === 'error') { stalls += 1; await sleep(4000); continue; }
+    const drafted = draft.value;
 
     const seen = new Set(Object.values(cache.snapshot()).map(setKey));
     const fresh = drafted.filter((item) => !seen.has(setKey(item)));
     if (fresh.length === 0) { console.log('Lô này không có bộ mới hợp lệ.'); stalls += 1; await sleep(4000); continue; }
 
-    let solved;
-    try {
-      solved = parseVocabResponse(await withRetry(() => solver.generate(buildSetVerifyPrompt(fresh))));
-    } catch (error) {
-      if (isDailyQuotaError(error)) {
-        console.log(`${solver.model} hết hạn mức ngày → đổi model kiểm định`);
-        solverIndex += 1;
-        if (solverIndex === writerIndex) solverIndex += 1;
-        continue;
-      }
-      console.error(`Kiểm định lỗi: ${error.message.slice(0, 160)}`);
-      stalls += 1;
-      continue;
-    }
+    const check = await aiStep({
+      pair, role: 'solver', provider: solver,
+      run: () => solver.generate(buildSetVerifyPrompt(fresh)),
+      parse: parseVocabResponse,
+    });
+    if (check.status === 'quota') continue;
+    if (check.status === 'error') { stalls += 1; continue; }
+    const solved = check.value;
 
     const { agreed, rejected } = crossCheckSets(fresh, solved);
     for (const item of agreed) {
