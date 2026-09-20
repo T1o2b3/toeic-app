@@ -9,6 +9,11 @@
  * của app do AI ra nên độ khó không hiệu chuẩn; một con số điểm sẽ là số bịa (D36).
  */
 
+import { shuffle } from './shuffle.js';
+import { composeRound } from './part5.js';
+
+export { shuffle };
+
 /** Quy cách từng phần: số câu mục tiêu, kỹ năng. Part 7 tách 3 dạng vì đề thật chia như vậy. */
 export const EXAM_SPEC = Object.freeze({
   part2: { skill: 'listening', questions: 25 },
@@ -24,9 +29,6 @@ export const PART7_SPLIT = Object.freeze({ single: 29, double: 10, triple: 15 })
 
 export const PART_ORDER = Object.freeze(['part2', 'part3', 'part4', 'part5', 'part6', 'part7']);
 
-/** Thời gian mỗi kỹ năng ở đề thật (phút). */
-export const SKILL_MINUTES = Object.freeze({ listening: 45, reading: 75 });
-
 /** Các chế độ chọn ở màn thi thử. */
 export const EXAM_MODES = Object.freeze({
   full: { label: 'Đề đủ', parts: PART_ORDER },
@@ -35,21 +37,6 @@ export const EXAM_MODES = Object.freeze({
   ...Object.fromEntries(PART_ORDER.map((p) => [p, { label: `Riêng Part ${p.slice(4)}`, parts: [p] }])),
 });
 
-/**
- * Fisher–Yates: xáo đều (khác sort(() => random() - 0.5) vốn thiên lệch).
- * @template T
- * @param {T[]} list
- * @param {() => number} random
- * @returns {T[]}
- */
-export function shuffle(list, random = Math.random) {
-  const out = [...list];
-  for (let i = out.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(random() * (i + 1));
-    [out[i], out[j]] = [out[j], out[i]];
-  }
-  return out;
-}
 
 /** Số câu hỏi của một đơn vị (một câu lẻ hoặc một bộ). */
 const sizeOf = (unit) => unit.questions.length;
@@ -104,7 +91,13 @@ export function buildExamForm(banks, mode, { random = Math.random, exclude = new
     const spec = EXAM_SPEC[part];
     let units;
     if (part === 'part2') units = pool(banks.part2).slice(0, spec.questions).map((q) => single('part2', q));
-    else if (part === 'part5') units = pool(banks.part5).slice(0, spec.questions).map((q) => single('part5', q));
+    else if (part === 'part5') {
+      // Part 5 lấy theo MẶT CẮT của đề thật (từ loại / từ vựng / ngữ pháp mỗi nhóm ~1/3), không lấy ngẫu nhiên
+      // đều tay — ngân hàng có 12 dạng gần bằng nhau nên lấy đều sẽ ra 2/3 số câu là ngữ pháp (D39).
+      // Xáo TRƯỚC khi chia hạn mức để mỗi lần thi ra câu khác nhau (trong đề thi không có ưu tiên câu từng sai).
+      units = composeRound(pool(banks.part5), new Map(), { size: spec.questions, random })
+        .map((q) => single('part5', q));
+    }
     else if (part === 'part7') {
       const sets = pool(banks.sets?.[7]).map((s) => setUnit('part7', s));
       // Đề thật chia Part 7 thành bộ đơn / đôi / ba; nếu thiếu dạng nào thì dồn số câu thiếu sang bộ đơn.
@@ -145,22 +138,6 @@ export function formUnits(form) {
 }
 
 /**
- * Thời gian cho đề (giây): mỗi kỹ năng có trong đề tính theo tỉ lệ số câu so với đề đủ.
- * @param {ReturnType<typeof buildExamForm>} form
- * @returns {number}
- */
-export function timeLimitSeconds(form) {
-  let seconds = 0;
-  for (const skill of ['listening', 'reading']) {
-    const have = form.sections.filter((s) => s.skill === skill).reduce((n, s) => n + s.questionCount, 0);
-    const full = Object.values(EXAM_SPEC).filter((s) => s.skill === skill).reduce((n, s) => n + s.questions, 0);
-    // Chặn ở 1: Part 7 có thể vượt 1 câu do bộ 2 câu, nhưng giờ làm bài không được dài hơn đề thật.
-    seconds += Math.round(SKILL_MINUTES[skill] * 60 * Math.min(1, have / full));
-  }
-  return seconds;
-}
-
-/**
  * Chấm bài.
  * @param {ReturnType<typeof buildExamForm>} form
  * @param {Record<string, string>} answers - id câu → chữ cái đã chọn
@@ -191,29 +168,29 @@ export function scoreExam(form, answers) {
 }
 
 /**
- * Đồng hồ mm:ss (hoặc h:mm:ss khi từ 1 giờ).
- * @param {number} seconds
- * @returns {string}
- */
-export function formatClock(seconds) {
-  const s = Math.max(0, Math.floor(seconds));
-  const h = Math.floor(s / 3600);
-  const m = Math.floor((s % 3600) / 60);
-  const pad = (n) => String(n).padStart(2, '0');
-  return h > 0 ? `${h}:${pad(m)}:${pad(s % 60)}` : `${pad(m)}:${pad(s % 60)}`;
-}
-
-/**
  * Sự kiện tóm tắt một bài thi để lưu vào nhật ký.
+ *
+ * Có lưu cả ĐIỂM ƯỚC LƯỢNG (D39) để sau này vẽ được đường tiến bộ mà không phải tính lại từ đầu —
+ * và để nếu bảng quy đổi sau này đổi thì con số Huy đã thấy hôm đó vẫn còn nguyên trong nhật ký.
+ * Nhật ký là append-only (ràng buộc #5) nên thêm trường mới là an toàn: bản app cũ chỉ bỏ qua.
+ *
  * @param {ReturnType<typeof scoreExam>} score
- * @param {{mode: string, seconds: number, timedOut: boolean}} meta
+ * @param {{mode: string, seconds: number, timedOut: boolean, estimate?: object}} meta
  * @returns {object} payload cho `exam.finished`
  */
-export function examSummaryPayload(score, { mode, seconds, timedOut }) {
-  return {
+export function examSummaryPayload(score, { mode, seconds, timedOut, estimate }) {
+  const payload = {
     mode, seconds, timedOut, correct: score.correct, answered: score.answered, total: score.total,
     byPart: Object.fromEntries(Object.entries(score.byPart).map(([p, x]) => [p, { correct: x.correct, total: x.total }])),
   };
+  if (estimate) {
+    payload.estimate = {
+      complete: estimate.complete,
+      total: estimate.total,
+      sections: estimate.sections.map((x) => ({ skill: x.skill, point: x.point, low: x.low, high: x.high, projected: x.projected })),
+    };
+  }
+  return payload;
 }
 
 /**

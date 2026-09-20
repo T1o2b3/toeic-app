@@ -1,8 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import {
-  EXAM_SPEC, PART7_SPLIT, PART_ORDER, EXAM_MODES, SKILL_MINUTES, shuffle, pickSets, buildExamForm, formUnits,
-  timeLimitSeconds, scoreExam, formatClock, examSummaryPayload, availability, modeStatus,
+  EXAM_SPEC, PART7_SPLIT, PART_ORDER, EXAM_MODES, shuffle, pickSets, buildExamForm, formUnits,
+  scoreExam, examSummaryPayload, availability, modeStatus,
 } from '../src/logic/exam.js';
+import {
+  SKILL_MINUTES, skillSeconds, examPhases, timeLimitSeconds, formatClock, numberQuestions, PART_FIRST_NUMBER,
+} from '../src/logic/exam-time.js';
 
 /** Bộ giả với n câu; câu có đáp án cố định 'A' để dễ chấm. */
 const makeSet = (id, n, kind) => ({
@@ -241,5 +244,103 @@ describe('availability / modeStatus', () => {
     expect(modeStatus('full', thin)).toEqual({ playable: true, missing: 194 - 10, total: 194 });
     expect(modeStatus('part5', thin).playable).toBe(false);
     expect(modeStatus('listening', thin).missing).toBe(94 - 10);
+  });
+});
+
+describe('hai phần tính giờ riêng như đề thật (D39)', () => {
+  it('đề đủ chia thành Nghe 45 phút rồi Đọc 75 phút, không gộp làm một', () => {
+    const form = buildExamForm(banks, 'full', { random: seeded() });
+    const phases = examPhases(form);
+    expect(phases.map((p) => p.skill)).toEqual(['listening', 'reading']);
+    expect(phases[0].seconds).toBe(45 * 60);
+    expect(phases[1].seconds).toBe(75 * 60);
+    expect(timeLimitSeconds(form)).toBe(120 * 60);
+  });
+
+  it('các đơn vị của phần Nghe đứng liền nhau và đúng trước phần Đọc', () => {
+    const form = buildExamForm(banks, 'full', { random: seeded(3) });
+    const units = formUnits(form);
+    const phases = examPhases(form);
+    expect(phases[0].from).toBe(0);
+    expect(phases[1].from).toBe(phases[0].to);
+    expect(phases[1].to).toBe(units.length);
+    for (const unit of units.slice(phases[0].from, phases[0].to)) {
+      expect(['part2', 'part3', 'part4']).toContain(unit.part);
+    }
+    for (const unit of units.slice(phases[1].from, phases[1].to)) {
+      expect(['part5', 'part6', 'part7']).toContain(unit.part);
+    }
+  });
+
+  it('đề một kỹ năng chỉ có MỘT phần; giờ tính theo tỉ lệ số câu', () => {
+    const reading = examPhases(buildExamForm(banks, 'reading', { random: seeded() }));
+    expect(reading).toHaveLength(1);
+    expect(reading[0].seconds).toBe(75 * 60);
+
+    const part5 = examPhases(buildExamForm(banks, 'part5', { random: seeded() }));
+    expect(part5).toHaveLength(1);
+    expect(part5[0].seconds).toBe(Math.round(75 * 60 * 30 / 100)); // 30/100 câu của phần Đọc
+  });
+
+  it('ngân hàng thiếu câu thì giờ ngắn lại theo, không bao giờ dài hơn đề thật', () => {
+    const thin = { ...banks, part2: flat('l2', 5) };
+    const form = buildExamForm(thin, 'listening', { random: seeded() });
+    const phases = examPhases(form);
+    expect(phases[0].seconds).toBeLessThan(45 * 60);
+    expect(skillSeconds(form, 'listening')).toBe(phases[0].seconds);
+    expect(skillSeconds(form, 'reading')).toBe(0);
+  });
+});
+
+describe('số hiệu câu theo đề thật', () => {
+  it('mỗi phần bắt đầu đúng số của đề thật: Part 5 = 101, Part 7 = 147', () => {
+    expect(PART_FIRST_NUMBER).toEqual({ part2: 7, part3: 32, part4: 71, part5: 101, part6: 131, part7: 147 });
+    const form = buildExamForm(banks, 'full', { random: seeded() });
+    const numbers = numberQuestions(form);
+    const firstOf = (part) => {
+      const section = form.sections.find((s) => s.part === part);
+      return numbers.get(section.units[0].questions[0].id);
+    };
+    expect(firstOf('part2')).toBe(7);
+    expect(firstOf('part5')).toBe(101);
+    expect(firstOf('part7')).toBe(147);
+  });
+
+  it('phần trước thiếu câu KHÔNG làm lệch số hiệu của phần sau', () => {
+    const thin = { ...banks, part2: flat('l2', 5) };
+    const form = buildExamForm(thin, 'full', { random: seeded() });
+    const numbers = numberQuestions(form);
+    const part5 = form.sections.find((s) => s.part === 'part5');
+    expect(numbers.get(part5.units[0].questions[0].id)).toBe(101);
+  });
+
+  it('đánh số liên tục trong một phần, không trùng', () => {
+    const form = buildExamForm(banks, 'reading', { random: seeded(9) });
+    const numbers = numberQuestions(form);
+    const part6 = form.sections.find((s) => s.part === 'part6');
+    const list = part6.units.flatMap((u) => u.questions).map((q) => numbers.get(q.id));
+    expect(list).toEqual(list.map((_, i) => 131 + i));
+    expect(new Set(numbers.values()).size).toBe(numbers.size);
+  });
+});
+
+describe('Part 5 trong đề thi cũng theo mặt cắt đề thật', () => {
+  it('30 câu Part 5 chia đều ba nhóm, và mỗi lần dựng đề ra câu khác nhau', () => {
+    const typed = Array.from({ length: 240 }, (_, i) => ({
+      id: `p5-${i}`, status: 'active', answer: 'A',
+      errorType: ['word-form', 'vocabulary', 'verb-tense', 'preposition', 'relative-clause', 'quantifier'][i % 6],
+    }));
+    const form = buildExamForm({ ...banks, part5: typed }, 'part5', { random: seeded() });
+    const questions = form.sections[0].units.flatMap((u) => u.questions);
+    expect(questions).toHaveLength(30);
+    const count = (type) => questions.filter((q) => q.errorType === type).length;
+    expect(count('word-form')).toBe(10);
+    expect(count('vocabulary')).toBe(10);
+    expect(count('verb-tense') + count('preposition') + count('relative-clause') + count('quantifier')).toBe(10);
+
+    const other = buildExamForm({ ...banks, part5: typed }, 'part5', { random: seeded(99) });
+    const ids = new Set(questions.map((q) => q.id));
+    const otherIds = other.sections[0].units.flatMap((u) => u.questions).map((q) => q.id);
+    expect(otherIds.some((id) => !ids.has(id))).toBe(true);
   });
 });

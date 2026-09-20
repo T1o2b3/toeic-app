@@ -21,6 +21,11 @@
         "set": { "type": "string", "pattern": "^[a-z0-9-]+$" },
         "part": { "type": "integer", "enum": [5] },
         "status": { "enum": ["active", "retired"] },
+        "retiredReason": {
+          "type": "string",
+          "minLength": 10,
+          "description": "Vì sao câu này bị loại. Id nội dung là vĩnh viễn (ràng buộc #6) nên câu hỏng ở lại làm lịch sử, kèm lý do."
+        },
         "stem": {
           "type": "string",
           "minLength": 20,

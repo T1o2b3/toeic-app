@@ -1,31 +1,23 @@
 /**
  * Dựng một đơn vị của bài thi thử: một câu lẻ (Part 2, Part 5) hoặc một bộ (Part 3, 4, 6, 7).
  *
+ * **Bố cục hai bên (D41):** tài liệu (đoạn văn / nút nghe / câu đề) ở BÊN TRÁI, câu hỏi và phương án ở
+ * BÊN PHẢI khi màn hình đủ rộng; trên điện thoại thì xếp dọc như cũ. CSS lo phần chia cột (`.split`),
+ * ở đây chỉ dựng đúng hai khối.
+ *
  * Khác màn luyện: KHÔNG chấm ngay, KHÔNG giải thích, KHÔNG gạt từ — chọn xong chỉ tô đáp án đã chọn, đổi lại được.
  * Part 2 chỉ hiện chữ A/B/C (đề thật không in chữ của câu hỏi và câu đáp).
+ * Câu mang SỐ HIỆU THẬT của đề (Part 5 = 101–130, Part 6 = 131–146…) chứ không phải 1, 2, 3.
  */
 import { el } from './dom.js';
+import { splitBlanks } from '../logic/part5.js';
+import { optionList, splitPane } from './blocks.js';
 
 const LETTERS4 = ['A', 'B', 'C', 'D'];
 const LETTERS3 = ['A', 'B', 'C'];
 
-/**
- * Một dãy nút chọn đáp án. `labels` = false thì chỉ hiện chữ cái (Part 2).
- * @param {{id: string}} question
- * @param {string[]} letters
- * @param {(letter: string) => string|null} textOf
- * @param {Record<string, string>} answers
- * @param {(id: string, letter: string) => void} pick
- */
-function renderOptions(question, letters, textOf, answers, pick) {
-  return el('div', { class: 'options' }, letters.map((letter) => el('button', {
-    class: answers[question.id] === letter ? 'option picked' : 'option',
-    onClick: () => pick(question.id, letter),
-  }, [
-    el('span', { class: 'letter', text: letter }),
-    el('span', { class: 'option-text', text: textOf(letter) ?? '' }),
-  ])));
-}
+/** Đề của câu Part 6 chỉ là "Blank [1]" — đề thật không in dòng này, chỉ in 4 phương án. */
+const BLANK_STEM = /^\s*Blank\s*\[\d+\]\s*$/i;
 
 /** Nút Nghe của một đơn vị âm thanh. */
 function renderPlay(ctx, label) {
@@ -39,42 +31,73 @@ function renderPlay(ctx, label) {
 }
 
 /**
+ * In chữ kèm chỗ trống đúng kiểu đề thật: dãy gạch nối dài, có số câu thì in số ngay trước
+ * ("… chairs 131. ------- by the shortage …") — nhìn đoạn văn là biết đang điền câu nào.
+ * @param {string} text
+ * @param {number[]} [numbers]
+ * @returns {Array<HTMLElement|string>}
+ */
+export function renderBlanks(text, numbers = []) {
+  return splitBlanks(text, numbers).map((piece) => {
+    if (piece.type === 'text') return piece.text;
+    if (piece.number === null) return el('span', { class: 'blank', text: piece.text });
+    return el('span', { class: 'blank numbered' }, [
+      el('span', { class: 'blank-no', text: `${piece.number}.` }),
+      el('span', { text: ` ${piece.text}` }),
+    ]);
+  });
+}
+
+/**
  * @param {object} unit - {kind: 'single'|'set', part, item, questions}
  * @param {{answers: Record<string, string>, pick: Function, play: Function, playing: boolean, heard: number, error: string|null}} ctx
+ * @param {Map<string, number>} [numbers] - id câu → số hiệu trong đề thật
  * @returns {HTMLElement}
  */
-export function renderUnit(unit, ctx) {
+export function renderUnit(unit, ctx, numbers = new Map()) {
   const { item, part } = unit;
+  const numberOf = (question) => numbers.get(question.id) ?? null;
 
   if (unit.kind === 'single' && part === 'part2') {
-    return el('div', {}, [
-      renderPlay(ctx, 'Nghe câu này'),
-      renderOptions(item, LETTERS3, () => '', ctx.answers, ctx.pick),
-      el('p', { class: 'footnote', text: 'Part 2: chỉ nghe, không có chữ. Chọn A, B hoặc C.' }),
-    ]);
+    const number = numberOf(item);
+    return splitPane(
+      [renderPlay(ctx, 'Nghe câu này'), el('p', { class: 'footnote', text: 'Part 2: chỉ nghe, không có chữ. Chọn A, B hoặc C.' })],
+      [
+        number ? el('div', { class: 'q-no', text: `Câu ${number}` }) : '',
+        optionList({ letters: LETTERS3, picked: ctx.answers[item.id], onPick: (l) => ctx.pick(item.id, l) }),
+      ],
+    );
   }
 
   if (unit.kind === 'single') {
-    return el('div', {}, [
-      el('div', { class: 'card' }, [el('div', { class: 'stem', text: item.stem })]),
-      renderOptions(item, LETTERS4, (l) => item.options[l], ctx.answers, ctx.pick),
-    ]);
+    const number = numberOf(item);
+    return splitPane(
+      [el('div', { class: 'card' }, [
+        number ? el('span', { class: 'q-no inline', text: `${number}.` }) : '',
+        el('span', { class: 'stem' }, renderBlanks(item.stem)),
+      ])],
+      [optionList({ letters: LETTERS4, textOf: (l) => item.options[l], picked: ctx.answers[item.id], onPick: (l) => ctx.pick(item.id, l) })],
+    );
   }
 
+  const numberList = unit.questions.map((q) => numberOf(q));
   const material = part === 'part3' || part === 'part4'
-    ? renderPlay(ctx, 'Nghe đoạn này')
-    : el('div', {}, item.passages.map((p) => el('div', { class: 'card passage' }, [
-        item.passages.length > 1 ? el('div', { class: 'gaps-title', text: p.label }) : '',
-        el('div', { class: 'stem', text: p.text }),
-      ])));
+    ? [renderPlay(ctx, 'Nghe đoạn này')]
+    : item.passages.map((passage) => el('div', { class: 'card passage' }, [
+        item.passages.length > 1 ? el('div', { class: 'gaps-title', text: passage.label }) : '',
+        el('div', { class: 'stem' }, renderBlanks(passage.text, part === 'part6' ? numberList : [])),
+      ]));
 
-  return el('div', {}, [
-    material,
-    ...unit.questions.map((question, i) => el('section', { class: 'set-q' }, [
-      el('div', { class: 'set-q-stem', text: `${i + 1}. ${question.stem}` }),
-      renderOptions(question, LETTERS4, (l) => question.options[l], ctx.answers, ctx.pick),
-    ])),
-  ]);
+  return splitPane(material, unit.questions.map((question, i) => {
+    const number = numberList[i] ?? i + 1;
+    const plain = BLANK_STEM.test(question.stem);
+    return el('section', { class: 'set-q' }, [
+      el('div', { class: 'set-q-stem' }, plain
+        ? [el('span', { class: 'q-no', text: `Câu ${number}` })]
+        : [el('span', { class: 'q-no inline', text: `${number}.` }), ` ${question.stem}`]),
+      optionList({ letters: LETTERS4, textOf: (l) => question.options[l], picked: ctx.answers[question.id], onPick: (l) => ctx.pick(question.id, l) }),
+    ]);
+  }));
 }
 
 /** Mô tả một câu để xem lại sau bài thi: đề + phương án (Part 2 là chữ nghe được). */

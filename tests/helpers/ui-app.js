@@ -70,11 +70,16 @@ const SETS = {
       { ...baseSet('p7-0002', 7, 'double'), questions: qs('p7-0002', 5, ['detail', 'cross-reference']), passages: [{ label: 'Email', text: 'Hello team, please confirm your attendance at the training session next Tuesday afternoon.' }, { label: 'Reply', text: 'Thanks for the reminder; I will attend but need to leave early at four for a client meeting.' }] }],
 };
 
-/** @returns {Promise<object>} store, root và các hàm thao tác/đọc màn hình */
-export async function bootApp() {
+/**
+ * @param {{questions?: object[]}} [override] - thay ngân hàng Part 5 (mặc định chỉ 1 câu, đủ cho hầu hết test;
+ *   test nào cần mặt cắt đề thật thì truyền vào một ngân hàng đủ 12 dạng)
+ * @returns {Promise<object>} store, root và các hàm thao tác/đọc màn hình
+ */
+export async function bootApp(override = {}) {
+  const questions = override.questions ? { ...QUESTIONS, entries: override.questions } : QUESTIONS;
   const fetchImpl = async (url) => {
     const data = String(url).includes('vocab-toeic-tsl') ? DECK
-      : String(url).includes('questions-part5') ? QUESTIONS
+      : String(url).includes('questions-part5') ? questions
       : String(url).includes('listening-part2') ? LISTENING
       : /sets-part(\d)/.test(String(url)) ? { set: 'x', part: 0, version: 1, entries: SETS[Number(String(url).match(/sets-part(\d)/)[1])] ?? [] } : null;
     return data ? { ok: true, status: 200, json: async () => data } : { ok: false, status: 404 };

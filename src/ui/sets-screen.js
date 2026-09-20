@@ -1,8 +1,12 @@
 /**
  * Màn luyện các bộ "tài liệu + nhiều câu hỏi": Part 3 (hội thoại), 4 (bài nói), 6 (điền đoạn văn), 7 (đọc hiểu).
  *
- * Địa chỉ #/sets?part=N. Đọc: hiện đoạn văn rồi trả lời các câu. Nghe: nút Nghe phát cả đoạn, câu hỏi hiện sẵn
- * (đề thật cho xem trước câu hỏi), chữ (transcript) chỉ hiện sau khi trả lời hết. Mỗi câu chấm ngay + giải thích.
+ * Địa chỉ #/sets?part=N. Bố cục HAI CỘT trên màn rộng (D41): tài liệu bên trái, câu hỏi bên phải; điện thoại
+ * thì xếp dọc. Đọc: hiện đoạn văn rồi trả lời các câu. Nghe: nút Nghe phát cả đoạn, câu hỏi hiện sẵn
+ * (đề thật cho xem trước câu hỏi), chữ (transcript) chỉ hiện sau khi trả lời hết.
+ *
+ * **Chấm cả bộ một lượt (D42):** chọn đáp án chỉ tô lại và đổi được; trả lời hết bộ mới hiện đúng/sai +
+ * giải thích, rồi mới ghi nhật ký MỘT lần cho cả bộ (chấm ngay từng câu sẽ lộ bài cho các câu sau).
  * Kết quả ghi bằng `question.answered` như Part 2/5 nên thống kê lỗ hổng dùng chung.
  */
 import { el, goTo } from './dom.js';
@@ -14,7 +18,9 @@ import { SPEEDS, turnSequence, audioUrl } from '../logic/listen.js';
 import { getListenSpeed, setListenSpeed } from '../data/prefs.js';
 import { createPlayer } from './audio-player.js';
 import { renderStem, renderTray, resetCapture } from './capture-tray.js';
-import { renderQuestion, renderTranscript } from './set-blocks.js';
+import { renderQuestion, renderTranscript, renderHold } from './set-blocks.js';
+import { splitPane } from './blocks.js';
+import { createEvent } from '../logic/events.js';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
 
@@ -28,6 +34,7 @@ let playing = false;
 let nowTurn = null;            // lượt nói đang phát
 let heard = false;
 let playError = null;
+let recorded = false;         // đã ghi nhật ký cho bộ này chưa (chỉ ghi MỘT lần, khi trả lời hết)
 
 let makePlayer = () => createPlayer();
 let player = null;
@@ -99,22 +106,22 @@ export function renderSets(store, params) {
   });
   const done = allAnswered(set);
 
-  const children = [
-    el('div', { class: 'topbar' }, [
-      el('button', { class: 'link', text: '← Bài thi', onClick: () => goTo('/exams') }),
-      el('span', { class: 'progress', text: `còn ${remaining} bộ · ${PART_LABEL[part]}` }),
-    ]),
-    el('h1', { class: 'set-title', text: set.title || PART_LABEL[part] }),
+  const left = set.questions.filter((q) => !answers[q.id]).length;
+
+  // Cột trái: tài liệu (đoạn văn / nút nghe), khay gạt từ, và chữ hội thoại khi đã làm xong.
+  const material = [
     isListening() ? renderListenCard(store, set) : renderPassages(store, set),
-    ...set.questions.map((question, index) => renderQuestion(
-      question, index, answers[question.id] ?? null, (letter) => answer(store, set, question, letter),
-    )),
+    ...(done && isListening() ? [renderTranscript(store, set, nowTurn)] : []),
+    ...(done || !isListening() ? [renderTray(store, { id: set.id })] : []),
   ];
 
-  if (done) {
-    children.push(
-      ...(isListening() ? [renderTranscript(store, set, nowTurn)] : []),
-      renderTray(store, { id: set.id }),
+  // Cột phải: các câu hỏi, rồi nút sang bộ kế khi đã chấm.
+  const questions = set.questions.map((question, index) => renderQuestion(
+    question, index, answers[question.id] ?? null, (letter) => pick(store, set, question, letter), done,
+  ));
+  if (!done) questions.push(renderHold(left));
+  else {
+    questions.push(
       el('div', { class: 'actions' }, [
         el('button', { class: 'primary', onClick: () => next(store) }, [
           el('span', { text: 'Bộ tiếp theo' }), el('small', { text: 'phím Space' }),
@@ -124,10 +131,16 @@ export function renderSets(store, params) {
         el('button', { class: 'link', text: '⚑ Báo bộ này có vấn đề', onClick: () => report(store, set) }),
       ]),
     );
-  } else if (!isListening()) {
-    children.push(renderTray(store, { id: set.id }));
   }
-  return el('div', {}, children);
+
+  return el('div', {}, [
+    el('div', { class: 'topbar' }, [
+      el('button', { class: 'link', text: '← Bài thi', onClick: () => goTo('/exams') }),
+      el('span', { class: 'progress', text: `còn ${remaining} bộ · ${PART_LABEL[part]}` }),
+    ]),
+    el('h1', { class: 'set-title', text: set.title || PART_LABEL[part] }),
+    splitPane(material, questions),
+  ]);
 }
 
 function renderNoPart() {
@@ -139,9 +152,11 @@ function renderNoPart() {
 
 /** Đoạn văn của bộ đọc (một, hai hoặc ba tài liệu). Từng từ gạt được (D34). */
 function renderPassages(store, set) {
+  // Part 6: chỗ trống [1], [2]… trong đoạn văn được in kèm số thứ tự câu, như đề thật.
+  const numbers = set.questions.map((_, i) => i + 1);
   return el('div', {}, set.passages.map((passage) => el('div', { class: 'card passage' }, [
     set.passages.length > 1 ? el('div', { class: 'gaps-title', text: passage.label }) : '',
-    renderStem(store, { stem: passage.text }),
+    renderStem(store, { stem: passage.text }, { numbers }),
   ])));
 }
 
@@ -190,19 +205,37 @@ async function play(store, set) {
   }
 }
 
-/** Ghi kết quả một câu. Câu cuối được trả lời thì bộ tính là xong lượt này. */
-async function answer(store, set, question, letter) {
-  if (answers[question.id]) return; // bấm hai lần: chỉ nhận lần đầu
+/**
+ * Chọn đáp án cho một câu. CHƯA chấm, chưa ghi gì — đổi lại thoải mái.
+ * Trả lời tới câu cuối thì chấm cả bộ và ghi nhật ký một lượt.
+ */
+async function pick(store, set, question, letter) {
+  if (allAnswered(set)) return;             // đã chấm rồi thì khoá
   answers = { ...answers, [question.id]: letter };
   locked = set;
-  if (allAnswered(set)) {
-    doneThisRound.add(set.id);
-    getPlayer().stop();
-  }
-  const result = gradeSetAnswer(question, letter);
-  await store.record('question.answered', {
-    questionId: question.id, choice: letter, correct: result.correct, errorType: result.errorType,
+  if (!allAnswered(set)) { store.refresh(); return; }
+
+  doneThisRound.add(set.id);
+  getPlayer().stop();
+  await finish(store, set);
+}
+
+/**
+ * Ghi kết quả CẢ BỘ trong một lượt. Ghi từng câu một sẽ vẽ lại màn nhiều lần và làm nhấp nháy
+ * (đúng lý do exam-screen.js gói sự kiện khi nộp bài).
+ */
+async function finish(store, set) {
+  if (recorded) return;
+  recorded = true;
+  const events = set.questions.map((question) => {
+    const letter = answers[question.id];
+    const result = gradeSetAnswer(question, letter);
+    return createEvent({
+      type: 'question.answered', deviceId: store.deviceId,
+      payload: { questionId: question.id, choice: letter, correct: result.correct, errorType: result.errorType },
+    });
   });
+  await store.importEvents(events);
 }
 
 function next(store) {
@@ -224,6 +257,7 @@ async function report(store, set) {
 function resetProgress() {
   locked = null;
   answers = {};
+  recorded = false;
   heard = false;
   playing = false;
   nowTurn = null;
@@ -252,7 +286,7 @@ export function handleSetsKey(store, event) {
   const byNumber = LETTERS[Number.parseInt(event.key, 10) - 1];
   const byLetter = LETTERS.includes(event.key.toUpperCase?.()) ? event.key.toUpperCase() : null;
   const letter = byNumber ?? byLetter;
-  if (letter) answer(store, set, question, letter);
+  if (letter) pick(store, set, question, letter);
 }
 
 /** Đặt lại khi rời màn. */

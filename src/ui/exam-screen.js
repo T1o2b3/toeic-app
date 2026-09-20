@@ -1,20 +1,22 @@
 /**
- * Thi thử (M15): chọn chế độ → làm bài có tính giờ, không xem đáp án → nộp → kết quả + xem lại câu sai.
+ * Thi thử (M15, dựng lại theo đề thật ở D39): chọn chế độ → làm bài có tính giờ, không xem đáp án → nộp →
+ * kết quả kèm ĐIỂM ƯỚC LƯỢNG + xem lại câu sai.
+ *
+ * Đúng như đề thật: đề đủ chia làm HAI phần tính giờ riêng — Nghe 45 phút rồi Đọc 75 phút — và sang phần
+ * sau thì không quay lại phần trước. Câu mang số hiệu thật (Part 5 = 101–130, Part 7 = 147–200).
  *
  * Chỉ ghi vào nhật ký KHI NỘP (một lần, gói gọn): `question.answered` cho mỗi câu đã trả lời (thêm mode: 'exam')
  * và một `exam.finished` tóm tắt. Vì vậy thoát giữa chừng thì mất bài — làm dở rồi tiếp trên máy khác là M16.
- * KHÔNG quy đổi ra điểm 10–990 (xem logic/exam.js và D36/D38).
  */
 import { el, goTo } from './dom.js';
-import {
-  buildExamForm, formUnits, timeLimitSeconds, scoreExam, formatClock, examSummaryPayload,
-} from '../logic/exam.js';
-import { PART_LABEL } from '../logic/sets.js';
+import { buildExamForm, formUnits, scoreExam, examSummaryPayload } from '../logic/exam.js';
+import { examPhases, numberQuestions, formatClock } from '../logic/exam-time.js';
+import { estimateScore } from '../logic/score.js';
 import { clipSequence, turnSequence, audioUrl } from '../logic/listen.js';
 import { getListenSpeed } from '../data/prefs.js';
 import { createEvent } from '../logic/events.js';
 import { createPlayer } from './audio-player.js';
-import { renderUnit } from './exam-unit.js';
+import { renderRunning, phaseNotice } from './exam-run.js';
 import { renderResult } from './exam-result.js';
 import { renderSetup } from './exam-setup.js';
 
@@ -24,14 +26,19 @@ const LETTERS = ['A', 'B', 'C', 'D'];
 let phase = 'setup';         // 'setup' | 'running' | 'result'
 let form = null;
 let units = [];
+let phases = [];
+let phaseIndex = 0;
+let numbers = new Map();
 let index = 0;               // đơn vị đang làm
 let answers = {};
 let deadline = 0;
 let startedAt = 0;
 let timer = null;
 let confirming = false;      // đang hỏi "còn câu chưa trả lời, nộp?"
+let switching = false;       // đang hỏi "sang phần sau?"
+let switched = false;        // vừa tự chuyển phần vì hết giờ — hiện lời nhắc một lần
 let showPalette = false;
-let result = null;           // {score, seconds, timedOut}
+let result = null;           // {score, seconds, timedOut, estimate}
 let playing = false;
 let heard = {};              // id đơn vị → số lần đã nghe
 let playError = null;
@@ -57,7 +64,7 @@ const isAudioUnit = (unit) => unit.part === 'part2' || unit.part === 'part3' || 
  * @returns {HTMLElement}
  */
 export function renderExam(store) {
-  if (phase === 'running') return renderRunning(store);
+  if (phase === 'running') return renderRunningScreen(store);
   if (phase === 'result') return renderResult(result, () => { reset(); store.refresh(); });
   return renderSetup(banksOf(store), (mode) => start(store, mode));
 }
@@ -67,20 +74,25 @@ function start(store, mode) {
   form = buildExamForm(banksOf(store), mode);
   units = formUnits(form);
   if (units.length === 0) return;
+  phases = examPhases(form);
+  numbers = numberQuestions(form);
   answers = {};
+  phaseIndex = 0;
   index = 0;
   heard = {};
   confirming = false;
+  switching = false;
+  switched = false;
   showPalette = false;
   result = null;
   phase = 'running';
   startedAt = Date.now();
-  deadline = startedAt + timeLimitSeconds(form) * 1000;
+  deadline = startedAt + phases[0].seconds * 1000;
   timer = setInterval(() => tick(store), 1000);
   store.refresh();
 }
 
-/** Mỗi giây: cập nhật đồng hồ tại chỗ (không vẽ lại cả màn) và tự nộp khi hết giờ. */
+/** Mỗi giây: cập nhật đồng hồ tại chỗ (không vẽ lại cả màn); hết giờ thì sang phần sau hoặc tự nộp. */
 function tick(store) {
   const remaining = Math.ceil((deadline - Date.now()) / 1000);
   const clock = document.querySelector('.exam-clock');
@@ -88,87 +100,68 @@ function tick(store) {
     clock.textContent = formatClock(remaining);
     clock.classList.toggle('low', remaining <= 300);
   }
-  if (remaining <= 0) submit(store, true);
+  if (remaining > 0) return;
+  if (phaseIndex < phases.length - 1) nextPhase(store, true);
+  else submit(store, true);
+}
+
+/** Sang phần sau (một chiều, như đề thật). `timedOut` = do hết giờ, không phải do bấm nút. */
+function nextPhase(store, timedOut) {
+  getPlayer().stop();
+  phaseIndex += 1;
+  index = phases[phaseIndex].from;
+  deadline = Date.now() + phases[phaseIndex].seconds * 1000;
+  switching = false;
+  switched = timedOut;
+  playing = false;
+  playError = null;
+  store.refresh();
 }
 
 const unitQuestionCount = (u) => u.questions.length;
-const answeredCount = () => units.reduce((n, u) => n + u.questions.filter((q) => answers[q.id]).length, 0);
-const totalCount = () => units.reduce((n, u) => n + unitQuestionCount(u), 0);
+const countAnswered = (list) => list.reduce((n, u) => n + u.questions.filter((q) => answers[q.id]).length, 0);
+const countQuestions = (list) => list.reduce((n, u) => n + unitQuestionCount(u), 0);
+const phaseUnits = () => units.slice(phases[phaseIndex].from, phases[phaseIndex].to);
 
-/** Số thứ tự câu đầu tiên của đơn vị (để hiện "Câu 12–14"). */
-function firstNumber(at) {
-  return units.slice(0, at).reduce((n, u) => n + unitQuestionCount(u), 0) + 1;
-}
-
-function renderRunning(store) {
+function renderRunningScreen(store) {
   const unit = units[index];
   getPlayer().preload(audioSources(unit)).catch(() => {});
-  const first = firstNumber(index);
-  const last = first + unitQuestionCount(unit) - 1;
-  const remaining = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+  const current = phaseUnits();
 
-  const ctx = {
-    answers, playing, heard: heard[unit.id] ?? 0, error: playError,
-    pick: (id, letter) => { answers = { ...answers, [id]: letter }; confirming = false; store.refresh(); },
-    play: () => play(store, unit),
+  const view = {
+    units, index, phases, phaseIndex, numbers, answers, showPalette, confirming, switching,
+    remaining: Math.max(0, Math.ceil((deadline - Date.now()) / 1000)),
+    atLastUnitOfExam: index >= units.length - 1,
+    totalCount: countQuestions(units),
+    answeredCount: countAnswered(units),
+    phaseTotal: countQuestions(current),
+    phaseAnswered: countAnswered(current),
+    unitCtx: {
+      answers, playing, heard: heard[unit.id] ?? 0, error: playError,
+      pick: (id, letter) => { answers = { ...answers, [id]: letter }; confirming = false; store.refresh(); },
+      play: () => play(store, unit),
+    },
+    onTogglePalette: () => { showPalette = !showPalette; store.refresh(); },
+    onGo: (step) => go(store, step),
+    onJump: (at) => { index = at; store.refresh(); },
+    onAskSubmit: () => { confirming = true; switching = false; store.refresh(); },
+    onAskSwitch: () => { switching = true; confirming = false; store.refresh(); },
+    onCancel: () => { confirming = false; switching = false; store.refresh(); },
+    onSwitch: () => nextPhase(store, false),
+    onSubmit: () => submit(store, false),
   };
 
-  const children = [
-    el('div', { class: 'exam-bar' }, [
-      el('span', { class: remaining <= 300 ? 'exam-clock low' : 'exam-clock', text: formatClock(remaining) }),
-      el('span', { class: 'progress', text: `${PART_LABEL[Number(unit.part.slice(4))]} · câu ${first === last ? first : `${first}–${last}`}/${totalCount()}` }),
-      el('button', { class: 'link', text: showPalette ? 'Ẩn danh sách' : 'Danh sách câu', onClick: () => { showPalette = !showPalette; store.refresh(); } }),
-    ]),
-    showPalette ? renderPalette(store) : '',
-    renderUnit(unit, ctx),
-    el('div', { class: 'exam-nav' }, [
-      el('button', { class: 'secondary', disabled: index === 0 ? 'disabled' : false, onClick: () => go(store, -1) }, [el('span', { text: '← Trước' })]),
-      index < units.length - 1
-        ? el('button', { class: 'primary', onClick: () => go(store, 1) }, [el('span', { text: 'Tiếp →' })])
-        : el('button', { class: 'primary', onClick: () => askSubmit(store) }, [el('span', { text: 'Nộp bài' })]),
-    ]),
-  ];
-  if (confirming) children.push(renderConfirm(store));
-  else if (index < units.length - 1) {
-    children.push(el('div', { class: 'actions' }, [
-      el('button', { class: 'link', text: 'Nộp bài sớm', onClick: () => askSubmit(store) }),
-    ]));
-  }
-  return el('div', {}, children);
+  const screen = renderRunning(view);
+  if (switched) screen.prepend(phaseNotice(phases[phaseIndex]));
+  return screen;
 }
-
-/** Lưới các đơn vị: đã trả lời hết / dở dang / chưa làm, bấm để nhảy tới. */
-function renderPalette(store) {
-  return el('div', { class: 'palette' }, units.map((u, i) => {
-    const done = u.questions.filter((q) => answers[q.id]).length;
-    const state = done === 0 ? '' : done === u.questions.length ? ' done' : ' part';
-    const first = firstNumber(i);
-    return el('button', {
-      class: `pal${state}${i === index ? ' current' : ''}`,
-      title: `${PART_LABEL[Number(u.part.slice(4))]}: ${done}/${u.questions.length} câu`,
-      text: u.questions.length > 1 ? `${first}–${first + u.questions.length - 1}` : String(first),
-      onClick: () => { index = i; store.refresh(); },
-    });
-  }));
-}
-
-/** Hộp xác nhận nộp bài, nói rõ còn bao nhiêu câu chưa trả lời. */
-function renderConfirm(store) {
-  const left = totalCount() - answeredCount();
-  return el('div', { class: 'card confirm' }, [
-    el('p', { text: left > 0 ? `Còn ${left} câu chưa trả lời. Nộp bài bây giờ?` : 'Đã trả lời hết. Nộp bài?' }),
-    el('div', { class: 'exam-nav' }, [
-      el('button', { class: 'secondary', onClick: () => { confirming = false; store.refresh(); } }, [el('span', { text: 'Làm tiếp' })]),
-      el('button', { class: 'primary', onClick: () => submit(store, false) }, [el('span', { text: 'Nộp bài' })]),
-    ]),
-  ]);
-}
-
-const askSubmit = (store) => { confirming = true; store.refresh(); };
 
 function go(store, step) {
   getPlayer().stop();
-  index = Math.min(units.length - 1, Math.max(0, index + step));
+  const { from, to } = phases[phaseIndex];
+  // Chặn trong phần đang làm: đề thật không cho quay lại phần trước, và sang phần sau phải qua nút xác nhận.
+  index = Math.min(to - 1, Math.max(from, index + step));
+  switched = false;
   playing = false;
   playError = null;
   store.refresh();
@@ -186,6 +179,7 @@ async function play(store, unit) {
   if (!isAudioUnit(unit)) return;
   playError = null;
   playing = true;
+  switched = false;
   store.refresh();
   try {
     const steps = unit.part === 'part2' ? clipSequence(unit.item) : turnSequence(unit.item);
@@ -199,7 +193,7 @@ async function play(store, unit) {
   }
 }
 
-/** Nộp bài: chấm, ghi nhật ký MỘT lần, chuyển sang màn kết quả. */
+/** Nộp bài: chấm, quy đổi điểm, ghi nhật ký MỘT lần, chuyển sang màn kết quả. */
 async function submit(store, timedOut) {
   if (phase !== 'running') return; // hết giờ và bấm nộp cùng lúc: chỉ nộp một lần
   phase = 'result';
@@ -209,7 +203,8 @@ async function submit(store, timedOut) {
 
   const seconds = Math.round((Math.min(Date.now(), deadline) - startedAt) / 1000);
   const score = scoreExam(form, answers);
-  result = { score, seconds, timedOut, mode: form.mode };
+  const estimate = estimateScore(score);
+  result = { score, estimate, seconds, timedOut, mode: form.mode };
   store.refresh();
 
   const events = [];
@@ -225,7 +220,10 @@ async function submit(store, timedOut) {
       }
     }
   }
-  events.push(createEvent({ type: 'exam.finished', deviceId: store.deviceId, payload: examSummaryPayload(score, { mode: form.mode, seconds, timedOut }) }));
+  events.push(createEvent({
+    type: 'exam.finished', deviceId: store.deviceId,
+    payload: examSummaryPayload(score, { mode: form.mode, seconds, timedOut, estimate }),
+  }));
   await store.importEvents(events);
 }
 
@@ -259,9 +257,14 @@ function reset() {
   phase = 'setup';
   form = null;
   units = [];
+  phases = [];
+  phaseIndex = 0;
+  numbers = new Map();
   answers = {};
   result = null;
   confirming = false;
+  switching = false;
+  switched = false;
   showPalette = false;
   playing = false;
   playError = null;

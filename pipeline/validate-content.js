@@ -27,6 +27,14 @@ function missingAudioFiles(bank) {
   return [...new Set(paths)].filter((p) => !existsSync(new URL(`public/${p}`, ROOT).pathname));
 }
 
+/**
+ * Câu Part 5 đang dùng (status active) mà thiếu chỗ trống thì không điền vào đâu được.
+ * Câu `retired` KHÔNG bị bắt lỗi: id nội dung là vĩnh viễn (ràng buộc #6) nên câu hỏng vẫn nằm lại làm lịch sử.
+ */
+function part5WithoutBlank(deck) {
+  return deck.entries.filter((e) => e.status !== 'retired' && !/-{2,}|_{2,}/.test(String(e.stem ?? ''))).map((e) => e.id);
+}
+
 let failed = false;
 let checked = 0;
 
@@ -56,6 +64,14 @@ for (const { file: relative, schema, label } of FILES) {
   if (missingAudio.length > 0) {
     failed = true;
     console.error(`✗ ${relative}: thiếu ${missingAudio.length} file âm thanh (vd ${missingAudio.slice(0, 3).join(', ')})`);
+    continue;
+  }
+
+  // Part 5: câu đang dùng phải có chỗ trống (lỗi thật: p5-0079 lọt ra bản phát hành).
+  const noBlank = valid && relative.includes('questions-part5') ? part5WithoutBlank(deck) : [];
+  if (noBlank.length > 0) {
+    failed = true;
+    console.error(`✗ ${relative}: ${noBlank.length} câu thiếu chỗ trống (${noBlank.slice(0, 5).join(', ')})`);
     continue;
   }
 

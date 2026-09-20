@@ -11,6 +11,7 @@ import { roundProgress } from '../logic/round.js';
 import { LISTEN_ROUND_SIZE, SPEEDS, clipSequence, canAnswer, audioUrl } from '../logic/listen.js';
 import { getListenSpeed, setListenSpeed } from '../data/prefs.js';
 import { createPlayer } from './audio-player.js';
+import { optionList } from './blocks.js';
 import { renderStem, renderTray, resetCapture } from './capture-tray.js';
 
 const LETTERS = ['A', 'B', 'C'];
@@ -106,23 +107,15 @@ export function renderListen(store) {
       ]),
       playError ? el('div', { class: 'warn', text: playError }) : '',
     ]),
-    el('div', { class: 'options' }, LETTERS.map((letter) => {
-      let className = 'option listen-opt';
-      if (result) {
-        if (letter === question.answer) className += ' correct';
-        else if (letter === picked) className += ' wrong';
-      }
-      if (nowKey === letter) className += ' now';
-      const enabled = canAnswer(heard, picked);
-      return el('button', {
-        class: className,
-        disabled: !enabled && !picked ? 'disabled' : false,
-        onClick: () => enabled && answer(store, question, letter),
-      }, [
-        el('span', { class: 'letter', text: letter }),
-        el('span', { class: 'option-text', text: result ? question.responses[letter] : (nowKey === letter ? '🔊' : '') }),
-      ]);
-    })),
+    // Nghe hết mới chọn được; chọn xong mới lộ chữ của ba câu đáp (D35).
+    optionList({
+      letters: LETTERS,
+      textOf: (letter) => (result ? question.responses[letter] : (nowKey === letter ? '🔊' : '')),
+      picked, answer: result ? question.answer : null, marker: nowKey, extra: 'listen-opt',
+      locked: !canAnswer(heard, picked),
+      isDisabled: () => !canAnswer(heard, picked) && !picked,
+      onPick: (letter) => answer(store, question, letter),
+    }),
   ];
 
   if (!picked) {

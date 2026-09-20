@@ -55,6 +55,27 @@ Huy báo: phân loại chỉ chọn được 1 trong 4, không xem lại đượ
   loại lỗi giữa logic và màn hình mà test logic thuần không thấy. **`validate:content` giờ kiểm cả BSL.**
   `audit:vocab -- --deck bsl` soi deck BSL. **343 test pass.**
 
+## Phiên 2026-09-20 (tối) — Part 5 theo đề thật, chấm điểm, thi thử hai phần, UI hai cột — ĐANG LÀM
+Huy giao 4 việc + 3 bổ sung giữa phiên. Xem **D39–D42**.
+- **Part 5 đúng đề thật (D39):** một lượt = 30 câu đánh số **101–130**, chia đúng mặt cắt đề thật
+  (từ loại 10 · từ vựng 10 · ngữ pháp 10 — trước đây lấy đều 12 dạng nên 2/3 lượt là ngữ pháp), xáo thứ tự,
+  chốt danh sách khi bắt đầu lượt. Chỗ trống in dài `-------` như đề in. **Giấu loại kiến thức** cho tới khi
+  trả lời xong. Đo nhịp từng câu (đề thật ~20 giây/câu) và tổng kết cuối lượt theo ba nhóm.
+- **Chấm điểm 10–990 (D39):** `src/logic/score.js` — bảng quy đổi ETS, luôn hiện KHOẢNG + chữ "ước lượng",
+  cộng thêm sai số lấy mẫu `sqrt(p(1-p)/n)` nên làm ít câu thì khoảng rộng ra. Chỉ làm một kỹ năng thì không
+  bịa điểm kỹ năng kia. Điểm được lưu vào `exam.finished` để sau vẽ đường tiến bộ.
+- **Thi thử đúng cấu trúc thật (D39):** đề đủ chạy **hai đồng hồ riêng** — Nghe 45 phút rồi Đọc 75 phút,
+  sang phần sau KHÔNG quay lại được (trước đây gộp 194 câu vào một đồng hồ 120 phút). Câu mang **số hiệu thật**.
+- **UI hai cột (D41):** `splitPane` — tài liệu bên trái, câu hỏi + phương án bên phải trên màn rộng;
+  iPhone vẫn một cột. Áp cho Part 5, các bộ Part 3/4/6/7 và thi thử.
+- **Chấm cả bộ một lượt (D42):** bộ nhiều câu chỉ chấm + giải thích sau khi trả lời HẾT bộ (chấm từng câu là
+  lộ bài cho các câu sau); đổi đáp án thoải mái trước khi chấm.
+- **Gom hàm dùng chung:** `src/ui/blocks.js` (`optionList`, `splitPane`, `noticeCard`, `confirmCard`) thay cho
+  **4 bản sao** của dãy nút chọn đáp án và 2 bản sao bố cục hai cột. Quy tắc mới trong CLAUDE.md.
+- **Nới hạn mức file 300 → 450 (D40)** theo yêu cầu của Huy.
+- **Lỗi nội dung thật:** `p5-0079` không có chỗ trống → đã `retired`; pipeline và `validate:content` nay đều chặn.
+- **735 test pass** (thêm: part5, score, ui-quiz, phases/numbering trong exam).
+
 ## Phiên 2026-09-20 (chiều) — Đủ nội dung cho đề 194 câu + thi thử đủ bộ — XONG, đã lưu
 Huy giao: "đẩy nhanh các phần ngoài Part 5 để có đề 194/200". 194 = 200 trừ 6 câu Part 1 (cần ảnh).
 - **Nội dung mới** (kiểm định chéo 2 model như D12; bộ chỉ đạt khi MỌI câu khớp): Part 3 = 13 bộ/39 câu · Part 4 = 10 bộ/30 câu ·

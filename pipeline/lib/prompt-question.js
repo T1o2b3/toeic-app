@@ -107,6 +107,19 @@ Trả về mảng JSON đủ ${questions.length} phần tử. Chỉ trả JSON, 
 }
 
 /**
+ * Câu Part 5 PHẢI có chỗ trống để điền. Đã lọt một câu không có chỗ trống ra bản phát hành (p5-0079:
+ * đáp án "irritated" nằm sẵn trong câu, không điền vào đâu được) — người làm bài không có cách nào chọn đúng.
+ *
+ * Bản sao của `hasBlank` trong src/logic/part5.js: pipeline cố ý KHÔNG nhập gì từ src/ (hai thế giới tách
+ * nhau — app chạy trên trình duyệt, pipeline chạy trên máy Huy). Một test canh hai bản không lệch nhau.
+ * @param {string} stem
+ * @returns {boolean}
+ */
+export function hasBlank(stem) {
+  return /-{2,}|_{2,}/.test(String(stem ?? ''));
+}
+
+/**
  * Đối chiếu đáp án của người ra đề với đáp án của người giải độc lập.
  * @param {Array<object>} questions - câu đã sinh, có trường answer
  * @param {Array<{index: number, answer: string}>} solved
@@ -128,7 +141,10 @@ export function crossCheck(questions, solved) {
     const solved = byIndex.get(position + 1) ?? null;
     const solvedAnswer = solved?.answer ?? null;
 
-    if (!solvedAnswer || solvedAnswer !== question.answer) {
+    // Chỉ áp cho câu Part 5 (có `stem`). Part 2 dùng lại crossCheck nhưng câu nghe không có chỗ trống.
+    if (question.stem !== undefined && !hasBlank(question.stem)) {
+      rejected.push({ question, solvedAnswer, reason: 'thiếu chỗ trống' });
+    } else if (!solvedAnswer || solvedAnswer !== question.answer) {
       rejected.push({ question, solvedAnswer, reason: solvedAnswer ? 'lệch đáp án' : 'không giải được' });
     } else if (solved.obvious) {
       // Đúng đáp án nhưng quá dễ thì cũng bỏ: người 850 điểm không học được gì từ câu này.

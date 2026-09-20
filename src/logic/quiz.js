@@ -54,19 +54,20 @@ export function gradeAnswer(question, choice) {
 }
 
 /**
- * Chọn câu cho một lượt luyện: ưu tiên câu từng làm sai, rồi tới câu chưa làm bao giờ.
- * Câu đã báo lỗi thì loại hẳn. Câu đã làm đúng gần đây xếp cuối.
+ * Xếp TOÀN BỘ ngân hàng theo mức cần làm: câu từng làm SAI trước (sai nhiều lên trước),
+ * rồi câu chưa làm bao giờ, cuối cùng câu đã làm đúng (lâu chưa gặp lên trước).
+ * Câu đã báo lỗi bị loại hẳn.
+ *
+ * Tách riêng khỏi `quizQueue` vì lượt Part 5 theo đề thật (part5.js) cần CẢ danh sách đã xếp hạng
+ * để chia theo hạn mức từng nhóm, chứ không chỉ N câu đầu.
+ *
  * @param {Array<object>} questions
  * @param {Map<string, object>} states
- * @param {object} [options]
- * @param {number} [options.size] - số câu mỗi lượt, mặc định 20
- * @param {string} [options.errorType] - chỉ lấy một loại kiến thức
- * @param {Set<string>} [options.exclude] - câu đã làm trong lượt này; câu sai được ưu tiên
- *   cho LƯỢT SAU, còn trong cùng một lượt thì không lặp lại ngay
+ * @param {{errorType?: string, exclude?: Set<string>}} [options]
  * @returns {Array<object>}
  */
-export function quizQueue(questions, states, { size = 20, errorType, exclude } = {}) {
-  const pool = questions.filter((question) => {
+export function rankQuestions(questions, states, { errorType, exclude } = {}) {
+  const pool = (questions ?? []).filter((question) => {
     if (question.status === 'retired') return false;
     if (states.get(question.id)?.reported) return false;
     if (errorType && question.errorType !== errorType) return false;
@@ -87,7 +88,22 @@ export function quizQueue(questions, states, { size = 20, errorType, exclude } =
   wrong.sort((a, b) => (states.get(b.id).wrong - states.get(a.id).wrong));
   done.sort((a, b) => (states.get(a.id).lastTs ?? 0) - (states.get(b.id).lastTs ?? 0));
 
-  return [...wrong, ...unseen, ...done].slice(0, size);
+  return [...wrong, ...unseen, ...done];
+}
+
+/**
+ * Chọn câu cho một lượt luyện: N câu đầu của danh sách đã xếp hạng.
+ * @param {Array<object>} questions
+ * @param {Map<string, object>} states
+ * @param {object} [options]
+ * @param {number} [options.size] - số câu mỗi lượt, mặc định 20
+ * @param {string} [options.errorType] - chỉ lấy một loại kiến thức
+ * @param {Set<string>} [options.exclude] - câu đã làm trong lượt này; câu sai được ưu tiên
+ *   cho LƯỢT SAU, còn trong cùng một lượt thì không lặp lại ngay
+ * @returns {Array<object>}
+ */
+export function quizQueue(questions, states, { size = 20, errorType, exclude } = {}) {
+  return rankQuestions(questions, states, { errorType, exclude }).slice(0, size);
 }
 
 /**

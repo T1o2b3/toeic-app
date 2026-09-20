@@ -3,11 +3,14 @@
  * Hiện chỉ lưu trên từng máy; đồng bộ cài đặt là việc sau (D23: cài đặt dùng last-write-wins).
  */
 
-/** Các lựa chọn số câu mỗi lượt luyện. */
-export const ROUND_SIZES = Object.freeze([10, 15, 20]);
+/**
+ * Các lựa chọn số câu mỗi lượt luyện Part 5. 30 = ĐÚNG số câu Part 5 của đề thật (D39);
+ * các mức nhỏ hơn dành cho lúc chỉ có mươi phút.
+ */
+export const ROUND_SIZES = Object.freeze([10, 20, 30]);
 
-/** Mặc định: lượt vừa phải, hợp nhịp học 1–2 giờ/tuần (D03). */
-export const DEFAULT_ROUND_SIZE = 15;
+/** Mặc định 30 câu: một lượt là một mẻ Part 5 đầy đủ, mất khoảng 10 phút theo nhịp đề thật. */
+export const DEFAULT_ROUND_SIZE = 30;
 
 /**
  * Lọc giá trị đọc được về một lựa chọn hợp lệ.
