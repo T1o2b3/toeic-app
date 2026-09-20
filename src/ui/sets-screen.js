@@ -9,7 +9,7 @@
  * giải thích, rồi mới ghi nhật ký MỘT lần cho cả bộ (chấm ngay từng câu sẽ lộ bài cho các câu sau).
  * Kết quả ghi bằng `question.answered` như Part 2/5 nên thống kê lỗ hổng dùng chung.
  */
-import { el, goTo } from './dom.js';
+import { el, goTo, scrollToTop } from './dom.js';
 import {
   SET_PARTS, SET_ROUND_SIZE, PART_LABEL, setQueue, gradeSetAnswer, nextUnanswered,
 } from '../logic/sets.js';
@@ -18,8 +18,9 @@ import { turnSequence, audioUrl } from '../logic/listen.js';
 import { getListenSpeed } from '../data/prefs.js';
 import { createPlayerSlot } from './audio-player.js';
 import { renderStem, renderTray, resetCapture } from './capture-tray.js';
-import { renderQuestion, renderTranscript, renderHold } from './set-blocks.js';
+import { renderQuestion, renderTranscript, renderHold, renderPace } from './set-blocks.js';
 import { splitPane, backLink, backButton, speedChooser, letterFromKey } from './blocks.js';
+import { formatClock } from '../logic/exam-time.js';
 import { createEvent } from '../logic/events.js';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
@@ -35,6 +36,9 @@ let nowTurn = null;            // lượt nói đang phát
 let heard = false;
 let playError = null;
 let recorded = false;         // đã ghi nhật ký cho bộ này chưa (chỉ ghi MỘT lần, khi trả lời hết)
+let startedAt = null;         // mốc bắt đầu bấm giờ bộ đang làm (ms); null = chưa chạy
+let spentSeconds = null;      // thời gian đã dùng, chốt lại lúc chấm xong
+let ticker = null;            // setInterval của đồng hồ
 
 const slot = createPlayerSlot();
 const getPlayer = () => slot.get();
@@ -100,6 +104,7 @@ export function renderSets(store, params) {
     availableCount: roundQueue(store).length, locked: Boolean(locked),
   });
   const done = allAnswered(set);
+  startClock();
 
   const left = set.questions.filter((q) => !answers[q.id]).length;
 
@@ -112,11 +117,14 @@ export function renderSets(store, params) {
 
   // Cột phải: các câu hỏi, rồi nút sang bộ kế khi đã chấm.
   const questions = set.questions.map((question, index) => renderQuestion(
-    question, index, answers[question.id] ?? null, (letter) => pick(store, set, question, letter), done,
+    store, question, index, answers[question.id] ?? null, (letter) => pick(store, set, question, letter), done,
   ));
   if (!done) questions.push(renderHold(left));
   else {
     questions.push(
+      // Khay thứ hai, chỉ hiện trên màn hẹp: ở đó tài liệu nằm tuốt phía trên nên khay của cột trái
+      // cách quá xa chỗ vừa chạm vào từ trong phương án. Màn rộng có hai cột thì khay trái luôn thấy.
+      renderTray(store, { id: set.id }, { extra: 'narrow-only' }),
       el('div', { class: 'actions' }, [
         el('button', { class: 'primary', onClick: () => next(store) }, [
           el('span', { text: 'Bộ tiếp theo' }), el('small', { text: 'phím Space' }),
@@ -134,6 +142,7 @@ export function renderSets(store, params) {
       el('span', { class: 'progress', text: `còn ${remaining} bộ · ${PART_LABEL[part]}` }),
     ]),
     el('h1', { class: 'set-title', text: set.title || PART_LABEL[part] }),
+    renderPace({ part, count: set.questions.length, seconds: elapsedSeconds(), done }),
     splitPane(material, questions),
   ]);
 }
@@ -165,6 +174,37 @@ function renderListenCard(store, set) {
     speedChooser(store),
     playError ? el('div', { class: 'warn', text: playError }) : '',
   ]);
+}
+
+/**
+ * Bắt đầu bấm giờ cho bộ đang làm. Part 6/7 tính từ lúc mở bộ; Part 3/4 chỉ tính SAU KHI băng dứt,
+ * vì nhịp phần nghe do băng quyết định chứ không do mình (xem logic/pace.js).
+ */
+function startClock() {
+  if (startedAt !== null || spentSeconds !== null) return;
+  if (isListening() && !heard) return;
+  startedAt = Date.now();
+  ticker ??= setInterval(paintClock, 1000);
+}
+
+/** Thời gian đã dùng (giây); null khi đồng hồ chưa từng chạy. */
+function elapsedSeconds() {
+  if (spentSeconds !== null) return spentSeconds;
+  return startedAt === null ? null : (Date.now() - startedAt) / 1000;
+}
+
+/** Mỗi giây chỉ sửa CHỮ của đồng hồ, không vẽ lại cả màn — vẽ lại mỗi giây sẽ nhấp nháy (như exam-screen). */
+function paintClock() {
+  const node = document.querySelector('.pace-clock');
+  const seconds = elapsedSeconds();
+  if (node && seconds !== null) node.textContent = formatClock(seconds);
+}
+
+/** Chốt số lúc chấm xong. Chưa từng chạy (bộ nghe mà chưa nghe hết) thì KHÔNG bịa ra con số 0. */
+function stopClock() {
+  if (startedAt !== null) spentSeconds = Math.round(elapsedSeconds());
+  clearInterval(ticker);
+  ticker = null;
 }
 
 /** Phát cả đoạn. Gọi từ thao tác chạm nên audio.play() được phép (xem audio-player.js). */
@@ -203,6 +243,7 @@ async function pick(store, set, question, letter) {
   locked = set;
   if (!allAnswered(set)) { store.refresh(); return; }
 
+  stopClock();
   doneThisRound.add(set.id);
   getPlayer().stop();
   await finish(store, set);
@@ -230,6 +271,7 @@ function next(store) {
   getPlayer().stop();
   resetProgress();
   store.refresh();
+  scrollToTop();
 }
 
 /** Báo cả bộ có vấn đề: mọi câu của bộ bị loại khỏi hàng đợi (D12). */
@@ -238,11 +280,16 @@ async function report(store, set) {
   doneThisRound.add(set.id);
   const questions = set.questions;
   resetProgress();
+  scrollToTop();
   for (const question of questions) await store.record('question.reported', { questionId: question.id });
 }
 
 /** Xoá trạng thái của bộ đang làm (giữ lại tiến độ của lượt). */
 function resetProgress() {
+  clearInterval(ticker);
+  ticker = null;
+  startedAt = null;
+  spentSeconds = null;
   locked = null;
   answers = {};
   recorded = false;

@@ -118,8 +118,8 @@ button.viz-row span { display: inline; }
 .exam-clock.low { color: var(--again); }
 .exam-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 1rem; }
 .exam-nav button { margin-bottom: 0; text-align: center; }
-button.option.picked { border-color: var(--accent); background: #eef6f1; }
-button.option.picked .letter { color: var(--accent); }
+.option.picked { border-color: var(--accent); background: #eef6f1; }
+.option.picked .letter { color: var(--accent); }
 .palette { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 0.75rem; }
 button.pal { min-width: 2.4rem; padding: 0.3rem 0.4rem; font-size: 0.75rem; background: var(--surface); border-radius: 0.5rem; }
 button.pal.part { background: #fdf6e7; }

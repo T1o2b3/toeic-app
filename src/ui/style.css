@@ -122,18 +122,24 @@ button.grade.easy { color: var(--easy); border-color: var(--easy); }
 /* Màn luyện câu hỏi */
 .stem { font-size: 1.05rem; line-height: 1.7; }
 .options { display: grid; gap: 0.5rem; margin-top: 0.75rem; }
-button.option {
+/* Dùng .option (không phải button.option): sau khi chấm, màn bộ đề vẽ phương án bằng <div> để
+   từng từ bên trong gạt được — con của <button disabled> không nhận được sự kiện chạm. */
+.option {
   display: flex; align-items: flex-start; gap: 0.6rem; text-align: left;
   padding: 0.7rem 0.8rem; background: var(--surface); width: 100%;
+  border: 1px solid var(--border); border-radius: 0.75rem;
 }
-button.option .letter {
+.option .letter {
   font-weight: 700; color: var(--muted); min-width: 1.2rem;
 }
-button.option .option-text { flex: 1; }
-button.option.correct { border-color: var(--good); background: #eef6f1; }
-button.option.correct .letter { color: var(--good); }
-button.option.wrong { border-color: var(--again); background: #fbeae6; }
-button.option.wrong .letter { color: var(--again); }
+.option .option-text { flex: 1; }
+.option.correct { border-color: var(--good); background: #eef6f1; }
+.option.correct .letter { color: var(--good); }
+.option.wrong { border-color: var(--again); background: #fbeae6; }
+.option.wrong .letter { color: var(--again); }
+/* Phương án đã chấm của màn bộ đề: để nguyên độ đậm (khác nút disabled mờ 45%) vì giờ nó là chữ
+   để ĐỌC và chạm vào từng từ, không còn là nút bấm. */
+.option.static .stem { flex: 1; font-size: inherit; line-height: 1.6; }
 
 .verdict { margin-top: 0.75rem; font-weight: 700; }
 .verdict.ok { color: var(--good); }
@@ -225,6 +231,13 @@ button.word-head small { font-size: 0.85rem; color: var(--muted); opacity: 1; }
 button.tray-add { background: var(--accent); color: #fff; border-color: var(--accent); padding: 0.35rem 0.9rem; font-weight: 600; }
 .option-capture { margin-top: 0.75rem; }
 .option-capture .chips { margin-top: 0.25rem; }
+/* Khay "Cần học" thứ hai của màn bộ đề: chỉ cần trên màn hẹp (một cột) — xem sets-screen.js. */
+@media (min-width: 62rem) { .tray.narrow-only { display: none; } }
+
+/* Đồng hồ nhịp của màn bộ đề: ĐO so với chuẩn, không khoá gì khi quá giờ */
+.pace { font-size: 0.8rem; color: var(--muted); margin: -0.3rem 0 0.7rem; font-variant-numeric: tabular-nums; }
+.pace.ok { color: var(--good); }
+.pace.slow { color: var(--hard); }
 .word-head.static { padding: 0.65rem 0; }
 a.ext-link { font-size: 0.8rem; color: var(--accent); }
 

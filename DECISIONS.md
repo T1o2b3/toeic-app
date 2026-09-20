@@ -398,6 +398,33 @@ phủ sóng từ vựng Part 5 — mới thấy NAWL đóng góp 1 từ. Ghi l�
   AI chỉ làm phần diễn đạt. Làm vậy thì kể cả hết hạn mức AI, app vẫn có bản nhận xét dạng số.
 - **Không gửi nhật ký thô cho AI**: chỉ gửi bảng thống kê đã tổng hợp (không có gì riêng tư, nhẹ hơn nhiều).
 
+**D45. Gạt từ lạ trong PHƯƠNG ÁN của Part 3/4/6/7: chạm thẳng vào từ, không dùng chip như Part 5.**
+- **Huy báo ngày 2026-09-20** khi đang làm Part 6: "không có chức năng thêm từ vựng trong phần đáp án vào
+  những từ vựng chưa biết/cần học". Đúng: D34 mới làm cho Part 5, màn bộ đề chỉ gạt được từ trong TÀI LIỆU.
+- **Vì sao không bê nguyên chip của Part 5 sang:** phương án Part 5 hầu hết là MỘT từ (555/800), còn phương án
+  Part 3/4/7 là cả câu. Đo trên nội dung thật: mỗi câu có **19–21 từ khác nhau** trong bốn phương án → một bộ
+  5 câu sẽ ra cả trăm chip. Nên ở màn bộ đề thì chạm thẳng vào từ ngay trong phương án, y như chạm từ trong
+  đoạn văn. Luật người dùng thấy vẫn là một: **"chạm vào từ mình không biết"**.
+- **Chỉ gạt được SAU KHI chấm cả bộ** — giữ nguyên lý do của D34: trước đó đánh dấu từ nào là gợi ý ngầm cho đáp án.
+- **Chi tiết kỹ thuật đáng nhớ:** phương án đã chấm phải vẽ bằng `<div>` chứ không phải `<button disabled>` —
+  trình duyệt KHÔNG gửi sự kiện chạm cho phần tử con của một nút bị disabled, chạm vào từ bên trong sẽ không ăn.
+  Vì vậy CSS đổi từ `button.option` sang `.option`. Phương án đã chấm nay để nguyên độ đậm (không mờ 45% như nút
+  disabled) — giờ nó là chữ để ĐỌC và chạm, không còn là nút bấm.
+
+**D46. Đồng hồ nhịp ở màn bộ đề: ĐO so với chuẩn, không đếm ngược, không khoá gì.**
+- **Huy đề nghị ngày 2026-09-20:** "thêm bấm giờ / giờ tiêu chuẩn… không phải bấm giờ để kết thúc, mà để đo
+  so với tiêu chuẩn để tăng tốc hoặc thêm thời gian làm bài hợp lý". Muốn đếm ngược thật thì đã có màn Thi thử.
+- **Mốc chuẩn** (`src/logic/pace.js`, dùng chung với nhịp Part 5 đã có ở D39): phần Đọc có 75 phút cho 100 câu,
+  chia Part 5 ~10 phút (20 giây/câu) · Part 6 ~8 phút (30 giây/câu) · Part 7 ~57 phút (60 giây/câu) — cộng lại
+  vừa đúng 75 phút, nên chậm ở phần trước là ăn vào giờ của Part 7.
+- **Phần Nghe đo khác:** nhịp do băng quyết định, đi nhanh hơn cũng không được. Thứ đo được là khoảng TRẢ LỜI
+  sau khi băng dứt — đề thi trên máy tự chuyển câu sau khoảng **5 giây** (Huy tra từ hướng dẫn giao diện thi
+  của IIG). Vì vậy với Part 3/4, đồng hồ chỉ bắt đầu chạy SAU KHI nghe xong.
+- Đồng hồ mỗi giây chỉ sửa CHỮ của nó (như `exam-screen`), không vẽ lại cả màn — vẽ lại mỗi giây sẽ nhấp nháy
+  và làm mất chỗ đang đọc.
+- **Không ghi nhật ký** thời gian này: nhật ký là append-only và đang dùng cho thống kê, thêm sự kiện mỗi bộ chỉ
+  để đo nhịp là làm nặng dữ liệu mà chưa có ai đọc tới. Khi nào M20 cần nhịp thì tính riêng.
+
 ## Câu hỏi còn mở
 - ~~Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng?~~ → **Đã giải quyết, xem D35** (chung repo, xét lại khi ~100 MB).
 - ~~Q2 (trước M2): xác nhận license của TSL 1.2 và NGSL.~~ → **Đã giải quyết, xem D18.**

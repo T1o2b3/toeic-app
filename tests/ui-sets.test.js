@@ -66,6 +66,17 @@ describe('Part 6: đọc đoạn văn rồi trả lời từng chỗ trống', (
     expect(options(0)[0].className).toContain('picked');
   });
 
+  it('CHƯA chấm: từ trong phương án chưa gạt được — đánh dấu từ nào lúc đó là gợi ý ngầm cho đáp án (D34)', () => {
+    expect(options(0)[0].tagName).toBe('BUTTON');
+    expect(options(0)[0].querySelector('.tok')).toBeNull();
+  });
+
+  it('đồng hồ nhịp chạy ngay từ đầu và ghi rõ chuẩn của bộ (Huy đề nghị 2026-09-20)', () => {
+    expect(root.querySelector('.pace-clock')).not.toBeNull();       // Part 6 là phần đọc: đo từ lúc mở bộ
+    expect(text()).toContain('chuẩn 02:00 cho 4 câu');               // 4 câu × 30 giây
+    expect(root.querySelector('.pace').className).not.toContain('slow');
+  });
+
   it('đổi đáp án trước khi chấm được, chỉ giữ lựa chọn cuối', async () => {
     await choose(0, 'C');
     expect([...options(0)].filter((b) => b.className.includes('picked'))).toHaveLength(1);
@@ -97,6 +108,26 @@ describe('Part 6: đọc đoạn văn rồi trả lời từng chỗ trống', (
     expect(text()).not.toContain('Còn 1 câu nữa');
   });
 
+  it('chấm xong: chạm từ trong phương án rồi bấm "Cần học" là vào danh sách học (Huy đề nghị 2026-09-20)', async () => {
+    const before = store.exportEvents().filter((e) => e.type === 'vocab.captured').length;
+    const tok = [...options(1).item(1).querySelectorAll('.tok')].find((t) => t.textContent === 'invoice');
+    expect(tok).toBeTruthy();                       // phương án giờ là <div> nên chạm vào từ bên trong mới ăn
+    tok.click();
+    await tick();
+    expect(text()).toContain('“invoice”');
+    await click((t) => t.includes('Cần học'));
+    const captured = store.exportEvents().filter((e) => e.type === 'vocab.captured');
+    expect(captured).toHaveLength(before + 1);
+    expect(captured.at(-1).payload.word).toBe('invoice');
+    expect(captured.at(-1).payload.questionId).toBe('p6-0001');     // ghi theo BỘ, như khay của tài liệu
+  });
+
+  it('chấm xong: đồng hồ chốt lại và nói rõ nhanh/chậm hơn chuẩn bao nhiêu', () => {
+    expect(root.querySelector('.pace-clock')).toBeNull();           // hết chạy, còn lại là con số đã chốt
+    expect(text()).toContain('chuẩn 02:00 cho 4 câu — nhanh hơn');
+    expect(root.querySelector('.pace').className).toContain('ok');
+  });
+
   it('chấm xong thì khoá, bấm nữa không ghi thêm', async () => {
     const events = store.eventCount;
     await choose(0, 'B');
@@ -120,12 +151,19 @@ describe('Part 3: nghe hội thoại', () => {
     expect(fake.preload).toHaveBeenCalled();
   });
 
+  it('bộ NGHE: CHƯA nghe xong thì đồng hồ chưa chạy — nhịp phần nghe do băng quyết định', () => {
+    expect(text()).toContain('bấm giờ chạy sau khi nghe xong');
+    expect(text()).toContain('chuẩn 00:15 cho 3 câu');               // 3 câu × 5 giây (đề thi trên máy tự chuyển câu)
+    expect(root.querySelector('.pace-clock')).toBeNull();
+  });
+
   it('bấm Nghe phát đủ các lượt nói xen khoảng lặng', async () => {
     await click((t) => t.includes('Nghe đoạn này'));
     const steps = fake.calls.at(-1);
     expect(steps.filter((s) => s.type === 'clip').map((s) => s.key)).toEqual([0, 1]);
     expect(steps.map((s) => s.type)).toEqual(['clip', 'gap', 'clip']);
     expect(text()).toContain('Nghe lại');
+    expect(root.querySelector('.pace-clock')).not.toBeNull();        // nghe xong mới bắt đầu bấm giờ
   });
 
   it('sau khi trả lời hết mới hiện transcript có nhãn người nói, và từng từ gạt được', async () => {

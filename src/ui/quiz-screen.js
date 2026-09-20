@@ -13,7 +13,8 @@
  */
 import { el } from './dom.js';
 import { gradeAnswer } from '../logic/quiz.js';
-import { composeRound, questionNumber, groupBreakdown, pace, PART5_GROUPS, PART5_COUNT } from '../logic/part5.js';
+import { composeRound, questionNumber, groupBreakdown, PART5_GROUPS, PART5_COUNT } from '../logic/part5.js';
+import { pace } from '../logic/pace.js';
 import { roundProgress } from '../logic/round.js';
 import { renderStem, renderTray, renderOptionCapture, resetCapture } from './capture-tray.js';
 import { optionList, splitPane, backLink, backButton, verdictLine, explanationCard, letterFromKey } from './blocks.js';

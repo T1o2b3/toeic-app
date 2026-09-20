@@ -12,13 +12,14 @@
  */
 import { rankQuestions } from './quiz.js';
 import { shuffle } from './shuffle.js';
+import { TARGET_SECONDS } from './pace.js';
 
 /** Đề thật: 30 câu, đánh số 101–130. */
 export const PART5_COUNT = 30;
 export const PART5_FIRST_NUMBER = 101;
 
-/** Nhịp cần giữ để còn giờ cho Part 6 và Part 7 (giây/câu). */
-export const PART5_TARGET_SECONDS = 20;
+/** Nhịp cần giữ để còn giờ cho Part 6 và Part 7 (giây/câu). Mốc của mọi Part nằm ở `pace.js`. */
+export const PART5_TARGET_SECONDS = TARGET_SECONDS[5];
 
 /**
  * Ba nhóm dạng câu của Part 5 và số câu mục tiêu trong một đề 30 câu.
@@ -194,19 +195,4 @@ export function splitBlanks(text, numbers = []) {
   }
   if (cursor < source.length) out.push({ type: 'text', text: source.slice(cursor), number: null });
   return out;
-}
-
-/**
- * Đánh giá nhịp làm một câu so với nhịp đề thật.
- * @param {number} seconds
- * @returns {{seconds: number, onPace: boolean, label: string}}
- */
-export function pace(seconds) {
-  const value = Math.max(0, Math.round(seconds));
-  const onPace = value <= PART5_TARGET_SECONDS;
-  return {
-    seconds: value,
-    onPace,
-    label: onPace ? `${value} giây · kịp nhịp` : `${value} giây · chậm hơn nhịp ${PART5_TARGET_SECONDS} giây`,
-  };
 }

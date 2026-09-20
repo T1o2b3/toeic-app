@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   PART5_COUNT, PART5_FIRST_NUMBER, PART5_TARGET_SECONDS, PART5_GROUPS, PART5_GROUP_KEYS,
-  groupOf, blueprintQuotas, composeRound, groupBreakdown, questionNumber, hasBlank, pace, BLANK_TEXT,
+  groupOf, blueprintQuotas, composeRound, groupBreakdown, questionNumber, hasBlank, BLANK_TEXT,
 } from '../src/logic/part5.js';
 import { reduceQuizState } from '../src/logic/quiz.js';
 
@@ -129,13 +129,5 @@ describe('chỗ trống và nhịp làm bài', () => {
 
   it('chỗ trống in dài như đề thật', () => {
     expect(BLANK_TEXT).toBe('-------');
-  });
-
-  it('nhịp: 20 giây là kịp, chậm hơn thì nói rõ', () => {
-    expect(pace(12).onPace).toBe(true);
-    expect(pace(20).onPace).toBe(true);
-    expect(pace(31).onPace).toBe(false);
-    expect(pace(31).label).toContain('20 giây');
-    expect(pace(-5).seconds).toBe(0);
   });
 });

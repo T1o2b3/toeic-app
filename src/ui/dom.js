@@ -38,3 +38,12 @@ export function replace(root, ...nodes) {
 export function goTo(path) {
   window.location.hash = path;
 }
+
+/**
+ * Về đầu trang khi SANG MỤC MỚI (bộ kế, câu kế). Trình duyệt giữ nguyên chỗ cuộn nếu nội dung mới vẫn
+ * đủ dài, nên bấm "Bộ tiếp theo" ở cuối một bộ Part 7 sẽ rơi vào giữa bài mới nếu không gọi hàm này.
+ * Kiểm `scrollY` trước cũng là cách tránh gọi `scrollTo` trong jsdom (luôn 0, và jsdom chưa cài hàm này).
+ */
+export function scrollToTop() {
+  if (window.scrollY !== 0) window.scrollTo(0, 0);
+}

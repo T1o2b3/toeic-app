@@ -28,11 +28,13 @@ import { getListenSpeed, setListenSpeed } from '../data/prefs.js';
  * @param {(letter: string) => boolean} [config.isDisabled] - vô hiệu từng nút (vd chưa nghe hết)
  * @param {string|null} [config.marker] - chữ cái đang được phát (Part 2 hiện 🔊)
  * @param {string} [config.extra] - lớp CSS thêm cho mỗi nút
+ * @param {(letter: string) => HTMLElement} [config.renderText] - vẽ phần chữ của phương án theo cách riêng
+ *   (màn bộ đề dùng để từng từ trong phương án gạt được). CHỈ dùng khi đã `locked`, xem bên dưới.
  * @returns {HTMLElement}
  */
 export function optionList({
   letters, textOf, picked = null, answer = null, onPick,
-  locked = false, isDisabled, marker = null, extra = '',
+  locked = false, isDisabled, marker = null, extra = '', renderText,
 }) {
   return el('div', { class: 'options' }, letters.map((letter) => {
     const classes = ['option'];
@@ -44,6 +46,18 @@ export function optionList({
     if (marker === letter) classes.push('now');
 
     const off = locked || (isDisabled ? isDisabled(letter) : false);
+
+    // Đã chấm xong VÀ bên gọi muốn chữ trong phương án tự vẽ (gạt từ lạ — D45): dựng bằng <div>.
+    // Không dùng <button disabled> ở đây vì trình duyệt KHÔNG gửi sự kiện chạm cho con của một nút bị
+    // disabled → chạm vào một từ bên trong sẽ không có gì xảy ra. Buộc phải `locked` để không bao giờ
+    // gạt được từ trong phương án TRƯỚC khi trả lời: đánh dấu từ nào lúc đó là gợi ý ngầm cho đáp án (D34).
+    if (renderText && locked) {
+      return el('div', { class: `${classes.join(' ')} static` }, [
+        el('span', { class: 'letter', text: letter }),
+        renderText(letter),
+      ]);
+    }
+
     return el('button', {
       class: classes.join(' '),
       disabled: off ? 'disabled' : false,

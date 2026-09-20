@@ -52,9 +52,12 @@ const LISTENING = {
   })),
 };
 
+// Mỗi phương án kèm một từ tiếng Anh THẬT: id giả (`p6-0001-a0`) bị bộ tách từ bỏ qua vì lẫn chữ số,
+// nên không có từ thật thì không test được việc gạt từ trong phương án.
+const OPTION_WORD = { A: 'ledger', B: 'invoice', C: 'warehouse', D: 'deadline' };
 const qs = (id, n, types = ['gist', 'detail', 'inference']) => Array.from({ length: n }, (_, i) => ({
   id: `${id}-${i + 1}`, stem: `Question ${i + 1} of ${id}?`, answer: 'BCDA'[i % 4], errorType: types[i % types.length],
-  options: { A: `${id} a${i}`, B: `${id} b${i}`, C: `${id} c${i}`, D: `${id} d${i}` },
+  options: Object.fromEntries(['A', 'B', 'C', 'D'].map((L) => [L, `${id} ${L.toLowerCase()}${i} ${OPTION_WORD[L]}`])),
   explanation: `Giải thích câu ${i + 1} của bộ ${id}, dựa vào tài liệu.`, trap: `Bẫy của câu ${i + 1}.`,
 }));
 const baseSet = (id, part, kind) => ({ id, set: `part${part}-core`, part, status: 'active', kind, title: `Bộ ${id}`,

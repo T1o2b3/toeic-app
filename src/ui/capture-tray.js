@@ -9,6 +9,20 @@ import { el } from './dom.js';
 import { tokenize, normalizeWord, planCapture } from '../logic/capture.js';
 import { renderBlanks } from './exam-unit.js';
 
+/**
+ * Vẽ lại màn mà GIỮ NGUYÊN chỗ đang đọc.
+ *
+ * `draw()` thay toàn bộ nội dung nên trang tự nhảy về đầu. Với các thao tác "sang mục mới" (câu kế,
+ * bộ kế) thì đúng là muốn về đầu, nhưng gạt một từ thì KHÔNG: chạm một từ trong phương án ở cuối bộ
+ * Part 7 mà trang nhảy lên đầu là mất chỗ đang đọc.
+ *
+ * `window.scrollY !== y` cũng là cách tránh gọi `scrollTo` trong jsdom (luôn 0, và jsdom chưa cài hàm này).
+ */
+function keepScroll() {
+  const y = window.scrollY;
+  return () => { if (window.scrollY !== y) window.scrollTo(0, y); };
+}
+
 /** Từ đang được chọn (chuẩn hoá), chờ bấm "Cần học". */
 let selected = null;
 
@@ -38,8 +52,10 @@ export function renderStem(store, question, { numbers = [] } = {}) {
 
     const node = el('span', { class: classes.join(' '), draggable: 'true', role: 'button', tabindex: '0', text: token.text });
     node.addEventListener('click', () => {
+      const restore = keepScroll();
       selected = selected === token.word ? null : token.word;
       store.refresh();
+      restore();
     });
     node.addEventListener('dragstart', (event) => {
       event.dataTransfer.setData('text/plain', token.word);
@@ -54,21 +70,22 @@ export function renderStem(store, question, { numbers = [] } = {}) {
  * Khay nhận từ: vùng thả (Mac) và nơi xác nhận "Cần học" (chạm).
  * @param {object} store
  * @param {{id: string}} question
+ * @param {{extra?: string}} [options] - lớp CSS thêm (màn bộ đề dùng để chỉ hiện khay thứ hai trên màn hẹp)
  * @returns {HTMLElement}
  */
-export function renderTray(store, question) {
+export function renderTray(store, question, { extra = '' } = {}) {
   let content;
   if (selected) {
     content = [
       el('span', { class: 'tray-word', text: `“${selected}”` }),
       el('button', { class: 'tray-add', text: '＋ Cần học', onClick: () => capture(store, question, selected) }),
-      el('button', { class: 'link', text: 'Bỏ chọn', onClick: () => { selected = null; store.refresh(); } }),
+      el('button', { class: 'link', text: 'Bỏ chọn', onClick: () => { const restore = keepScroll(); selected = null; store.refresh(); restore(); } }),
     ];
   } else {
     content = [el('span', { class: 'tray-note', text: notice ?? HINT })];
   }
 
-  const tray = el('div', { class: 'tray' }, content);
+  const tray = el('div', { class: extra ? `tray ${extra}` : 'tray' }, content);
   tray.addEventListener('dragover', (event) => {
     event.preventDefault();
     tray.classList.add('over');
@@ -111,6 +128,7 @@ async function capture(store, question, raw) {
   const word = normalizeWord(raw);
   if (!word || busy) return;
   busy = true;
+  const restore = keepScroll();
   try {
     const plan = planCapture(word, {
       questionId: question.id, index: store.wordIndex, states: store.states, captured: store.captured,
@@ -124,6 +142,7 @@ async function capture(store, question, raw) {
     for (const event of plan.events) await store.record(event.type, event.payload);
   } finally {
     busy = false;
+    restore();
   }
 }
 

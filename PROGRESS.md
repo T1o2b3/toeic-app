@@ -55,6 +55,38 @@ Huy báo: phân loại chỉ chọn được 1 trong 4, không xem lại đượ
   loại lỗi giữa logic và màn hình mà test logic thuần không thấy. **`validate:content` giờ kiểm cả BSL.**
   `audit:vocab -- --deck bsl` soi deck BSL. **343 test pass.**
 
+## Phiên 2026-09-20 (tối, máy Huy) — Ba góp ý lúc đang học + dọn refactor — ĐANG LÀM
+
+Huy nhắn ba góp ý trong lúc đang làm Part 6. Hai cái đầu đã làm xong, đã kiểm trên trình duyệt thật.
+
+**1. Gạt từ trong PHƯƠNG ÁN ở Part 3/4/6/7 (D45) — XONG.** Trước đây chỉ gạt được từ trong tài liệu (D34 mới
+làm cho Part 5). Nay chấm xong cả bộ thì từng từ trong phương án chạm được luôn, y như chữ trong đoạn văn.
+- **Không bê chip của Part 5 sang** vì phương án Part 3/4/7 là cả câu: đo trên nội dung thật ra **19–21 từ
+  khác nhau mỗi câu** → một bộ 5 câu thành cả trăm chip. Câu chèn câu của Part 6 có tới 43 từ chạm được.
+- Chi tiết dễ vấp: phải vẽ bằng `<div>` chứ không phải `<button disabled>` — trình duyệt KHÔNG gửi sự kiện
+  chạm cho con của nút bị disabled. CSS đổi `button.option` → `.option`.
+
+**2. Đồng hồ nhịp ở màn bộ đề (D46) — XONG.** Đo so với chuẩn, KHÔNG đếm ngược, không khoá gì (muốn đếm ngược
+thật thì vào Thi thử). Mốc dùng chung ở `src/logic/pace.js`: Part 5 = 20 giây/câu · Part 6 = 30 · Part 7 = 60
+(cộng lại đúng 75 phút phần Đọc) · Part 3/4 = 5 giây/câu và **chỉ chạy sau khi nghe xong**, vì nhịp phần nghe
+do băng quyết định (con số 5 giây lấy từ mô tả giao diện thi của IIG mà Huy gửi).
+
+**Hai lỗi thật bắt được khi xem bằng trình duyệt** (test jsdom không thấy vì jsdom không có cuộn trang):
+- Chạm một từ ở cuối bộ là trang **nhảy về đầu**, mất chỗ đang đọc — vì vẽ lại thay sạch nội dung.
+  Nay thao tác gạt từ giữ nguyên chỗ cuộn (`keepScroll` trong `capture-tray.js`).
+- Ngược lại, bấm "Bộ tiếp theo" thì **không** về đầu bài mới mà rơi vào lưng chừng (`scrollToTop` trong `dom.js`).
+
+**759 test pass** (thêm `tests/pace.test.js` và 5 test giao diện ở `ui-sets`). Đã xem thật trên Chromium
+1280×900 và 375×812: hai cột, đồng hồ chạy 00:08→00:11, chấm xong ra "⏱ 00:17 · chuẩn 02:00 cho 4 câu —
+nhanh hơn 01:43", gạt từ "successfully" vào danh sách học ngon.
+
+**3. Góp ý thứ ba (mô tả giao diện đề thi thật) — CHƯA làm, đang đối chiếu.** Xem mục "Đối chiếu với đề thật".
+
+### Dọn nốt refactor (kế hoạch 1A/1B/1C ở cuối file) — ĐANG LÀM
+- **1A** đang làm dở: đã tạo `pipeline/lib/cli.js` (`projectPath`, `today`, `flagValue`, `flagNumber`,
+  `hasFlag`) nhưng **CHƯA nối vào 4 script** — file mới chưa được commit cùng hai việc trên.
+- 1B, 1C chưa bắt đầu.
+
 ## Phiên 2026-09-20 (khuya) — Soát codebase + refactor DRY — XONG giai đoạn A & B, ĐÃ MERGE VÀO MAIN
 
 > **Đã merge vào `main` và push lúc kết phiên** → Cloudflare tự build và deploy (D27b).

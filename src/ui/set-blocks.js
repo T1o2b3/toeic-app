@@ -7,6 +7,8 @@
  */
 import { el } from './dom.js';
 import { gradeSetAnswer } from '../logic/sets.js';
+import { pace, targetFor } from '../logic/pace.js';
+import { formatClock } from '../logic/exam-time.js';
 import { renderStem } from './capture-tray.js';
 import { optionList, noticeCard, questionLabel, verdictLine, explanationCard } from './blocks.js';
 
@@ -14,6 +16,7 @@ const LETTERS = ['A', 'B', 'C', 'D'];
 
 /**
  * Một câu hỏi của bộ.
+ * @param {object} store
  * @param {object} question
  * @param {number} index - vị trí trong bộ (0-based)
  * @param {string|null} picked - chữ cái đã chọn
@@ -21,7 +24,7 @@ const LETTERS = ['A', 'B', 'C', 'D'];
  * @param {boolean} revealed - đã trả lời hết bộ chưa (mới hiện đúng/sai + giải thích)
  * @returns {HTMLElement}
  */
-export function renderQuestion(question, index, picked, onPick, revealed) {
+export function renderQuestion(store, question, index, picked, onPick, revealed) {
   const result = revealed && picked ? gradeSetAnswer(question, picked) : null;
   const blocks = [
     questionLabel(question, index + 1),
@@ -29,12 +32,53 @@ export function renderQuestion(question, index, picked, onPick, revealed) {
     optionList({
       letters: LETTERS, textOf: (l) => question.options[l], picked,
       answer: revealed ? question.answer : null, locked: revealed, onPick,
+      // Chấm xong thì từng từ trong phương án gạt được như chữ trong tài liệu (Huy đề nghị 2026-09-20).
+      // KHÔNG làm chip mỗi từ như Part 5: phương án Part 3/4/7 là cả câu — đo trên nội dung thật ra
+      // 19–21 từ khác nhau mỗi câu, thành ra cả trăm chip một bộ.
+      renderText: (l) => renderStem(store, { stem: question.options[l] }),
     }),
   ];
   if (result) {
     blocks.push(verdictLine(result, question.answer), explanationCard(question));
   }
   return el('section', { class: 'set-q' }, blocks);
+}
+
+/** Khoảng chênh so với chuẩn, đọc bằng mắt cho nhanh: dưới một phút thì nói thẳng số giây. */
+const gapText = (seconds) => (seconds < 60 ? `${seconds} giây` : formatClock(seconds));
+
+/**
+ * Đồng hồ nhịp của bộ đang làm (Huy đề nghị 2026-09-20): ĐO để biết nên tăng tốc hay còn dư giờ,
+ * không khoá gì khi quá giờ. Muốn làm bài có đếm ngược thật thì vào màn Thi thử.
+ *
+ * @param {object} config
+ * @param {number} config.part
+ * @param {number} config.count - số câu của bộ
+ * @param {number|null} config.seconds - đã dùng bao lâu; null = chưa bấm giờ (bộ nghe chưa nghe xong)
+ * @param {boolean} config.done - đã chấm xong chưa
+ * @returns {HTMLElement}
+ */
+export function renderPace({ part, count, seconds, done }) {
+  const target = targetFor(part, count);
+  if (!target) return el('div');
+  const goal = `chuẩn ${formatClock(target)} cho ${count} câu`;
+
+  // Phần nghe: nhịp do băng quyết định, nên chỉ đo khoảng TRẢ LỜI sau khi băng dứt (xem logic/pace.js).
+  if (seconds === null) return el('div', { class: 'pace', text: `⏱ bấm giờ chạy sau khi nghe xong · ${goal}` });
+
+  if (!done) {
+    return el('div', { class: 'pace' }, [
+      el('span', { text: '⏱ ' }),
+      el('span', { class: 'pace-clock', text: formatClock(seconds) }),
+      el('span', { text: ` · ${goal}` }),
+    ]);
+  }
+
+  const result = pace(seconds, target);
+  return el('div', {
+    class: result.onPace ? 'pace ok' : 'pace slow',
+    text: `⏱ ${formatClock(result.seconds)} · ${goal} — ${result.onPace ? 'nhanh hơn' : 'chậm hơn'} ${gapText(result.diff)}`,
+  });
 }
 
 /** Nhắc còn mấy câu nữa mới được xem giải thích — để không ai tưởng app quên chấm. */
