@@ -762,6 +762,386 @@
           "Speaker": "en-GB-SoniaNeural"
         }
       }
+    },
+    {
+      "id": "p4-0011",
+      "set": "part4-core",
+      "part": 4,
+      "status": "active",
+      "kind": "talk",
+      "title": "Software Update Notification",
+      "script": [
+        {
+          "speaker": "IT Manager",
+          "text": "Attention all staff. Please be advised that our internal project management software, TaskFlow, will undergo a mandatory security patch tonight at 10 PM. The system will be completely inaccessible for approximately three hours while our engineering team migrates the database to a more robust cloud architecture. We understand this might disrupt those of you working late, so please ensure all your current progress is saved and synced to the local server before the maintenance window begins. If you encounter any login errors tomorrow morning, try clearing your browser cache first. Should the issue persist, please submit a ticket via the new support portal instead of calling the help desk directly. Thank you for your cooperation."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p4-0011-1",
+          "stem": "What is the primary purpose of this announcement?",
+          "options": {
+            "A": "To explain a change in the company's cloud storage policy.",
+            "B": "To provide instructions on how to use the new support portal.",
+            "C": "To notify employees about a scheduled system outage.",
+            "D": "To request feedback on the current project management software."
+          },
+          "answer": "C",
+          "errorType": "purpose",
+          "explanation": "Người nói thông báo về việc phần mềm quản lý dự án sẽ ngừng hoạt động để bảo trì trong một khoảng thời gian xác định.",
+          "trap": "Người nghe có thể nhầm lẫn vì phần mềm mới được đề cập đến trong ngữ cảnh hỗ trợ, nhưng mục đích chính là thông báo về việc ngừng hoạt động."
+        },
+        {
+          "id": "p4-0011-2",
+          "stem": "What are employees advised to do before the maintenance begins?",
+          "options": {
+            "A": "Clear their browser cache.",
+            "B": "Submit a support ticket.",
+            "C": "Log out of the cloud architecture.",
+            "D": "Back up their work to the local server."
+          },
+          "answer": "D",
+          "errorType": "detail",
+          "explanation": "Người nói yêu cầu nhân viên lưu và đồng bộ hóa tiến độ công việc vào máy chủ cục bộ trước khi quá trình bảo trì diễn ra.",
+          "trap": "Việc xóa bộ nhớ đệm trình duyệt được nhắc đến như một giải pháp cho ngày hôm sau, không phải là việc cần làm trước khi bảo trì."
+        },
+        {
+          "id": "p4-0011-3",
+          "stem": "What does the speaker imply about the help desk?",
+          "options": {
+            "A": "It is not the preferred method for reporting post-update issues.",
+            "B": "It will be understaffed during the maintenance period.",
+            "C": "It is currently undergoing a structural reorganization.",
+            "D": "It will be unavailable to handle inquiries tomorrow morning."
+          },
+          "answer": "A",
+          "errorType": "inference",
+          "explanation": "Người nói yêu cầu nhân viên sử dụng cổng thông tin hỗ trợ thay vì gọi trực tiếp cho bộ phận trợ giúp, cho thấy đó là kênh ưu tiên.",
+          "trap": "Người nghe có thể suy luận sai rằng bộ phận trợ giúp không hoạt động, trong khi thực tế chỉ là thay đổi kênh liên lạc ưu tiên."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-22",
+        "date": "2026-09-22"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      },
+      "audio": {
+        "clips": [
+          "audio/87851f1db625d849.mp3"
+        ],
+        "voices": {
+          "IT Manager": "en-GB-RyanNeural"
+        }
+      }
+    },
+    {
+      "id": "p4-0012",
+      "set": "part4-core",
+      "part": 4,
+      "status": "active",
+      "kind": "talk",
+      "title": "Conference Registration Inquiry",
+      "script": [
+        {
+          "speaker": "Event Coordinator",
+          "text": "Hello, this is Sarah from the Global Tech Summit organizing committee. I am calling to follow up on your registration for next month's conference in Singapore. We noticed that your payment for the premium pass is still pending in our system. The early-bird discount period ends this Friday, and we want to ensure you secure that rate before it reverts to the standard pricing. If you have already processed the payment through your bank, please forward the transaction receipt to our finance department as soon as possible so we can manually update your status. If you have any questions regarding the workshop schedule or the keynote speaker lineup, feel free to check our website or call me back at this number."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p4-0012-1",
+          "stem": "Why is the speaker calling?",
+          "options": {
+            "A": "To invite the listener to be a keynote speaker.",
+            "B": "To address an incomplete registration payment.",
+            "C": "To inform the listener about a change in the conference venue.",
+            "D": "To offer an extension on the early-bird discount period."
+          },
+          "answer": "B",
+          "errorType": "purpose",
+          "explanation": "Người nói gọi để thông báo rằng khoản thanh toán cho vé tham dự hội nghị của người nghe vẫn chưa được ghi nhận trong hệ thống.",
+          "trap": "Người nghe có thể nhầm lẫn rằng người nói đang gia hạn thời gian giảm giá, nhưng thực tế người nói chỉ đang nhắc nhở để người nghe kịp hưởng ưu đãi đó."
+        },
+        {
+          "id": "p4-0012-2",
+          "stem": "What should the listener do if the payment has already been sent?",
+          "options": {
+            "A": "Contact the bank to cancel the transaction.",
+            "B": "Register again using a different payment method.",
+            "C": "Send a copy of the payment verification to the finance team.",
+            "D": "Wait for the system to update automatically."
+          },
+          "answer": "C",
+          "errorType": "next-action",
+          "explanation": "Người nói hướng dẫn người nghe gửi biên lai giao dịch cho bộ phận tài chính nếu họ đã thực hiện thanh toán qua ngân hàng.",
+          "trap": "Người nghe có thể nghĩ rằng hệ thống sẽ tự cập nhật, nhưng người nói nhấn mạnh việc cần gửi biên lai để cập nhật thủ công."
+        },
+        {
+          "id": "p4-0012-3",
+          "stem": "What is implied about the conference pricing?",
+          "options": {
+            "A": "It is non-refundable after the registration deadline.",
+            "B": "It varies depending on the chosen workshop.",
+            "C": "It is currently at its lowest possible rate.",
+            "D": "It will increase after the current week."
+          },
+          "answer": "D",
+          "errorType": "inference",
+          "explanation": "Việc đề cập rằng thời hạn giảm giá kết thúc vào thứ Sáu và giá sẽ trở về mức tiêu chuẩn ngụ ý rằng chi phí sẽ tăng lên sau thời điểm đó.",
+          "trap": "Người nghe có thể hiểu nhầm rằng đây là mức giá thấp nhất, nhưng thông tin quan trọng là giá sẽ thay đổi theo thời gian."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-22",
+        "date": "2026-09-22"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      },
+      "audio": {
+        "clips": [
+          "audio/610e4e8aa0a3b719.mp3"
+        ],
+        "voices": {
+          "Event Coordinator": "en-CA-ClaraNeural"
+        }
+      }
+    },
+    {
+      "id": "p4-0013",
+      "set": "part4-core",
+      "part": 4,
+      "status": "active",
+      "kind": "talk",
+      "title": "Expense Report Issue",
+      "script": [
+        {
+          "speaker": "Finance Department Representative",
+          "text": "Hi, this is Mark from the accounting office. I am reviewing the expense report you submitted yesterday for your recent business trip to Tokyo. I noticed that several of your meal receipts are missing, and one of the hotel invoices lacks the required tax identification number. Without these documents, I cannot process your reimbursement request, and it will likely be rejected by the audit team. Could you please scan the missing receipts and provide the correct hotel invoice by the end of the day? I have a meeting with the department head tomorrow morning, and I would like to have your report finalized before then. Please let me know if you have any trouble locating these files."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p4-0013-1",
+          "stem": "What is the problem with the expense report?",
+          "options": {
+            "A": "It is missing necessary supporting documentation.",
+            "B": "It was submitted after the deadline.",
+            "C": "It contains incorrect currency conversions.",
+            "D": "It exceeds the company's travel budget limit."
+          },
+          "answer": "A",
+          "errorType": "detail",
+          "explanation": "Người nói chỉ ra rằng báo cáo thiếu biên lai ăn uống và hóa đơn khách sạn không có mã số thuế, tức là thiếu tài liệu hỗ trợ cần thiết.",
+          "trap": "Người nghe có thể nghĩ rằng báo cáo bị từ chối do vượt ngân sách, nhưng người nói chỉ đề cập đến vấn đề thiếu giấy tờ."
+        },
+        {
+          "id": "p4-0013-2",
+          "stem": "What does the speaker mean when he says, 'I would like to have your report finalized before then'?",
+          "options": {
+            "A": "He wants to avoid a confrontation with the department head.",
+            "B": "He needs the report ready for his upcoming meeting.",
+            "C": "He is planning to go on vacation after the meeting.",
+            "D": "He intends to submit the report to the audit team himself."
+          },
+          "answer": "B",
+          "errorType": "speaker-intent",
+          "explanation": "Người nói muốn hoàn thiện báo cáo trước cuộc họp với trưởng bộ phận vào sáng mai để đảm bảo mọi thứ đã sẵn sàng.",
+          "trap": "Người nghe có thể suy diễn rằng người nói sợ bị khiển trách, nhưng ý chính là sự chuẩn bị cho cuộc họp."
+        },
+        {
+          "id": "p4-0013-3",
+          "stem": "What is the listener expected to do?",
+          "options": {
+            "A": "Reschedule the trip to Tokyo.",
+            "B": "Attend a meeting with the audit team.",
+            "C": "Provide the missing documents by today.",
+            "D": "Request a refund from the hotel."
+          },
+          "answer": "C",
+          "errorType": "next-action",
+          "explanation": "Người nói yêu cầu người nghe quét biên lai còn thiếu và cung cấp hóa đơn đúng trước khi kết thúc ngày làm việc.",
+          "trap": "Người nghe có thể nhầm lẫn rằng cần liên hệ với khách sạn để yêu cầu hoàn tiền, trong khi thực tế chỉ cần hóa đơn hợp lệ."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-22",
+        "date": "2026-09-22"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      },
+      "audio": {
+        "clips": [
+          "audio/e6c5dafab93f9550.mp3"
+        ],
+        "voices": {
+          "Finance Department Representative": "en-US-GuyNeural"
+        }
+      }
+    },
+    {
+      "id": "p4-0014",
+      "set": "part4-core",
+      "part": 4,
+      "status": "active",
+      "kind": "talk",
+      "title": "Supplier Contract Renewal",
+      "script": [
+        {
+          "speaker": "Procurement Officer",
+          "text": "Good morning, team. I am calling to discuss the upcoming renewal of our contract with Apex Logistics. As you know, our current agreement expires at the end of this quarter. While their shipping rates have been competitive, we have experienced several delays in delivery over the past six months, which has negatively impacted our customer satisfaction scores. I have scheduled a meeting with their account manager for Thursday to renegotiate the terms. I need each of you to compile a brief summary of any shipping issues you have encountered recently. Please email these reports to me by Wednesday afternoon so I can present concrete evidence during our negotiation session. Your input is crucial for securing better service guarantees."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p4-0014-1",
+          "stem": "What is the main topic of the message?",
+          "options": {
+            "A": "Selecting a new shipping provider.",
+            "B": "Improving customer satisfaction scores.",
+            "C": "Scheduling a meeting with the logistics team.",
+            "D": "Renegotiating a contract with a current supplier."
+          },
+          "answer": "D",
+          "errorType": "gist",
+          "explanation": "Thông điệp tập trung vào việc gia hạn hợp đồng với Apex Logistics và các bước cần chuẩn bị để đàm phán lại các điều khoản.",
+          "trap": "Người nghe có thể nhầm lẫn rằng công ty đang tìm nhà cung cấp mới, nhưng người nói chỉ đang muốn đàm phán lại hợp đồng hiện tại."
+        },
+        {
+          "id": "p4-0014-2",
+          "stem": "Why is the speaker dissatisfied with the current supplier?",
+          "options": {
+            "A": "They have caused repeated shipment delays.",
+            "B": "Their shipping rates have increased significantly.",
+            "C": "They have failed to provide service guarantees.",
+            "D": "They have been unresponsive to previous complaints."
+          },
+          "answer": "A",
+          "errorType": "detail",
+          "explanation": "Người nói đề cập rằng đã có nhiều sự chậm trễ trong việc giao hàng trong sáu tháng qua.",
+          "trap": "Người nghe có thể nhầm lẫn rằng giá cước tăng, nhưng người nói lại khẳng định giá cước vẫn đang cạnh tranh."
+        },
+        {
+          "id": "p4-0014-3",
+          "stem": "What are the team members asked to do?",
+          "options": {
+            "A": "Attend the negotiation meeting on Thursday.",
+            "B": "Submit a report on shipping problems.",
+            "C": "Contact the account manager directly.",
+            "D": "Find alternative logistics providers."
+          },
+          "answer": "B",
+          "errorType": "next-action",
+          "explanation": "Người nói yêu cầu các thành viên gửi bản tóm tắt các vấn đề giao hàng mà họ gặp phải qua email trước chiều thứ Tư.",
+          "trap": "Người nghe có thể nghĩ rằng họ cần tham gia cuộc họp, nhưng người nói chỉ yêu cầu gửi báo cáo để người nói sử dụng làm bằng chứng."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-22",
+        "date": "2026-09-22"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      },
+      "audio": {
+        "clips": [
+          "audio/5e6702f493265786.mp3"
+        ],
+        "voices": {
+          "Procurement Officer": "en-GB-SoniaNeural"
+        }
+      }
+    },
+    {
+      "id": "p4-0015",
+      "set": "part4-core",
+      "part": 4,
+      "status": "active",
+      "kind": "talk",
+      "title": "Customer Complaint Follow-up",
+      "script": [
+        {
+          "speaker": "Customer Service Manager",
+          "text": "Hello, this is Brenda from the customer support department. I am calling regarding the complaint you filed yesterday about the damaged shipment you received. I have personally investigated the matter with our warehouse team, and it appears that the packaging used for your order was insufficient for international transit. I sincerely apologize for the inconvenience this has caused your business. We have already processed a replacement order, which will be shipped via express delivery at no additional cost to you. You should receive a tracking number in your email within the next hour. Please let us know if the replacement arrives in good condition, as we are committed to resolving this issue to your satisfaction."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p4-0015-1",
+          "stem": "What is the primary reason for the call?",
+          "options": {
+            "A": "To explain the cause of a shipping error.",
+            "B": "To request more information about a damaged product.",
+            "C": "To provide a status update on a customer's complaint.",
+            "D": "To offer a discount on future orders."
+          },
+          "answer": "C",
+          "errorType": "purpose",
+          "explanation": "Người nói gọi để phản hồi về khiếu nại của khách hàng về lô hàng bị hỏng và thông báo về giải pháp đã được thực hiện.",
+          "trap": "Người nghe có thể nhầm lẫn rằng người nói chỉ gọi để giải thích nguyên nhân, nhưng mục đích chính là giải quyết khiếu nại."
+        },
+        {
+          "id": "p4-0015-2",
+          "stem": "What caused the problem with the shipment?",
+          "options": {
+            "A": "A delay at the international customs office.",
+            "B": "An error in the delivery address.",
+            "C": "A mistake made by the express delivery service.",
+            "D": "Inadequate packaging for long-distance shipping."
+          },
+          "answer": "D",
+          "errorType": "detail",
+          "explanation": "Người nói xác nhận rằng bao bì được sử dụng cho đơn hàng không đủ tiêu chuẩn cho việc vận chuyển quốc tế.",
+          "trap": "Người nghe có thể nhầm lẫn rằng lỗi thuộc về dịch vụ chuyển phát nhanh, nhưng người nói chỉ rõ là do khâu đóng gói của kho."
+        },
+        {
+          "id": "p4-0015-3",
+          "stem": "What will the listener receive shortly?",
+          "options": {
+            "A": "A confirmation of the replacement shipment.",
+            "B": "A refund for the damaged items.",
+            "C": "A survey regarding customer service quality.",
+            "D": "A discount code for the next purchase."
+          },
+          "answer": "A",
+          "errorType": "next-action",
+          "explanation": "Người nói thông báo rằng khách hàng sẽ nhận được số theo dõi đơn hàng thay thế qua email trong vòng một giờ tới.",
+          "trap": "Người nghe có thể nghĩ rằng sẽ nhận được tiền hoàn lại, nhưng người nói nhấn mạnh vào việc gửi đơn hàng thay thế."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-22",
+        "date": "2026-09-22"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      },
+      "audio": {
+        "clips": [
+          "audio/31b2a73a1360cfee.mp3"
+        ],
+        "voices": {
+          "Customer Service Manager": "en-CA-LiamNeural"
+        }
+      }
     }
   ]
 }

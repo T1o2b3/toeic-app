@@ -330,6 +330,334 @@
         "model": "gemini-flash-lite-latest",
         "agreed": true
       }
+    },
+    {
+      "id": "p6-0005",
+      "set": "part6-core",
+      "part": 6,
+      "status": "active",
+      "kind": "text-completion",
+      "title": "Email",
+      "passages": [
+        {
+          "label": "Email",
+          "text": "Subject: Travel Arrangements for Tokyo Summit\n\nDear Mr. Vance,\n\nI am writing to confirm that your travel itinerary for the upcoming Tokyo Technology Summit has been finalized. We have booked you on a direct flight departing on November 12. [1], we managed to secure a room at the Grand Hyatt, which is adjacent to the convention center. Please note that the corporate rate we secured requires a non-refundable deposit. [2]. To ensure a seamless transition upon arrival, a private shuttle has been arranged to transport you directly to the hotel. We kindly request that you [3] all receipts during your stay to facilitate the reimbursement process. Should you need to make any last-minute adjustments to your schedule, please contact the travel department immediately. [4] will incur additional administrative fees from the agency."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p6-0005-1",
+          "stem": "Blank [1]",
+          "options": {
+            "A": "Furthermore",
+            "B": "Consequently",
+            "C": "Conversely",
+            "D": "Meanwhile"
+          },
+          "answer": "A",
+          "errorType": "connector-in-context",
+          "explanation": "Từ nối này dùng để bổ sung thông tin về việc đặt phòng khách sạn sau khi đã đề cập đến việc đặt vé máy bay. Cả hai đều là các bước trong quá trình hoàn tất lịch trình di chuyển.",
+          "trap": "Từ chỉ kết quả như 'Consequently' dễ gây nhầm lẫn vì người đọc có thể tưởng việc đặt khách sạn là hậu quả trực tiếp của việc đặt vé máy bay."
+        },
+        {
+          "id": "p6-0005-2",
+          "stem": "Blank [2]",
+          "options": {
+            "A": "The summit organizers have promised to waive this fee for early registrants.",
+            "B": "Any subsequent cancellations will therefore result in a forfeiture of these funds.",
+            "C": "You will need to present your corporate ID upon checking in at the front desk.",
+            "D": "Flight upgrades can be requested at the boarding gate if seats are available."
+          },
+          "answer": "B",
+          "errorType": "sentence-insertion",
+          "explanation": "Câu này giải thích trực tiếp cho cảnh báo ở câu trước về việc khoản đặt cọc phòng khách sạn không được hoàn lại, làm rõ hậu quả tài chính nếu hủy chuyến.",
+          "trap": "Câu nói về việc xuất trình thẻ nhân viên 'corporate ID' dễ bị chọn do có chứa từ khóa liên quan đến khách sạn nhưng không kết nối logic với điều khoản đặt cọc."
+        },
+        {
+          "id": "p6-0005-3",
+          "stem": "Blank [3]",
+          "options": {
+            "A": "discard",
+            "B": "submit",
+            "C": "retain",
+            "D": "forfeit"
+          },
+          "answer": "C",
+          "errorType": "vocab-in-context",
+          "explanation": "Trong ngữ cảnh đi công tác, nhân viên cần giữ lại tất cả hóa đơn trong suốt thời gian lưu trú để làm thủ tục hoàn tiền sau đó.",
+          "trap": "Từ 'submit' rất phổ biến với hóa đơn nhưng không hợp lý khi đi với cụm 'trong suốt thời gian lưu trú' vì việc nộp thường diễn ra sau khi chuyến đi kết thúc."
+        },
+        {
+          "id": "p6-0005-4",
+          "stem": "Blank [4]",
+          "options": {
+            "A": "To have done",
+            "B": "By doing this",
+            "C": "Which",
+            "D": "Doing so"
+          },
+          "answer": "D",
+          "errorType": "grammar-in-context",
+          "explanation": "Cụm danh động từ đóng vai trò làm chủ ngữ cho động từ 'will incur', đề cập đến hành động điều chỉnh lịch trình vào phút chót đã nêu ở câu trước.",
+          "trap": "Cụm 'By doing this' tạo cảm giác đúng ngữ pháp nhưng lại biến câu thành một trạng ngữ thiếu chủ ngữ chính đứng trước động từ."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-22",
+        "date": "2026-09-22"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p6-0006",
+      "set": "part6-core",
+      "part": 6,
+      "status": "active",
+      "kind": "text-completion",
+      "title": "Memo",
+      "passages": [
+        {
+          "label": "Memo",
+          "text": "To: All Department Heads\nFrom: Chief Financial Officer\nDate: October 5\nSubject: FY2024 Budget Allocation Approval\n\nI am pleased to inform you that the Board of Directors has officially approved the budget allocations for the upcoming fiscal year. After rigorous review, we have decided to increase the R&D funding by 15% to foster innovation. [1], marketing expenditures must be scaled back to offset these costs. Each department head is expected to submit a revised operational plan reflecting these new figures by Friday. [2]. Please ensure that your team prioritizes essential projects to avoid any operational disruptions. We understand that these adjustments may require [3] some of your strategic goals. However, we believe this realignment is crucial for our long-term market viability. Your cooperation in [4] these financial targets is highly appreciated."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p6-0006-1",
+          "stem": "Blank [1]",
+          "options": {
+            "A": "Conversely",
+            "B": "In addition",
+            "C": "Therefore",
+            "D": "Specifically"
+          },
+          "answer": "A",
+          "errorType": "connector-in-context",
+          "explanation": "Từ nối này thể hiện sự tương phản giữa việc tăng ngân sách cho R&D và việc phải cắt giảm ngân sách của mảng marketing để bù đắp chi phí.",
+          "trap": "Từ chỉ kết quả 'Therefore' dễ bị chọn nhầm nếu người đọc nghĩ việc cắt giảm marketing là hệ quả tất yếu, nhưng thực chất đây là hai hành động đối lập nhau trong kế hoạch phân bổ."
+        },
+        {
+          "id": "p6-0006-2",
+          "stem": "Blank [2]",
+          "options": {
+            "A": "The marketing team has already launched their new promotional campaign.",
+            "B": "Failure to meet this deadline may delay the disbursement of your department's funds.",
+            "C": "Most departments have reported a surplus from the previous quarter.",
+            "D": "A detailed breakdown of the R&D projects is available on the shared drive."
+          },
+          "answer": "B",
+          "errorType": "sentence-insertion",
+          "explanation": "Câu này liên kết chặt chẽ với thời hạn nộp kế hoạch vào thứ Sáu được đề cập ở câu trước bằng cách nêu rõ hậu quả nếu trễ hạn.",
+          "trap": "Câu nói về ngân sách thặng dư 'surplus' có vẻ liên quan đến chủ đề tài chính nhưng hoàn toàn lạc đề so với yêu cầu nộp kế hoạch hoạt động điều chỉnh."
+        },
+        {
+          "id": "p6-0006-3",
+          "stem": "Blank [3]",
+          "options": {
+            "A": "abandoning",
+            "B": "suspending",
+            "C": "recalibrating",
+            "D": "accelerating"
+          },
+          "answer": "C",
+          "errorType": "vocab-in-context",
+          "explanation": "Từ 'recalibrating' mang nghĩa hiệu chỉnh hoặc điều chỉnh lại cho phù hợp, rất chính xác khi nói về việc thay đổi các mục tiêu chiến lược do ngân sách bị cắt giảm.",
+          "trap": "Từ 'abandoning' mang nghĩa từ bỏ quá cực đoan và không phù hợp với phong cách quản lý chuyên nghiệp trong bối cảnh này."
+        },
+        {
+          "id": "p6-0006-4",
+          "stem": "Blank [4]",
+          "options": {
+            "A": "to meet",
+            "B": "having met",
+            "C": "meet",
+            "D": "meeting"
+          },
+          "answer": "D",
+          "errorType": "grammar-in-context",
+          "explanation": "Sau giới từ 'in' cần một danh động từ để làm tân ngữ, chỉ hành động hoàn thành các mục tiêu tài chính được đề ra.",
+          "trap": "Động từ nguyên mẫu 'meet' hoặc 'to meet' thường bị chọn sai do thói quen dịch nghĩa trực tiếp từ tiếng Việt mà bỏ qua cấu trúc ngữ pháp sau giới từ."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-22",
+        "date": "2026-09-22"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p6-0007",
+      "set": "part6-core",
+      "part": 6,
+      "status": "active",
+      "kind": "text-completion",
+      "title": "Short Article",
+      "passages": [
+        {
+          "label": "Short Article",
+          "text": "Aura Electronics has officially announced the release of its highly anticipated smartphone, the Prism X. Designed to compete in the premium segment, the device boasts a revolutionary holographic display. Industry analysts predict that this feature alone will redefine user interaction. [1], early beta testers have raised concerns regarding the device's battery life under heavy usage. Aura's engineering team, however, downplayed these reports, claiming that the final retail version will feature optimized power-management software. [2]. Pre-orders are scheduled to begin next week, with shipments commencing in early December. The company has also hinted at [3] promotional bundles for early adopters. Whether the Prism X can live up to its immense hype [4] to be seen."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p6-0007-1",
+          "stem": "Blank [1]",
+          "options": {
+            "A": "Nevertheless",
+            "B": "Furthermore",
+            "C": "Consequently",
+            "D": "Indeed"
+          },
+          "answer": "A",
+          "errorType": "connector-in-context",
+          "explanation": "Từ nối này biểu thị sự nhượng bộ/tương phản giữa những dự báo tích cách của các nhà phân tích và những lo ngại thực tế từ người thử nghiệm bản beta.",
+          "trap": "Từ 'Indeed' dễ bị chọn do người đọc muốn nhấn mạnh dự đoán trước đó mà bỏ qua sự chuyển hướng tiêu cực ở vế sau về thời lượng pin."
+        },
+        {
+          "id": "p6-0007-2",
+          "stem": "Blank [2]",
+          "options": {
+            "A": "Several retail stores have already sold out of their initial inventory.",
+            "B": "This software update is expected to extend battery longevity by up to twenty percent.",
+            "C": "The holographic display was developed in partnership with a leading optics firm.",
+            "D": "Customers are advised to back up their data before installing the update."
+          },
+          "answer": "B",
+          "errorType": "sentence-insertion",
+          "explanation": "Câu này tiếp nối trực tiếp ý của câu trước về việc phiên bản bán lẻ sẽ có phần mềm quản lý nguồn điện tối ưu bằng cách đưa ra số liệu cải thiện cụ thể.",
+          "trap": "Câu nói về việc sao lưu dữ liệu 'back up their data' liên quan đến cập nhật phần mềm nhưng hoàn toàn không phù hợp với bối cảnh giới thiệu một sản phẩm mới chưa mở bán."
+        },
+        {
+          "id": "p6-0007-3",
+          "stem": "Blank [3]",
+          "options": {
+            "A": "redundant",
+            "B": "extravagant",
+            "C": "exclusive",
+            "D": "tentative"
+          },
+          "answer": "C",
+          "errorType": "vocab-in-context",
+          "explanation": "Từ 'exclusive' dùng để chỉ các gói khuyến mãi độc quyền hoặc dành riêng cho những người mua đầu tiên, rất phổ biến trong các chiến dịch ra mắt sản phẩm.",
+          "trap": "Từ 'tentative' mang nghĩa ướm chừng/chưa dứt khoát dễ gây nhầm lẫn vì các kế hoạch ra mắt thường có tính thay đổi, nhưng không đi kèm với gói khuyến mãi cho khách hàng."
+        },
+        {
+          "id": "p6-0007-4",
+          "stem": "Blank [4]",
+          "options": {
+            "A": "remain",
+            "B": "is remaining",
+            "C": "has remained",
+            "D": "remains"
+          },
+          "answer": "D",
+          "errorType": "grammar-in-context",
+          "explanation": "Chủ ngữ của câu là một mệnh đề danh từ 'Whether the Prism X can live up to its immense hype', đòi hỏi động từ chia ở ngôi thứ ba số ít trong cấu trúc cố định 'remains to be seen'.",
+          "trap": "Động từ số nhiều 'remain' dễ bị chọn sai do người đọc bị đánh lừa bởi danh từ số nhiều hoặc danh từ đứng gần động từ nhất."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-22",
+        "date": "2026-09-22"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p6-0008",
+      "set": "part6-core",
+      "part": 6,
+      "status": "active",
+      "kind": "text-completion",
+      "title": "Notice",
+      "passages": [
+        {
+          "label": "Notice",
+          "text": "Please be advised that the main parking structure will undergo scheduled resurfacing and structural maintenance from October 12 to October 15. During this period, the entire facility will be closed to all vehicles. [1], employees are instructed to utilize the temporary parking lot located at the north end of the campus. Shuttle buses will operate continuously between the temporary lot and the main entrance to minimize inconvenience. [2]. We apologize for any disruption this essential maintenance may cause. We appreciate your patience as we work to [3] the safety and aesthetics of our corporate campus. Please note that any vehicles remaining in the main structure after 6:00 PM on October 11 [4] at the owner's expense."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p6-0008-1",
+          "stem": "Blank [1]",
+          "options": {
+            "A": "Accordingly",
+            "B": "On the contrary",
+            "C": "In contrast",
+            "D": "Conversely"
+          },
+          "answer": "A",
+          "errorType": "connector-in-context",
+          "explanation": "Từ nối này mang nghĩa 'Do đó/Vì vậy', dùng để dẫn ra hành động tiếp theo mà nhân viên cần thực hiện do bãi đỗ xe chính bị đóng cửa.",
+          "trap": "Từ 'On the contrary' dễ bị chọn nhầm nếu người đọc dịch thô sơ là 'ngược lại' mà không nhận ra đây là mối quan hệ nhân quả chứ không phải đối lập hoàn toàn."
+        },
+        {
+          "id": "p6-0008-2",
+          "stem": "Blank [2]",
+          "options": {
+            "A": "The parking structure was originally constructed over two decades ago.",
+            "B": "These shuttles will run every ten minutes during peak commuting hours.",
+            "C": "Security personnel will be stationed at the temporary lot to collect parking fees.",
+            "D": "Construction on the new office building is expected to finish ahead of schedule."
+          },
+          "answer": "B",
+          "errorType": "sentence-insertion",
+          "explanation": "Câu này bổ sung thông tin chi tiết về tần suất hoạt động của xe đưa đón 'shuttles' đã được giới thiệu ở câu ngay trước đó.",
+          "trap": "Câu nói về việc thu phí đỗ xe 'parking fees' có vẻ liên quan đến bãi đỗ xe tạm thời nhưng lại mâu thuẫn với bối cảnh bãi đỗ xe nội bộ dành cho nhân viên công ty."
+        },
+        {
+          "id": "p6-0008-3",
+          "stem": "Blank [3]",
+          "options": {
+            "A": "compromise",
+            "B": "neglect",
+            "C": "enhance",
+            "D": "reconcile"
+          },
+          "answer": "C",
+          "errorType": "vocab-in-context",
+          "explanation": "Từ 'enhance' mang nghĩa nâng cao, cải thiện, hoàn toàn phù hợp với mục đích bảo trì để tăng tính thẩm mỹ và độ an toàn của khuôn viên.",
+          "trap": "Từ 'reconcile' mang nghĩa hòa giải hoặc làm cho nhất quán, tuy là từ vựng cao cấp nhưng hoàn toàn sai nghĩa trong bối cảnh nâng cấp cơ sở vật chất."
+        },
+        {
+          "id": "p6-0008-4",
+          "stem": "Blank [4]",
+          "options": {
+            "A": "will tow",
+            "B": "are towing",
+            "C": "have towed",
+            "D": "will be towed"
+          },
+          "answer": "D",
+          "errorType": "grammar-in-context",
+          "explanation": "Câu này cần một động từ ở thể bị động thì tương lai đơn 'will be towed' vì chủ ngữ là vật 'vehicles' chịu tác động của hành động cẩu đi nếu đỗ sai quy định.",
+          "trap": "Động từ chủ động 'will tow' dễ bị chọn nếu người đọc lướt nhanh mà không phân tích mối quan hệ chủ-vị giữa phương tiện và hành động kéo xe."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-22",
+        "date": "2026-09-22"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
     }
   ]
 }

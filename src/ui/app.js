@@ -17,6 +17,7 @@ import { renderExam, handleExamKey, resetExam } from './exam-screen.js';
 import { renderVocab } from './vocab-screen.js';
 import { renderExams } from './exams-screen.js';
 import { renderLookup, resetLookup } from './lookup-screen.js';
+import { renderCollocations, resetCollocations } from './collocations-screen.js';
 import { createTabBar, updateTabBar } from './tabbar.js';
 
 const SCREENS = {
@@ -34,6 +35,7 @@ const SCREENS = {
   lookup: renderLookup,
   sets: renderSets,
   exam: renderExam,
+  collocations: renderCollocations,
 };
 
 const KEY_HANDLERS = {
@@ -66,7 +68,9 @@ export function mountApp(root, store) {
   };
 
   startRouter((route) => {
-    if (route.name !== current.name) { resetTriage(); resetReview(); resetQuiz(); resetSync(); resetWords(); resetPractice(); resetListen(); resetLookup(); resetSets(); resetExam(); }
+    if (route.name !== current.name) { 
+      resetTriage(); resetReview(); resetQuiz(); resetSync(); resetWords(); resetPractice(); resetListen(); resetLookup(); resetSets(); resetExam(); resetCollocations(); 
+    }
     current = route;
     updateTabBar(nav, current.name);
     draw();

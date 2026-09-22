@@ -59,10 +59,9 @@ export function createPlayer({
       audio.onended = resolve;
       audio.onerror = () => reject(new Error('Không phát được âm thanh'));
       audio.src = url;
-      // Đặt tốc độ SAU khi gán src: một số trình duyệt đặt lại tốc độ khi đổi nguồn.
       audio.defaultPlaybackRate = rate;
       audio.playbackRate = rate;
-      if ('preservesPitch' in audio) audio.preservesPitch = true; // đổi tốc độ mà không đổi cao độ giọng
+      if ('preservesPitch' in audio) audio.preservesPitch = true;
       const started = audio.play();
       if (started?.catch) started.catch(reject);
     });
@@ -95,11 +94,11 @@ export function createPlayer({
           await wait(step.ms);
           continue;
         }
-        // Đoạn đã tải sẵn thì phát ngay (giữ được thao tác chạm); chưa có thì đợi tải, tải hỏng thì dùng địa chỉ gốc.
         const url = ready(step.src) ?? (await preloadOne(step.src)) ?? step.src;
         if (mine !== token) return 'stopped';
         await playClip(url, rate);
       }
+      onStep?.({ type: 'done' });
       return mine === token ? 'done' : 'stopped';
     },
 

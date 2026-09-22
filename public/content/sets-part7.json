@@ -1380,6 +1380,346 @@
         "model": "gemini-flash-lite-latest",
         "agreed": true
       }
+    },
+    {
+      "id": "p7-0021",
+      "set": "part7-core",
+      "part": 7,
+      "status": "active",
+      "kind": "single",
+      "title": "Memorandum",
+      "passages": [
+        {
+          "label": "Office Equipment Repair Memo",
+          "text": "MEMORANDUM\n\nTO: All Staff\nFROM: Facilities Management\nDATE: October 12\nSUBJECT: Out-of-Service Multi-Function Printer (MFP) on Floor 3\n\nPlease be advised that the primary multi-function printer (MFP-3B) located in the east wing of Floor 3 is currently offline due to a critical fuser assembly failure. A certified technician from Apex Office Solutions has been dispatched and is scheduled to arrive tomorrow, October 13, at 9:00 A.M.\n\nWe anticipate the repair work will take approximately three hours, during which time the immediate area may experience moderate noise. In the interim, all print jobs automatically routed to MFP-3B have been redirected to MFP-3A in the west wing. However, because MFP-3A does not have the high-capacity stapling or booklet-finishing modules, any complex document assembly must be sent to the central print depot on the ground floor.\n\nWe apologize for any inconvenience this temporary disruption may cause. For urgent, high-volume printing requests, please contact Marcus Vance at extension 4402 to expedite processing."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p7-0021-1",
+          "stem": "What is the primary purpose of the memorandum?",
+          "options": {
+            "A": "To announce a temporary relocation of the printing department.",
+            "B": "To request feedback on the performance of a new printer model.",
+            "C": "To schedule maintenance for all office equipment on Floor 3.",
+            "D": "To inform employees about alternative printing arrangements during a repair."
+          },
+          "answer": "D",
+          "errorType": "purpose",
+          "explanation": "Bản ghi nhớ thông báo về việc máy in MFP-3B bị hỏng và hướng dẫn nhân viên sử dụng máy in MFP-3A hoặc bộ phận in ấn trung tâm ở tầng trệt để thay thế trong thời gian chờ sửa chữa.",
+          "trap": "Lựa chọn về việc di dời tạm thời bộ phận in ấn dễ gây nhầm lẫn vì văn bản nhắc đến việc chuyển lệnh in sang máy in khác và gửi tài liệu phức tạp xuống tầng trệt, nhưng đây chỉ là giải pháp tạm thời chứ không phải di dời phòng ban."
+        },
+        {
+          "id": "p7-0021-2",
+          "stem": "According to the memorandum, where should employees send documents requiring booklet-finishing?",
+          "options": {
+            "A": "To the ground floor printing facility.",
+            "B": "To the west wing of Floor 3.",
+            "C": "To the technician from Apex Office Solutions.",
+            "D": "To Marcus Vance's office."
+          },
+          "answer": "A",
+          "errorType": "detail",
+          "explanation": "Văn bản nêu rõ máy in MFP-3A ở phía tây không có chức năng đóng sách (booklet-finishing), do đó các tài liệu phức tạp phải được gửi đến xưởng in trung tâm ở tầng trệt (central print depot on the ground floor).",
+          "trap": "Lựa chọn về phía tây tầng 3 dễ đánh lừa vì đó là nơi đặt máy in thay thế MFP-3A, nhưng máy này lại thiếu tính năng đóng sách."
+        },
+        {
+          "id": "p7-0021-3",
+          "stem": "What is implied about the repair scheduled for October 13?",
+          "options": {
+            "A": "It must be completed before the office opens for the day.",
+            "B": "It will likely cause some auditory disturbance in the surrounding area.",
+            "C": "It will require the complete shutdown of all Floor 3 printers.",
+            "D": "It is being performed by an in-house maintenance team."
+          },
+          "answer": "B",
+          "errorType": "inference",
+          "explanation": "Văn bản đề cập rằng trong khoảng ba tiếng sửa chữa, khu vực xung quanh có thể gặp phải tiếng ồn vừa phải (moderate noise), điều này ngụ ý sẽ có sự làm phiền về mặt âm thanh.",
+          "trap": "Lựa chọn về việc hoàn thành trước giờ mở cửa hấp dẫn vì kỹ thuật viên đến lúc 9:00 sáng, nhưng thực tế công việc kéo dài 3 tiếng nên sẽ diễn ra trong giờ làm việc."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-22",
+        "date": "2026-09-22"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p7-0022",
+      "set": "part7-core",
+      "part": 7,
+      "status": "active",
+      "kind": "single",
+      "title": "Email",
+      "passages": [
+        {
+          "label": "Hiring and Interviews Email",
+          "text": "To: Clara Vance <c.vance@vanguardtech.com>\nFrom: HR Department <careers@vanguardtech.com>\nDate: April 5\nSubject: Interview Schedule - Senior Systems Analyst\n\nDear Ms. Vance,\n\nThank you for submitting your application for the Senior Systems Analyst position at Vanguard Technologies. Our hiring committee was highly impressed by your extensive background in cloud architecture and database migration.\n\nWe would like to invite you for an initial 45-minute interview via video conference on Thursday, April 11, at 2:00 P.M. EST. This session will be conducted by our Lead Architect, Dr. Aris Thorne, and will focus primarily on your technical expertise. You will also be asked to briefly present a case study of a past project that demonstrates your problem-solving capabilities under tight deadlines.\n\nPlease confirm your availability for this slot by replying to this email by 5:00 P.M. on Monday, April 8. If this time is unsuitable, please propose two alternative slots during regular business hours on April 11 or 12. Once confirmed, we will send a calendar invitation containing the video link and a detailed agenda.\n\nSincerely,\nThe Vanguard HR Team"
+        }
+      ],
+      "questions": [
+        {
+          "id": "p7-0022-1",
+          "stem": "What is Ms. Vance expected to do during the interview?",
+          "options": {
+            "A": "Complete a live coding assessment.",
+            "B": "Submit references from her former employers.",
+            "C": "Deliver a short presentation on a previous project.",
+            "D": "Meet with the entire hiring committee."
+          },
+          "answer": "C",
+          "errorType": "detail",
+          "explanation": "Thư yêu cầu ứng viên trình bày ngắn gọn một nghiên cứu tình huống về dự án trước đây (briefly present a case study of a past project).",
+          "trap": "Lựa chọn gặp toàn bộ hội đồng tuyển dụng dễ nhầm vì thư nhắc đến việc hội đồng tuyển dụng ấn tượng với hồ sơ, nhưng cuộc phỏng vấn này chỉ do một người là Dr. Aris Thorne thực hiện."
+        },
+        {
+          "id": "p7-0022-2",
+          "stem": "What is implied about the scheduling of the interview?",
+          "options": {
+            "A": "It cannot be rescheduled under any circumstances.",
+            "B": "It will take place in person at the Vanguard headquarters.",
+            "C": "The interview must be completed before April 8.",
+            "D": "The candidate has some flexibility regarding the interview date."
+          },
+          "answer": "D",
+          "errorType": "inference",
+          "explanation": "Người viết cho phép ứng viên đề xuất hai khung giờ thay thế vào ngày 11 hoặc 12 tháng 4 nếu thời gian ban đầu không phù hợp, cho thấy sự linh hoạt về ngày giờ.",
+          "trap": "Lựa chọn cuộc phỏng vấn phải hoàn thành trước ngày 8 tháng 4 gây nhầm lẫn vì ngày 8 tháng 4 là hạn chót để xác nhận lịch hẹn, chứ không phải ngày phỏng vấn."
+        },
+        {
+          "id": "p7-0022-3",
+          "stem": "The word 'slot' in paragraph 3 is closest in meaning to",
+          "options": {
+            "A": "time interval",
+            "B": "opening",
+            "C": "position",
+            "D": "location"
+          },
+          "answer": "A",
+          "errorType": "reference",
+          "explanation": "Trong ngữ cảnh xác nhận sự có mặt cho khung giờ này (confirm your availability for this slot), từ 'slot' chỉ một khoảng thời gian cụ thể được ấn định cho cuộc phỏng vấn.",
+          "trap": "Lựa chọn về vị trí công việc trống (opening hoặc position) rất dễ nhầm vì đây là thư tuyển dụng, nhưng ở đây từ này bổ nghĩa cho lịch trình thời gian."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-22",
+        "date": "2026-09-22"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p7-0023",
+      "set": "part7-core",
+      "part": 7,
+      "status": "active",
+      "kind": "single",
+      "title": "Letter",
+      "passages": [
+        {
+          "label": "Delayed Shipment Letter",
+          "text": "Sovereign Logistics Corp.\n102 Industrial Parkway, Suite B\nChicago, IL 60611\n\nNovember 18\n\nMs. Elena Rostova\nProcurement Director\nApex Manufacturing Ltd.\n450 Industrial Blvd\nDetroit, MI 48201\n\nDear Ms. Rostova,\n\nI am writing to formally notify you of an unavoidable delay regarding shipment #SL-88401, containing the precision steel bearings scheduled for delivery to your Detroit facility on November 20.\n\nDue to unprecedented severe weather conditions that forced the temporary closure of the Port of Seattle, the cargo vessel carrying your order was delayed at sea for four days. The vessel has now docked, and customs clearance is being expedited. However, we now estimate that the shipment will arrive at your facility on November 24.\n\nWe deeply regret this delay, as we understand it may impact your production timeline. To mitigate this inconvenience, Sovereign Logistics will waive all overland freight charges for this delivery, resulting in a 15% discount on your invoice. Additionally, we will provide real-time GPS tracking updates directly to your logistics team starting tomorrow morning.\n\nThank you for your patience and understanding. Please contact me directly if you require further assistance.\n\nSincerely,\nDavid Vance\nOperations Manager"
+        }
+      ],
+      "questions": [
+        {
+          "id": "p7-0023-1",
+          "stem": "What caused the delay of shipment #SL-88401?",
+          "options": {
+            "A": "A labor strike at the Detroit facility.",
+            "B": "Extreme weather affecting port operations.",
+            "C": "A clerical error in the customs documentation.",
+            "D": "Mechanical failure of the cargo vessel."
+          },
+          "answer": "B",
+          "errorType": "detail",
+          "explanation": "Thư nêu rõ nguyên nhân là do điều kiện thời tiết khắc nghiệt chưa từng có buộc Cảng Seattle phải đóng cửa tạm thời (severe weather conditions that forced the temporary closure of the Port of Seattle).",
+          "trap": "Lựa chọn về lỗi thủ tục hải quan dễ nhầm vì thư có nhắc đến việc đang đẩy nhanh thông quan hải quan (customs clearance is being expedited), nhưng đây là bước xử lý sau khi tàu cập cảng chứ không phải nguyên nhân gây trễ."
+        },
+        {
+          "id": "p7-0023-2",
+          "stem": "What is NOT mentioned as a measure to compensate for the delay?",
+          "options": {
+            "A": "Offering a discount on the invoice.",
+            "B": "Eliminating land transport fees.",
+            "C": "Upgrading the delivery to air freight.",
+            "D": "Providing live tracking updates."
+          },
+          "answer": "C",
+          "errorType": "not-stated",
+          "explanation": "Thư đề cập đến việc miễn phí vận chuyển đường bộ (waive overland freight charges), giảm giá 15% hóa đơn (15% discount) và cung cấp định vị GPS thời gian thực (real-time GPS tracking), nhưng không hề nói đến việc chuyển sang vận chuyển bằng đường hàng không.",
+          "trap": "Lựa chọn miễn phí vận chuyển đường bộ dễ bị loại trừ nhầm vì người đọc có thể nghĩ thuật ngữ chuyên môn trong bài viết không tương đồng với cụm từ mô tả chung, nhưng thực chất chúng là một."
+        },
+        {
+          "id": "p7-0023-3",
+          "stem": "What is implied about the shipment's arrival date?",
+          "options": {
+            "A": "It will reach Detroit on November 20.",
+            "B": "It has been postponed indefinitely.",
+            "C": "It will arrive before the customs clearance is completed.",
+            "D": "It will arrive four days later than originally planned."
+          },
+          "answer": "D",
+          "errorType": "inference",
+          "explanation": "Ban đầu chuyến hàng dự kiến giao vào ngày 20 tháng 11 (scheduled for delivery on November 20), nhưng do sự cố nên ước tính mới là ngày 24 tháng 11 (arrive on November 24), tức là trễ đúng 4 ngày.",
+          "trap": "Lựa chọn ngày 20 tháng 11 dễ gây nhầm lẫn vì đó là ngày giao hàng dự kiến ban đầu được nhắc đến trong đoạn đầu tiên."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-22",
+        "date": "2026-09-22"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p7-0024",
+      "set": "part7-core",
+      "part": 7,
+      "status": "active",
+      "kind": "single",
+      "title": "Group Chat",
+      "passages": [
+        {
+          "label": "Client Meeting Reschedule Chat",
+          "text": "**Project Alpha Group Chat**\n\n**Sarah Jenkins [10:15 A.M.]**\nHi team, I just got off the phone with Mr. Henderson from Orion Enterprises. Due to an urgent board meeting on their end, he needs to push back our project review session scheduled for tomorrow, Wednesday at 2:00 P.M.\n\n**Liam Chen [10:18 A.M.]**\nOh, that’s tight. We were supposed to finalize the budget proposal during that meeting. Did he suggest an alternative time?\n\n**Sarah Jenkins [10:20 A.M.]**\nYes, he proposed Thursday at 10:00 A.M. or Friday at 3:00 P.M. I know we have the marketing alignment meeting on Thursday morning, so Friday seems more feasible. What do you think?\n\n**Liam Chen [10:22 A.M.]**\nFriday afternoon works for me, but we must send him the updated slide deck at least 24 hours in advance. That means our internal review must be completed by Thursday afternoon.\n\n**Sarah Jenkins [10:25 A.M.]**\nAgreed. I’ll confirm the Friday 3:00 P.M. slot with Mr. Henderson now. Liam, please make sure the design team finishes the graphics by tomorrow evening so we can review them first thing Thursday."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p7-0024-1",
+          "stem": "Why did Ms. Jenkins contact the team?",
+          "options": {
+            "A": "To communicate a change in a client's availability.",
+            "B": "To request assistance with a budget proposal.",
+            "C": "To reschedule an internal marketing meeting.",
+            "D": "To complain about a client's lack of professionalism."
+          },
+          "answer": "A",
+          "errorType": "purpose",
+          "explanation": "Sarah nhắn tin để thông báo rằng khách hàng (Mr. Henderson) cần lùi lịch họp dự kiến vào ngày mai do bận họp hội đồng quản trị đột xuất.",
+          "trap": "Lựa chọn dời lịch họp marketing nội bộ dễ nhầm vì Sarah có nhắc đến cuộc họp marketing vào sáng thứ Năm, nhưng đó chỉ là lý do cô ấy không chọn lịch họp với khách hàng vào thời điểm đó."
+        },
+        {
+          "id": "p7-0024-2",
+          "stem": "When will the meeting with Mr. Henderson most likely take place?",
+          "options": {
+            "A": "Wednesday at 2:00 P.M.",
+            "B": "Friday at 3:00 P.M.",
+            "C": "Thursday at 10:00 A.M.",
+            "D": "Thursday afternoon."
+          },
+          "answer": "B",
+          "errorType": "detail",
+          "explanation": "Sarah đề xuất thứ Sáu vì thứ Năm vướng lịch họp marketing, Liam đồng ý và Sarah chốt sẽ xác nhận lịch họp vào 3:00 chiều thứ Sáu với khách hàng.",
+          "trap": "Lựa chọn thứ Năm lúc 10:00 sáng là một trong hai phương án khách hàng đề xuất nhưng nhóm không chọn vì trùng lịch họp khác."
+        },
+        {
+          "id": "p7-0024-3",
+          "stem": "What must the team do by Thursday afternoon?",
+          "options": {
+            "A": "Submit the final budget proposal to Orion Enterprises.",
+            "B": "Hold an alignment session with the marketing department.",
+            "C": "Conduct an internal review of the presentation materials.",
+            "D": "Request a deadline extension from Mr. Henderson."
+          },
+          "answer": "C",
+          "errorType": "inference",
+          "explanation": "Liam nói rằng họ phải gửi slide đã cập nhật trước 24 giờ (tức là trước 3:00 chiều thứ Sáu), nghĩa là việc duyệt nội bộ (internal review) phải hoàn thành trước chiều thứ Năm.",
+          "trap": "Lựa chọn nộp đề xuất ngân sách cuối cùng cho khách hàng dễ nhầm vì Liam nhắc đến việc hoàn thiện ngân sách, nhưng tài liệu cần gửi trước thứ Năm là slide thuyết trình đã cập nhật (updated slide deck), không phải bản đề xuất ngân sách hoàn chỉnh."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-22",
+        "date": "2026-09-22"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p7-0025",
+      "set": "part7-core",
+      "part": 7,
+      "status": "active",
+      "kind": "single",
+      "title": "Advertisement",
+      "passages": [
+        {
+          "label": "Business Travel Booking Ad",
+          "text": "**Apex Travel Solutions: Corporate Travel Management Redefined**\n\nAre your employees spending too much time booking flights and tracking expenses? Apex Travel Solutions offers an all-in-one digital platform tailored for medium-to-large enterprises.\n\nWith our proprietary platform, your staff can book flights, reserve hotel rooms, and arrange car rentals within a single, intuitive interface. Our system automatically enforces your company’s travel budget policies, preventing out-of-policy bookings before they happen. Furthermore, expense reporting is fully automated; receipts scanned via our mobile app are instantly categorized and matched with credit card transactions.\n\nSign up for our Premium Tier by December 31 and receive a complimentary 3-month trial of our 24/7 Dedicated Concierge Service. Our concierge team handles last-minute flight cancellations and rebookings, ensuring your executives are never stranded.\n\nSchedule a free 15-minute live demonstration with one of our corporate account specialists today at www.apextravel.com/demo. Let us streamline your business travel so you can focus on growth."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p7-0025-1",
+          "stem": "According to the advertisement, how does the platform prevent budget overruns?",
+          "options": {
+            "A": "By requiring manager approval for every single transaction.",
+            "B": "By offering discounts on bulk flight bookings.",
+            "C": "By sending weekly expense reports to the finance department.",
+            "D": "By automatically blocking bookings that exceed company limits."
+          },
+          "answer": "D",
+          "errorType": "detail",
+          "explanation": "Quảng cáo nêu rõ hệ thống tự động thực thi các chính sách ngân sách du lịch của công ty, ngăn chặn các lượt đặt chỗ vượt quá chính sách trước khi chúng xảy ra (preventing out-of-policy bookings).",
+          "trap": "Lựa chọn yêu cầu quản lý phê duyệt mọi giao dịch dễ gây nhầm lẫn vì đây là cách quản lý ngân sách truyền thống, nhưng hệ thống này tự động hóa việc đó mà không cần phê duyệt thủ công từng giao dịch."
+        },
+        {
+          "id": "p7-0025-2",
+          "stem": "What is implied about the Dedicated Concierge Service?",
+          "options": {
+            "A": "It is normally a paid add-on or part of a higher-priced plan.",
+            "B": "It is only available during standard business hours.",
+            "C": "It must be purchased separately from the Premium Tier.",
+            "D": "It is designed primarily for entry-level employees."
+          },
+          "answer": "A",
+          "errorType": "inference",
+          "explanation": "Quảng cáo nói rằng nếu đăng ký gói Premium trước 31/12 sẽ được tặng kèm 3 tháng dùng thử miễn phí dịch vụ này (complimentary 3-month trial), điều này ngụ ý dịch vụ này thông thường phải trả phí hoặc không đi kèm miễn phí mãi mãi.",
+          "trap": "Lựa chọn chỉ hoạt động trong giờ hành chính sai vì tên dịch vụ có chữ '24/7'. Lựa chọn dành cho nhân viên mới vào nghề sai vì văn bản ghi dịch vụ này đảm bảo ban điều hành không bị kẹt lại (ensuring your executives are never stranded)."
+        },
+        {
+          "id": "p7-0025-3",
+          "stem": "What is the main focus of the advertisement?",
+          "options": {
+            "A": "Announcing discounted rates for holiday travel bookings.",
+            "B": "Promoting a software solution that simplifies corporate travel administration.",
+            "C": "Introducing a new mobile app for personal vacation planning.",
+            "D": "Recruiting corporate account specialists for a travel agency."
+          },
+          "answer": "B",
+          "errorType": "gist",
+          "explanation": "Toàn bộ quảng cáo giới thiệu về nền tảng kỹ thuật số của Apex Travel Solutions giúp quản lý, đặt lịch và báo cáo chi phí đi lại của doanh nghiệp một cách tinh gọn.",
+          "trap": "Lựa chọn tuyển dụng chuyên viên tài khoản doanh nghiệp dễ nhầm vì đoạn cuối có nhắc đến các chuyên viên này, nhưng đó là người sẽ thực hiện buổi demo giới thiệu phần mềm chứ không phải tuyển dụng họ."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-22",
+        "date": "2026-09-22"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
     }
   ]
 }

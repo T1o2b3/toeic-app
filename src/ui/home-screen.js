@@ -102,7 +102,7 @@ function renderKpis(store, events, now) {
       el('div', { class: 'kpi-note', text: goalMet ? `✓ đạt mục tiêu ${WEEKLY_GOAL_MINUTES} phút` : `mục tiêu ${WEEKLY_GOAL_MINUTES} phút` }),
     ]),
     el('div', { class: 'kpi', title: `Từ có lần ôn kế tiếp cách từ ${MATURE_DAYS} ngày trở lên — thuật toán FSRS thấy bạn thật sự nhớ` }, [
-      el('div', { class: 'kpi-label', text: 'Từ nhớ vững' }),
+      el('div', { class: 'kpi-label', text: 'Từ nhớ vững'}),
       el('div', { class: 'kpi-value', text: String(mature.now) }),
       el('div', { class: 'kpi-note', text: matureNote }),
     ]),
@@ -119,7 +119,6 @@ function renderToday(store) {
   const entries = filterByTier(store.entries, getTier(TIER_ORDER));
   const plan = planToday({ entries, states: store.states, questions: store.questions, quizStates: store.quizStates });
 
-  // Người mới (chưa phân loại từ nào) thì việc đầu tiên là phân loại — chưa có thẻ nào để ôn, chỉ toàn câu Part 5 là gợi ý lạc hướng.
   const newcomer = ![...store.states.values()].some((state) => state.triaged);
 
   let action;
@@ -155,6 +154,10 @@ function renderVocabPanel(store) {
       el('div', { class: 'hero-sub', text: `${progress.mastered} thành thạo · ${progress.learning} đang học` }),
     ]),
     renderLevelBar(progress, (key) => goTo(`/words?f=${key}`)),
+    el('div', { class: 'panel-actions' }, [
+      el('button', { class: 'link', text: 'Kho từ vựng', onClick: () => goTo('/words') }),
+      el('button', { class: 'link', text: 'Collocations', onClick: () => goTo('/collocations') }),
+    ]),
   ]);
 }
 
@@ -178,14 +181,13 @@ function renderExamsPanel(store, events, now) {
   ]);
 }
 
-/** Một ô: tên phần thi, % đúng (7 ngày gần nhất, không có thì tất cả), và xu hướng so với tuần trước bằng chữ + mũi tên. */
 function examTile(label, overview, available) {
   const recent = overview.recent.attempts > 0;
   const basis = recent ? overview.recent : overview.all;
   let trend = '';
   if (overview.delta !== null) {
     if (overview.delta > 0) trend = `▲ ${overview.delta} điểm so với tuần trước`;
-    else if (overview.delta < 0) trend = `▼ ${-overview.delta} điểm so với tuần trước`;
+    else if (overview.delta < 0) trend = `▼ ${overview.delta} điểm so với tuần trước`;
     else trend = '＝ như tuần trước';
   }
   return el('div', { class: 'tile' }, [
@@ -198,7 +200,6 @@ function examTile(label, overview, available) {
   ]);
 }
 
-/** Tải nhật ký sự kiện về máy dưới dạng JSON (D25: tự sao lưu vì free tier không có backup). */
 function downloadBackup(store) {
   const data = buildExport({ events: store.exportEvents(), deviceId: store.deviceId });
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
