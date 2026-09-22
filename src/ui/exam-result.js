@@ -11,7 +11,7 @@ import { formatClock, SKILL_LABEL } from '../logic/exam-time.js';
 import { GOAL_SCORE, formatBand } from '../logic/score.js';
 import { describeQuestion } from './exam-unit.js';
 
-export function renderResult(result, onAgain) {
+export function renderResult(result, onAgain, { activePart, onPartChange } = {}) {
   const { score, estimate, seconds, timedOut } = result;
   const percent = score.total === 0 ? 0 : Math.round((score.correct / score.total) * 100);
 
@@ -24,7 +24,7 @@ export function renderResult(result, onAgain) {
     el('h1', { text: 'Kết quả' }),
     renderScore(estimate, { score, percent, seconds, timedOut }),
     el('div', { class: 'gaps' }, [el('div', { class: 'gaps-title', text: 'Theo từng phần' }), ...partRows]),
-    renderWrong(score),
+    renderWrong(score, activePart, onPartChange),
     el('button', { class: 'primary', onClick: onAgain }, [el('span', { text: 'Làm đề khác' })]),
     backButton('exams'),
   ]);
@@ -75,11 +75,10 @@ function caveat(estimate) {
   return `${base} Lần này suy ra từ ít câu hơn đề thật (${list}) nên khoảng điểm càng rộng.`;
 }
 
-/** Các câu sai / bỏ trống, chia theo Part để tránh cuộn quá nhiều. */
-function renderWrong(score) {
+/** Các câu sai / bỏ trống, chia thành các tab theo Part để tránh scroll quá nhiều. */
+function renderWrong(score, activePart, onPartChange) {
   if (score.wrong.length === 0) return el('p', { class: 'empty', text: 'Đúng hết mọi câu.' });
 
-  // Nhóm câu sai theo part
   const byPart = {};
   for (const item of score.wrong) {
     const part = item.part;
@@ -87,29 +86,35 @@ function renderWrong(score) {
     byPart[part].push(item);
   }
 
-  const partSections = Object.entries(byPart).map(([part, wrongs]) => {
-    return el('div', { class: 'wrong-part-section' }, [
-      el('h3', { class: 'wrong-part-title', text: `${PART_LABEL[Number(part.slice(4))]} (${wrongs.length} câu)` }),
-      el('div', { class: 'viz-table wrong-list' }, [
-        ...wrongs.map(({ part, question, picked }) => {
-          const view = describeQuestion(question);
-          return el('div', { class: 'wrong-item' }, [
-            el('div', { class: 'gaps-title', text: `${PART_LABEL[Number(part.slice(4))]} · ${question.id}` }),
-            el('div', { class: 'set-q-stem', text: view.stem }),
-            ...view.letters.map((l) => el('div', {
-              class: l === question.answer ? 'rev correct' : l === picked ? 'rev wrong' : 'rev',
-              text: `${l}. ${view.options[l]}${l === question.answer ? '  ✓ đáp án đúng' : l === picked ? '  ✗ bạn chọn' : ''}`,
-            })),
-            picked ? '' : el('div', { class: 'warn', text: 'Bạn chưa trả lời câu này.' }),
-            el('div', { class: 'note', text: question.explanation }),
-          ]);
-        }),
-      ]),
+  const parts = Object.keys(byPart).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+  
+  // Nếu chưa chọn part, mặc định chọn part đầu tiên có câu sai
+  const currentPart = activePart || parts[0];
+
+  const tabButtons = parts.map((part) => el('button', {
+    class: `tab-btn ${currentPart === part ? 'active' : ''}`,
+    text: `${PART_LABEL[Number(part.slice(4))]} (${byPart[part].length})`,
+    onClick: () => onPartChange(part),
+  }));
+
+  const wrongs = byPart[currentPart] || [];
+  const content = wrongs.map(({ part, question, picked }) => {
+    const view = describeQuestion(question);
+    return el('div', { class: 'wrong-item' }, [
+      el('div', { class: 'gaps-title', text: `${PART_LABEL[Number(part.slice(4))]} · ${question.id}` }),
+      el('div', { class: 'set-q-stem', text: view.stem }),
+      ...view.letters.map((l) => el('div', {
+        class: l === question.answer ? 'rev correct' : l === picked ? 'rev wrong' : 'rev',
+        text: `${l}. ${view.options[l]}${l === question.answer ? '  ✓ đáp án đúng' : l === picked ? '  ✗ bạn chọn' : ''}`,
+      })),
+      picked ? '' : el('div', { class: 'warn', text: 'Bạn chưa trả lời câu này.' }),
+      el('div', { class: 'note', text: question.explanation }),
     ]);
   });
 
-  return el('div', {}, [
+  return el('div', { class: 'wrong-review' }, [
     el('h2', { text: 'Xem lại câu sai hoặc bỏ trống' }),
-    ...partSections,
+    el('div', { class: 'tab-group' }, tabButtons),
+    el('div', { class: 'viz-table wrong-list' }, content),
   ]);
 }
