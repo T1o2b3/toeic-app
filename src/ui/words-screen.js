@@ -30,7 +30,12 @@ let openId = null;
 
 export function renderWords(store, params) {
   if (filter === null) filter = normalizeFilter(params?.get('f'));
-  const counts = countByFilter(store.entries, store.states, { capturedTotal: store.captured.size });
+  
+  // Xử lý tự động mở một từ nếu có param ?open=ID
+  const openParam = params?.get('open');
+  if (openParam) openId = openParam;
+
+  const counts = countByFilter(store.entries, store.states, { capturedTotal: store.captured?.size ?? 0 });
 
   const search = el('input', {
     class: 'field', type: 'search', placeholder: 'Tìm từ hoặc nghĩa…', value: query,
@@ -42,13 +47,12 @@ export function renderWords(store, params) {
     store.refresh();
   });
 
-  // Render danh sách
   const listContainer = el('div', { class: 'vocab-main' });
   const list = el('div', { class: 'word-list' });
   const summary = el('p', { class: 'subtitle' });
   
   const fill = () => {
-    const { entryIds, unmatched } = splitCaptured(store.captured, store.wordIndex);
+    const { entryIds, unmatched } = splitCaptured(store.captured ?? new Map(), store.wordIndex);
     const matches = filterWords(store.entries, store.states, { filter, query, capturedIds: entryIds });
     const visible = matches.slice(0, shown);
     const orphans = filter === FILTERS.CAPTURED ? unmatchedRows(unmatched) : [];
@@ -73,7 +77,6 @@ export function renderWords(store, params) {
 
   fill();
 
-  // Panel chi tiết (Side panel / Bottom sheet)
   const detailPanel = el('div', { class: 'word-detail-panel' });
   const updateDetail = () => {
     if (!openId) {

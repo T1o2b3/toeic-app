@@ -23,9 +23,6 @@ const WORD_PATTERN = /[A-Za-z]+(?:['’-][A-Za-z]+)*/g;
  */
 export function normalizeWord(raw) {
   const text = String(raw ?? '').trim();
-  // MỘT từ thôi. Trước đây cụm nhiều từ ("have been", "in contrast" — 31% phương án Part 5) được trả về
-  // nguyên cụm rồi ghi thẳng vào nhật ký: không bao giờ khớp được mục deck nào, mà nhật ký là append-only
-  // (ràng buộc #5) nên rác đó nằm lại vĩnh viễn. Muốn lấy từ trong một cụm thì `tokenize` trước.
   if (/\s/.test(text)) return '';
 
   const word = text
@@ -109,6 +106,7 @@ export function baseForms(word) {
  * @returns {object|null}
  */
 export function lookupDeckEntry(word, index) {
+  if (!index) return null;
   if (index.has(word)) return index.get(word);
   for (const form of baseForms(word)) {
     if (index.has(form)) return index.get(form);
@@ -125,8 +123,6 @@ export function reduceCaptured(events) {
   const captured = new Map();
   for (const event of events ?? []) {
     if (event?.type !== 'vocab.captured') continue;
-    // Sự kiện cũ có thể chứa cả cụm (lỗi đã sửa): normalizeWord trả về '' nên chúng rơi khỏi danh sách.
-    // Cố ý — cụm không bao giờ tra được nghĩa, để lại chỉ làm bẩn "Kho từ vựng › Đã gạt".
     const word = normalizeWord(event.payload?.word);
     if (!word) continue;
 
@@ -151,6 +147,7 @@ export function reduceCaptured(events) {
 export function splitCaptured(captured, index) {
   const entryIds = new Set();
   const unmatched = [];
+  if (!captured || typeof captured.values !== 'function') return { entryIds, unmatched };
   for (const item of captured.values()) {
     const entry = lookupDeckEntry(item.word, index);
     if (entry) entryIds.add(entry.id);
@@ -176,7 +173,7 @@ export function splitCaptured(captured, index) {
  * @returns {{events: Array<{type: string, payload: object}>, notice: string, entry: object|null}}
  */
 export function planCapture(word, { questionId, index, states, captured = new Map() }) {
-  const previous = captured.get(word);
+  const previous = captured?.get(word);
   if (questionId && previous?.questionIds.includes(questionId)) {
     return { events: [], entry: null, notice: `“${word}” đã được thêm từ câu này rồi.` };
   }
@@ -195,7 +192,7 @@ export function planCapture(word, { questionId, index, states, captured = new Ma
   }
 
   const label = entry.word.toLowerCase() === word ? `“${word}”` : `“${word}” (từ gốc “${entry.word}”)`;
-  const state = states.get(entry.id);
+  const state = states?.get(entry.id);
   if (!state?.triaged) {
     events.push({ type: 'vocab.triaged', payload: payloadForLevel(entry.id, LEVELS.UNKNOWN) });
     return { events, entry, notice: `Đã thêm ${label} vào danh sách học.` };

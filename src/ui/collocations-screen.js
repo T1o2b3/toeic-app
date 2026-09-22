@@ -1,13 +1,18 @@
 /**
  * Màn Collocations: Xem lại các cụm từ cố định trong toàn bộ deck.
- * Giúp người học nhận diện các "pattern" xuất hiện thường xuyên trong TOEIC.
+ * Thiết kế mới: Chia theo chủ đề và làm nổi bật các cụm từ thiết yếu (Essential).
  */
-import { el } from './dom.js';
+import { el, goTo } from './dom.js';
 import { backLink } from './blocks.js';
-import { getAllCollocations, filterCollocations, groupCollocations } from '../logic/collocations.js';
+import { 
+  getAllCollocations, 
+  filterCollocations, 
+  groupCollocationsByTheme, 
+  getEssentialCollocations 
+} from '../logic/collocations.js';
 
 let query = '';
-let selectedWord = null;
+let activeTheme = null;
 
 /**
  * @param {object} store
@@ -16,20 +21,21 @@ let selectedWord = null;
 export function renderCollocations(store) {
   const all = getAllCollocations(store);
   const matches = filterCollocations(all, query);
-  const groups = groupCollocations(matches);
+  const themes = groupCollocationsByTheme(matches);
+  const essential = getEssentialCollocations(matches);
 
   const search = el('input', {
     class: 'field', type: 'search', placeholder: 'Tìm cụm từ hoặc từ chính…', value: query,
   });
   search.addEventListener('input', () => {
     query = search.value;
-    selectedWord = null;
+    activeTheme = null;
     store.refresh();
   });
 
-  const content = selectedWord 
-    ? renderWordCollocations(groups, selectedWord)
-    : renderGroups(groups);
+  const content = activeTheme 
+    ? renderThemeDetail(themes, activeTheme)
+    : renderThemeList(themes, essential);
 
   return el('div', {}, [
     el('div', { class: 'topbar' }, [
@@ -42,43 +48,87 @@ export function renderCollocations(store) {
   ]);
 }
 
-/** Danh sách các từ chính có collocation. */
-function renderGroups(groups) {
-  if (groups.size === 0) return el('p', { class: 'empty', text: 'Không tìm thấy cụm từ nào.' });
+/** Màn chính: Danh sách chủ đề + Top Essential */
+function renderThemeList(themes, essential) {
+  const sections = [];
 
-  const rows = [...groups.keys()].sort((a, b) => a.localeCompare(b)).map((word) => {
-    const count = groups.get(word).length;
-    return el('div', { 
-      class: 'word-row', 
-      onClick: () => { selectedWord = word; window.location.hash = '#/collocations'; } // Trigger refresh
-    }, [
-      el('div', { class: 'word-head static' }, [
-        el('strong', { text: word }),
-        el('span', { class: 'lvl none', text: `${count} cụm` }),
-      ]),
-    ]);
-  });
+  // 1. Phần Essential (Lọc ra những cụm cực kỳ quan trọng)
+  if (essential.length > 0) {
+    sections.push(el('div', { class: 'section' }, [
+      el('div', { class: 'section-label', text: '🔥 Cụm từ thiết yếu' }),
+      el('div', { class: 'chips' }, essential.slice(0, 12).map((c) => 
+        renderCollocChip(c)
+      )),
+    ]));
+  }
 
-  return el('div', { class: 'colloc-list' }, rows);
+  // 2. Danh sách chủ đề
+  sections.push(el('div', { class: 'section' }, [
+    el('div', { class: 'section-label', text: 'Theo chủ đề' }),
+    el('div', { class: 'colloc-categories' }, 
+      [...themes.keys()].sort().map((theme) => {
+        const count = themes.get(theme).length;
+        return el('button', { 
+          class: 'cat-btn', 
+          onClick: () => { activeTheme = theme; window.location.hash = '#/collocations'; } 
+        }, [
+          el('span', { text: theme }),
+          el('span', { class: 'cat-count', text: `${count} cụm` }),
+        ]);
+      })
+    ),
+  ]));
+
+  return el('div', {}, sections);
 }
 
-/** Danh sách Collocations của một từ cụ thể. */
-function renderWordCollocations(groups, word) {
-  const collocations = groups.get(word) || [];
+/** Màn chi tiết: Tất cả cụm từ trong một chủ đề */
+function renderThemeDetail(themes, theme) {
+  const collocations = themes.get(theme) || [];
   
   return el('div', { class: 'colloc-detail' }, [
     el('button', { 
       class: 'link', 
-      text: '← Quay lại danh sách', 
-      onClick: () => { selectedWord = null; window.location.hash = '#/collocations'; } 
+      text: '← Quay lại danh sách chủ đề', 
+      onClick: () => { activeTheme = null; window.location.hash = '#/collocations'; } 
     }),
-    el('h2', { text: `Cụm từ với "${word}"` }),
-    el('div', { class: 'chips' }, collocations.map((c) => el('span', { class: 'chip', text: c.collocation }))),
-    el('p', { class: 'footnote', text: 'Collocations giúp bạn hiểu nhanh ý nghĩa câu mà không cần phân tích từng từ.' }),
+    el('h2', { text: `Chủ đề: ${theme}` }),
+    el('div', { class: 'colloc-list' }, collocations.map((c) => 
+      renderCollocItem(c)
+    )),
+  ]);
+}
+
+/** Render một chip nhỏ cho phần Essential */
+function renderCollocChip(c) {
+  return el('span', { 
+    class: 'chip', 
+    onClick: () => goTo(`/words?open=${c.entryId}`),
+    style: 'cursor:pointer' 
+  }, [
+    el('span', { 
+      style: 'font-weight:700; margin-right:4px', 
+      text: c.word 
+    }),
+    el('span', { text: c.collocation }),
+  ]);
+}
+
+/** Render một dòng cụm từ chi tiết */
+function renderCollocItem(c) {
+  return el('div', { 
+    class: 'colloc-item', 
+    onClick: () => goTo(`/words?open=${c.entryId}`) 
+  }, [
+    el('div', { class: 'colloc-main' }, [
+      el('span', { class: 'colloc-word', text: c.word }),
+      el('span', { class: 'colloc-phrase', text: c.collocation }),
+    ]),
+    el('span', { class: 'colloc-badge', text: 'Xem từ ›' }),
   ]);
 }
 
 export function resetCollocations() {
   query = '';
-  selectedWord = null;
+  activeTheme = null;
 }
