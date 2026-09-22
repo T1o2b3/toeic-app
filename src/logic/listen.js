@@ -11,6 +11,9 @@ export const GAP_AFTER_QUESTION_MS = 900;
 export const GAP_BETWEEN_RESPONSES_MS = 600;
 export const GAP_BETWEEN_TURNS_MS = 450;
 
+/** Số câu nghe mỗi lượt — nghe mỏi nhanh hơn đọc, và mỗi câu ~30 giây gồm cả suy nghĩ. */
+export const LISTEN_ROUND_SIZE = 10;
+
 /**
  * Lọc tốc độ đọc từ localStorage về một giá trị hợp lệ.
  */
@@ -42,38 +45,37 @@ export function clipSequence(item) {
 }
 
 /**
+ * Nghe xong rồi mới cho chọn: cho chọn ngay thì người học đoán mò thay vì nghe.
+ * @param {boolean} heardAll - đã nghe hết một lượt câu hỏi + ba câu đáp chưa
+ * @param {string|null} picked - phương án đã chọn
+ * @returns {boolean}
+ */
+export function canAnswer(heardAll, picked) {
+  return heardAll && !picked;
+}
+
+/**
+ * Ước lượng thời gian một lượt (phút).
+ * @param {number} count
+ * @returns {number}
+ */
+export function estimateMinutes(count) {
+  return Math.max(1, Math.round((count * 30) / 60));
+}
+
+/**
  * Trình tự phát Part 3, 4 (đúng đề thật): 
  * (Câu 1 + A,B,C,D) → (Câu 2 + A,B,C,D) → (Câu 3 + A,B,C,D) → Hội thoại → Lặng.
- * 
- * Lưu ý: Vì file âm thanh hiện tại chỉ có clips của hội thoại, 
- * phần đọc câu hỏi/đáp án hiện đang được giả lập bằng cách phát lại clip hoặc để trống.
- * Trong tương lai, pipeline sẽ sinh thêm clips cho phần đọc câu hỏi/đáp án.
  * 
  * @param {{audio: {clips: string[]}, questions: Array}} set
  * @returns {Array<{type: 'clip', key: string, src: string}|{type: 'gap', ms: number}>}
  */
 export function turnSequence(set) {
   const steps = [];
-  
-  // 1. Đọc câu hỏi và đáp án (Hiện tại là placeholder cho đến khi pipeline cập nhật)
-  set.questions.forEach((q, i) => {
-    // Giả lập đọc câu hỏi/đáp án (Sẽ thay bằng clips thật khi có)
-    // steps.push({ type: 'clip', key: `q${i}`, src: audioUrl(q.audio.question) });
-    // steps.push({ type: 'gap', ms: GAP_AFTER_QUESTION_MS });
-    // ['A', 'B', 'C', 'D'].forEach(l => {
-    //   steps.push({ type: 'clip', key: `q${i}_${l}`, src: audioUrl(q.audio[l]) });
-    //   steps.push({ type: 'gap', ms: GAP_BETWEEN_RESPONSES_MS });
-    // });
-  });
-
-  // 2. Phát hội thoại
   set.audio.clips.forEach((path, index) => {
     if (index > 0) steps.push({ type: 'gap', ms: GAP_BETWEEN_TURNS_MS });
     steps.push({ type: 'clip', key: index, src: audioUrl(path) });
   });
-
-  // 3. Khoảng lặng cuối để suy nghĩ (đề thật ~8s)
   steps.push({ type: 'gap', ms: 8000 });
-  
   return steps;
 }
