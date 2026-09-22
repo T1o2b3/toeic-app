@@ -48,12 +48,30 @@ const KEY_HANDLERS = {
   exam: handleExamKey,
 };
 
+/** Quản lý giao diện Sáng/Tối */
+export function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') || 'light';
+  const next = current === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  return next;
+}
+
+function initTheme() {
+  const saved = localStorage.getItem('theme');
+  const preferDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const theme = saved || (preferDark ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', theme);
+}
+
 /**
  * Gắn app vào DOM.
  * @param {HTMLElement} root
  * @param {object} store
  */
 export function mountApp(root, store) {
+  initTheme();
+
   let current = { name: 'home', params: new URLSearchParams() };
   const nav = createTabBar();
   root.after(nav);

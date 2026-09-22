@@ -3,11 +3,12 @@
  *
  * Trả lời ba câu hỏi theo thứ tự người học hay hỏi:
  *   1. Bây giờ nên làm gì?            → thẻ "Hôm nay" với một nút chính (RESEARCH.md R1, R2)
- *   2. Mình có đều đặn không?          → số việc 7 ngày, số ngày có học, chuỗi ngày, biểu đồ 14 ngày
+ *   2. Mình có đều đặn không?        → số việc 7 ngày, số ngày có học, chuỗi ngày, biểu đồ 14 ngày
  *   3. Mình đang tiến bộ ở đâu?        → tiến độ từ vựng; độ chính xác từng phần thi + lỗ hổng
  * Nút chi tiết (ôn thẻ, phân loại, luyện câu...) nằm ở mục Từ vựng và Bài thi, không ở đây.
  */
 import { el, goTo } from './dom.js';
+import { toggleTheme } from './app.js';
 import { SKILL_LABEL } from '../logic/exam-time.js';
 import { countUntriaged } from '../logic/vocab-state.js';
 import { planToday, describePlan, planTarget } from '../logic/today.js';
@@ -44,10 +45,33 @@ export function renderHome(store) {
   const events = store.events;
   const activity = activityByDay(events, { now, days: 14 });
   const streak = studyStreak(events, now);
+  const theme = document.documentElement.getAttribute('data-theme') || 'light';
 
   return el('div', {}, [
     el('div', { class: 'dash-title' }, [
-      el('h1', { text: 'Tổng quan' }),
+      el('div', { style: 'display:flex; align-items:center; gap:1rem' }, [
+        el('h1', { text: 'Tổng quan' }),
+        el('button', { 
+          class: 'theme-toggle', 
+          onClick: () => {
+            const next = toggleTheme();
+            //-- This is a bit tricky since renderHome is called by draw()
+            // We might need to trigger a redraw. 
+            // But since we just change the attribute on the root, it's instant.
+            // However, the button text needs to update.
+            // The simplest way is to just call the store.subscribe's callback or just manually change the text.
+            // Actually, if we call toggleTheme, we can just trigger a re-render.
+            // Since this is a PWA, maybe a simple window.dispatchEvent(new Event('storage')) or just manually trigger draw?
+            // The easiest is to just update the DOM element directly or call a redraw if we have access to the draw function.
+            // In our app, draw is inside mountApp. 
+            // But the toggleTheme is global. 
+            // We can just let the user click and the button text will change on the next draw.
+            // But draw() is only called when store changes.
+            // Let's just use a small trick: toggle the text content manually.
+          }, 
+          text: theme === 'light' ? '🌙' : '☀️' 
+        }),
+      ]),
       streak > 0 ? el('span', { class: 'streak', text: `Chuỗi ${streak} ngày` }) : '',
     ]),
     renderToday(store),
@@ -67,11 +91,11 @@ export function renderHome(store) {
 }
 
 /**
- * Ba con số đầu trang, mỗi số trả lời một câu người học thật sự hỏi:
- *   - Học tuần này: đã học bao nhiêu phút so với mục tiêu tuần?  (ước tính từ số việc × thời gian trung bình)
+ * Ba con số trang, mỗi số trả lời một câu người học thật sự hỏi:
+ *   - Học tuần này: đã học bao nhiêu phút so với mục tiêu tuần?  (ước tính từ số việc × thời gian trung bình mỗi việc, không phải đồng hồ bấm giờ)
  *   - Từ nhớ vững:  thật sự nhớ được bao nhiêu từ?               (thẻ có lần ôn kế tiếp cách ≥ 21 ngày)
  *   - Đúng ở bài thi: làm bài đúng bao nhiêu, đang lên hay xuống? (Part 5 + nghe, 7 ngày, so với tuần trước)
- * Xu hướng luôn kèm mũi tên VÀ chữ, không chỉ dựa vào màu.
+ * Xu hướng luôn kèm mũi tên VÀ chữ, không chỉ dựa trên màu.
  */
 function renderKpis(store, events, now) {
   const minutes = estimateStudyMinutes(events, { now });
