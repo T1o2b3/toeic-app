@@ -75,25 +75,41 @@ function caveat(estimate) {
   return `${base} Lần này suy ra từ ít câu hơn đề thật (${list}) nên khoảng điểm càng rộng.`;
 }
 
-/** Các câu sai / bỏ trống, mỗi câu mở ra xem đề, đáp án bạn chọn, đáp án đúng và giải thích. */
+/** Các câu sai / bỏ trống, chia theo Part để tránh cuộn quá nhiều. */
 function renderWrong(score) {
   if (score.wrong.length === 0) return el('p', { class: 'empty', text: 'Đúng hết mọi câu.' });
-  
-  // Bỏ bọc <details> để hiện trực tiếp danh sách câu sai cho dễ nhìn khi nộp bài sớm.
-  return el('div', { class: 'viz-table wrong-list' }, [
-    el('h3', { text: `Xem lại ${score.wrong.length} câu sai hoặc bỏ trống` }),
-    ...score.wrong.map(({ part, question, picked }) => {
-      const view = describeQuestion(question);
-      return el('div', { class: 'wrong-item' }, [
-        el('div', { class: 'gaps-title', text: `${PART_LABEL[Number(part.slice(4))]} · ${question.id}` }),
-        el('div', { class: 'set-q-stem', text: view.stem }),
-        ...view.letters.map((l) => el('div', {
-          class: l === question.answer ? 'rev correct' : l === picked ? 'rev wrong' : 'rev',
-          text: `${l}. ${view.options[l]}${l === question.answer ? '  ✓ đáp án đúng' : l === picked ? '  ✗ bạn chọn' : ''}`,
-        })),
-        picked ? '' : el('div', { class: 'warn', text: 'Bạn chưa trả lời câu này.' }),
-        el('div', { class: 'note', text: question.explanation }),
-      ]);
-    }),
+
+  // Nhóm câu sai theo part
+  const byPart = {};
+  for (const item of score.wrong) {
+    const part = item.part;
+    if (!byPart[part]) byPart[part] = [];
+    byPart[part].push(item);
+  }
+
+  const partSections = Object.entries(byPart).map(([part, wrongs]) => {
+    return el('div', { class: 'wrong-part-section' }, [
+      el('h3', { class: 'wrong-part-title', text: `${PART_LABEL[Number(part.slice(4))]} (${wrongs.length} câu)` }),
+      el('div', { class: 'viz-table wrong-list' }, [
+        ...wrongs.map(({ part, question, picked }) => {
+          const view = describeQuestion(question);
+          return el('div', { class: 'wrong-item' }, [
+            el('div', { class: 'gaps-title', text: `${PART_LABEL[Number(part.slice(4))]} · ${question.id}` }),
+            el('div', { class: 'set-q-stem', text: view.stem }),
+            ...view.letters.map((l) => el('div', {
+              class: l === question.answer ? 'rev correct' : l === picked ? 'rev wrong' : 'rev',
+              text: `${l}. ${view.options[l]}${l === question.answer ? '  ✓ đáp án đúng' : l === picked ? '  ✗ bạn chọn' : ''}`,
+            })),
+            picked ? '' : el('div', { class: 'warn', text: 'Bạn chưa trả lời câu này.' }),
+            el('div', { class: 'note', text: question.explanation }),
+          ]);
+        }),
+      ]),
+    ]);
+  });
+
+  return el('div', {}, [
+    el('h2', { text: 'Xem lại câu sai hoặc bỏ trống' }),
+    ...partSections,
   ]);
 }

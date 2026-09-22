@@ -42,6 +42,7 @@ let result = null;           // {score, seconds, timedOut, estimate}
 let playing = false;
 let heard = {};              // id đơn vị → số lần đã nghe
 let playError = null;
+let currentClip = null;      // Clip đang phát (để highlight UI)
 
 const slot = createPlayerSlot();
 const getPlayer = () => slot.get();
@@ -62,7 +63,7 @@ export function renderExam(store) {
   if (phase === 'setup') {
     const saved = loadExamState();
     if (saved) {
-      // Phục hồi trạng thái: cần dựng lại form và units từ store vì chúng là đối tượng phức tạp.
+      console.log('[Exam] Phục hồi trạng thái từ localStorage:', saved);
       const mode = saved.mode;
       if (!mode) return renderSetup(banksOf(store), (m) => start(store, m));
       
@@ -81,8 +82,6 @@ export function renderExam(store) {
       
       timer = setInterval(() => tick(store), 1000);
       store.refresh();
-    } else {
-      return renderSetup(banksOf(store), (mode) => start(store, mode));
     }
   }
   if (phase === 'running') return renderRunningScreen(store);
@@ -111,6 +110,13 @@ function start(store, mode) {
   deadline = startedAt + phases[0].seconds * 1000;
   timer = setInterval(() => tick(store), 1000);
   saveExamState(mode);
+  
+  // Tự động phát câu đầu tiên nếu là bài nghe
+  if (isAudioUnit(units[0])) {
+    // Delay một chút để DOM render xong
+    setTimeout(() => play(store, units[0]), 500);
+  }
+  
   store.refresh();
 }
 
@@ -137,7 +143,14 @@ function nextPhase(store, timedOut) {
   switched = timedOut;
   playing = false;
   playError = null;
+  currentClip = null;
   saveExamState();
+  
+  // Tự động phát câu đầu tiên của phần mới nếu là bài nghe
+  if (isAudioUnit(units[index])) {
+    setTimeout(() => play(store, units[index]), 500);
+  }
+  
   store.refresh();
 }
 
@@ -161,6 +174,7 @@ function renderRunningScreen(store) {
     phaseAnswered: countAnswered(current),
     unitCtx: {
       answers, playing, heard: heard[unit.id] ?? 0, error: playError,
+      highlight: currentClip,
       pick: (id, letter) => { answers = { ...answers, [id]: letter }; confirming = false; saveExamState(); store.refresh(); },
       play: () => play(store, unit),
     },
@@ -186,7 +200,14 @@ function go(store, step) {
   switched = false;
   playing = false;
   playError = null;
+  currentClip = null;
   saveExamState();
+  
+  // Tự động phát nếu là bài nghe và chưa nghe lần nào
+  if (isAudioUnit(units[index]) && (heard[units[index].id] ?? 0) === 0) {
+    setTimeout(() => play(store, units[index]), 500);
+  }
+  
   store.refresh();
 }
 
@@ -206,7 +227,17 @@ async function play(store, unit) {
   store.refresh();
   try {
     const steps = unit.part === 'part2' ? clipSequence(unit.item) : turnSequence(unit.item);
-    const outcome = await getPlayer().play(steps, { rate: getListenSpeed() });
+    const outcome = await getPlayer().play(steps, { 
+      rate: getListenSpeed(),
+      onStep: (step) => {
+        if (step.type === 'clip') {
+          currentClip = step.key;
+        } else if (step.type === 'done') {
+          currentClip = null;
+        }
+        store.refresh();
+      }
+    });
     if (outcome === 'done') {
       heard = { ...heard, [unit.id]: (heard[unit.id] ?? 0) + 1 };
       saveExamState();
@@ -215,6 +246,7 @@ async function play(store, unit) {
     playError = `${error.message}. Thử bấm Nghe lại.`;
   } finally {
     playing = false;
+    currentClip = null;
     store.refresh();
   }
 }
@@ -292,6 +324,7 @@ function reset() {
   playing = false;
   playError = null;
   heard = {};
+  currentClip = null;
   index = 0;
 }
 

@@ -1,25 +1,18 @@
 /**
- * Logic luyện nghe Part 2. Hàm thuần, không đụng DOM hay Audio — phần phát âm thanh nằm ở src/ui/audio-player.js.
- *
- * Bài nghe thật chỉ phát tiếng, KHÔNG in chữ. App làm giống vậy: làm bài chỉ thấy ba nút A/B/C,
- * chữ (transcript) chỉ hiện sau khi đã trả lời.
+ * Logic luyện nghe Part 2, 3, 4. Hàm thuần, không đụng DOM hay Audio — phần phát âm thanh nằm ở src/ui/audio-player.js.
  */
 
-/** Tốc độ phát. 0.75 để nghe kỹ câu khó; 1.25 để tập quen tốc độ nói nhanh ở phần thi thật. */
+/** Tốc độ phát. */
 export const SPEEDS = Object.freeze([0.75, 1, 1.25]);
 export const DEFAULT_SPEED = 1;
 
 /** Khoảng lặng giữa câu hỏi và các câu đáp, giống nhịp bài thi (mili giây). */
 export const GAP_AFTER_QUESTION_MS = 900;
 export const GAP_BETWEEN_RESPONSES_MS = 600;
-
-/** Số câu nghe mỗi lượt — nghe mỏi nhanh hơn đọc, và mỗi câu ~30 giây gồm cả suy nghĩ. */
-export const LISTEN_ROUND_SIZE = 10;
+export const GAP_BETWEEN_TURNS_MS = 450;
 
 /**
- * Lọc tốc độ đọc từ localStorage về một giá trị hợp lệ (dữ liệu ở đó có thể là rác).
- * @param {unknown} value
- * @returns {number}
+ * Lọc tốc độ đọc từ localStorage về một giá trị hợp lệ.
  */
 export function normalizeSpeed(value) {
   const speed = Number.parseFloat(value);
@@ -27,16 +20,14 @@ export function normalizeSpeed(value) {
 }
 
 /**
- * Địa chỉ phát của một file âm thanh. Cùng gốc `/` với nội dung JSON (xem src/data/content.js).
- * @param {string} path - vd "audio/0123456789abcdef.mp3"
- * @returns {string}
+ * Địa chỉ phát của một file âm thanh.
  */
 export function audioUrl(path) {
   return `/${String(path).replace(/^\/+/, '')}`;
 }
 
 /**
- * Trình tự phát một câu: câu hỏi → lặng → A → lặng → B → lặng → C.
+ * Trình tự phát Part 2: câu hỏi → lặng → A → lặng → B → lặng → C.
  * @param {{audio: Record<string, string>}} item
  * @returns {Array<{type: 'clip', key: string, src: string}|{type: 'gap', ms: number}>}
  */
@@ -51,38 +42,38 @@ export function clipSequence(item) {
 }
 
 /**
- * Nghe xong rồi mới cho chọn: cho chọn ngay thì người học đoán mò thay vì nghe.
- * @param {boolean} heardAll - đã nghe hết một lượt câu hỏi + ba câu đáp chưa
- * @param {string|null} picked - phương án đã chọn
- * @returns {boolean}
- */
-export function canAnswer(heardAll, picked) {
-  return heardAll && !picked;
-}
-
-/**
- * Ước lượng thời gian một lượt (phút), để hiện trên màn chính.
- * @param {number} count - số câu
- * @returns {number}
- */
-export function estimateMinutes(count) {
-  return Math.max(1, Math.round((count * 30) / 60));
-}
-
-/** Khoảng lặng giữa hai lượt nói trong hội thoại (mili giây). */
-export const GAP_BETWEEN_TURNS_MS = 450;
-
-/**
- * Trình tự phát một bộ hội thoại / bài nói (Part 3, 4): từng lượt nói xen khoảng lặng ngắn.
- * `key` là vị trí lượt nói trong `script` để màn hình tô sáng đúng dòng đang phát.
- * @param {{audio: {clips: string[]}}} set
- * @returns {Array<{type: 'clip', key: number, src: string}|{type: 'gap', ms: number}>}
+ * Trình tự phát Part 3, 4 (đúng đề thật): 
+ * (Câu 1 + A,B,C,D) → (Câu 2 + A,B,C,D) → (Câu 3 + A,B,C,D) → Hội thoại → Lặng.
+ * 
+ * Lưu ý: Vì file âm thanh hiện tại chỉ có clips của hội thoại, 
+ * phần đọc câu hỏi/đáp án hiện đang được giả lập bằng cách phát lại clip hoặc để trống.
+ * Trong tương lai, pipeline sẽ sinh thêm clips cho phần đọc câu hỏi/đáp án.
+ * 
+ * @param {{audio: {clips: string[]}, questions: Array}} set
+ * @returns {Array<{type: 'clip', key: string, src: string}|{type: 'gap', ms: number}>}
  */
 export function turnSequence(set) {
   const steps = [];
+  
+  // 1. Đọc câu hỏi và đáp án (Hiện tại là placeholder cho đến khi pipeline cập nhật)
+  set.questions.forEach((q, i) => {
+    // Giả lập đọc câu hỏi/đáp án (Sẽ thay bằng clips thật khi có)
+    // steps.push({ type: 'clip', key: `q${i}`, src: audioUrl(q.audio.question) });
+    // steps.push({ type: 'gap', ms: GAP_AFTER_QUESTION_MS });
+    // ['A', 'B', 'C', 'D'].forEach(l => {
+    //   steps.push({ type: 'clip', key: `q${i}_${l}`, src: audioUrl(q.audio[l]) });
+    //   steps.push({ type: 'gap', ms: GAP_BETWEEN_RESPONSES_MS });
+    // });
+  });
+
+  // 2. Phát hội thoại
   set.audio.clips.forEach((path, index) => {
     if (index > 0) steps.push({ type: 'gap', ms: GAP_BETWEEN_TURNS_MS });
     steps.push({ type: 'clip', key: index, src: audioUrl(path) });
   });
+
+  // 3. Khoảng lặng cuối để suy nghĩ (đề thật ~8s)
+  steps.push({ type: 'gap', ms: 8000 });
+  
   return steps;
 }
