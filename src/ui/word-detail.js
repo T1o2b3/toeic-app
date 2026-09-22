@@ -42,7 +42,7 @@ export function renderWordDetail(store, entry, state, level) {
     ]) : '',
     entry.collocations?.length ? el('div', { class: 'detail-collocations' }, [
       el('div', { class: 'section-label', text: 'Collocations' }),
-      el('div', { class: 'chips', entry.collocations.map((c) => el('span', { class: 'chip', text: c })) }),
+      el('div', { class: 'chips' }, entry.collocations.map((c) => el('span', { class: 'chip', text: c }))),
     ]) : '',
     entry.note ? el('div', { class: 'detail-note' }, [
       el('div', { class: 'section-label', text: 'Ghi chú' }),
@@ -85,11 +85,11 @@ export function renderWordBack(entry) {
   for (const example of entry.examples ?? []) {
     parts.push(el('div', { class: 'example' }, [
       el('div', { class: 'en', text: example.en }),
-      el('div', { class: 'vi', text: example.vi }),
+      el('div', { class: 'ex-vi', text: example.vi }),
     ]));
   }
   if (entry.collocations?.length) {
-    parts.push(el('div', { class: 'chips', entry.collocations.map((c) => el('span', { class: 'chip', text: c })) }));
+    parts.push(el('div', { class: 'chips' }, entry.collocations.map((c) => el('span', { class: 'chip', text: c }))));
   }
   if (entry.note) parts.push(el('div', { class: 'note', text: entry.note }));
   return el('div', { class: 'card back' }, parts);
