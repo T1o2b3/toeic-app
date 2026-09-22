@@ -107,7 +107,7 @@ function renderWrong(score, activePart, onPartChange) {
     ]);
   });
   return el('div', { class: 'wrong-review' }, [
-    el('h2', { text: 'Xem lại câu sai hoặc bỏ trống' }),
+    el('h2', { text: `Xem lại ${score.wrong.length} câu sai hoặc bỏ trống` }),
     el('div', { class: 'tab-group' }, tabButtons),
     el('div', { class: 'viz-table wrong-list' }, content),
   ]);

@@ -37,7 +37,7 @@ export function createPlayer({
     if (cache.has(src)) return cache.get(src);
     const job = (async () => {
       try {
-        const response = await fetchImpl(src);
+        const response = await fetchImpl(src, { signal: AbortSignal.timeout(8000) });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         return toUrl(await response.blob());
       } catch {
@@ -98,7 +98,6 @@ export function createPlayer({
         if (mine !== token) return 'stopped';
         await playClip(url, rate);
       }
-      onStep?.({ type: 'done' });
       return mine === token ? 'done' : 'stopped';
     },
 

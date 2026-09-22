@@ -6,7 +6,7 @@
  */
 import { el } from './dom.js';
 import { backLink } from './blocks.js';
-import { LEVEL_ORDER, LEVEL_INFO, payloadForLevel } from '../logic/vocab-levels.js';
+import { LEVEL_ORDER, LEVEL_INFO } from '../logic/vocab-levels.js';
 import {
   FILTERS, FILTER_ORDER, normalizeFilter, filterWords, countByFilter, fold,
 } from '../logic/word-library.js';
@@ -28,28 +28,33 @@ let query = '';
 let shown = PAGE_SIZE;
 let openId = null;
 
+const searchInput = el('input', {
+  class: 'field', type: 'search', placeholder: 'Tìm từ hoặc nghĩa…',
+});
+
 export function renderWords(store, params) {
-  if (filter === null) filter = normalizeFilter(params?.get('f'));
+  const paramFilter = params?.get('f');
+  if (paramFilter) {
+    filter = normalizeFilter(paramFilter);
+  } else if (filter === null) {
+    filter = FILTERS.ALL;
+  }
   
-  // Xử lý tự động mở một từ nếu có param ?open=ID
   const openParam = params?.get('open');
   if (openParam) openId = openParam;
 
-  const counts = countByFilter(store.entries, store.states, { capturedTotal: store.captured?.size ?? 0 });
-
-  const search = el('input', {
-    class: 'field', type: 'search', placeholder: 'Tìm từ hoặc nghĩa…', value: query,
-  });
-  search.addEventListener('input', () => {
-    query = search.value;
+  searchInput.value = query;
+  searchInput.oninput = () => {
+    query = searchInput.value;
     shown = PAGE_SIZE;
     openId = null;
     store.refresh();
-  });
+  };
 
-  const listContainer = el('div', { class: 'vocab-main' });
-  const list = el('div', { class: 'word-list' });
+  const counts = countByFilter(store.entries, store.states, { capturedTotal: store.captured?.size ?? 0 });
+
   const summary = el('p', { class: 'subtitle' });
+  const list = el('div', { class: 'word-list' });
   
   const fill = () => {
     const { entryIds, unmatched } = splitCaptured(store.captured ?? new Map(), store.wordIndex);
@@ -98,7 +103,7 @@ export function renderWords(store, params) {
       el('span', { class: 'progress', text: `${counts[FILTERS.ALL]} từ trong kho` }),
     ]),
     el('h1', { text: 'Kho từ vựng' }),
-    search,
+    searchInput,
     summary,
     el('div', { class: 'filters' }, FILTER_ORDER.map((key) => el('button', {
       class: key === filter ? 'chip-btn active' : 'chip-btn',
@@ -106,7 +111,7 @@ export function renderWords(store, params) {
       onClick: () => { filter = key; shown = PAGE_SIZE; openId = null; store.refresh(); },
     }))),
     el('div', { class: 'vocab-layout' }, [
-      el('div', { class: 'vocab-list-wrap' }, list),
+      el('div', { class: 'vocab-list-wrap' }, [list]),
       detailPanel,
     ]),
   ]);
@@ -128,7 +133,7 @@ function renderOrphanRow(item) {
       ]),
       el('small', { text: `gặp ${item.count} lần trong ${item.questionIds.length} câu` }),
       el('a', {
-        class: 'ext-link', href: `https://en.wiktionary.org/wiki/${encodeURIComponent(item.word)}`,
+        class: 'ext-link', href: \`https://en.wiktionary.org/wiki/\${encodeURIComponent(item.word)}\`,
         target: '_blank', rel: 'noopener', text: 'Tra nghĩa ↗',
       }),
     ]),
@@ -156,7 +161,7 @@ function renderRow(store, entry) {
       el('strong', { text: entry.word }),
       state?.bookmarked ? el('span', { class: 'star', text: '★' }) : '',
       el('span', {
-        class: level ? `lvl ${LEVEL_INFO[level].css}` : 'lvl none',
+        class: level ? \`lvl \${LEVEL_INFO[level].css}\` : 'lvl none',
         text: level ? LEVEL_INFO[level].label : 'chưa phân loại',
       }),
     ]),

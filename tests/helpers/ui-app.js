@@ -7,6 +7,23 @@ import { IDBFactory } from 'fake-indexeddb';
 import { createStore } from '../../src/data/store.js';
 import { mountApp } from '../../src/ui/app.js';
 
+// Mock matchMedia for JSDOM
+if (!window.matchMedia) {
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: (query) => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: () => {}, 
+      removeListener: () => {},
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      dispatchEvent: () => {},
+    }),
+  });
+}
+
 const WORD_COUNT = 60;
 const DECK = {
   deck: 'toeic-tsl',

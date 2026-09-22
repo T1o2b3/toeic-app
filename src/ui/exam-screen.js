@@ -54,7 +54,7 @@ export const setExamPlayerFactory = (factory) => slot.setFactory(factory);
 /** Ngân hàng câu hỏi gom từ store, đúng dạng buildExamForm cần. */
 const banksOf = (store) => ({ part2: store.listening, part5: store.questions, sets: store.sets });
 
-const isAudioUnit = (unit) => unit.part === 'part2' || unit.part === 'part3' || unit.part === 'part4';
+const isAudioUnit = (unit) => unit && (unit.part === 'part2' || unit.part === 'part3' || unit.part === 'part4');
 
 /**
  * @param {object} store

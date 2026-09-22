@@ -21,12 +21,12 @@ describe('buildPart2Prompt', () => {
     expect(prompt).toContain('wh-who:');
     expect(prompt).toContain('indirect:');
     expect(prompt).not.toContain('wh-where:');
-    expect(prompt).toMatch(/không chép lại/i);
+    expect(prompt).toMatch(/tránh xa các mẫu câu "sách giáo khoa"/i);
   });
 
   it('đòi bẫy âm thanh và đáp án gián tiếp — thứ làm câu đủ khó cho mức 850', () => {
     const prompt = buildPart2Prompt({ types: ['yes-no'], count: 1 });
-    expect(prompt).toMatch(/gần âm/);
+    expect(prompt).toMatch(/âm thanh tương tự/i);
     expect(prompt).toMatch(/GIÁN TIẾP/);
     expect(prompt).toMatch(/TRẢ LỜI MỘT CÂU HỎI KHÁC/);
   });
@@ -99,7 +99,7 @@ describe('isWellFormedPart2', () => {
 
 describe('không được nhắc chữ cái phương án (vị trí sẽ bị xoay)', () => {
   it('prompt cấm rõ ràng', () => {
-    expect(buildPart2Prompt({ types: ['yes-no'], count: 1 })).toMatch(/KHÔNG nhắc tới chữ cái A, B, C/);
+    expect(buildPart2Prompt({ types: ['yes-no'], count: 1 })).toMatch(/KHÔNG nhắc chữ cái A, B, C/i);
   });
 
   it.each([

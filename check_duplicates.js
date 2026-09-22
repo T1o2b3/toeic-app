@@ -17,18 +17,24 @@ function checkFile(fileName) {
 
   entries.forEach(entry => {
     let text = '';
-    if (entry.kind === 'single') {
-      text = entry.stem || entry.question;
+    // Handle different entry types
+    if (entry.question) {
+      text = entry.question;
+    } else if (entry.stem) {
+      text = entry.stem;
     } else if (entry.script) {
       text = entry.script.map(s => s.text).join(' ');
     } else if (entry.passages) {
       text = entry.passages.map(p => p.text).join(' ');
     }
 
-    if (seen.has(text)) {
-      duplicates.push({ id: entry.id, duplicateOf: seen.get(text), text: text.slice(0, 50) + '...' });
-    } else {
-      seen.set(text, entry.id);
+    if (text && text.trim()) {
+      const normalized = text.trim().toLowerCase();
+      if (seen.has(normalized)) {
+        duplicates.push({ id: entry.id, duplicateOf: seen.get(normalized), text: text.slice(0, 50) + '...' });
+      } else {
+        seen.set(normalized, entry.id);
+      }
     }
   });
 

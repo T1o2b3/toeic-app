@@ -76,6 +76,5 @@ export function turnSequence(set) {
     if (index > 0) steps.push({ type: 'gap', ms: GAP_BETWEEN_TURNS_MS });
     steps.push({ type: 'clip', key: index, src: audioUrl(path) });
   });
-  steps.push({ type: 'gap', ms: 8000 });
   return steps;
 }

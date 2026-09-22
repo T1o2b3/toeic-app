@@ -123,8 +123,8 @@ function renderSwitch(view) {
 
 /** Báo đã hết giờ một phần và tự chuyển sang phần sau. */
 export function phaseNotice(phase) {
-  return noticeCard(
-    `Đã sang ${phase.label.toLowerCase()} — ${Math.round(phase.seconds / 60)} phút. Không quay lại phần trước được, đúng như đề thật.`,
-    'Hết giờ phần trước',
-  );
+  return el('div', { class: 'card notice' }, [
+    el('div', { class: 'gaps-title', text: 'Hết giờ phần trước' }),
+    el('p', { text: `Đã sang ${phase.label.toLowerCase()} — ${Math.round(phase.seconds / 60)} phút. Không quay lại phần trước được, đúng như đề thật.` }),
+  ]);
 }

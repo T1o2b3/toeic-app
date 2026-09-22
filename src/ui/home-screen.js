@@ -4,7 +4,7 @@
  * Trả lời ba câu hỏi theo thứ tự người học hay hỏi:
  *   1. Bây giờ nên làm gì?            → thẻ "Hôm nay" với một nút chính (RESEARCH.md R1, R2)
  *   2. Mình có đều đặn không?        → số việc 7 ngày, số ngày có học, chuỗi ngày, biểu đồ 14 ngày
- *   3. Mình đang tiến bộ ở đâu?        → tiến độ từ vựng; độ chính xác từng phần thi + lỗ hổng
+ *   3. Mình đang tiến bộ ở đâu? → tiến độ từ vựng; độ chính xác từng phần thi + lỗ hổng
  * Nút chi tiết (ôn thẻ, phân loại, luyện câu...) nằm ở mục Từ vựng và Bài thi, không ở đây.
  */
 import { el, goTo } from './dom.js';
@@ -54,20 +54,8 @@ export function renderHome(store) {
         el('button', { 
           class: 'theme-toggle', 
           onClick: () => {
-            const next = toggleTheme();
-            //-- This is a bit tricky since renderHome is called by draw()
-            // We might need to trigger a redraw. 
-            // But since we just change the attribute on the root, it's instant.
-            // However, the button text needs to update.
-            // The simplest way is to just call the store.subscribe's callback or just manually change the text.
-            // Actually, if we call toggleTheme, we can just trigger a re-render.
-            // Since this is a PWA, maybe a simple window.dispatchEvent(new Event('storage')) or just manually trigger draw?
-            // The easiest is to just update the DOM element directly or call a redraw if we have access to the draw function.
-            // In our app, draw is inside mountApp. 
-            // But the toggleTheme is global. 
-            // We can just let the user click and the button text will change on the next draw.
-            // But draw() is only called when store changes.
-            // Let's just use a small trick: toggle the text content manually.
+            toggleTheme();
+            store.refresh();
           }, 
           text: theme === 'light' ? '🌙' : '☀️' 
         }),
@@ -92,10 +80,9 @@ export function renderHome(store) {
 
 /**
  * Ba con số trang, mỗi số trả lời một câu người học thật sự hỏi:
- *   - Học tuần này: đã học bao nhiêu phút so với mục tiêu tuần?  (ước tính từ số việc × thời gian trung bình mỗi việc, không phải đồng hồ bấm giờ)
- *   - Từ nhớ vững:  thật sự nhớ được bao nhiêu từ?               (thẻ có lần ôn kế tiếp cách ≥ 21 ngày)
- *   - Đúng ở bài thi: làm bài đúng bao nhiêu, đang lên hay xuống? (Part 5 + nghe, 7 ngày, so với tuần trước)
- * Xu hướng luôn kèm mũi tên VÀ chữ, không chỉ dựa trên màu.
+ *   - Học tuần này: đã học bao nhiêu phút so với mục tiêu tuần?
+ *   - Từ nhớ vững:  thật sự nhớ được bao nhiêu từ?
+ *   - Đúng ở bài thi: làm bài đúng bao nhiêu, đang lên hay xuống?
  */
 function renderKpis(store, events, now) {
   const minutes = estimateStudyMinutes(events, { now });
@@ -178,10 +165,6 @@ function renderVocabPanel(store) {
       el('div', { class: 'hero-sub', text: `${progress.mastered} thành thạo · ${progress.learning} đang học` }),
     ]),
     renderLevelBar(progress, (key) => goTo(`/words?f=${key}`)),
-    el('div', { class: 'panel-actions' }, [
-      el('button', { class: 'link', text: 'Kho từ vựng', onClick: () => goTo('/words') }),
-      el('button', { class: 'link', text: 'Collocations', onClick: () => goTo('/collocations') }),
-    ]),
   ]);
 }
 
@@ -212,7 +195,7 @@ function examTile(label, overview, available) {
   if (overview.delta !== null) {
     if (overview.delta > 0) trend = `▲ ${overview.delta} điểm so với tuần trước`;
     else if (overview.delta < 0) trend = `▼ ${overview.delta} điểm so với tuần trước`;
-    else trend = '＝ như tuần trước';
+    else if (overview.delta === 0) trend = '＝ như tuần trước';
   }
   return el('div', { class: 'tile' }, [
     el('div', { class: 'tile-label', text: label }),
