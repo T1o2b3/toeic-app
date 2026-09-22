@@ -78,8 +78,10 @@ function caveat(estimate) {
 /** Các câu sai / bỏ trống, mỗi câu mở ra xem đề, đáp án bạn chọn, đáp án đúng và giải thích. */
 function renderWrong(score) {
   if (score.wrong.length === 0) return el('p', { class: 'empty', text: 'Đúng hết mọi câu.' });
-  return el('details', { class: 'viz-table wrong-list' }, [
-    el('summary', { text: `Xem lại ${score.wrong.length} câu sai hoặc bỏ trống` }),
+  
+  // Bỏ bọc <details> để hiện trực tiếp danh sách câu sai cho dễ nhìn khi nộp bài sớm.
+  return el('div', { class: 'viz-table wrong-list' }, [
+    el('h3', { text: `Xem lại ${score.wrong.length} câu sai hoặc bỏ trống` }),
     ...score.wrong.map(({ part, question, picked }) => {
       const view = describeQuestion(question);
       return el('div', { class: 'wrong-item' }, [

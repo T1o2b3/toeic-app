@@ -5,8 +5,8 @@
  * Đúng như đề thật: đề đủ chia làm HAI phần tính giờ riêng — Nghe 45 phút rồi Đọc 75 phút — và sang phần
  * sau thì không quay lại phần trước. Câu mang số hiệu thật (Part 5 = 101–130, Part 7 = 147–200).
  *
- * Chỉ ghi vào nhật ký KHI NỘP (một lần, gói gọn): `question.answered` cho mỗi câu đã trả lời (thêm mode: 'exam')
- * và một `exam.finished` tóm tắt. Vì vậy thoát giữa chừng thì mất bài — làm dở rồi tiếp trên máy khác là M16.
+ * Ghi nhật ký một lần khi nộp: `question.answered` cho mỗi câu đã trả lời (thêm mode: 'exam')
+ * và một `exam.finished` tóm tắt. M16: Lưu trạng thái làm dở vào localStorage để không bị mất bài.
  */
 import { buildExamForm, formUnits, scoreExam, examSummaryPayload } from '../logic/exam.js';
 import { examPhases, numberQuestions, formatClock } from '../logic/exam-time.js';
@@ -20,8 +20,9 @@ import { renderResult } from './exam-result.js';
 import { renderSetup } from './exam-setup.js';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
+const STATE_KEY = 'codex_toeic_exam_state';
 
-// Trạng thái của bài thi đang làm (chỉ trong bộ nhớ).
+// Trạng thái của bài thi đang làm.
 let phase = 'setup';         // 'setup' | 'running' | 'result'
 let form = null;
 let units = [];
@@ -58,6 +59,32 @@ const isAudioUnit = (unit) => unit.part === 'part2' || unit.part === 'part3' || 
  * @returns {HTMLElement}
  */
 export function renderExam(store) {
+  if (phase === 'setup') {
+    const saved = loadExamState();
+    if (saved) {
+      // Phục hồi trạng thái: cần dựng lại form và units từ store vì chúng là đối tượng phức tạp.
+      const mode = saved.mode;
+      if (!mode) return renderSetup(banksOf(store), (m) => start(store, m));
+      
+      form = buildExamForm(banksOf(store), mode);
+      units = formUnits(form);
+      phases = examPhases(form);
+      numbers = numberQuestions(form);
+      
+      phase = 'running';
+      phaseIndex = saved.phaseIndex;
+      index = saved.index;
+      answers = saved.answers;
+      startedAt = saved.startedAt;
+      deadline = saved.deadline;
+      heard = saved.heard;
+      
+      timer = setInterval(() => tick(store), 1000);
+      store.refresh();
+    } else {
+      return renderSetup(banksOf(store), (mode) => start(store, mode));
+    }
+  }
   if (phase === 'running') return renderRunningScreen(store);
   if (phase === 'result') return renderResult(result, () => { reset(); store.refresh(); });
   return renderSetup(banksOf(store), (mode) => start(store, mode));
@@ -83,10 +110,11 @@ function start(store, mode) {
   startedAt = Date.now();
   deadline = startedAt + phases[0].seconds * 1000;
   timer = setInterval(() => tick(store), 1000);
+  saveExamState(mode);
   store.refresh();
 }
 
-/** Mỗi giây: cập nhật đồng hồ tại chỗ (không vẽ lại cả màn); hết giờ thì sang phần sau hoặc tự nộp. */
+/** Mỗi giây: cập nhật đồng hồ tại chỗ; hết giờ thì sang phần sau hoặc tự nộp. */
 function tick(store) {
   const remaining = Math.ceil((deadline - Date.now()) / 1000);
   const clock = document.querySelector('.exam-clock');
@@ -99,7 +127,7 @@ function tick(store) {
   else submit(store, true);
 }
 
-/** Sang phần sau (một chiều, như đề thật). `timedOut` = do hết giờ, không phải do bấm nút. */
+/** Sang phần sau (một chiều, như đề thật). */
 function nextPhase(store, timedOut) {
   getPlayer().stop();
   phaseIndex += 1;
@@ -109,6 +137,7 @@ function nextPhase(store, timedOut) {
   switched = timedOut;
   playing = false;
   playError = null;
+  saveExamState();
   store.refresh();
 }
 
@@ -132,12 +161,12 @@ function renderRunningScreen(store) {
     phaseAnswered: countAnswered(current),
     unitCtx: {
       answers, playing, heard: heard[unit.id] ?? 0, error: playError,
-      pick: (id, letter) => { answers = { ...answers, [id]: letter }; confirming = false; store.refresh(); },
+      pick: (id, letter) => { answers = { ...answers, [id]: letter }; confirming = false; saveExamState(); store.refresh(); },
       play: () => play(store, unit),
     },
     onTogglePalette: () => { showPalette = !showPalette; store.refresh(); },
     onGo: (step) => go(store, step),
-    onJump: (at) => { index = at; store.refresh(); },
+    onJump: (at) => { index = at; saveExamState(); store.refresh(); },
     onAskSubmit: () => { confirming = true; switching = false; store.refresh(); },
     onAskSwitch: () => { switching = true; confirming = false; store.refresh(); },
     onCancel: () => { confirming = false; switching = false; store.refresh(); },
@@ -153,15 +182,15 @@ function renderRunningScreen(store) {
 function go(store, step) {
   getPlayer().stop();
   const { from, to } = phases[phaseIndex];
-  // Chặn trong phần đang làm: đề thật không cho quay lại phần trước, và sang phần sau phải qua nút xác nhận.
   index = Math.min(to - 1, Math.max(from, index + step));
   switched = false;
   playing = false;
   playError = null;
+  saveExamState();
   store.refresh();
 }
 
-/** Địa chỉ mọi đoạn âm thanh của một đơn vị (rỗng nếu không phải đơn vị nghe). */
+/** Địa chỉ mọi đoạn âm thanh của một đơn vị. */
 function audioSources(unit) {
   if (!isAudioUnit(unit)) return [];
   const item = unit.item;
@@ -178,7 +207,10 @@ async function play(store, unit) {
   try {
     const steps = unit.part === 'part2' ? clipSequence(unit.item) : turnSequence(unit.item);
     const outcome = await getPlayer().play(steps, { rate: getListenSpeed() });
-    if (outcome === 'done') heard = { ...heard, [unit.id]: (heard[unit.id] ?? 0) + 1 };
+    if (outcome === 'done') {
+      heard = { ...heard, [unit.id]: (heard[unit.id] ?? 0) + 1 };
+      saveExamState();
+    }
   } catch (error) {
     playError = `${error.message}. Thử bấm Nghe lại.`;
   } finally {
@@ -187,13 +219,14 @@ async function play(store, unit) {
   }
 }
 
-/** Nộp bài: chấm, quy đổi điểm, ghi nhật ký MỘT lần, chuyển sang màn kết quả. */
+/** Nộp bài. */
 async function submit(store, timedOut) {
-  if (phase !== 'running') return; // hết giờ và bấm nộp cùng lúc: chỉ nộp một lần
+  if (phase !== 'running') return;
   phase = 'result';
   clearInterval(timer);
   timer = null;
   getPlayer().stop();
+  localStorage.removeItem(STATE_KEY);
 
   const seconds = Math.round((Math.min(Date.now(), deadline) - startedAt) / 1000);
   const score = scoreExam(form, answers);
@@ -221,11 +254,7 @@ async function submit(store, timedOut) {
   await store.importEvents(events);
 }
 
-/**
- * Phím tắt khi đang làm bài: ← → chuyển đơn vị, Space nghe, 1–4/A–D chọn cho câu đầu tiên chưa trả lời.
- * @param {object} store
- * @param {KeyboardEvent} event
- */
+/** Phím tắt. */
 export function handleExamKey(store, event) {
   if (phase !== 'running') return;
   const unit = units[index];
@@ -233,7 +262,6 @@ export function handleExamKey(store, event) {
   if (event.key === 'ArrowLeft') { go(store, -1); return; }
   if (event.key === ' ') {
     event.preventDefault();
-    // Space cũng phải theo luật "một lần duy nhất", nếu không thì bấm phím là lách được nút đã khoá.
     if (!playing && !(heard[unit.id] > 0)) play(store, unit);
     return;
   }
@@ -243,7 +271,7 @@ export function handleExamKey(store, event) {
   const byNumber = Number.parseInt(event.key, 10);
   const byLetter = LETTERS.indexOf(event.key.toUpperCase?.());
   const at = byNumber >= 1 && byNumber <= max ? byNumber - 1 : byLetter >= 0 && byLetter < max ? byLetter : -1;
-  if (at >= 0) { answers = { ...answers, [question.id]: LETTERS[at] }; confirming = false; store.refresh(); }
+  if (at >= 0) { answers = { ...answers, [question.id]: LETTERS[at] }; confirming = false; saveExamState(); store.refresh(); }
 }
 
 function reset() {
@@ -267,8 +295,24 @@ function reset() {
   index = 0;
 }
 
-/** Đặt lại khi rời màn (bài đang làm dở bị bỏ — xem ghi chú đầu file). */
 export function resetExam() {
   slot.dispose();
   reset();
+  localStorage.removeItem(STATE_KEY);
+}
+
+function saveExamState(mode = form?.mode) {
+  if (phase !== 'running') return;
+  localStorage.setItem(STATE_KEY, JSON.stringify({
+    mode, phaseIndex, index, answers, startedAt, deadline, heard,
+  }));
+}
+
+function loadExamState() {
+  try {
+    const data = localStorage.getItem(STATE_KEY);
+    return data ? JSON.parse(data) : null;
+  } catch {
+    return null;
+  }
 }
