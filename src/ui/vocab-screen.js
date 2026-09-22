@@ -14,9 +14,10 @@ import { TIER_ORDER, TIER_INFO, ALL_TIERS, filterByTier, untriagedByTier } from 
  * @returns {HTMLElement}
  */
 export function renderVocab(store) {
-  const states = store.states;
+  if (!store || !store.entries) return el('div', { class: 'empty' }, [el('span', { text: 'Không có dữ liệu từ vựng.' })]);
+
+  const states = store.states ?? new Map();
   const tier = getTier(TIER_ORDER);
-  // Mọi con số ở màn này tính theo tầng đang chọn, để khớp với thứ màn học sẽ đưa ra.
   const entries = filterByTier(store.entries, tier);
   const { total, fresh, due } = summarizeQueue(reviewQueue(entries, states, {}));
   const untriaged = countUntriaged(entries, states);
@@ -61,13 +62,16 @@ export function renderVocab(store) {
   sections.push(nav('Kho từ vựng', triagedCount > 0
     ? `${triagedCount} từ đã phân loại · xem lại, lọc, đổi mức`
     : 'xem, lọc và đổi mức từng từ', '/words'));
+  
+  // Add Collocations link here as requested
+  sections.push(nav('Collocations', 'Xem lại các cụm từ cố định', '/collocations'));
+
   if (weak.length > 0) sections.push(nav('Từ hay sai', `${weak.length} từ cần để mắt`, '/weak'));
-  if (store.captured.size > 0) {
+  if (store.captured?.size > 0) {
     sections.push(nav('Từ đã gạt lúc làm bài', `${store.captured.size} từ gặp khi luyện Part 5 / nghe`, '/words?f=captured'));
   }
 
   if (triagedCount > 0) {
-    // Mỗi dòng bấm được: nhảy thẳng tới danh sách từ ở mức đó trong kho.
     sections.push(el('div', { class: 'gaps' }, [
       el('div', { class: 'gaps-title', text: 'Đã phân loại tới đâu' }),
       ...LEVEL_ORDER.map((level) => el('button', {
@@ -81,7 +85,6 @@ export function renderVocab(store) {
   return el('div', {}, sections);
 }
 
-/** Ô tìm nhanh: gõ rồi Enter để sang màn Tra từ với chuỗi đã gõ. */
 function renderSearchShortcut() {
   const input = el('input', {
     class: 'field', type: 'search', placeholder: 'Tra một từ (tiếng Anh hoặc nghĩa tiếng Việt)…', 'aria-label': 'Tra từ',
@@ -94,10 +97,6 @@ function renderSearchShortcut() {
   return input;
 }
 
-/**
- * Chọn tầng từ vựng. Deck xếp theo tần suất nên mặc định màn phân loại bắt đầu từ từ dễ nhất;
- * ai đã ở mức 850 thì chọn thẳng tầng trên để khỏi cày lại 400 từ đã biết (xem deck-tiers.js).
- */
 function renderTierChooser(store, current) {
   const counts = untriagedByTier(store.entries, store.states);
   const option = (value, label, note) => el('button', {
