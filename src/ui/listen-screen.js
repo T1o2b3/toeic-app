@@ -13,6 +13,7 @@ import { getListenSpeed } from '../data/prefs.js';
 import { createPlayerSlot } from './audio-player.js';
 import { backButton, backLink, explanationCard, letterFromKey, optionList, speedChooser, verdictLine } from './blocks.js';
 import { renderStem, renderTray, resetCapture } from './capture-tray.js';
+import { shuffleChoices, originalLetter, onceShuffled } from '../logic/shuffle.js';
 
 const LETTERS = ['A', 'B', 'C'];
 
@@ -37,8 +38,11 @@ function roundQueue(store) {
   return quizQueue(store.listening, store.quizStates, { size: left, exclude: doneThisRound });
 }
 
+/** Câu đang hiện, câu đáp + âm thanh đã xáo MỘT lần khi câu hiện ra (D65). */
+const shown = onceShuffled((q) => shuffleChoices(q));
+
 function currentQuestion(store) {
-  return locked ?? roundQueue(store)[0] ?? null;
+  return locked ?? shown.get(roundQueue(store)[0] ?? null);
 }
 
 const sourcesOf = (item) => [item.audio.question, ...LETTERS.map((l) => item.audio[l])].map(audioUrl);
@@ -178,7 +182,7 @@ async function answer(store, question, letter) {
   getPlayer().stop();
   const result = gradeAnswer(question, letter);
   await store.record('question.answered', {
-    questionId: question.id, choice: letter, correct: result.correct, errorType: result.errorType,
+    questionId: question.id, choice: originalLetter(question, letter), correct: result.correct, errorType: result.errorType,
   });
 }
 
@@ -186,6 +190,7 @@ function next(store) {
   getPlayer().stop();
   picked = null;
   locked = null;
+  shown.reset();
   heard = false;
   playing = false;
   nowKey = null;
@@ -199,6 +204,7 @@ async function report(store, question) {
   getPlayer().stop();
   picked = null;
   locked = null;
+  shown.reset();
   heard = false;
   resetCapture();
   doneThisRound.add(question.id);
@@ -231,6 +237,7 @@ export function resetListen() {
   slot.dispose();
   picked = null;
   locked = null;
+  shown.reset();
   doneThisRound = new Set();
   heard = false;
   playing = false;

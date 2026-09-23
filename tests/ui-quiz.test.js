@@ -35,7 +35,7 @@ const groupCounts = (list) => {
 };
 
 beforeAll(async () => {
-  ({ store, root, tick, go, key, text, click } = await bootApp({ questions: BANK }));
+  ({ store, root, tick, go, key, text, click } = await bootApp({ questions: BANK, realRandom: true }));
 });
 
 describe('một lượt = một mẻ Part 5 của đề thật', () => {
@@ -111,5 +111,23 @@ describe('một lượt = một mẻ Part 5 của đề thật', () => {
     await tick(30);
     expect(text()).toContain('còn 30 câu');
     expect(root.querySelector('.q-no').textContent).toBe('101.');
+  });
+
+  it('phương án bị XÁO mỗi lần hiện (D65) nhưng nhật ký vẫn ghi chữ cái GỐC và chấm đúng', async () => {
+    const moved = [];
+    for (let i = 0; i < 6; i += 1) {
+      const [, t, n] = stemText().match(/coded T(\d+)I(\d+)/);
+      const original = BANK.find((q) => q.stem.includes(`coded T${t}I${n} `));
+      const rightText = original.options[original.answer];
+      const shown = [...root.querySelectorAll('.option')].find((b) => b.querySelector('.option-text').textContent === rightText);
+      moved.push(shown.querySelector('.letter').textContent !== original.answer);
+      shown.click();
+      await tick(40);
+      const last = store.exportEvents().at(-1).payload;
+      expect(last).toMatchObject({ questionId: original.id, choice: original.answer, correct: true });
+      expect(text()).toContain('Đúng');
+      await key(' '); await tick(20);
+    }
+    expect(moved.some(Boolean)).toBe(true);                   // 6 câu mà đáp án chưa từng rời chỗ gốc = chưa xáo
   });
 });

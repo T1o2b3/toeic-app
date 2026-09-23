@@ -6,7 +6,8 @@ import { el, goTo } from './dom.js';
 import { backButton, backLink, sessionDone } from './blocks.js';
 import { reviewQueue, reviewCounts } from '../logic/vocab-state.js';
 import { reviewProgress } from '../logic/round.js';
-import { TIER_ORDER, filterByTier } from '../logic/deck-tiers.js';
+import { TIER_ORDER, studyEntries } from '../logic/deck-tiers.js';
+import { randomSeed } from '../logic/shuffle.js';
 import { getTier } from '../data/prefs.js';
 import { previewIntervals, GRADES } from '../logic/scheduler.js';
 import { formatDuration } from '../logic/format.js';
@@ -40,20 +41,17 @@ function newLeft() {
   return Math.max(0, NEW_PER_ROUND - newThisRound.size);
 }
 
-/**
- * Thẻ của lượt ôn: từ vựng (đã lọc theo tầng) **CỘNG** cụm từ.
- *
- * Ôn chung một hàng đợi chứ không tách hai lượt: lịch FSRS tính theo từng thẻ, nên trộn vào không làm
- * sai lịch của thẻ nào; mà tách ra thì Huy phải nhớ vào hai chỗ và cụm từ sẽ bị bỏ quên. Học MỚI thì
- * vẫn tách hai (xem màn Từ vựng) vì lúc mới học, từ đơn và cụm là hai kiểu ghi nhớ khác nhau.
- */
-function tieredEntries(store) {
-  return [...filterByTier(store.entries, getTier(TIER_ORDER)), ...(store.collocationCards ?? [])];
-}
+/** Hạt giống thứ tự của lượt (D65): thẻ xáo ngẫu nhiên, từ mới xen giữa thẻ đến hạn, mỗi lượt một thứ tự. */
+let seed = randomSeed();
 
-/** Hàng đợi của lượt hiện tại: hết hạn mức từ mới thì chỉ còn thẻ đến hạn. */
+/**
+ * Hàng đợi của lượt hiện tại: từ vựng (đã lọc theo tầng) CỘNG cụm từ, chung một hàng — lịch FSRS tính theo
+ * từng thẻ nên trộn không làm sai lịch thẻ nào. Hết hạn mức từ mới thì chỉ còn thẻ đến hạn.
+ */
+const studyList = (store) => studyEntries(store.entries, getTier(TIER_ORDER), store.collocationCards ?? []);
+
 function roundQueue(store) {
-  return reviewQueue(tieredEntries(store), store.states, { maxNew: newLeft() });
+  return reviewQueue(studyList(store), store.states, { maxNew: newLeft(), seed });
 }
 
 /** Lấy thẻ đang ôn, hoặc null nếu hết. */
@@ -66,7 +64,7 @@ function currentItem(store) {
  * @returns {HTMLElement}
  */
 export function renderReview(store) {
-  const counts = reviewCounts(tieredEntries(store), store.states);
+  const counts = reviewCounts(studyList(store), store.states);
   const { remaining } = reviewProgress({
     dueCount: counts.due,
     newAvailable: counts.fresh,
@@ -207,6 +205,7 @@ export function handleReviewKey(store, event) {
 
 /** Đặt lại khi rời màn hoặc khi bắt đầu lượt mới. */
 export function resetReview() {
+  seed = randomSeed();
   revealed = false;
   newThisRound = new Set();
   gradedThisRound = 0;

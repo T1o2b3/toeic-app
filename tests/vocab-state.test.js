@@ -130,6 +130,36 @@ describe('reviewQueue', () => {
     expect(reviewQueue(DECK, states, { now: NOW, maxNew: 2 })).toHaveLength(2);
   });
 
+  describe('có hạt giống (D65): xáo theo lượt, trộn từ mới với từ đến hạn', () => {
+    const BIG = Array.from({ length: 60 }, (_, i) => ({ id: `tsl-${String(i).padStart(4, '0')}` }));
+    // 30 từ đã ôn (đến hạn sau 3 ngày), 30 từ mới — đều đã triage "chưa biết".
+    const states = reduceVocabState(BIG.flatMap((e, i) => [
+      ev('vocab.triaged', { wordId: e.id, known: false }, T0 + i),
+      ...(i < 30 ? [ev('vocab.reviewed', { wordId: e.id, grade: 'again' }, T0 + 100 + i)] : []),
+    ]));
+    const later = new Date(T0 + 3 * 24 * 3600_000);
+    const queue = (seed, opts = {}) => reviewQueue(BIG, states, { now: later, seed, ...opts });
+
+    it('không còn đi tuyến tính; cùng hạt giống thì cùng thứ tự, khác hạt giống thì khác', () => {
+      const ids = (q) => q.map((x) => x.entry.id);
+      expect(ids(queue(1))).toEqual(ids(queue(1)));
+      expect(ids(queue(1))).not.toEqual(ids(queue(2)));
+      expect(ids(queue(1)).slice(0, 5)).not.toEqual(['tsl-0000', 'tsl-0001', 'tsl-0002', 'tsl-0003', 'tsl-0004']);
+    });
+
+    it('từ mới xen giữa từ đến hạn chứ không dồn cuối; vẫn giữ hạn mức từ mới', () => {
+      const q = queue(3);
+      expect(q.filter((x) => x.isNew)).toHaveLength(10);
+      expect(q.slice(0, 20).some((x) => x.isNew)).toBe(true);
+    });
+
+    it('chạm trần tổng số thẻ thì thẻ ĐẾN HẠN được giữ trước (quên từ đã học tốn công hơn học từ mới)', () => {
+      const q = queue(4, { maxTotal: 25 });
+      expect(q).toHaveLength(25);
+      expect(q.every((x) => !x.isNew)).toBe(true);
+    });
+  });
+
   it('giới hạn tổng số thẻ mỗi phiên', () => {
     const states = reduceVocabState(
       DECK.map((e, i) => ev('vocab.triaged', { wordId: e.id, known: false }, T0 + i)),

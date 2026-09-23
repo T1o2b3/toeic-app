@@ -9,6 +9,7 @@
  * và một `exam.finished` tóm tắt. M16: Lưu trạng thái làm dở vào localStorage để không bị mất bài.
  */
 import { buildExamForm, formUnits, scoreExam, examSummaryPayload } from '../logic/exam.js';
+import { originalLetter, randomSeed } from '../logic/shuffle.js';
 import { seededRandom } from '../logic/shuffle.js';
 import { examPhases, numberQuestions, formatClock } from '../logic/exam-time.js';
 import { estimateScore } from '../logic/score.js';
@@ -107,7 +108,7 @@ function restoreExamState(store) {
 
 /** Bắt đầu một bài thi. */
 function start(store, mode) {
-  seed = Math.floor(Math.random() * 2 ** 31);
+  seed = randomSeed();
   form = buildExamForm(banksOf(store), mode, { random: seededRandom(seed) });
   units = formUnits(form);
   if (units.length === 0) return;
@@ -300,7 +301,7 @@ async function submit(store, timedOut) {
         if (!picked) continue;
         events.push(createEvent({
           type: 'question.answered', deviceId: store.deviceId,
-          payload: { questionId: question.id, choice: picked, correct: picked === question.answer, errorType: question.errorType, mode: 'exam' },
+          payload: { questionId: question.id, choice: originalLetter(question, picked), correct: picked === question.answer, errorType: question.errorType, mode: 'exam' },
         }));
       }
     }

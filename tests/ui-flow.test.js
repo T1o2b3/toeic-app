@@ -31,12 +31,12 @@ describe('màn phân loại', () => {
   it('bộ đếm đi 20 → 18 sau hai từ (quy tắc số 7)', async () => {
     await go('#/triage');
     first = word();
-    expect(text()).toContain('còn 20 từ trong lượt');
+    expect(text()).toContain('còn 20 từ/cụm trong lượt');
     await key('4');
     second = word();
     await key('1');
     third = word();
-    expect(text()).toContain('còn 18 từ trong lượt');
+    expect(text()).toContain('còn 18 từ/cụm trong lượt');
     expect(new Set([first, second, third]).size).toBe(3);
   });
 
@@ -44,7 +44,7 @@ describe('màn phân loại', () => {
     const events = store.eventCount;
     await key('s');
     expect(word()).not.toBe(third);
-    expect(text()).toContain('còn 18 từ trong lượt');
+    expect(text()).toContain('còn 18 từ/cụm trong lượt');
     expect(store.eventCount).toBe(events);
   });
 

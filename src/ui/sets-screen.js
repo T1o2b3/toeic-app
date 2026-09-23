@@ -22,6 +22,7 @@ import { renderQuestion, renderTranscript, renderHold, renderPace } from './set-
 import { splitPane, backLink, backButton, speedChooser, letterFromKey, sessionDone } from './blocks.js';
 import { formatClock } from '../logic/exam-time.js';
 import { createEvent } from '../logic/events.js';
+import { shuffleChoices, originalLetter, onceShuffled } from '../logic/shuffle.js';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
 
@@ -54,7 +55,9 @@ function roundQueue(store) {
   return setQueue(store.sets[part], store.quizStates, { size: left, exclude: doneThisRound });
 }
 
-const currentSet = (store) => locked ?? roundQueue(store)[0] ?? null;
+/** Bộ đang hiện, phương án từng câu đã xáo MỘT lần khi bộ hiện ra (D65). */
+const shown = onceShuffled((set) => ({ ...set, questions: set.questions.map((q) => shuffleChoices(q)) }));
+const currentSet = (store) => locked ?? shown.get(roundQueue(store)[0] ?? null);
 const allAnswered = (set) => nextUnanswered(set, answers) === null;
 
 /**
@@ -262,7 +265,7 @@ async function finish(store, set) {
     const result = gradeSetAnswer(question, letter);
     return createEvent({
       type: 'question.answered', deviceId: store.deviceId,
-      payload: { questionId: question.id, choice: letter, correct: result.correct, errorType: result.errorType },
+      payload: { questionId: question.id, choice: originalLetter(question, letter), correct: result.correct, errorType: result.errorType },
     });
   });
   await store.importEvents(events);
@@ -292,6 +295,7 @@ function resetProgress() {
   startedAt = null;
   spentSeconds = null;
   locked = null;
+  shown.reset();
   answers = {};
   recorded = false;
   heard = false;

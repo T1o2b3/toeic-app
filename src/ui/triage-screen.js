@@ -17,7 +17,8 @@ import { roundProgress } from '../logic/round.js';
 import { LEVEL_ORDER, LEVEL_INFO, payloadForLevel } from '../logic/vocab-levels.js';
 import { stepBack, stepForward, canStepBack } from '../logic/triage-history.js';
 import { getShowMeaning, setShowMeaning, getTier } from '../data/prefs.js';
-import { TIER_ORDER, TIER_INFO, ALL_TIERS, filterByTier } from '../logic/deck-tiers.js';
+import { TIER_ORDER, TIER_INFO, ALL_TIERS, studyEntries } from '../logic/deck-tiers.js';
+import { seededOrder, randomSeed } from '../logic/shuffle.js';
 
 /** Số từ mỗi lượt phân loại — đủ ngắn để làm xong trong một lần ngồi. */
 const ROUND_SIZE = 20;
@@ -39,6 +40,9 @@ let revisitIndex = null;
 /** Đang ghi một câu trả lời. Chặn bấm phím hai lần thật nhanh chấm nhầm sang từ kế tiếp. */
 let busy = false;
 
+/** Hạt giống thứ tự của lượt (D65): mỗi lượt một thứ tự ngẫu nhiên mới, trong lượt thì cố định. */
+let seed = randomSeed();
+
 /**
  * Hàng đợi của lượt hiện tại: chỉ lấy đúng số từ CÒN LẠI của lượt,
  * nhờ vậy lượt kết thúc sau đủ ROUND_SIZE từ thay vì kéo dài mãi.
@@ -46,24 +50,24 @@ let busy = false;
 function roundQueue(store) {
   const left = Math.max(0, ROUND_SIZE - doneThisRound.size);
   if (left === 0) return [];
-  const pool = tieredEntries(store).filter((entry) => !skipped.has(entry.id));
+  // Sắp TRƯỚC rồi mới bỏ từ "để sau": thứ tự theo hash nên bỏ bớt không làm từ khác nhảy chỗ.
+  const pool = seededOrder(tieredEntries(store), seed).filter((entry) => !skipped.has(entry.id));
   return triageQueue(pool, store.states, left);
 }
 
 /**
- * Màn phân loại chạy hai chế độ: từ vựng (mặc định) và **cụm từ** (`#/triage?kind=colloc`).
- * Tách hẳn khi học MỚI vì hai kiểu ghi nhớ khác nhau — nhìn `apply` rồi đoán nghĩa là một việc,
- * nhớ `apply FOR chứ không phải apply TO` là việc khác. Ôn lại thì trộn chung (xem review-screen.js).
+ * Màn phân loại chạy hai chế độ: mặc định là từ vựng TRỘN cụm từ, thứ tự ngẫu nhiên (D65 — Huy: "mỗi lần
+ * từ vựng sẽ được xáo trộn ngẫu nhiên… trộn đều tất cả độ khó, cụm từ"); `#/triage?kind=colloc` chỉ cụm từ.
  */
 let kind = 'vocab';
 
 function tieredEntries(store) {
   if (kind === 'colloc') return store.collocationCards ?? [];
-  return filterByTier(store.entries, getTier(TIER_ORDER));
+  return studyEntries(store.entries, getTier(TIER_ORDER), store.collocationCards ?? []);
 }
 
 /** Nhãn hiện trên màn, theo chế độ đang chạy. */
-const kindLabel = () => (kind === 'colloc' ? 'cụm từ' : 'từ');
+const kindLabel = () => (kind === 'colloc' ? 'cụm từ' : 'từ/cụm');
 
 /** Từ đang hiện trên màn: từ đang xem lại nếu đi lùi, không thì đầu hàng đợi. */
 function currentEntry(store) {
@@ -110,7 +114,7 @@ export function renderTriage(store, params) {
       ...renderWordHead(entry),
       el('div', { class: 'hint', text: reviewing
         ? `Trước đó bạn chấm: ${LEVEL_INFO[previous]?.label ?? '—'}. Chấm lại nếu cần.`
-        : `Bạn dùng được ${kind === 'colloc' ? 'CỤM' : 'từ'} này tới mức nào?` }),
+        : `Bạn dùng được ${entry.isCollocation ? 'CỤM' : 'từ'} này tới mức nào?` }),
     ]),
     showMeaning ? renderMeaning(entry) : '',
     el('div', { class: 'actions four' }, LEVEL_ORDER.map((level) => {
@@ -272,6 +276,7 @@ export function handleTriageKey(store, event) {
 
 /** Đặt lại khi rời màn hoặc khi bắt đầu lượt mới. */
 export function resetTriage() {
+  seed = randomSeed();
   doneThisRound = new Set();
   skipped = new Set();
   history = [];

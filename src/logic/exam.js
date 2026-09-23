@@ -9,7 +9,7 @@
  * của app do AI ra nên độ khó không hiệu chuẩn; một con số điểm sẽ là số bịa (D36).
  */
 
-import { shuffle } from './shuffle.js';
+import { shuffle, shuffleChoices } from './shuffle.js';
 import { composeRound } from './part5.js';
 
 export { shuffle };
@@ -121,6 +121,14 @@ export function buildExamForm(banks, mode, { random = Math.random, exclude = new
       questionCount: units.reduce((s, u) => s + sizeOf(u), 0),
     };
   }).filter((section) => section.units.length > 0);
+
+  // Xáo phương án từng câu (D65) SAU KHI đã rút đủ đề: thứ tự rút câu giữ y như cũ, và cùng `random` có hạt
+  // giống nên khôi phục bài làm dở vẫn ra đúng thứ tự phương án đã thấy.
+  for (const section of sections) {
+    section.units = section.units.map((unit) => (unit.kind === 'single'
+      ? single(unit.part, shuffleChoices(unit.item, random))
+      : setUnit(unit.part, { ...unit.item, questions: unit.item.questions.map((q) => shuffleChoices(q, random)) })));
+  }
 
   const shortage = config.parts
     .map((part) => ({ part, have: sections.find((s) => s.part === part)?.questionCount ?? 0, need: EXAM_SPEC[part].questions }))

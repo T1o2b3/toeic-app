@@ -3,6 +3,7 @@
  * Mỗi file test chạy trong một cửa sổ jsdom riêng nên mỗi file gọi bootApp() đúng MỘT lần
  * (mountApp gắn listener lên window, gắn hai lần thì mỗi phím bị xử lý hai lần).
  */
+import { vi } from 'vitest';
 import { IDBFactory } from 'fake-indexeddb';
 import { createStore } from '../../src/data/store.js';
 import { mountApp } from '../../src/ui/app.js';
@@ -91,7 +92,7 @@ const SETS = {
 };
 
 /**
- * @param {{questions?: object[]}} [override] - thay ngân hàng Part 5 (mặc định chỉ 1 câu, đủ cho hầu hết test;
+ * @param {{questions?: object[], realRandom?: boolean}} [override] - thay ngân hàng Part 5 (mặc định chỉ 1 câu, đủ cho hầu hết test;
  *   test nào cần mặt cắt đề thật thì truyền vào một ngân hàng đủ 12 dạng)
  * @returns {Promise<object>} store, root và các hàm thao tác/đọc màn hình
  */
@@ -102,6 +103,10 @@ const COLLOCATIONS = [
 ];
 
 export async function bootApp(override = {}) {
+  // App xáo phương án và thứ tự từ (D65). Test chọn đáp án theo CHỮ CÁI (Part 2 trước khi trả lời không có chữ
+  // nào để chọn theo nội dung), nên mặc định cố định: random ≈ 1 thì Fisher–Yates giữ nguyên thứ tự.
+  // Test nào kiểm chính việc xáo thì truyền `realRandom: true`.
+  if (!override.realRandom) vi.spyOn(Math, 'random').mockReturnValue(0.999999);
   const questions = override.questions ? { ...QUESTIONS, entries: override.questions } : QUESTIONS;
   const fetchImpl = async (url) => {
     const data = String(url).includes('vocab-toeic-tsl') ? DECK
@@ -132,6 +137,6 @@ export async function bootApp(override = {}) {
       target.click();
       await tick();
     },
-    levelOf: (w) => store.states.get(store.entries.find((e) => e.word === w).id)?.level,
+    levelOf: (w) => store.states.get([...store.entries, ...store.collocationCards].find((e) => e.word === w).id)?.level,
   };
 }

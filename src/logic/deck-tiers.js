@@ -76,3 +76,15 @@ export function untriagedByTier(entries, states) {
   }
   return counts;
 }
+
+/**
+ * Thẻ để phân loại/ôn: từ ở tầng đang chọn CỘNG mọi cụm từ (cụm không chia tầng) — trộn chung một hàng,
+ * không tách hai nơi (D65; trước đây học mới cụm từ tách riêng — D53).
+ * @param {Array<object>} entries
+ * @param {string} tier
+ * @param {Array<object>} [collocationCards]
+ * @returns {Array<object>}
+ */
+export function studyEntries(entries, tier, collocationCards = []) {
+  return [...filterByTier(entries, tier), ...collocationCards];
+}

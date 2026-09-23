@@ -15,6 +15,7 @@ import { el } from './dom.js';
 import { gradeAnswer, errorTypeLabel } from '../logic/quiz.js';
 import { composeRound, questionNumber, groupBreakdown, PART5_GROUPS, PART5_COUNT } from '../logic/part5.js';
 import { pace } from '../logic/pace.js';
+import { shuffleChoices, originalLetter } from '../logic/shuffle.js';
 import { roundProgress } from '../logic/round.js';
 import { renderStem, renderTray, renderOptionCapture, resetCapture } from './capture-tray.js';
 import { optionList, splitPane, backLink, backButton, verdictLine, explanationCard, letterFromKey, sessionDone } from './blocks.js';
@@ -35,7 +36,8 @@ let results = [];
 /** Dựng lượt mới nếu chưa có. Mỗi lượt 30 câu = đúng Part 5 của đề thật (D39, D58). */
 function ensureRound(store) {
   if (roundList.length > 0) return;
-  roundList = composeRound(store.questions, store.quizStates);
+  // Xáo phương án mỗi lượt (D65): câu sai quay lại thì đáp án không còn nằm đúng chỗ cũ để nhớ vị trí.
+  roundList = composeRound(store.questions, store.quizStates).map((q) => shuffleChoices(q));
   at = 0;
   picked = null;
   results = [];
@@ -169,7 +171,7 @@ async function answer(store, question, letter) {
   results.push({ question, picked: letter, correct: result.correct, seconds: (Date.now() - askedAt) / 1000 });
   await store.record('question.answered', {
     questionId: question.id,
-    choice: letter,
+    choice: originalLetter(question, letter),   // nhật ký ghi chữ cái GỐC, không phải chữ vừa hiện
     correct: result.correct,
     errorType: result.errorType,
   });

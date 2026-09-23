@@ -5,6 +5,7 @@
  */
 import { describe, it, expect, beforeAll } from 'vitest';
 import { bootApp } from './helpers/ui-app.js';
+import { renderOptionCapture } from '../src/ui/capture-tray.js';
 
 let store; let root; let tick; let go; let key; let text; let click;
 
@@ -96,21 +97,15 @@ describe('gạt từ lạ lúc làm Part 5 (D34)', () => {
     expect(chips.textContent).toContain('suspend');
   });
 
-  it('phương án dài hơn một từ thì tách RA TỪNG TỪ, không lấy cả cụm', async () => {
+  it('phương án dài hơn một từ thì tách RA TỪNG TỪ, không lấy cả cụm', () => {
     // 31% phương án Part 5 dài hơn một từ ("have been"). Lấy cả cụm thì ghi vào danh sách học một thứ
     // không bao giờ tra được nghĩa — mà nhật ký là append-only nên rác đó nằm lại vĩnh viễn.
-    const question = store.questions[0];
-    const goc = question.options.B;
-    question.options.B = 'have been raised';
-    store.refresh();
-    await tick();
-    const chips = [...root.querySelectorAll('.option-capture .chip-btn')].map((b) => b.textContent.replace('＋ ', ''));
+    const base = store.questions[0];
+    const question = { ...base, options: { ...base.options, B: 'have been raised' } };
+    const chips = [...renderOptionCapture(store, question).querySelectorAll('.chip-btn')].map((b) => b.textContent.replace('＋ ', ''));
     expect(chips).toContain('raised');
     expect(chips).toContain('have');
     expect(chips.some((c) => c.includes(' '))).toBe(false);      // không chip nào là cả cụm
-    question.options.B = goc;
-    store.refresh();
-    await tick();
   });
 
   it('bấm một từ ở phương án thì thêm vào danh sách và chip đổi thành ✓', async () => {

@@ -119,6 +119,19 @@ describe('buildExamForm — đề đủ', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
+  it('phương án được xáo (D65): cùng hạt giống dựng lại ra ĐÚNG thứ tự đã thấy — khôi phục bài dở không lệch', () => {
+    const withOptions = {
+      ...banks,
+      part5: flat('p5', 60).map((q) => ({ ...q, options: { A: `${q.id}-right`, B: 'b', C: 'c', D: 'd' } })),
+    };
+    const shown = (f) => formUnits(f).map((u) => JSON.stringify(u.item.options));
+    const first = buildExamForm(withOptions, 'part5', { random: seeded(9) });
+    expect(shown(buildExamForm(withOptions, 'part5', { random: seeded(9) }))).toEqual(shown(first));
+    const units = formUnits(first);
+    expect(units.every((u) => u.item.options[u.item.answer] === `${u.id}-right`)).toBe(true);   // đáp án theo nội dung
+    expect(new Set(units.map((u) => u.item.answer)).size).toBe(4);                              // hết dồn vào A
+  });
+
   it('cùng hạt giống thì cùng đề; khác hạt giống thì đề khác', () => {
     const idsOf = (f) => formUnits(f).map((u) => u.id);
     expect(idsOf(buildExamForm(banks, 'full', { random: seeded(3) }))).toEqual(idsOf(form));

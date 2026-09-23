@@ -5,6 +5,7 @@
  */
 import { createNewCard, reviewCard, isDue, isNew } from './scheduler.js';
 import { LEVELS, levelFromPayload, needsStudy, studyPriority } from './vocab-levels.js';
+import { seededOrder } from './shuffle.js';
 
 /**
  * Trạng thái khởi đầu của một từ chưa có sự kiện nào.
@@ -132,9 +133,10 @@ export function triageQueue(entries, states, limit = Infinity) {
  * @param {Date} [options.now]
  * @param {number} [options.maxNew] - số từ MỚI tối đa mỗi phiên, mặc định 10
  * @param {number} [options.maxTotal] - tổng số thẻ tối đa, mặc định 40
+ * @param {number} [options.seed] - có thì xáo theo lượt (D65): từ mới xen giữa từ đến hạn, thứ tự đổi mỗi lượt
  * @returns {Array<{entry: object, state: object, isNew: boolean}>}
  */
-export function reviewQueue(entries, states, { now = new Date(), maxNew = 10, maxTotal = 40 } = {}) {
+export function reviewQueue(entries, states, { now = new Date(), maxNew = 10, maxTotal = 40, seed } = {}) {
   const due = [];
   const fresh = [];
 
@@ -144,6 +146,14 @@ export function reviewQueue(entries, states, { now = new Date(), maxNew = 10, ma
     if (!state || state.known) continue;          // chưa triage hoặc đã biết -> bỏ
     if (isNew(state.card)) fresh.push({ entry, state, isNew: true });
     else if (isDue(state.card, now)) due.push({ entry, state, isNew: false });
+  }
+
+  if (seed !== undefined) {
+    // Đến hạn vẫn được giữ trước khi chạm trần maxTotal — quên từ đã học tốn công hơn học từ mới (D03).
+    const byId = (item) => item.entry.id;
+    const picked = seededOrder(due, seed, byId).slice(0, maxTotal);
+    picked.push(...seededOrder(fresh, seed, byId).slice(0, Math.min(maxNew, maxTotal - picked.length)));
+    return seededOrder(picked, seed, byId);
   }
 
   due.sort((a, b) => new Date(a.state.card.due) - new Date(b.state.card.due));

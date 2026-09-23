@@ -480,7 +480,7 @@ vựng thì vào ôn thẻ, không thì vào Part 5 — bất kể đang hổng 
 - `logic/today.js` bị **xoá** — `planToday`/`planTarget` không còn ai dùng.
 - Bộ chấm dùng lại ở màn Bài thi để đánh dấu "← cần nhất", nên gộp nhóm không làm mất dấu chỗ bắt đầu.
 
-**D53. Cụm từ là THẺ HỌC, dùng chung bộ máy từ vựng — học mới thì tách, ôn lại thì chung.**
+**D53. Cụm từ là THẺ HỌC, dùng chung bộ máy từ vựng — học mới thì tách, ôn lại thì chung.** *(Phần "học mới thì tách" đã đổi ở D65: phân loại mặc định trộn cả cụm; chế độ chỉ-cụm vẫn còn.)*
 Bản D50 mới chỉ là danh sách tra cứu. Nay cụm từ vào hẳn vòng học.
 - **Không dựng hệ thống song song.** `reduceVocabState` chỉ khoá theo `wordId`, mọi hàm hàng đợi đều nhận
   `entries` từ ngoài, nên chỉ cần `collocationEntries()` cho cụm một hình dạng giống mục deck là được
@@ -593,8 +593,24 @@ rồi. Ngoài thêm nội dung ra thì còn lại cũng không cần thiết l�
 - **Sửa:** `balanceAnswers` (`pipeline/lib/prompt-question.js`) lúc ghi file: mỗi câu mới nhận chữ cái đang ÍT nhất trong
   cả ngân hàng (dùng lại `moveOptionTo` của bộ đề) → các lần chạy sau tự kéo lệch cũ về dần. Câu có lời giải nhắc chữ
   cái thì không đổi chỗ.
-- **Câu cũ giữ nguyên** (ràng buộc #6: nhật ký có ghi chữ cái đã chọn). Nếu muốn hết lệch hẳn thì phải xáo phương án
-  lúc HIỆN trong app (đổi chữ hiển thị, quy về chữ gốc khi chấm) — chưa làm, chờ Huy quyết.
+- **Câu cũ giữ nguyên** (ràng buộc #6: nhật ký có ghi chữ cái đã chọn). Hết lệch hẳn nhờ xáo lúc HIỆN — xem D65.
+
+**D65. Xáo trộn mỗi lần hiện: phương án câu hỏi, và thứ tự từ vựng (trộn mọi tầng + cụm từ).** (Huy, 2026-09-24: "nếu có
+thể xáo trộn mọi lần thì tốt nhất… khi học từ vựng thì mỗi lần từ vựng sẽ được xáo trộn ngẫu nhiên… trộn đều tất cả
+độ khó, cụm từ".)
+- **Phương án** (Part 2, 5 luyện; bộ Part 3/4/6/7; thi thử): xáo MỘT lần khi câu/bộ hiện ra, giữ nguyên khi màn vẽ lại
+  (`onceShuffled`), câu quay lại ở lượt sau thì xáo lần nữa. Part 2 đổi chỗ câu đáp CÙNG file âm thanh. Thi thử xáo
+  bằng chính bộ số có hạt giống, SAU khi đã rút đủ đề → khôi phục bài dở ra đúng thứ tự đã thấy.
+- **Nhật ký ghi chữ cái GỐC** (`originalLetter`) → lịch sử cũ và mới đọc như nhau; nội dung trong `public/content`
+  không đổi (ràng buộc #6).
+- Câu có lời giải nhắc chữ cái ("Phương án B…") thì KHÔNG xáo (13 câu Part 5). App giữ bản sao `mentionsChoiceLetter`
+  của pipeline, test canh hai bản không lệch.
+- **Từ vựng:** phân loại mặc định trộn từ (tầng đang chọn) + mọi cụm từ; ôn tập trộn từ mới xen giữa thẻ đến hạn. Thứ
+  tự theo hash(hạt giống, id) (`seededOrder`): cố định trong một lượt (chấm xong một từ thì từ khác không nhảy chỗ),
+  lượt mới hạt mới. Thẻ đến hạn vẫn được giữ trước khi chạm trần 40 thẻ/lượt. Bỏ thứ tự "từ phổ biến trước" và "từ
+  chưa biết trước từ đoán được". Chọn tầng vẫn giữ (Huy ở 850 bỏ tầng Cơ bản); chọn "Tất cả" là trộn đều mọi tầng.
+- Test giao diện cũ chọn đáp án theo chữ cái (Part 2 trước khi trả lời không có chữ để chọn theo nội dung) nên
+  `bootApp` cố định `Math.random ≈ 1` (Fisher–Yates giữ nguyên thứ tự); `tests/ui-shuffle.test.js` chạy ngẫu nhiên thật.
 
 ## Câu hỏi còn mở
 - ~~Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng?~~ → **Đã giải quyết, xem D35** (chung repo, xét lại khi ~100 MB).

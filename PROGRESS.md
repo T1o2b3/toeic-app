@@ -6,7 +6,7 @@
 ## Trạng thái hiện tại
 - **Phạm vi đã chốt (D63): app đủ dùng — chỉ còn THÊM NỘI DUNG.** M0–M6, M8–M13, M15, M18, M21 xong; M16 bỏ; M10 phụ/M14/M17/M19/M20 chỉ làm khi Huy yêu cầu. M7 chờ Huy học thật.
 - **App đã dùng học thật được**: https://toeic-app.huybndc-451.workers.dev
-- Repo private: https://github.com/huybndc/toeic-app — **848 test pass**.
+- Repo private: https://github.com/huybndc/toeic-app — **882 test pass**.
 
 ## Dùng app thế nào (cho Huy)
 1. Mở link trên (máy Mac hoặc iPhone).
@@ -52,8 +52,7 @@ node --env-file=.env pipeline/build-listening.js --target 150 --batch-size 12 > 
 ```
   Sau đó: `npm run validate:content` + `npm test`, đọc thử vài câu mới, commit `content:`. Rồi tới các bộ:
   `build-sets.js --part 3|4|6|7 --target …` (Part 7 thêm `--variant single|double|triple`).
-- **Chờ Huy quyết (không gấp):** xáo thứ tự phương án lúc HIỆN câu để hết hẳn lệch A của 200 câu cũ (~1 giờ) — hay để
-  mức lệch còn lại (A ~55% ngân hàng hiện tại, giảm dần khi thêm câu).
+- ~~Chờ Huy quyết: xáo phương án lúc hiện câu~~ → Huy đồng ý, đã làm (D65, mục 5).
 
 **4. M21 xong.** Thi thử phần Nghe: nghe xong đếm ngược 5 giây (bộ Part 3/4: 5 giây × số câu) rồi tự sang câu sau và PHÁT
 LUÔN, như băng đề thật. Phần Đọc: nút ⚐ đánh dấu câu chưa chắc, ⚑ hiện trên danh sách câu, hộp nộp bài nhắc lại.
@@ -61,8 +60,14 @@ LUÔN, như băng đề thật. Phần Đọc: nút ⚐ đánh dấu câu chưa 
 phát không (Safari chỉ cho phát tiếp trên cùng phần tử Audio đã được chạm mở — thiết kế bộ phát dựa đúng vào điều đó).
 8 test mới; **848 test pass**.
 
+**5. Xáo trộn (D65) — Huy yêu cầu 2026-09-24.** Phương án xáo mỗi lần câu hiện ra (Part 2, 5, bộ đề, thi thử), nhật ký
+vẫn ghi chữ cái gốc → hết lệch "đáp án A" của 200 câu cũ mà không sửa nội dung. Từ vựng: phân loại trộn từ + cụm từ,
+thứ tự ngẫu nhiên mỗi lượt; ôn tập xen từ mới giữa thẻ đến hạn. Đã xem thật: phân loại ra `enlargement, usage, fog…,
+comparable to [cụm]`, vào lại ra thứ tự khác; cùng câu Part 5 vào hai lần thì `inadequate` ở A rồi ở D. **882 test pass.**
+
 ### Bước tiếp theo
-- **Claude:** chạy tiếp nội dung (mục 3) khi Gemini bớt quá tải.
+- **Claude:** chạy tiếp nội dung (mục 3) khi Gemini bớt quá tải — lần gần nhất (01:20) `gemini-3.5-flash` hết hạn mức
+  ngày, `gemini-3.1-flash-lite` báo 503. Chạy lại lệnh ở mục 3 là tiếp đúng chỗ dở.
 - **Huy:** thử nghe chép + thi thử phần Nghe trên iPhone; kiểm tự đồng bộ trên bản deploy; học thật để đóng M7.
 - **Claude:** chỉ còn việc nội dung (D63). Không tự mở milestone mới.
 

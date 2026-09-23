@@ -8,7 +8,7 @@ import { countUntriaged, reviewQueue, weakWords } from '../logic/vocab-state.js'
 import { LEVEL_ORDER, LEVEL_INFO, countByLevel } from '../logic/vocab-levels.js';
 import { estimateSessionTime, summarizeQueue } from '../logic/format.js';
 import { getTier, setTier } from '../data/prefs.js';
-import { TIER_ORDER, TIER_INFO, ALL_TIERS, filterByTier, untriagedByTier } from '../logic/deck-tiers.js';
+import { TIER_ORDER, TIER_INFO, ALL_TIERS, filterByTier, untriagedByTier, studyEntries } from '../logic/deck-tiers.js';
 
 /**
  * @param {object} store
@@ -21,8 +21,9 @@ export function renderVocab(store) {
   const tier = getTier(TIER_ORDER);
   const entries = filterByTier(store.entries, tier);
   const collocCards = store.collocationCards ?? [];
-  const { total, fresh, due } = summarizeQueue(reviewQueue([...entries, ...collocCards], states, {}));
-  const untriaged = countUntriaged(entries, states);
+  const study = studyEntries(store.entries, tier, collocCards);
+  const { total, fresh, due } = summarizeQueue(reviewQueue(study, states, {}));
+  const untriaged = countUntriaged(study, states);   // phân loại trộn cả cụm từ (D65)
   const weak = weakWords(states);
   const learning = [...states.values()].filter((s) => s.triaged && !s.known).length;
   const byLevel = countByLevel(states);
@@ -53,7 +54,7 @@ export function renderVocab(store) {
   // "Tra cứu" là thứ mở ra xem rồi đóng. Trước đây 8 nút to xếp dọc, trên điện thoại phải cuộn mãi.
   const hoc = [
     total > 0 && { title: 'Ôn tập', note: `${total} thẻ (từ + cụm) · ${estimateSessionTime(due, fresh)}`, path: '/review', primary: true },
-    untriaged > 0 && { title: 'Phân loại từ vựng', note: `còn ${untriaged} · làm ${batch} từ · ~${Math.max(1, Math.round(batch * 4 / 60))} phút`, path: '/triage' },
+    untriaged > 0 && { title: 'Phân loại từ vựng', note: `còn ${untriaged} từ + cụm · xáo ngẫu nhiên · làm ${batch} · ~${Math.max(1, Math.round(batch * 4 / 60))} phút`, path: '/triage' },
     collocLeft > 0 && { title: 'Học cụm từ mới', note: `còn ${collocLeft} cụm · làm ${collocBatch} · ~${Math.max(1, Math.round(collocBatch * 5 / 60))} phút`, path: '/triage?kind=colloc' },
     triagedCount > 0 && { title: 'Ôn chủ động', note: 'tự chọn nhóm để kiểm tra lại trí nhớ', path: '/practice' },
   ];
