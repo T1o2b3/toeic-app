@@ -4,9 +4,9 @@
 > Huy: cách bắt đầu phiên mới xem mục "Bắt đầu một phiên làm việc mới" trong \`README.md\`.
 
 ## Trạng thái hiện tại
-- Giai đoạn: 1 — MVP. **M0–M4 và M6 XONG. M5 code xong, chờ Huy cấu hình Supabase** — checklist từng bước ở mục "VIỆC CỦA HUY" bên dưới.
+- Giai đoạn: 1 — MVP. **M0–M6 XONG** (M5: Huy cấu hình Supabase xong 2026-09-23). Còn **bước H** (khoá đăng ký) — xem phiên mới nhất bên dưới.
 - **App đã dùng học thật được**: https://toeic-app.huybndc-451.workers.dev
-- Repo private: https://github.com/huybndc/toeic-app — **801 test pass**.
+- Repo private: https://github.com/huybndc/toeic-app — **803 test pass**.
 
 ## Dùng app thế nào (cho Huy)
 1. Mở link trên (máy Mac hoặc iPhone).
@@ -23,8 +23,45 @@
 5. **Xem lại / tự ôn:** \`Kho từ vựng\` để xem các từ đã chấm và đổi mức; \`Ôn chủ động\` để tự kiểm tra
    một nhóm từ (nhất là nhóm "thành thạo" — quên thì từ tự quay lại danh sách học). Ở màn phân loại,
    \`Backspace\` lùi về từ trước, \`S\` để sau.
-6. **Lưu ý quan trọng:** dữ liệu hiện lưu RIÊNG trên từng máy (IndexedDB), chưa đồng bộ.
-   Đồng bộ Mac ↔ iPhone là M5. Học trên một máy trước để tránh lệch dữ liệu.
+6. **Đồng bộ (thủ công):** mục **Sao lưu** → **Đồng bộ ngay**. Bấm khi BẮT ĐẦU và khi XONG mỗi buổi học,
+   trên máy đang dùng — app chưa tự đồng bộ, quên bấm thì hai máy lệch nhau (ôn trùng thẻ).
+
+## Phiên 2026-09-23 (18:40) — Supabase chạy thật · sửa lỗi đồng bộ quá 1000 sự kiện — XONG
+
+Huy đã cấu hình Supabase xong, đăng nhập và đồng bộ được trên bản deploy (524 sự kiện ở Mac).
+
+**1. Merge nhánh `claude/exciting-allen-8406f0`** (checklist Supabase A–H viết lại) — merge sạch.
+
+**2. Tự kiểm RLS từ bên ngoài** — dùng đúng URL + publishable key lấy từ bundle JS của bản deploy
+(key này vốn công khai), gọi thẳng REST API mà KHÔNG đăng nhập:
+- đọc `events` → `[]`, đọc `settings` → `[]` (có dữ liệu thật của Huy mà không thấy dòng nào);
+- ghi một dòng giả vào `events` → `42501 new row violates row-level security policy`.
+→ Nửa sau tiêu chí M5 "người khác không đọc được dữ liệu" đạt. **PLAN.md: M5 → [x].**
+
+**3. Sửa lỗi đồng bộ sẽ âm thầm mất dữ liệu khi quá 1000 sự kiện.** `syncEvents` đọc cả bảng bằng MỘT
+lệnh `select`, mà Supabase **trả tối đa 1000 dòng/request và không báo lỗi khi cắt** (Settings → API →
+Max rows). Hiện 524 sự kiện nên chưa lộ; vài tuần nữa vượt 1000 thì máy kia không bao giờ nhận được phần
+dư, còn màn hình vẫn báo "Đồng bộ xong". Nay đọc theo trang (`order(created_at, id)` + `range`), dừng
+khi trang RỖNG (đúng cả khi Max rows bị chỉnh nhỏ hơn 1000). 2 test mới ở `tests/sync.test.js` với máy
+chủ giả cắt ở 1000 và 300 dòng — đã kiểm test ĐỎ trên code cũ. Truy vấn mới đã thử trên Supabase thật.
+
+**4. Máy này chưa có `node_modules`** (repo mới chép sang) → đã `npm ci`. Cũng chưa có `.env` —
+chỉ cần khi chạy pipeline hoặc `npm run dev` có đồng bộ; bản deploy lấy biến từ Cloudflare.
+
+### ⚠️ VIỆC CỦA HUY — còn đúng một bước (bước H, ~3 phút)
+Kiểm tra lúc 18:40: **`disable_signup: false` — ai có link app cũng tạo được tài khoản** (không cần
+xác nhận email). RLS vẫn giữ họ không đọc được dữ liệu của Huy, nhưng họ lấp được 500 MB của gói Free.
+Supabase → **Authentication → Sign In / Providers → TẮT "Allow new users to sign up" → Save.**
+Tài khoản của Huy đã có, không bị ảnh hưởng. Claude kiểm lại được bằng lệnh đọc `/auth/v1/settings`.
+
+### Bước tiếp theo
+- **Huy xác nhận iPhone:** đăng nhập cùng tài khoản trên iPhone → Đồng bộ ngay → phải "nhận về ~524".
+- **Đề xuất, chờ Huy chốt — tự đồng bộ:** gọi `syncEvents` lúc mở app và lúc xong một lượt (khi đã đăng
+  nhập, lỗi mạng thì im lặng bỏ qua). Nút thủ công là phương án LÙI của M5; mục tiêu gốc là tự động.
+  Đổi quyết định nên phải hỏi (ràng buộc #9).
+- **M18 nên làm sớm:** gói Free tự tạm dừng sau 7 ngày không có request; nhịp học 1–2 giờ/tuần (D03) thì
+  rất dễ chạm. Ping chỉ cần URL + publishable key (công khai, không phải bí mật) → không cần secret nhạy
+  cảm cho phần ping; phần backup thì cần.
 
 ## Phiên 2026-09-24 — Gợi ý theo chỗ yếu · học cụm từ · gộp nhóm (D52–D54) — XONG, ĐÃ PUSH
 
@@ -445,7 +482,7 @@ Màn chính hiện số hiệu bản build ở dòng cuối (\`bản 2026-09-19 
 bộ nhớ đệm của service worker $\rightarrow$ tải lại trang (Mac: Cmd+Shift+R; iPhone: đóng hẳn app rồi mở lại).
 App đã có cơ chế tự tải lại khi thấy bản mới, nhưng lần đầu ngay sau khi deploy vẫn có thể lệch.
 
-## VIỆC CỦA HUY — kích hoạt đồng bộ (M5): checklist cấu hình Supabase, khoảng 20–25 phút
+## ~~VIỆC CỦA HUY — kích hoạt đồng bộ (M5)~~ — A–G XONG 2026-09-23, còn bước H (giữ để tra cứu)
 
 > Viết lại 2026-09-23. Bản cũ có hai chỗ lệch với giao diện hiện nay: (1) trên Cloudflare phải đặt biến ở
 > mục biến của **Build**, không phải biến lúc chạy của Worker; (2) Supabase nay gọi key công khai là

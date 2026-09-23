@@ -50,12 +50,14 @@ toeic-app/
   Xong khi: làm được 1 lượt 20 câu, sự kiện ghi đúng.
   ✅ Xong 2026-09-19: 200 câu phủ đều 12 loại kiến thức, 100% qua kiểm định 2 bước bằng 2 model
   khác nhau; màn luyện chấm ngay + giải thích tiếng Việt + nút báo câu lỗi đã thử chạy thật.
-- [~] **M5. Supabase + đồng bộ (ngày 5, ~2,5h).** Bảng events + settings, **bật RLS**, đăng nhập OTP, đồng bộ 2 chiều theo sự kiện.
+- [x] **M5. Supabase + đồng bộ (ngày 5, ~2,5h).** Bảng events + settings, **bật RLS**, đăng nhập OTP, đồng bộ 2 chiều theo sự kiện.
   Học: database, RLS, auth. Xong khi: làm bài trên Mac → thấy trên iPhone và ngược lại; user khác không đọc được dữ liệu.
   Phương án lùi nếu trễ: đồng bộ thủ công bằng nút "Đồng bộ" thay vì tự động.
   🔄 2026-09-19: CODE ĐÃ XONG (schema SQL + RLS, đăng nhập OTP, đồng bộ hai chiều, 10 test).
   Đã chọn phương án nút "Đồng bộ" thủ công cho MVP. Chờ Huy tạo project Supabase và điền
   2 biến vào `.env` là chạy — xem hướng dẫn trong PROGRESS.md.
+  ✅ Xong 2026-09-23: Huy cấu hình Supabase + đăng nhập + đồng bộ trên bản deploy; RLS đã kiểm từ ngoài
+  (không đăng nhập thì đọc ra rỗng, ghi bị chặn). Sửa kèm lỗi chỉ đọc được 1000 sự kiện đầu.
 - [x] **M6. PWA + "15 phút hôm nay" + xuất dữ liệu (ngày 6, ~2h).** vite-plugin-pwa, cài lên màn hình iPhone, phiên học trộn từ đến hạn + câu từng sai + câu mới, nút xuất JSON.
   Học: manifest, service worker, cache. Xong khi: app cài được trên iPhone, mở offline vẫn học được.
   ✅ Xong 2026-09-19: manifest + service worker chạy trên bản deploy; đã kiểm tra bộ nhớ offline có

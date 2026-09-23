@@ -1,5 +1,27 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { diffEvents, toRows, fromRows, describeSync } from '../src/logic/sync.js';
+import { syncEvents } from '../src/data/sync.js';
+
+// Máy chủ giả: cắt mỗi request ở `cap` dòng, im lặng như Supabase thật (Max rows).
+const server = { rows: [], cap: 1000, pushed: [] };
+vi.mock('../src/data/supabase.js', () => ({
+  isSupabaseConfigured: () => true,
+  getConfigError: () => null,
+  getSupabase: () => ({
+    auth: { getUser: async () => ({ data: { user: { id: 'u1' } } }) },
+    from: () => {
+      const query = {
+        select: () => query,
+        order: () => query,
+        range: async (from, to) => ({
+          data: server.rows.slice(from, Math.min(to + 1, from + server.cap)), error: null,
+        }),
+        upsert: async (rows) => { server.pushed.push(...rows); return { error: null }; },
+      };
+      return query;
+    },
+  }),
+}));
 
 const event = (id, ts = 1000) => ({ id, deviceId: 'mac-1', ts, type: 'vocab.reviewed', payload: { wordId: 'w' } });
 
@@ -56,5 +78,17 @@ describe('describeSync', () => {
     expect(describeSync({ pushed: 3, pulled: 0 })).toMatch(/gửi lên 3/);
     expect(describeSync({ pushed: 0, pulled: 2 })).toMatch(/nhận về 2/);
     expect(describeSync({ pushed: 0, pulled: 0 })).toMatch(/không có gì mới/);
+  });
+});
+
+describe('syncEvents — máy chủ cắt ở giới hạn dòng mỗi request', () => {
+  const remoteRows = (n) => Array.from({ length: n }, (_, i) => ({ id: `r${i}`, device_id: 'iphone', ts: i, type: 'x', payload: {} }));
+
+  it.each([1000, 300])('kéo về đủ 2500 sự kiện khi máy chủ trả tối đa %i dòng/lần', async (cap) => {
+    Object.assign(server, { rows: remoteRows(2500), cap, pushed: [] });
+    let saved = [];
+    const result = await syncEvents({ localEvents: [event('a')], saveLocal: async (e) => { saved = e; } });
+    expect(result).toEqual({ pushed: 1, pulled: 2500 });
+    expect(new Set(saved.map((e) => e.id)).size).toBe(2500);
   });
 });

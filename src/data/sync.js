@@ -91,10 +91,25 @@ export async function syncEvents({ localEvents, saveLocal }) {
   const user = await getCurrentUser();
   if (!user) throw new Error('Chưa đăng nhập');
 
-  const { data, error } = await supabase.from(TABLE).select('id, device_id, ts, type, payload');
-  if (error) throw new Error(`Không đọc được dữ liệu: ${error.message}`);
+  // Supabase trả tối đa 1000 dòng mỗi request (Settings → API → Max rows) và KHÔNG báo lỗi khi cắt.
+  // Đọc một lần là quá 1000 sự kiện thì phần dư không bao giờ về máy kia → phải đọc từng trang.
+  // Dừng khi trang RỖNG chứ không phải khi trang thiếu: nếu giới hạn máy chủ nhỏ hơn PAGE thì trang
+  // nào cũng "thiếu". Sắp theo created_at để sự kiện máy khác vừa đẩy lên nằm cuối, không xô lệch trang.
+  const PAGE = 1000;
+  const rows = [];
+  for (;;) {
+    const { data, error } = await supabase
+      .from(TABLE)
+      .select('id, device_id, ts, type, payload')
+      .order('created_at')
+      .order('id')
+      .range(rows.length, rows.length + PAGE - 1);
+    if (error) throw new Error(`Không đọc được dữ liệu: ${error.message}`);
+    if (data.length === 0) break;
+    rows.push(...data);
+  }
 
-  const remoteEvents = fromRows(data);
+  const remoteEvents = fromRows(rows);
   const { toPush, toPull } = diffEvents(localEvents, remoteEvents);
 
   if (toPush.length > 0) {
