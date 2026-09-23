@@ -4,7 +4,7 @@
 > Huy: cách bắt đầu phiên mới xem mục "Bắt đầu một phiên làm việc mới" trong \`README.md\`.
 
 ## Trạng thái hiện tại
-- Giai đoạn: 1 — MVP. **M0–M6 XONG** (M5: Huy cấu hình Supabase xong 2026-09-23). Còn **bước H** (khoá đăng ký) — xem phiên mới nhất bên dưới.
+- Giai đoạn: 1 — MVP. **M0–M6 XONG** (M5: Huy cấu hình Supabase xong 2026-09-23). M18 xong (ping). Tiếp theo: **M7** (README + sửa lỗi phát sinh).
 - **App đã dùng học thật được**: https://toeic-app.huybndc-451.workers.dev
 - Repo private: https://github.com/huybndc/toeic-app — **806 test pass**.
 
@@ -48,6 +48,14 @@ chủ giả cắt ở 1000 và 300 dòng — đã kiểm test ĐỎ trên code c
 **4. Máy này chưa có `node_modules`** (repo mới chép sang) → đã `npm ci`. Huy đã tự tạo `.env` bằng `nano`
 (có 2 biến Supabase). Bản deploy vẫn lấy biến từ Cloudflare, không từ `.env`.
 
+**5. Tự đồng bộ (D55) — Huy đồng ý.** `startAutoSync(store)` ở `src/data/sync.js`, gắn ở `src/main.js`
+(không ở `mountApp` → test giao diện không gọi mạng). Chạy lúc mở app, lúc quay lại/rời app, lúc có mạng
+lại, và 15 giây sau sự kiện cuối. Màn Đồng bộ hiện lần chạy gần nhất. 3 test mới (hẹn giờ giả): đồng bộ
+ngay khi mở · chờ yên 15 giây, vẽ lại màn không tính · chưa đăng nhập thì không gọi máy chủ. Đã kiểm test
+đỏ khi bỏ chốt "sự kiện vừa kéo về không hẹn đồng bộ". Chạy thử trình duyệt với `.env` thật: không lỗi
+console, chưa đăng nhập thì không có request nào tới Supabase. **806 test pass.**
+**CHƯA kiểm được nhánh ĐÃ đăng nhập trên trình duyệt** (cần mật khẩu của Huy) — Huy kiểm ở bước dưới.
+
 **6. M18 — ping Supabase chống tạm dừng.** `.github/workflows/keep-supabase-awake.yml`: 3 ngày/lần gọi
 `events?select=id&limit=1` bằng publishable key (RLS trả rỗng nhưng DB vẫn chạy truy vấn = có hoạt động);
 lỗi thì job đỏ → GitHub gửi email. Đã chạy thử đúng lệnh curl ở máy với `.env` thật: trả `[]`, exit 0.
@@ -59,25 +67,13 @@ gh workflow run keep-supabase-awake.yml
 gh run list --workflow keep-supabase-awake.yml --limit 1
 ```
 
-### ⚠️ VIỆC CỦA HUY — còn đúng một bước (bước H, ~3 phút)
-Kiểm tra lúc 18:40: **`disable_signup: false` — ai có link app cũng tạo được tài khoản** (không cần
-xác nhận email). RLS vẫn giữ họ không đọc được dữ liệu của Huy, nhưng họ lấp được 500 MB của gói Free.
-Supabase → **Authentication → Sign In / Providers → TẮT "Allow new users to sign up" → Save.**
-Tài khoản của Huy đã có, không bị ảnh hưởng. Claude kiểm lại được bằng lệnh đọc `/auth/v1/settings`.
-
-**5. Tự đồng bộ (D55) — Huy đồng ý.** `startAutoSync(store)` ở `src/data/sync.js`, gắn ở `src/main.js`
-(không ở `mountApp` → test giao diện không gọi mạng). Chạy lúc mở app, lúc quay lại/rời app, lúc có mạng
-lại, và 15 giây sau sự kiện cuối. Màn Đồng bộ hiện lần chạy gần nhất. 3 test mới (hẹn giờ giả): đồng bộ
-ngay khi mở · chờ yên 15 giây, vẽ lại màn không tính · chưa đăng nhập thì không gọi máy chủ. Đã kiểm test
-đỏ khi bỏ chốt "sự kiện vừa kéo về không hẹn đồng bộ". Chạy thử trình duyệt với `.env` thật: không lỗi
-console, chưa đăng nhập thì không có request nào tới Supabase. **806 test pass.**
-**CHƯA kiểm được nhánh ĐÃ đăng nhập trên trình duyệt** (cần mật khẩu của Huy) — Huy kiểm ở bước dưới.
+**7. Đăng ký tài khoản để MỞ (D56)** — Huy chia sẻ link cho bạn bè; bước H bỏ. Backup tự động bỏ (D57).
+Huy đã đặt 2 secret, workflow ping chạy tay lần đầu **thành công** (Supabase trả `[]`). **M18 → [x].**
 
 ### Bước tiếp theo
 - **Huy kiểm tự đồng bộ trên bản deploy** (nhớ đối chiếu số hiệu bản build): Mac học 1 thẻ → chờ 20 giây →
   mở app trên iPhone (đăng nhập cùng tài khoản nếu chưa) → vào **Sao lưu**: dòng "Lần gần nhất … nhận về 1".
-- **M18 — Huy đặt 2 secret cho workflow ping** (lệnh ở mục 6 bên trên), rồi chạy tay một lần để kiểm.
-- **Huy chốt phần backup của M18:** đề xuất bỏ (lý do ở PLAN.md M18).
+- **M7:** README có phần "cách dùng" cho bạn bè (người mới, không biết code) + sửa lỗi phát sinh.
 
 ## Phiên 2026-09-24 — Gợi ý theo chỗ yếu · học cụm từ · gộp nhóm (D52–D54) — XONG, ĐÃ PUSH
 

@@ -512,6 +512,19 @@ là hai máy lệch nhau → ôn trùng thẻ, lịch FSRS sai.
 - Giới hạn đã biết: mỗi lần vẫn đọc lại cả bảng (~3 MB/lần ở 10k sự kiện, gói Free 5 GB/tháng). Chạm ngưỡng
   thì chuyển sang chỉ đọc dòng mới hơn lần trước.
 
+**D56. Để MỞ đăng ký tài khoản — Huy chia sẻ link cho bạn bè.** (Huy chốt 2026-09-23.) Thay bước H của
+checklist Supabase (tắt "Allow new users to sign up").
+- **Dữ liệu vẫn an toàn:** RLS đã kiểm từ ngoài — tài khoản nào chỉ đọc/ghi được dòng của chính nó.
+- **Rủi ro chấp nhận:** (1) mọi tài khoản dùng chung 500 MB gói Free; (2) "Confirm email" đang tắt nên đăng
+  ký được bằng email bịa → có thể có tài khoản rác/bot.
+- **Dấu hiệu phải đóng lại:** thấy tài khoản lạ trong Authentication → Users, hoặc Database size vượt ~250 MB.
+  Cách xử lý theo thứ tự: bật lại Confirm email → thêm CAPTCHA Turnstile (miễn phí) → tắt đăng ký.
+
+**D57. M18 chỉ làm phần ping, BỎ backup tự động hằng tuần.** (Huy đồng ý 2026-09-23.) Thay phần "backup định
+kỳ" của D25. Dữ liệu đã có nhiều bản: IndexedDB trên từng máy + Supabase + nút "Xuất dữ liệu". Backup tự động
+phải đưa lên GitHub secret key (bỏ qua MỌI RLS, lộ là lộ dữ liệu của cả bạn bè — D56) hoặc mật khẩu của Huy:
+rủi ro lớn hơn lợi. Ping: `.github/workflows/keep-supabase-awake.yml`, 3 ngày/lần, chỉ dùng publishable key.
+
 ## Câu hỏi còn mở
 - ~~Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng?~~ → **Đã giải quyết, xem D35** (chung repo, xét lại khi ~100 MB).
 - ~~Q2 (trước M2): xác nhận license của TSL 1.2 và NGSL.~~ → **Đã giải quyết, xem D18.**

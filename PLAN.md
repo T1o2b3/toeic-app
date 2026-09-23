@@ -96,10 +96,8 @@ toeic-app/
 
 ## Giai đoạn 5 — Hoàn thiện & mở rộng (tuần 9–10 trở đi, ~6 giờ + liên tục)
 - [ ] M17. Trang ngữ pháp & từ nối (tra cứu + liên kết câu từng sai).
-- [~] M18. GitHub Actions: ping Supabase chống tạm dừng + backup hằng tuần.
-  🔄 2026-09-23: phần PING xong (`.github/workflows/keep-supabase-awake.yml`, 3 ngày/lần) — chờ Huy đặt 2 secret.
-  Phần BACKUP tạm hoãn, chờ Huy chốt: dữ liệu đã nằm trên từng máy (IndexedDB) + Supabase + nút xuất JSON;
-  backup tự động phải đưa secret key (bỏ qua RLS) hoặc mật khẩu của Huy lên GitHub — rủi ro lớn hơn lợi.
+- [x] M18. GitHub Actions: ping Supabase chống tạm dừng ~~+ backup hằng tuần~~ (bỏ backup — D57).
+  ✅ Xong 2026-09-23: `.github/workflows/keep-supabase-awake.yml`, 3 ngày/lần; chạy tay lần đầu thành công.
 - [ ] M19. Deck từ vựng đời thường (NGSL / chủ đề đời sống).
 - [ ] M20. Bản nhận xét điểm mạnh/yếu + cách luyện (đo đạc trước, AI viết lời khuyên trong pipeline — D44; chi tiết ở Backlog).
 - Liên tục: chạy pipeline bổ sung nội dung ~30 phút/tuần khi cần.
