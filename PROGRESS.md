@@ -48,6 +48,17 @@ chủ giả cắt ở 1000 và 300 dòng — đã kiểm test ĐỎ trên code c
 **4. Máy này chưa có `node_modules`** (repo mới chép sang) → đã `npm ci`. Huy đã tự tạo `.env` bằng `nano`
 (có 2 biến Supabase). Bản deploy vẫn lấy biến từ Cloudflare, không từ `.env`.
 
+**6. M18 — ping Supabase chống tạm dừng.** `.github/workflows/keep-supabase-awake.yml`: 3 ngày/lần gọi
+`events?select=id&limit=1` bằng publishable key (RLS trả rỗng nhưng DB vẫn chạy truy vấn = có hoạt động);
+lỗi thì job đỏ → GitHub gửi email. Đã chạy thử đúng lệnh curl ở máy với `.env` thật: trả `[]`, exit 0.
+Cần 2 secret — Huy tự đặt (bước học về secret), đọc thẳng từ `.env` để khỏi dán tay:
+```bash
+grep '^VITE_SUPABASE_URL=' .env | cut -d= -f2- | gh secret set SUPABASE_URL
+grep '^VITE_SUPABASE_ANON_KEY=' .env | cut -d= -f2- | gh secret set SUPABASE_PUBLISHABLE_KEY
+gh workflow run keep-supabase-awake.yml
+gh run list --workflow keep-supabase-awake.yml --limit 1
+```
+
 ### ⚠️ VIỆC CỦA HUY — còn đúng một bước (bước H, ~3 phút)
 Kiểm tra lúc 18:40: **`disable_signup: false` — ai có link app cũng tạo được tài khoản** (không cần
 xác nhận email). RLS vẫn giữ họ không đọc được dữ liệu của Huy, nhưng họ lấp được 500 MB của gói Free.
@@ -65,9 +76,8 @@ console, chưa đăng nhập thì không có request nào tới Supabase. **806 
 ### Bước tiếp theo
 - **Huy kiểm tự đồng bộ trên bản deploy** (nhớ đối chiếu số hiệu bản build): Mac học 1 thẻ → chờ 20 giây →
   mở app trên iPhone (đăng nhập cùng tài khoản nếu chưa) → vào **Sao lưu**: dòng "Lần gần nhất … nhận về 1".
-- **M18 nên làm sớm:** gói Free tự tạm dừng sau 7 ngày không có request; nhịp học 1–2 giờ/tuần (D03) thì
-  rất dễ chạm. Ping chỉ cần URL + publishable key (công khai, không phải bí mật) → không cần secret nhạy
-  cảm cho phần ping; phần backup thì cần.
+- **M18 — Huy đặt 2 secret cho workflow ping** (lệnh ở mục 6 bên trên), rồi chạy tay một lần để kiểm.
+- **Huy chốt phần backup của M18:** đề xuất bỏ (lý do ở PLAN.md M18).
 
 ## Phiên 2026-09-24 — Gợi ý theo chỗ yếu · học cụm từ · gộp nhóm (D52–D54) — XONG, ĐÃ PUSH
 

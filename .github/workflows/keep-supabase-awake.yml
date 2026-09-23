@@ -1,0 +1,33 @@
+# M18 — giữ project Supabase gói Free không bị tạm dừng.
+# Supabase Free tự tạm dừng sau 7 ngày không có hoạt động; nhịp học 1–2 buổi/tuần (D03) rất dễ chạm mốc đó.
+# Chạy 3 ngày một lần: lỡ một lần (GitHub đôi khi trễ/bỏ lịch) vẫn còn dư trước mốc 7 ngày.
+#
+# Cần 2 secret trên GitHub (Settings → Secrets and variables → Actions), cùng giá trị với .env:
+#   SUPABASE_URL              = VITE_SUPABASE_URL
+#   SUPABASE_PUBLISHABLE_KEY  = VITE_SUPABASE_ANON_KEY  (sb_publishable_… — KHÔNG dùng secret/service_role key)
+#
+# Request đọc bảng events bằng key công khai: RLS trả về rỗng, nhưng database vẫn phải chạy truy vấn
+# → tính là có hoạt động. Lỗi (project đã bị dừng, key sai) thì job đỏ và GitHub gửi email báo.
+name: Giữ Supabase không tạm dừng
+
+on:
+  schedule:
+    - cron: '17 2 */3 * *' # 02:17 UTC, 3 ngày một lần (tránh phút 0 — giờ đó GitHub hay dồn lịch và trễ)
+  workflow_dispatch: # cho phép bấm chạy tay ở tab Actions
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Gọi Supabase một lần
+        env:
+          URL: ${{ secrets.SUPABASE_URL }}
+          KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          test -n "$URL" && test -n "$KEY" || { echo "Thiếu secret SUPABASE_URL / SUPABASE_PUBLISHABLE_KEY"; exit 1; }
+          curl --fail-with-body --silent --show-error --max-time 30 \
+            -H "apikey: $KEY" -H "Authorization: Bearer $KEY" \
+            "$URL/rest/v1/events?select=id&limit=1"
+          echo
+          echo "Supabase trả lời bình thường."
