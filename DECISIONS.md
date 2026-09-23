@@ -525,6 +525,12 @@ kỳ" của D25. Dữ liệu đã có nhiều bản: IndexedDB trên từng máy
 phải đưa lên GitHub secret key (bỏ qua MỌI RLS, lộ là lộ dữ liệu của cả bạn bè — D56) hoặc mật khẩu của Huy:
 rủi ro lớn hơn lợi. Ping: `.github/workflows/keep-supabase-awake.yml`, 3 ngày/lần, chỉ dùng publishable key.
 
+**D58. Bỏ bộ chọn "Part 5 mỗi lượt 10/20/30 câu" — lượt Part 5 cố định 30 câu.** (Huy yêu cầu 2026-09-23:
+"không ăn nhập với các phần khác".) Không phần nào khác cho chọn cỡ lượt (Part 2 = 10 câu, Part 3/4/6/7 = 2–3
+bộ, phân loại = 20 từ). 30 = đúng Part 5 của đề thật, nên lượt vẫn là một mặt cắt đề thật như D39. Kèm sửa
+lệch: ô "Hôm nay" từng báo Part 5 là 20 câu trong khi lượt thật là 30 — nay mọi chỗ dùng `PART5_COUNT`.
+Muốn luyện ít hơn thì thoát giữa lượt: câu đã làm vẫn được ghi.
+
 ## Câu hỏi còn mở
 - ~~Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng?~~ → **Đã giải quyết, xem D35** (chung repo, xét lại khi ~100 MB).
 - ~~Q2 (trước M2): xác nhận license của TSL 1.2 và NGSL.~~ → **Đã giải quyết, xem D18.**

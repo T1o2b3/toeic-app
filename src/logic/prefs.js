@@ -3,26 +3,6 @@
  * Hiện chỉ lưu trên từng máy; đồng bộ cài đặt là việc sau (D23: cài đặt dùng last-write-wins).
  */
 
-/**
- * Các lựa chọn số câu mỗi lượt luyện Part 5. 30 = ĐÚNG số câu Part 5 của đề thật (D39);
- * các mức nhỏ hơn dành cho lúc chỉ có mươi phút.
- */
-export const ROUND_SIZES = Object.freeze([10, 20, 30]);
-
-/** Mặc định 30 câu: một lượt là một mẻ Part 5 đầy đủ, mất khoảng 10 phút theo nhịp đề thật. */
-export const DEFAULT_ROUND_SIZE = 30;
-
-/**
- * Lọc giá trị đọc được về một lựa chọn hợp lệ.
- * Dữ liệu trong localStorage có thể là chuỗi, số lạ, hoặc rác — không được tin.
- * @param {unknown} value
- * @returns {number}
- */
-export function normalizeRoundSize(value) {
-  const size = Number.parseInt(value, 10);
-  return ROUND_SIZES.includes(size) ? size : DEFAULT_ROUND_SIZE;
-}
-
 /** Mặc định HIỆN nghĩa khi phân loại: không thấy nghĩa thì tự chấm 4 mức rất dễ sai. */
 export const DEFAULT_SHOW_MEANING = true;
 

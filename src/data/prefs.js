@@ -3,37 +3,10 @@
  * (chế độ riêng tư, hết dung lượng) — mất tuỳ chọn thì dùng mặc định, không được sập app.
  */
 import {
-  normalizeRoundSize, DEFAULT_ROUND_SIZE,
   normalizeShowMeaning, DEFAULT_SHOW_MEANING,
   normalizeTier, DEFAULT_TIER,
 } from '../logic/prefs.js';
 import { normalizeSpeed, DEFAULT_SPEED } from '../logic/listen.js';
-
-const ROUND_SIZE_KEY = 'toeic-app.quizRoundSize';
-
-/**
- * Số câu mỗi lượt luyện.
- * @returns {number}
- */
-export function getRoundSize() {
-  try {
-    return normalizeRoundSize(localStorage.getItem(ROUND_SIZE_KEY));
-  } catch {
-    return DEFAULT_ROUND_SIZE;
-  }
-}
-
-/**
- * Đổi số câu mỗi lượt.
- * @param {number} size
- */
-export function setRoundSize(size) {
-  try {
-    localStorage.setItem(ROUND_SIZE_KEY, String(normalizeRoundSize(size)));
-  } catch {
-    // Không lưu được thì thôi, lần sau dùng mặc định.
-  }
-}
 
 const SHOW_MEANING_KEY = 'toeic-app.triageShowMeaning';
 

@@ -12,7 +12,7 @@ import { reviewQueue, countUntriaged } from './vocab-state.js';
 import { quizQueue } from './quiz.js';
 import { examOverview } from './dashboard.js';
 import { summarizeQueue, estimateSessionTime } from './format.js';
-import { PART5_TARGET_SECONDS } from './part5.js';
+import { PART5_TARGET_SECONDS, PART5_COUNT } from './part5.js';
 import { LISTEN_ROUND_SIZE, estimateMinutes } from './listen.js';
 import { SET_PARTS, PART_LABEL, SET_ROUND_SIZE, setQueue, estimateSetMinutes } from './sets.js';
 
@@ -123,7 +123,7 @@ export function suggestSessions({
   }
 
   if ((questions ?? []).length > 0) {
-    const round = quizQueue(questions, quizStates ?? new Map(), { size: 20 });
+    const round = quizQueue(questions, quizStates ?? new Map(), { size: PART5_COUNT });
     const { need, reason } = scorePart(examOverview(events ?? [], 'part5', +now));
     out.push({
       key: 'part5', path: '/quiz', title: `Luyện ${PART_LABEL[5]}`,

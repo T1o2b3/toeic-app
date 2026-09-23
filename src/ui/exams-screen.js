@@ -8,11 +8,9 @@ import { suggestSessions } from '../logic/suggest.js';
 import { quizQueue } from '../logic/quiz.js';
 import { LISTEN_ROUND_SIZE, estimateMinutes } from '../logic/listen.js';
 import { examOverview, weakestTypes } from '../logic/dashboard.js';
-import { getRoundSize, setRoundSize } from '../data/prefs.js';
-import { PART5_TARGET_SECONDS } from '../logic/part5.js';
+import { PART5_TARGET_SECONDS, PART5_COUNT } from '../logic/part5.js';
 import { latestEstimate, formatBand, GOAL_SCORE } from '../logic/score.js';
 import { SKILL_LABEL } from '../logic/exam-time.js';
-import { ROUND_SIZES } from '../logic/prefs.js';
 import { renderAccuracyBars } from './dashboard-charts.js';
 import { SET_PARTS, PART_LABEL, SET_ROUND_SIZE, setQueue, countAvailableSets, estimateSetMinutes, questionsBySkill } from '../logic/sets.js';
 
@@ -59,7 +57,6 @@ export function renderExams(store) {
 
   // Gộp theo KỸ NĂNG thay vì liệt kê Part 2→7 thành một cột dài: lúc chọn, thứ Huy cân nhắc là
   // "giờ có đeo tai nghe được không", chứ không phải số thứ tự Part.
-  const size = getRoundSize();
   const doc = [];
   const nghe = [];
 
@@ -72,7 +69,7 @@ export function renderExams(store) {
   const mark = (key, title) => (key === neediest ? `${title}  ← cần nhất` : title);
 
   if (store.questions.length > 0) {
-    const quiz = quizQueue(store.questions, store.quizStates, { size });
+    const quiz = quizQueue(store.questions, store.quizStates, { size: PART5_COUNT });
     doc.push({
       title: mark('part5', PART_LABEL[5]),
       note: `${quiz.length} câu · ~${Math.max(1, Math.round(quiz.length * PART5_TARGET_SECONDS / 60))} phút · ${accuracyNote(examOverview(events, 'part5'))}`,
@@ -100,17 +97,6 @@ export function renderExams(store) {
   }
 
   sections.push(navGroup('Luyện phần Đọc', doc));
-  if (store.questions.length > 0) {
-    sections.push(el('div', { class: 'chooser' }, [
-      el('span', { class: 'chooser-label', text: 'Part 5 mỗi lượt' }),
-      ...ROUND_SIZES.map((option) => el('button', {
-        class: option === size ? 'chip-btn active' : 'chip-btn',
-        text: String(option),
-        onClick: () => { setRoundSize(option); store.refresh(); },
-      })),
-      el('span', { class: 'chooser-label', text: 'câu' }),
-    ]));
-  }
   sections.push(navGroup('Luyện phần Nghe · nên đeo tai nghe', nghe));
 
   if (doc.length === 0 && nghe.length === 0) {

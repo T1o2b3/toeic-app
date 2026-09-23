@@ -18,7 +18,6 @@ import { pace } from '../logic/pace.js';
 import { roundProgress } from '../logic/round.js';
 import { renderStem, renderTray, renderOptionCapture, resetCapture } from './capture-tray.js';
 import { optionList, splitPane, backLink, backButton, verdictLine, explanationCard, letterFromKey, sessionDone } from './blocks.js';
-import { getRoundSize } from '../data/prefs.js';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
 
@@ -33,10 +32,10 @@ let askedAt = 0;
 /** Kết quả từng câu của lượt: {question, picked, correct, seconds}. */
 let results = [];
 
-/** Dựng lượt mới nếu chưa có. Mỗi lượt lấy số câu Huy chọn ở mục Bài thi (mặc định 30 = đề thật). */
+/** Dựng lượt mới nếu chưa có. Mỗi lượt 30 câu = đúng Part 5 của đề thật (D39, D58). */
 function ensureRound(store) {
   if (roundList.length > 0) return;
-  roundList = composeRound(store.questions, store.quizStates, { size: getRoundSize() });
+  roundList = composeRound(store.questions, store.quizStates);
   at = 0;
   picked = null;
   results = [];

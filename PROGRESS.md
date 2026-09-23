@@ -658,7 +658,7 @@ App đã có cơ chế tự tải lại khi thấy bản mới, nhưng lần đ�
 - iPhone: thanh tab đáy + một cột còn nguyên không (CSS điều hướng vừa đổi, đây là chỗ dễ vỡ nhất).
 - **Nghe thử thật Part 2/3/4 trên iPhone** — test dùng bộ phát GIẢ nên lỗi âm thanh không thể lộ ra bằng test.
 - M5: đăng nhập + "Đồng bộ ngay" trên cả hai máy (càng học nhiều trước khi bật thì dữ liệu càng lệch).
-- Part 5 nay mặc định **30 câu/lượt** (đúng đề thật) thay vì 15 — thấy dài thì đổi ở chip "Mỗi lượt".
+- Part 5 cố định **30 câu/lượt** (đúng đề thật). Bộ chọn 10/20/30 đã bỏ (D58).
 
 ### 3. Lần chạy pipeline tới — kiểm giúp một dòng
 Ba script (\`build:questions\`, \`build:listening\`, \`build:sets\`) vừa đổi sang \`lib/model-pair.js\` nhưng
