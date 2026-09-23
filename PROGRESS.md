@@ -106,6 +106,12 @@ chạy `validate_palette` (skill dataviz) cho cả 3 màu chuỗi lẫn thang 4 
 - **Đánh bóng phần B — Claude đã tự cân nhắc lại và HOÃN:** thang khoảng cách/cỡ chữ thống nhất đụng toàn bộ CSS, rủi
   ro vỡ cao mà người dùng gần như không thấy khác. Hiệu ứng khi chọn đáp án thì sẽ PHÁT LẠI mỗi lần màn vẽ lại
   (vd chạm gạt từ sau khi trả lời) — phiền hơn là đẹp. Làm khi có lý do cụ thể.
+- **Phiên sau, Claude tự làm theo thứ tự** (Huy giao tự chọn — memory `autonomy-next-steps`):
+  1. **Chốt M13:** gạt từ đã có ở Part 5, nghe Part 2, bộ đề 3/4/6/7, transcript (`capture-tray.js`). Kiểm xem sự kiện
+     `vocab.captured` có lưu câu gốc chưa; có rồi thì đánh dấu M13 phần app xong, phần deck `my-words` (pipeline sinh
+     nghĩa) để Backlog như đã ghi.
+  2. **M11 — nghe chép (dictation) câu nghe sai:** tận dụng MP3 + transcript sẵn có; chấm theo từ, bỏ qua hoa/thường
+     và dấu câu. Logic chấm viết ở `src/logic/` + test trước, rồi mới nối màn.
 - **Huy kiểm tự đồng bộ trên bản deploy** (nhớ đối chiếu số hiệu bản build): Mac học 1 thẻ → chờ 20 giây →
   mở app trên iPhone (đăng nhập cùng tài khoản nếu chưa) → vào **Sao lưu**: dòng "Lần gần nhất … nhận về 1".
 - **M7 xong khi** Huy học thật 1 phiên trên Mac + 1 phiên trên iPhone. Gặp lỗi gì thì báo (kèm số hiệu bản build).
