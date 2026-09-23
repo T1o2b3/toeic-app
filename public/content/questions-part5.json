@@ -5603,6 +5603,1574 @@
         "answer": "A",
         "agreed": true
       }
+    },
+    {
+      "id": "p5-0201",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The newly designed electric sedan is ---- efficient than any other model currently produced by our automotive division.",
+      "options": {
+        "A": "not less",
+        "B": "much lesser",
+        "C": "as less",
+        "D": "no less"
+      },
+      "answer": "D",
+      "errorType": "comparison",
+      "explanation": "Cấu trúc 'no less + adjective + than' được dùng để nhấn mạnh rằng đối tượng được so sánh có mức độ tính chất ngang bằng hoặc thậm chí vượt trội hơn (không hề kém cạnh). 'Not less' tuy đúng ngữ pháp nhưng không mang tính nhấn mạnh tự nhiên trong văn phong thương mại bằng 'no less'.",
+      "trap": "Thí sinh dễ chọn 'much lesser' vì nghĩ 'lesser' là dạng so sánh hơn của 'less', hoặc chọn 'not less' vì dịch nghĩa thô là 'không kém hơn'.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0202",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The upscale beauty salon ---- its grand reopening next week, but the unexpected plumbing issue has delayed the event indefinitely.",
+      "options": {
+        "A": "is hosting",
+        "B": "hosted",
+        "C": "has hosted",
+        "D": "was to host"
+      },
+      "answer": "D",
+      "errorType": "verb-tense",
+      "explanation": "Cấu trúc 'was/were to + V' dùng để diễn tả một sự việc đã được lên kế hoạch hoặc dự định sẽ xảy ra trong quá khứ/tương lai gần nhưng cuối cùng đã không xảy ra do một sự cố nào đó (được làm rõ bởi vế sau 'but... delayed').",
+      "trap": "Thí sinh thấy 'next week' dễ bị đánh lừa chọn 'is hosting' vì nghĩ là thì hiện tại tiếp diễn chỉ tương lai gần, mà bỏ qua vế sau nói về việc sự kiện đã bị hoãn vô thời hạn.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0203",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The marketing director prefers a subtle intonation in advertisements, believing it to be ---- effective than aggressive promotional slogans.",
+      "options": {
+        "A": "not as",
+        "B": "much as",
+        "C": "so much",
+        "D": "no less"
+      },
+      "answer": "D",
+      "errorType": "comparison",
+      "explanation": "Cấu trúc 'no less + adj + than' dùng để khẳng định tính chất so sánh bằng hoặc không kém phần so với đối tượng kia. Dấu hiệu nhận biết là từ 'than' đứng sau chỗ trống, loại trừ phương án 'not as' (vốn đi với 'as').",
+      "trap": "Phương án 'not as' rất dễ bị chọn nhầm do người học liên tưởng đến cấu trúc so sánh không bằng 'not as... as', nhưng sự xuất hiện của 'than' ở phía sau khiến phương án này sai ngữ pháp.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0204",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "Purchasing raw materials in bulk is ---- beneficial to our budget as negotiating long-term contracts with local suppliers.",
+      "options": {
+        "A": "more",
+        "B": "so much",
+        "C": "as much",
+        "D": "every bit as"
+      },
+      "answer": "D",
+      "errorType": "comparison",
+      "explanation": "Cấu trúc 'every bit as + adj + as' dùng để nhấn mạnh hai hành động có tính chất ngang bằng nhau hoàn toàn. Dấu hiệu nhận biết là từ 'as' ở mệnh đề phía sau chỗ trống.",
+      "trap": "Người học thường chọn 'more' do thói quen so sánh hơn trong kinh doanh, hoặc chọn 'as much' vì dịch nghĩa 'có lợi nhiều như', nhưng 'as much' không đứng trước một tính từ như 'beneficial'.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0205",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The executive committee expressed gratitude to the volunteers, particularly ---- who worked silently behind the scenes to organize the event.",
+      "options": {
+        "A": "these",
+        "B": "anyone",
+        "C": "them",
+        "D": "those"
+      },
+      "answer": "D",
+      "errorType": "pronoun",
+      "explanation": "Đại từ 'those' được dùng để chỉ một nhóm người không xác định cụ thể và làm tiền ngữ cho mệnh đề quan hệ 'who worked...'. Động từ 'worked' ở quá khứ nhưng ngữ cảnh ám chỉ số nhiều (volunteers).",
+      "trap": "Phương án 'them' hoặc 'these' thường được chọn do thói quen dịch nghĩa của người Việt ('đặc biệt là họ/những người này'), nhưng 'them who' là sai ngữ pháp và 'these' không dùng làm tiền ngữ cho mệnh đề quan hệ chỉ người nói chung.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0206",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The conference schedule has only one presentation slot left, so the committee must decide ---- of the remaining proposals to accept.",
+      "options": {
+        "A": "what",
+        "B": "whose",
+        "C": "that",
+        "D": "which"
+      },
+      "answer": "D",
+      "errorType": "pronoun",
+      "explanation": "Đại từ nghi vấn 'which' được dùng trong cấu trúc 'which of + danh từ số nhiều' khi người nói muốn đưa ra lựa chọn từ một nhóm giới hạn có sẵn ('the remaining proposals').",
+      "trap": "Phương án 'what' rất hay bị chọn do thói quen dịch nghĩa 'quyết định cái gì', nhưng 'what' không đi với cấu trúc giới hạn lựa chọn 'what of the remaining proposals' như 'which'.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0207",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The research analyst narrowly avoided ---- for making a broad generalization about consumer behavior before the data was fully verified.",
+      "options": {
+        "A": "criticizing",
+        "B": "to be criticized",
+        "C": "to criticize",
+        "D": "being criticized"
+      },
+      "answer": "D",
+      "errorType": "infinitive-gerund",
+      "explanation": "Động từ 'avoid' bắt buộc đi với danh động từ (V-ing). Do chủ ngữ 'research analyst' là đối tượng nhận hành động chỉ trích, ta phải dùng dạng bị động của danh động từ là 'being criticized'.",
+      "trap": "Phương án 'criticizing' đúng về mặt ngữ pháp sau 'avoid' nhưng sai hoàn toàn về mặt ngữ nghĩa chủ động/bị động, khiến người học chỉ chú ý đến dạng V-ing mà không dịch nghĩa toàn câu dễ bị sập bẫy.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0208",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "Providing affordable housing options, along with improving public transportation, ---- a top priority for the city council this year.",
+      "options": {
+        "A": "remain",
+        "B": "are remaining",
+        "C": "have remained",
+        "D": "remains"
+      },
+      "answer": "D",
+      "errorType": "subject-verb-agreement",
+      "explanation": "Chủ ngữ chính của câu là danh động từ 'Providing...' (việc cung cấp) là chủ ngữ số ít, nên động từ chính phải chia số ít là 'remains'. Cụm 'along with...' chỉ là thành phần phụ họa chèn vào, không làm thay đổi sự hòa hợp chủ-vị.",
+      "trap": "Người học thường bị đánh lừa bởi các danh từ số nhiều đứng sát chỗ trống như 'options' hay 'transportation' và chọn động từ số nhiều 'remain' hoặc 'are remaining'.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0209",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "Neither the executive suite nor the adjacent conference rooms ---- equipped with the new video conferencing technology yet.",
+      "options": {
+        "A": "is",
+        "B": "was",
+        "C": "has",
+        "D": "are"
+      },
+      "answer": "D",
+      "errorType": "subject-verb-agreement",
+      "explanation": "Trong cấu trúc 'Neither A nor B', động từ chính sẽ chia theo chủ ngữ gần nhất là 'the adjacent conference rooms' (danh từ số nhiều), do đó động từ phải chia ở số nhiều là 'are'.",
+      "trap": "Phương án 'is' rất hấp dẫn vì người học thường có xu hướng nghĩ cấu trúc 'Neither... nor...' mang nghĩa phủ định đơn lẻ nên mặc định chọn số ít, hoặc bị thu hút bởi chủ ngữ thứ nhất 'the executive suite' (số ít).",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0210",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "Whether the company relocates to the downtown area or stays in the suburbs ---- on the final tax incentives.",
+      "options": {
+        "A": "depend",
+        "B": "depending",
+        "C": "are depending",
+        "D": "depends"
+      },
+      "answer": "D",
+      "errorType": "subject-verb-agreement",
+      "explanation": "Chủ ngữ của câu là một mệnh đề danh từ 'Whether the company relocates... or stays...'. Mệnh đề danh từ khi làm chủ ngữ luôn được tính là số ít, do đó động từ đi kèm phải chia số ít là 'depends'.",
+      "trap": "Sự xuất hiện của hai danh từ chỉ địa điểm 'downtown area' và 'suburbs' nối với nhau bằng 'or' dễ khiến người học lầm tưởng đây là một chủ ngữ phức tạp số nhiều và chọn động từ nguyên mẫu 'depend'.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0211",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The executive board, ---- the feedback from the annual retreat, decided to restructure the marketing department's budget.",
+      "options": {
+        "A": "analyzed",
+        "B": "analyze",
+        "C": "having analyzed",
+        "D": "being analyzed"
+      },
+      "answer": "C",
+      "errorType": "participle",
+      "explanation": "Đây là cấu trúc rút gọn mệnh đề trạng ngữ chỉ hành động xảy ra trước một hành động khác trong quá khứ (dùng Perfect Participle 'having + V3/ed'). Việc phân tích phản hồi diễn ra trước quyết định tái cơ cấu ngân sách của ban điều hành.",
+      "trap": "Phương án 'analyzed' rất dễ bị chọn nhầm nếu người học chỉ nhìn lướt qua và nghĩ đây là động từ chính của câu, hoặc nhầm là phân từ bị động rút gọn bổ nghĩa cho 'board'.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0212",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "While the company offered several incentives, ---- of the rebate program was actually utilized by the wholesale clients.",
+      "options": {
+        "A": "few",
+        "B": "many",
+        "C": "several",
+        "D": "little"
+      },
+      "answer": "D",
+      "errorType": "quantifier",
+      "explanation": "'rebate program' ở đây được coi là một thực thể danh từ số ít/không đếm được trong cấu trúc 'little of...'. 'Little' mang nghĩa phủ định (hầu như không có phần nào của chương trình được sử dụng), phù hợp với liên từ tương phản 'While'.",
+      "trap": "Người học dễ bị thu hút bởi 'few' hoặc 'many' vì thấy từ 'incentives' (số nhiều) ở mệnh đề trước và dịch nghĩa theo kiểu 'ít/nhiều ưu đãi được sử dụng'.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0213",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "---- the safety of the spectators, the stadium management decided to cancel the outdoor concert during the storm.",
+      "options": {
+        "A": "Feared",
+        "B": "Having feared",
+        "C": "Fearing",
+        "D": "To fear"
+      },
+      "answer": "C",
+      "errorType": "participle",
+      "explanation": "Đây là mệnh đề phân từ rút gọn chỉ nguyên nhân, mang nghĩa chủ động ('Vì lo sợ cho sự an toàn...'). Danh từ 'the safety' đóng vai trò là tân ngữ trực tiếp của hành động 'fear', do đó phân từ phải ở dạng V-ing.",
+      "trap": "Phân từ bị động 'Feared' thường đánh lừa những người học có thói quen chọn phân từ hai (-ed) cho các cấu trúc rút gọn đầu câu mà không phân tích kỹ quan hệ chủ-khách thể.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0214",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "Due to the supply chain disruption, ---- of the imported wool shipments arrived at the textile factory on schedule.",
+      "options": {
+        "A": "little",
+        "B": "much",
+        "C": "another",
+        "D": "few"
+      },
+      "answer": "D",
+      "errorType": "quantifier",
+      "explanation": "Danh từ chính trong cụm là 'shipments' (số nhiều, đếm được), do đó từ chỉ lượng đi kèm phải là 'few'. 'Little' và 'much' chỉ đi với danh từ không đếm được.",
+      "trap": "Người học dễ bị đánh lừa bởi từ 'wool' (len - không đếm được) đứng ngay trước 'shipments' và chọn 'little' hoặc 'much' mà không nhận diện đúng danh từ trung tâm.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0215",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "---- the main drawback of the new software, the IT department still recommended its implementation for all departments.",
+      "options": {
+        "A": "Recognized",
+        "B": "Having been recognized",
+        "C": "Recognizing",
+        "D": "To recognize"
+      },
+      "answer": "C",
+      "errorType": "participle",
+      "explanation": "Mệnh đề trạng ngữ chỉ sự nhượng bộ được rút gọn về dạng chủ động ('Recognizing...' tương đương 'Although they recognized...'). Bộ phận IT là chủ thể thực hiện hành động nhận ra nhược điểm.",
+      "trap": "Phương án 'Recognized' (bị động) rất hấp dẫn vì người học dịch là 'được nhận diện là nhược điểm chính', nhưng chủ ngữ của câu là 'the IT department' chứ không phải 'drawback'.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0216",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The newspaper increased its circulation by offering digital subscriptions to ---- who register before the end of the month.",
+      "options": {
+        "A": "anyone",
+        "B": "whoever",
+        "C": "someone",
+        "D": "those"
+      },
+      "answer": "D",
+      "errorType": "pronoun",
+      "explanation": "Động từ trong mệnh đề quan hệ là 'register' ở dạng nguyên mẫu số nhiều. Do đó, đại từ đứng trước làm tiền từ phải là 'those' (số nhiều). Các từ 'anyone', 'whoever', 'someone' đều là đại từ số ít, đòi hỏi động từ phải chia là 'registers'.",
+      "trap": "Cấu trúc 'anyone who' cực kỳ phổ biến nên người học thường chọn theo phản xạ tự nhiên mà không kiểm tra sự hòa hợp số ít/số nhiều với động từ 'register'.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0217",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "Additionally, the manager noted that ---- of the budget had been allocated to research and development this quarter.",
+      "options": {
+        "A": "many",
+        "B": "several",
+        "C": "much",
+        "D": "few"
+      },
+      "answer": "C",
+      "errorType": "quantifier",
+      "explanation": "Danh từ 'budget' ở đây là danh từ số ít/không đếm được (chỉ tổng lượng ngân sách), do đó chỉ có 'much' là phù hợp để đi với 'of the budget'. Các từ còn lại đều đi với danh từ số nhiều.",
+      "trap": "Người học dịch nghĩa là 'nhiều phần của ngân sách' nên dễ chọn 'many' hoặc 'several' mà không để ý rằng 'budget' không có đuôi số nhiều '-s'.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0218",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The executive suite contains ---- furniture, leaving plenty of open space for hosting formal networking events.",
+      "options": {
+        "A": "few",
+        "B": "many",
+        "C": "a number of",
+        "D": "little"
+      },
+      "answer": "D",
+      "errorType": "quantifier",
+      "explanation": "'Furniture' là danh từ không đếm được. 'Little' đi với danh từ không đếm được mang nghĩa phủ định (hầu như không có), phù hợp với kết quả ở vế sau 'leaving plenty of open space'.",
+      "trap": "Người học dịch nghĩa là 'ít đồ đạc' và chọn ngay 'few' mà quên mất 'few' chỉ đi với danh từ đếm được số nhiều.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0219",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The auditor requested ---- additional documents to verify the expenses, but the accounting department had already archived them.",
+      "options": {
+        "A": "much",
+        "B": "each",
+        "C": "several",
+        "D": "every"
+      },
+      "answer": "C",
+      "errorType": "quantifier",
+      "explanation": "Danh từ 'documents' là danh từ đếm được số nhiều, đi kèm với từ chỉ lượng 'several'. 'Much' đi với danh từ không đếm được, còn 'each' và 'every' đi với danh từ số ít.",
+      "trap": "Phương án 'each' hoặc 'every' dịch nghĩa 'mỗi/mọi tài liệu' nghe rất hợp lý về mặt ngữ nghĩa nhưng sai hoàn toàn về mặt ngữ pháp do danh từ đang ở dạng số nhiều.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0220",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The board of directors decided to ---- the contract with the logistics provider, citing persistent delays that compromised our seasonal sales.",
+      "options": {
+        "A": "dismiss",
+        "B": "abolish",
+        "C": "resign",
+        "D": "terminate"
+      },
+      "answer": "D",
+      "errorType": "vocabulary",
+      "explanation": "Động từ 'terminate' đi với tân ngữ 'contract' tạo thành collocation quen thuộc 'terminate a contract' (chấm dứt hợp đồng). Các phương án khác không phù hợp: 'dismiss' dùng cho sa thải nhân viên, 'abolish' dùng cho bãi bỏ luật lệ/hệ thống, 'resign' là từ chức (nội động từ).",
+      "trap": "Người học dễ nhầm lẫn giữa các từ mang nghĩa tiêu cực liên quan đến sự chấm dứt như 'dismiss' hoặc 'abolish' nếu chỉ dịch nghĩa thô mà không chú ý đến sự kết hợp từ (collocation) với 'contract'.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0221",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The warehouse manager refused to accept the latest ---- of electronic components because several protective seals had been tampered with.",
+      "options": {
+        "A": "alignment",
+        "B": "assignment",
+        "C": "consignment",
+        "D": "commitment"
+      },
+      "answer": "C",
+      "errorType": "vocabulary",
+      "explanation": "Trong ngữ cảnh kho bãi và vận chuyển hàng hóa, 'consignment' (lô hàng gửi) là danh từ phù hợp nhất. 'Assignment' là nhiệm vụ được giao, 'alignment' là sự thẳng hàng/liên minh, 'commitment' là sự cam kết.",
+      "trap": "Các từ có đuôi '-ment' và có cấu trúc âm tiết tương tự dễ gây nhầm lẫn về mặt chữ, đặc biệt là 'assignment' (nhiệm vụ) thường bị nhầm với lô hàng được bàn giao.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0222",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "Under the terms of the new agreement, the shipping company agreed to ---- the late delivery fees if the delay was caused by severe weather.",
+      "options": {
+        "A": "remit",
+        "B": "resign",
+        "C": "discard",
+        "D": "waive"
+      },
+      "answer": "D",
+      "errorType": "vocabulary",
+      "explanation": "Động từ 'waive' có nghĩa là từ bỏ quyền lợi, miễn trừ (lệ phí, yêu cầu). Trong ngữ cảnh hợp đồng thương mại, 'waive the late delivery fees' nghĩa là miễn phí giao hàng trễ. 'Remit' là chuyển tiền, 'resign' là từ chức, 'discard' là vứt bỏ vật dụng.",
+      "trap": "Người học có thể chọn 'discard' (vứt bỏ) hoặc 'remit' (miễn giảm thuế/án) do dịch nghĩa tiếng Việt tương đương mà không nắm được collocation chuẩn xác trong văn phong pháp lý/thương mại.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0223",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The parent company had to ---- the unexpected losses incurred by its subsidiary during the initial phase of the overseas expansion.",
+      "options": {
+        "A": "digest",
+        "B": "admit",
+        "C": "absorb",
+        "D": "occupy"
+      },
+      "answer": "C",
+      "errorType": "vocabulary",
+      "explanation": "Collocation 'absorb losses/costs' nghĩa là gánh chịu, tự chi trả các khoản lỗ/chi phí phát sinh mà không chuyển giao cho bên khác. 'Digest' là tiêu hóa, 'admit' là thừa nhận, 'occupy' là chiếm đóng.",
+      "trap": "Người học có thể chỉ biết nghĩa đen của 'absorb' là 'hấp thụ, hút nước' nên loại trừ nó, dẫn đến chọn nhầm 'admit' (thừa nhận thất bại/thừa nhận khoản lỗ) do dịch nghĩa thô.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0224",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "Although the candidate possessed an advanced ---- in international relations, his lack of practical experience was a major concern.",
+      "options": {
+        "A": "diplomacy",
+        "B": "diplomat",
+        "C": "diplomatic",
+        "D": "diploma"
+      },
+      "answer": "D",
+      "errorType": "word-form",
+      "explanation": "Chỗ trống đứng sau tính từ 'advanced' và trước giới từ 'in' nên cần một danh từ chỉ vật/bằng cấp. 'Diploma' (bằng cấp, chứng chỉ) là phù hợp nhất. 'Diplomacy' là ngành ngoại giao (không đếm được, không đi với 'an'), 'diplomat' là nhà ngoại giao (chỉ người, không phù hợp ngữ cảnh 'sở hữu').",
+      "trap": "Người học dễ nhầm lẫn giữa các danh từ cùng gốc 'diplom-' như 'diplomacy' (sự ngoại giao) hoặc chọn tính từ 'diplomatic' do nhầm lẫn cấu trúc cụm danh từ.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0225",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The luxury hotel chain decided to outsource its ---- services to a local eco-friendly facility to reduce water and energy consumption.",
+      "options": {
+        "A": "lavatory",
+        "B": "lounge",
+        "C": "laundry",
+        "D": "larder"
+      },
+      "answer": "C",
+      "errorType": "vocabulary",
+      "explanation": "Cụm danh từ ghép 'laundry services' (dịch vụ giặt là) hoàn toàn phù hợp với ngữ cảnh khách sạn muốn cắt giảm lượng nước và năng lượng tiêu thụ ('reduce water and energy consumption'). 'Lavatory' là nhà vệ sinh, 'lounge' là phòng chờ, 'larder' là chạn thức ăn.",
+      "trap": "Các từ bắt đầu bằng chữ 'l' và có độ dài tương đương dễ gây nhiễu thị giác cực mạnh nếu người học chỉ đọc lướt qua mà không phân tích nghĩa logic của câu.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0226",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The facility manager ordered energy-efficient LED ---- to replace the outdated fluorescent tubes throughout the entire office building.",
+      "options": {
+        "A": "plugs",
+        "B": "wires",
+        "C": "sockets",
+        "D": "bulbs"
+      },
+      "answer": "D",
+      "errorType": "vocabulary",
+      "explanation": "Cụm từ 'LED bulbs' (bóng đèn LED) là phù hợp nhất để thay thế cho 'fluorescent tubes' (bóng đèn tuýp huỳnh quang). 'Plugs' là phích cắm, 'wires' là dây điện, 'sockets' là ổ cắm.",
+      "trap": "Người học có thể nhầm lẫn giữa các thiết bị điện văn phòng nếu không chú ý đến từ khóa 'fluorescent tubes' (thiết bị chiếu sáng) ở mệnh đề sau để suy ra từ cần điền.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0227",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "To resolve the billing dispute, the telecom company issued a refund to the client who had been ---- for roaming services.",
+      "options": {
+        "A": "overcharging",
+        "B": "overcharges",
+        "C": "overcharged",
+        "D": "overcharge"
+      },
+      "answer": "C",
+      "errorType": "word-form",
+      "explanation": "Mệnh đề quan hệ 'who had been ----' cần một quá khứ phân từ (V3/ed) để tạo thành thể bị động (quá khứ hoàn thành bị động), vì khách hàng là đối tượng 'bị tính phí quá cao' chứ không phải tự tính phí.",
+      "trap": "Người học dễ nhầm lẫn giữa chủ động (overcharging) và bị động (overcharged) nếu không dịch nghĩa để xác định chủ ngữ 'who' (thay thế cho 'the client') là đối tượng nhận hành động.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0228",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The medical ---- decided to expand its operating hours to accommodate patients who cannot attend appointments during regular working hours.",
+      "options": {
+        "A": "chamber",
+        "B": "ward",
+        "C": "office",
+        "D": "clinic"
+      },
+      "answer": "D",
+      "errorType": "vocabulary",
+      "explanation": "Cụm 'medical clinic' (phòng khám y tế) là nơi tiếp nhận bệnh nhân đến khám theo lịch hẹn ('attend appointments'). 'Ward' là phòng bệnh nội trú, 'chamber' là phòng nghị án/buồng, 'office' là văn phòng nói chung.",
+      "trap": "Người học dễ nhầm lẫn giữa 'clinic' và 'ward' (phân khoa/phòng bệnh trong bệnh viện) hoặc 'office' do dịch thô là 'văn phòng y tế'.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0229",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The marketing department is analyzing which advertising ---- has yielded the highest return on investment over the past fiscal year.",
+      "options": {
+        "A": "media",
+        "B": "mediums",
+        "C": "medium",
+        "D": "mediated"
+      },
+      "answer": "C",
+      "errorType": "word-form",
+      "explanation": "Động từ 'has yielded' chia ở số ít cho biết chủ ngữ đứng trước phải là danh từ số ít. 'Medium' là danh từ số ít (phương tiện), còn 'media' là danh từ số nhiều của nó.",
+      "trap": "Người học cực kỳ dễ chọn 'media' vì đây là từ cực kỳ quen thuộc và thường bị lầm tưởng là danh từ số ít hoặc không đếm được trong tiếng Anh giao tiếp.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0230",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The legal department ---- the signed acquisition contract by courier before the board unexpectedly called to cancel the merger.",
+      "options": {
+        "A": "dispatched",
+        "B": "had dispatched",
+        "C": "has dispatched",
+        "D": "was dispatching"
+      },
+      "answer": "B",
+      "errorType": "verb-tense",
+      "explanation": "Hành động gửi hợp đồng (dispatch) xảy ra và hoàn thành trước một hành động khác trong quá khứ (called to cancel). Do đó, ta phải dùng thì quá khứ hoàn thành (had dispatched) để thể hiện rõ trình tự thời gian.",
+      "trap": "Phương án A (dispatched) dễ bị chọn nhầm vì người học thấy 'before' và nghĩ ngay đến việc dùng quá khứ đơn cho cả hai vế, nhưng ngữ cảnh đòi hỏi nhấn mạnh tính hoàn tất trước một sự kiện quá khứ khác.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "B",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0231",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "By the time the senior technician arrives to calibrate the server, the system ---- offline for over three hours.",
+      "options": {
+        "A": "will have been",
+        "B": "has been",
+        "C": "is",
+        "D": "will be"
+      },
+      "answer": "A",
+      "errorType": "verb-tense",
+      "explanation": "Cấu trúc 'By the time + hiện tại đơn' (arrives) chỉ một mốc thời gian trong tương lai. Hành động ở mệnh đề chính kéo dài đến mốc đó nên phải chia ở tương lai hoàn thành (will have been).",
+      "trap": "Phương án B (has been) rất hấp dẫn vì có 'for over three hours', khiến người học nghĩ ngay đến hiện tại hoàn thành mà quên mất mốc tương lai 'By the time... arrives'.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "A",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0232",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The client ---- to settle the outstanding debit balance, so we are forced to suspend their account access immediately.",
+      "options": {
+        "A": "failed",
+        "B": "has failed",
+        "C": "fails",
+        "D": "had failed"
+      },
+      "answer": "B",
+      "errorType": "verb-tense",
+      "explanation": "Hành động thanh toán thất bại xảy ra trong quá khứ nhưng để lại hậu quả trực tiếp ở hiện tại ('we are forced to suspend...'). Do đó, thì hiện tại hoàn thành (has failed) là lựa chọn chính xác nhất.",
+      "trap": "Phương án A (failed) dễ bị chọn vì người học nghĩ đây là một sự việc đã xảy ra và kết thúc, không nhận ra mối liên kết nhân quả chặt chẽ với hành động ở hiện tại.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "B",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0233",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The customer service representative ---- the client's complex query for two hours before finally escalating it to the technical director.",
+      "options": {
+        "A": "has been researching",
+        "B": "had been researching",
+        "C": "researched",
+        "D": "was researching"
+      },
+      "answer": "B",
+      "errorType": "verb-tense",
+      "explanation": "Hành động nghiên cứu (research) diễn ra liên tục trong một khoảng thời gian ('for two hours') trước một hành động quá khứ khác ('escalated'). Do đó, ta dùng thì quá khứ hoàn thành tiếp diễn.",
+      "trap": "Phương án A (has been researching) đánh lừa người học chỉ nhìn vào 'for two hours' mà không để ý hành động 'escalated' ở quá khứ, dẫn đến việc chọn sai thì hiện tại hoàn thành tiếp diễn.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "B",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0234",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The marketing team, eager ---- the new campaign before the holiday season, worked overtime to finalize the promotional materials.",
+      "options": {
+        "A": "to launch",
+        "B": "launching",
+        "C": "launch",
+        "D": "to be launched"
+      },
+      "answer": "A",
+      "errorType": "infinitive-gerund",
+      "explanation": "Tính từ 'eager' (hăm hở, háo hức) luôn đi kèm với động từ nguyên mẫu có 'to' (be eager to do something).",
+      "trap": "Phương án B (launching) hấp dẫn vì người học có thể nhầm cụm 'eager ----' là một mệnh đề rút gọn dạng chủ động sử dụng V-ing đứng sau danh từ 'The marketing team'.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "A",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0235",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The teen apparel brand's quarterly revenue was ---- higher than the financial analysts had projected in their worst-case scenario.",
+      "options": {
+        "A": "marginally",
+        "B": "more",
+        "C": "very",
+        "D": "as"
+      },
+      "answer": "A",
+      "errorType": "comparison",
+      "explanation": "Chỗ trống đứng trước tính từ so sánh hơn 'higher' để bổ nghĩa mức độ chênh lệch. Trạng từ 'marginally' (một chút, không đáng kể) hoàn toàn phù hợp.",
+      "trap": "Phương án B (more) là bẫy lặp từ (more higher là sai ngữ pháp vì high đã có đuôi -er). Phương án C (very) sai vì không bổ nghĩa trực tiếp cho so sánh hơn.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "A",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0236",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The deluxe storage locker is ---- more expensive than the standard one, yet it offers twice the security features.",
+      "options": {
+        "A": "slightly",
+        "B": "very",
+        "C": "so",
+        "D": "as"
+      },
+      "answer": "A",
+      "errorType": "comparison",
+      "explanation": "Trạng từ 'slightly' (nhẹ, một chút) được dùng để bổ nghĩa cho tính từ so sánh hơn 'more expensive' nhằm chỉ mức độ chênh lệch nhỏ.",
+      "trap": "Phương án B (very) hoặc C (so) thường thu hút người học do thói quen dịch nghĩa 'rất đắt hơn' hoặc 'quá đắt hơn' mà quên rằng chúng không bổ nghĩa cho dạng so sánh hơn.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "A",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0237",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "A critical shortage of raw materials, along with rising logistics costs, ---- forced the production team to revise their schedule.",
+      "options": {
+        "A": "have",
+        "B": "are",
+        "C": "having",
+        "D": "has"
+      },
+      "answer": "D",
+      "errorType": "subject-verb-agreement",
+      "explanation": "Chủ ngữ chính của câu là danh từ số ít 'A critical shortage'. Cụm giới từ 'along with...' đi kèm không làm thay đổi sự hòa hợp của chủ ngữ chính, do đó động từ chính phải chia ở số ít dạng hoàn thành là 'has'.",
+      "trap": "Người học dễ bị thu hút bởi các danh từ số nhiều đứng ngay trước chỗ trống như 'materials' và 'costs' nên chọn động từ số nhiều 'have'.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0238",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The decision to not overcrowd the main exhibition hall, which many coordinators ---- was unnecessary, actually improved visitor satisfaction.",
+      "options": {
+        "A": "believes",
+        "B": "believing",
+        "C": "believe",
+        "D": "is believing"
+      },
+      "answer": "C",
+      "errorType": "subject-verb-agreement",
+      "explanation": "Chỗ trống nằm trong mệnh đề quan hệ 'which many coordinators [verb] was unnecessary'. Chủ ngữ của mệnh đề này là 'many coordinators' (danh từ số nhiều), vì vậy động từ phải chia ở dạng số nhiều không chia 'believe'.",
+      "trap": "Người học dễ nhìn vào danh từ số ít 'hall' đứng trước mệnh đề quan hệ hoặc chủ ngữ chính của câu 'The decision' để chọn động từ số ít 'believes'.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0239",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "A series of market analyses that steadily ---- consumer behavior is now available in the library.",
+      "options": {
+        "A": "tracks",
+        "B": "tracking",
+        "C": "is tracking",
+        "D": "track"
+      },
+      "answer": "D",
+      "errorType": "subject-verb-agreement",
+      "explanation": "Đại từ quan hệ 'that' thay thế cho danh từ đứng trước nó là 'analyses' (đây là dạng số nhiều của 'analysis'). Do đó, động từ trong mệnh đề quan hệ phải chia ở số nhiều là 'track'.",
+      "trap": "Người học dễ nhầm lẫn từ 'analyses' là số ít vì đuôi '-es' lạ, hoặc bị đánh lừa bởi cụm 'A series of' ở đầu câu nên chọn động từ số ít 'tracks'.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0240",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The restoration team managed to repair the antique cabinet, but the final decision on its placement remains ----.",
+      "options": {
+        "A": "their",
+        "B": "them",
+        "C": "theirs",
+        "D": "themselves"
+      },
+      "answer": "C",
+      "errorType": "pronoun",
+      "explanation": "Chỗ trống đóng vai trò là bổ ngữ đứng sau động từ liên kết 'remains'. Ta cần một đại từ sở hữu 'theirs' (quyết định của họ) để thay thế cho cụm 'their decision' nhằm tránh lặp từ.",
+      "trap": "Người học dễ chọn tính từ sở hữu 'their' do thói quen dịch nghĩa, hoặc chọn đại từ phản thân 'themselves' vì nghĩ chủ ngữ là 'restoration team'.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0241",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "All staff members must abide by the new security protocols, regardless of ---- department they belong to.",
+      "options": {
+        "A": "whose",
+        "B": "whom",
+        "C": "what",
+        "D": "which"
+      },
+      "answer": "D",
+      "errorType": "pronoun",
+      "explanation": "Cụm 'regardless of which department...' dùng đại từ nghi vấn 'which' đóng vai trò như một từ hạn định để chỉ sự lựa chọn trong số các phòng ban xác định của công ty.",
+      "trap": "Người học dễ chọn 'whose' do nhầm lẫn về mối quan hệ sở hữu với 'they belong to', hoặc chọn 'what' vì thói quen dịch nghĩa 'bất kể phòng ban gì'.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0242",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The manager regretted ---- the staff meeting during lunchtime, as many employees were hungry and distracted.",
+      "options": {
+        "A": "to schedule",
+        "B": "schedule",
+        "C": "scheduling",
+        "D": "scheduled"
+      },
+      "answer": "C",
+      "errorType": "infinitive-gerund",
+      "explanation": "Động từ 'regret' đi với V-ing khi diễn tả sự hối tiếc về một việc đã làm trong quá khứ. Việc họp đã diễn ra (thể hiện qua vế 'were hungry'), nên chọn 'scheduling'.",
+      "trap": "Người học biết 'regret' đi được với cả 'to-V' và 'V-ing' nhưng không đọc hết vế sau để xác định mốc thời gian, dẫn đến việc chọn 'to schedule' (dùng khi tiếc vì sắp phải làm gì).",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0243",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The head chef believes that using fresh herbs is ---- important factor in creating an exceptional culinary experience.",
+      "options": {
+        "A": "more",
+        "B": "as",
+        "C": "most of",
+        "D": "the most"
+      },
+      "answer": "D",
+      "errorType": "comparison",
+      "explanation": "Câu so sánh nhất cần mạo từ 'the' đi kèm với 'most' trước tính từ dài 'important' để bổ nghĩa cho danh từ 'factor' trong một phạm vi xác định ('in creating...').",
+      "trap": "Người học có thể chọn 'more' do thói quen dịch nghĩa so sánh giữa hai việc, hoặc chọn 'most of' mà không để ý cấu trúc ngữ pháp không cho phép giới từ đứng trước danh từ trực tiếp như vậy.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0244",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "To minimize the risk of data theft, the firm advises employees to encrypt files, especially ---- containing proprietary client information.",
+      "options": {
+        "A": "that",
+        "B": "these",
+        "C": "those",
+        "D": "which"
+      },
+      "answer": "C",
+      "errorType": "pronoun",
+      "explanation": "Đại từ 'those' được dùng để thay thế cho danh từ số nhiều đã đề cập phía trước ('files') khi đi kèm với một cụm phân từ bổ nghĩa ('containing...').",
+      "trap": "Thí sinh dễ chọn 'these' do thói quen dịch nghĩa 'những cái này', hoặc chọn 'which' vì nghĩ đến mệnh đề quan hệ nhưng 'which' cần một động từ chia thì phía sau.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0245",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The senior salesman attributed the record-breaking quarterly revenue not to his own efforts, but to ---- of his dedicated team.",
+      "options": {
+        "A": "that",
+        "B": "these",
+        "C": "them",
+        "D": "those"
+      },
+      "answer": "D",
+      "errorType": "pronoun",
+      "explanation": "Đại từ 'those' được dùng để thay thế cho danh từ số nhiều 'efforts' nhằm tránh lặp từ trong cấu trúc so sánh/đối chiếu 'not to A, but to B'.",
+      "trap": "Thí sinh dễ chọn 'that' (chỉ dùng cho danh từ số ít) hoặc 'them' (không đi kèm với cụm giới từ chỉ sự sở hữu tương đương phía sau).",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0246",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The executive ordered a custom leather writing pad that is twice ---- of the standard ones issued to the staff.",
+      "options": {
+        "A": "as large",
+        "B": "larger",
+        "C": "the size",
+        "D": "as big"
+      },
+      "answer": "C",
+      "errorType": "comparison",
+      "explanation": "Cấu trúc so sánh gấp nhiều lần có dạng 'X times + the + noun + of'. Ở đây 'twice the size of' (gấp đôi kích thước của) là cấu trúc chính xác.",
+      "trap": "Thí sinh quen với cấu trúc 'twice as + adj + as' nên dễ bị nhầm lẫn và cố chọn 'as large' hoặc 'larger' dù có giới từ 'of' phía sau.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0247",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The preliminary findings suggest that the new engine is ---- as efficient as the previous model, if not more so.",
+      "options": {
+        "A": "so",
+        "B": "as",
+        "C": "more",
+        "D": "at least"
+      },
+      "answer": "D",
+      "errorType": "comparison",
+      "explanation": "Cấu trúc 'at least as + adj + as..., if not more so' dùng để khẳng định một vật 'ít nhất là bằng... nếu không muốn nói là hơn'.",
+      "trap": "Thí sinh dễ chọn 'as' vì thấy 'as' phía sau tạo thành cặp 'as... as', nhưng 'is as as efficient as' là sai ngữ pháp.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0248",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "To monitor software usage, the IT department tracks all active licenses, ensuring that each department pays for only ---- it actually uses.",
+      "options": {
+        "A": "that",
+        "B": "which",
+        "C": "what",
+        "D": "whatever"
+      },
+      "answer": "C",
+      "errorType": "pronoun",
+      "explanation": "Đại từ 'what' đóng vai trò là đại từ quan hệ danh từ (nominal relative pronoun), tương đương với 'the thing(s) that', làm tân ngữ cho giới từ 'for' và động từ 'uses'.",
+      "trap": "Thí sinh dễ chọn 'that' hoặc 'which' theo thói quen làm mệnh đề quan hệ, nhưng 'that/which' cần có danh từ tiền ngữ đứng trước để bổ nghĩa.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0249",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "---- by chronic fatigue caused by consecutive overnight shifts, the quality control inspector requested a temporary reassignment to the day shift.",
+      "options": {
+        "A": "Exhausting",
+        "B": "Exhausted",
+        "C": "Exhaust",
+        "D": "Having exhausted"
+      },
+      "answer": "B",
+      "errorType": "participle",
+      "explanation": "Mệnh đề rút gọn đồng chủ ngữ ở dạng bị động. Chủ ngữ chính 'the quality control inspector' bị làm cho kiệt sức bởi sự mệt mỏi mãn tính (fatigue), nên dùng quá khứ phân từ 'Exhausted'.",
+      "trap": "Người học dễ chọn 'Exhausting' (A) hoặc 'Having exhausted' (D) do nhầm lẫn sang thể chủ động khi dịch nghĩa bề nổi mà không phân tích kỹ mối quan hệ bị động.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "B",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0250",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "---- by the federal agency during the surprise inspection, the factory was forced to suspend operations until all violations were corrected.",
+      "options": {
+        "A": "Cited",
+        "B": "Citing",
+        "C": "Cite",
+        "D": "Having cited"
+      },
+      "answer": "A",
+      "errorType": "participle",
+      "explanation": "Mệnh đề rút gọn mang nghĩa bị động. Chủ ngữ của mệnh đề chính 'the factory' (nhà máy) bị lập biên bản/phạt (cited) bởi cơ quan liên bang, nên dùng quá khứ phân từ 'Cited'.",
+      "trap": "Người học dễ chọn 'Citing' (B) hoặc 'Having cited' (D) do thói quen chọn dạng chủ động V-ing đứng đầu câu mà không xét mối quan hệ bị động với chủ ngữ chính.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "A",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0251",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "---- through the archives for hours, the research assistant finally located the original patent documents from 1920.",
+      "options": {
+        "A": "Having combed",
+        "B": "Combed",
+        "C": "To comb",
+        "D": "Comb"
+      },
+      "answer": "A",
+      "errorType": "participle",
+      "explanation": "Mệnh đề phân từ hoàn thành (Having + V3) được dùng để nhấn mạnh một hành động đã hoàn thành trước một hành động khác trong quá khứ. Ở đây, việc 'tìm kiếm kỹ lưỡng' (comb through) xảy ra và hoàn thành trước khi 'tìm thấy' (located).",
+      "trap": "Người học dễ nhầm lẫn chọn 'Combed' (B) nếu nghĩ đây là dạng bị động, hoặc chọn 'To comb' (C) chỉ mục đích nhưng không hợp nghĩa ngữ cảnh.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "A",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0252",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "---- silently in the background, the update utility ensures that the database remains synchronized without disrupting the user.",
+      "options": {
+        "A": "Running",
+        "B": "Run",
+        "C": "Having run",
+        "D": "To run"
+      },
+      "answer": "A",
+      "errorType": "participle",
+      "explanation": "Mệnh đề phân từ hiện tại (V-ing) chỉ hành động chủ động diễn ra song song với mệnh đề chính. Chủ ngữ của mệnh đề chính 'the update utility' tự 'chạy ngầm' (running silently), nên dùng 'Running'.",
+      "trap": "Người học dễ chọn 'Run' (B) vì nghĩ đó là phân từ quá khứ (bị động) hoặc chọn 'To run' (D) chỉ mục đích nhưng không hợp ngữ cảnh của câu.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "A",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0253",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The head baker decorated the wedding cake ---- as the client had specified in the original order form.",
+      "options": {
+        "A": "as meticulously",
+        "B": "meticulously",
+        "C": "more meticulously",
+        "D": "most meticulously"
+      },
+      "answer": "A",
+      "errorType": "comparison",
+      "explanation": "Cấu trúc so sánh bằng 'as + adverb + as'. Ở đây động từ 'decorated' cần một trạng từ bổ nghĩa ('meticulously'), và sự xuất hiện của 'as' ở phía sau chỉ ra cấu trúc so sánh bằng 'as ... as'.",
+      "trap": "Người học dễ chọn 'meticulously' (B) vì thấy động từ 'decorated' và nghĩ chỉ cần một trạng từ thường, hoặc chọn 'more meticulously' (C) do thói quen dùng so sánh hơn trong công việc.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "A",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0254",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The lead ---- predicted a market downturn, but his subsequent analysis suggested that the recession would be surprisingly brief.",
+      "options": {
+        "A": "economy",
+        "B": "economics",
+        "C": "economical",
+        "D": "economist"
+      },
+      "answer": "D",
+      "errorType": "word-form",
+      "explanation": "Chủ ngữ thực hiện hành động 'predicted' (dự báo) và được thay thế bằng đại từ 'his' ở vế sau phải là danh từ chỉ người. Do đó, 'economist' (nhà kinh tế học) là đáp án đúng.",
+      "trap": "Người học dễ chọn 'economy' (nền kinh tế) hoặc 'economics' (ngành kinh tế học) do cụm 'lead economy' (nền kinh tế dẫn đầu) nghe rất quen thuộc nếu không đọc hết vế sau có 'his'.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0255",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The board of directors approved the upgrade ---- the corporate software, which will transition all users to a cloud-based platform.",
+      "options": {
+        "A": "on",
+        "B": "with",
+        "C": "to",
+        "D": "for"
+      },
+      "answer": "C",
+      "errorType": "preposition",
+      "explanation": "Danh từ 'upgrade' đi với giới từ 'to' khi nói về việc nâng cấp lên một phiên bản hoặc hệ thống mới hơn ('an upgrade to something').",
+      "trap": "Người học dễ chọn giới từ 'for' (nâng cấp cho) hoặc 'on' do dịch trực tiếp từ tư duy tiếng Việt sang tiếng Anh.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0256",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The constant delays in shipment proved highly ---- to the distributors, who threatened to terminate their contracts with us.",
+      "options": {
+        "A": "irritated",
+        "B": "irritation",
+        "C": "irritates",
+        "D": "irritating"
+      },
+      "answer": "D",
+      "errorType": "word-form",
+      "explanation": "Động từ liên kết 'proved' yêu cầu một tính từ theo sau. Vì chủ ngữ là 'constant delays' (sự chậm trễ - vật gây ra sự khó chịu), ta phải dùng tính từ chủ động đuôi -ing ('irritating').",
+      "trap": "Người học thấy 'distributors' (nhà phân phối - người) ở vế sau nên dễ nhầm lẫn và chọn 'irritated' (đuôi -ed chỉ cảm xúc bị tác động của con người).",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
     }
   ]
 }
