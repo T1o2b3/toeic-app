@@ -566,6 +566,26 @@ không có icon khi thêm ra màn hình iPhone. Làm các thứ RẺ mà thấy 
 - **Tắt tự sửa chính tả** ở ô gõ (iPhone sửa hộ thì không còn biết mình nghe ra chữ gì). Kèm sửa ô nhập toàn app lên
   16px — dưới 16px iPhone tự phóng to trang khi chạm vào ô (ô Tìm từ cũng bị).
 
+**D62. Pipeline sinh nội dung lấy file ĐÃ PHÁT HÀNH làm chuẩn, cache chỉ là nháp.** (Claude phát hiện 2026-09-23, trước
+khi chạy thêm nội dung.)
+- **Lỗi đã suýt xảy ra:** `build-questions/listening/sets` ghi file đầu ra CHỈ từ `pipeline/.cache/` và đánh id theo
+  `cache.size() + 1`. Cache nằm trong .gitignore → máy Mac này (repo mới chép sang) không có. Chạy là id đánh lại từ 1,
+  ghi đè 200 câu Part 5 bằng câu mới CÙNG id (nhật ký học trỏ nhầm câu — ràng buộc #6), và bước dọn âm thanh xoá MP3
+  của câu cũ. Ở máy có cache thì vẫn mất chỗ sửa tay trên file phát hành (40 lời giải Part 7 dịch ở D60).
+- **Sửa ở gốc, dùng chung 3 pipeline** (`pipeline/lib/cache.js`): `openWorkCache` nạp file phát hành vào cache trước
+  (bản phát hành thắng); lúc ghi file, mục đã phát hành giữ NGUYÊN, không lắp ráp lại (không đổi chỗ đáp án/giọng);
+  `nextId` = số lớn nhất + 1. File phát hành hỏng thì dừng, không coi như rỗng.
+- **Đã kiểm:** chạy lại cả 6 file không sinh gì mới → giống từng byte, không MP3 nào bị xoá.
+- Chưa áp cho `build-vocab` (khoá theo từ, id theo danh sách gốc nên không đánh lại id; nhưng chạy ở máy không có cache
+  sẽ gọi lại AI cho ~2400 từ). Làm khi cần sinh lại từ vựng.
+
+**D63. Chốt phạm vi: app đủ dùng — chỉ còn THÊM NỘI DUNG và M21.** (Huy, 2026-09-23: "app làm đến đây cũng là ổn ổn
+rồi. Ngoài thêm nội dung ra thì còn lại cũng không cần thiết lắm… trải nghiệm giống thi thật hơn cũng oke đấy".)
+- **Bỏ M16** (làm dở máy này, tiếp máy khác): Huy luôn làm trọn một đề hoặc trọn các part đã chọn trong một lần ngồi.
+  Làm dở trên CÙNG máy thì đã có (localStorage).
+- **Chỉ làm khi Huy yêu cầu:** M10 phần phụ (bảng/biểu Part 3, đánh dấu câu chứa đáp án), M14, M17, M19, M20.
+- **Làm tiếp:** nội dung (ưu tiên phần luyện nhiều: Part 5, Part 2, rồi các bộ) và phần còn lại của M21.
+
 ## Câu hỏi còn mở
 - ~~Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng?~~ → **Đã giải quyết, xem D35** (chung repo, xét lại khi ~100 MB).
 - ~~Q2 (trước M2): xác nhận license của TSL 1.2 và NGSL.~~ → **Đã giải quyết, xem D18.**

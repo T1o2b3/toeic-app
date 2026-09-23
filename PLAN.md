@@ -31,9 +31,12 @@ toeic-app/
 ---
 
 ## Giai đoạn 0 — Chuẩn bị (trước ngày 1, ~1–1,5 giờ)
-- [ ] **M0.** Cài Node.js LTS, git (kiểm tra `node -v`, `git --version`); tạo tài khoản GitHub, Cloudflare, Supabase; lấy Gemini API key tại Google AI Studio (không bật billing).
+- [x] **M0.** Cài Node.js LTS, git (kiểm tra `node -v`, `git --version`); tạo tài khoản GitHub, Cloudflare, Supabase; lấy Gemini API key tại Google AI Studio (không bật billing).
   Xong khi: 4 tài khoản đăng nhập được, key nằm trong `.env` trên máy.
   Tiến độ: ✅ Node v24.18.0, npm 11.16.0, git 2.50.1 (đã có sẵn, git đã cấu hình user.name/email). ⏳ Còn lại: 4 tài khoản + Gemini key (Huy tự làm).
+
+> **Chốt phạm vi 2026-09-23 (D63):** app đủ dùng. Chỉ còn làm **thêm nội dung** và **M21**. M10 phần phụ, M14, M17,
+> M19, M20 chỉ làm khi Huy yêu cầu; M16 bỏ.
 
 ## Giai đoạn 1 — MVP (ngày 1–7, ~13 giờ)
 - [x] **M1. Khung project + deploy ngay (ngày 1, ~2h).** Vite vanilla, Vitest + 1 test mẫu, git, repo GitHub private, deploy Cloudflare Pages trang "Hello".
@@ -94,7 +97,7 @@ toeic-app/
 - [x] M15. Chế độ theo part / theo kỹ năng / full (194 câu); chế độ luyện vs thi; bấm giờ.
   ✅ 2026-09-20: `#/exam` — đề đủ / Nghe / Đọc / từng Part, tính giờ, tự nộp khi hết giờ, kết quả + xem lại câu sai (D38).
   Đủ nội dung để dựng đúng 194 câu (đã kiểm bằng dữ liệu thật); mới đủ MỘT đề nên chưa có nhiều đề khác nhau.
-- [ ] M16. Làm dở trên máy này, tiếp trên máy khác; màn xem lại sau bài.
+- [~] ~~M16. Làm dở trên máy này, tiếp trên máy khác~~ — **bỏ (D63)**: luôn làm trọn một lần ngồi; cùng máy thì đã tiếp được.
 - [ ] M21. Thi thử giống đề thật hơn (Huy gửi mô tả giao diện thi của IIG, 2026-09-20 — bảng đối chiếu đầy đủ
   ở PROGRESS.md). Chỉ áp cho màn THI THỬ; màn luyện giữ nghe lại + chỉnh tốc độ.
   - [x] Audio phát MỘT LẦN, không tua, không nghe lại ✅ 2026-09-20 (Huy chốt làm mục này trước).
