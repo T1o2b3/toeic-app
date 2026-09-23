@@ -33,9 +33,10 @@ beforeAll(async () => {
 describe('mục Bài thi liệt kê các phần đã có bộ đề', () => {
   it('có nút cho Part 3, 6, 7; không có Part 4 (chưa có bộ nào)', async () => {
     await go('#/exams');
-    expect(text()).toContain('Luyện Part 3 — Hội thoại');
-    expect(text()).toContain('Luyện Part 6 — Điền đoạn văn');
-    expect(text()).toContain('Luyện Part 7 — Đọc hiểu');
+    // Part 3/4 xếp vào nhóm Nghe, Part 5/6/7 vào nhóm Đọc — không còn một cột dài theo số Part.
+    expect(text()).toContain('Part 3 · Hội thoại');
+    expect(text()).toContain('Part 6 · Điền đoạn văn');
+    expect(text()).toContain('Part 7 · Đọc hiểu');
     expect(text()).not.toContain('Part 4');
     expect(text()).toContain('2 bộ');                       // Part 3 có 2 bộ
   });

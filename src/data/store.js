@@ -12,6 +12,7 @@ import { buildSearchIndex } from '../logic/lookup.js';
 import { openDb, appendEvents, readAllEvents } from './db.js';
 import { getDeviceId } from './device.js';
 import { loadAllVocabDecks, loadQuestionBank, loadListeningBank, loadSetBank, loadCollocationBank } from './content.js';
+import { collocationEntries } from '../logic/collocations.js';
 import { SET_PARTS } from '../logic/sets.js';
 
 /**
@@ -54,6 +55,8 @@ export async function createStore({ factory, fetchImpl } = {}) {
     listening: listeningBank.entries,
     /** Cụm từ TOEIC tuyển chọn (xem logic/collocations.js). Rỗng nếu chưa có file nội dung. */
     collocations,
+    /** Cùng bộ cụm từ nhưng mang hình dạng thẻ học, để dùng chung hàng đợi ôn với từ vựng. */
+    collocationCards: collocationEntries(collocations),
     /** Bộ tài liệu + câu hỏi theo Part (3, 4, 6, 7): {3: [...], 4: [...], 6: [...], 7: [...]}. Xem logic/sets.js. */
     sets,
     deviceId,

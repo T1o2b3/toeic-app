@@ -11,7 +11,7 @@ import { el, goTo } from './dom.js';
 import { toggleTheme } from './app.js';
 import { SKILL_LABEL } from '../logic/exam-time.js';
 import { countUntriaged } from '../logic/vocab-state.js';
-import { planToday, describePlan, planTarget } from '../logic/today.js';
+import { suggestSessions, pickTwo } from '../logic/suggest.js';
 import {
   activityByDay, activeWeeks, examOverview, vocabProgress, weakestTypes,
   estimateStudyMinutes, matureTrend, combinedExam, WEEKLY_GOAL_MINUTES, MATURE_DAYS,
@@ -144,46 +144,59 @@ function renderKpis(store, events, now) {
   ]);
 }
 
-/** Thẻ "Hôm nay": MỘT nút chính. Hết việc đến hạn thì gợi ý việc kế tiếp thay vì để trống. */
+/**
+ * Thẻ "Hôm nay": **HAI lựa chọn**, chọn theo chỗ đang yếu chứ không trỏ cứng vào một phần.
+ *
+ * Hai chứ không một: thứ "cần nhất theo số liệu" chưa chắc là thứ làm được lúc đó — đang ngồi chỗ ồn
+ * thì không luyện nghe được, còn 5 phút thì không mở nổi một bộ Part 7. Một lựa chọn duy nhất mà không
+ * hợp hoàn cảnh là mất luôn cả phiên. Cách chấm nằm ở `logic/suggest.js`.
+ */
 function renderToday(store) {
   const entries = filterByTier(store.entries, getTier(TIER_ORDER));
-  const plan = planToday({ entries, states: store.states, questions: store.questions, quizStates: store.quizStates });
-
   const newcomer = ![...store.states.values()].some((state) => state.triaged);
 
-  let action;
   if (newcomer && countUntriaged(entries, store.states) > 0) {
-    action = el('button', { class: 'primary', onClick: () => goTo('/triage') }, [
-      el('span', { text: 'Bắt đầu: phân loại từ vựng' }),
-      el('small', { text: 'chấm 20 từ đầu tiên (~2 phút) để app biết bạn cần học gì' }),
-    ]);
-  } else if (!plan.empty) {
-    action = el('button', { class: 'primary', onClick: () => goTo(planTarget(plan)) }, [
-      el('span', { text: '15 phút hôm nay' }),
-      el('small', { text: describePlan(plan) }),
-    ]);
-  } else if (countUntriaged(entries, store.states) > 0) {
-    action = el('button', { class: 'primary', onClick: () => goTo('/triage') }, [
-      el('span', { text: 'Phân loại thêm từ vựng' }),
-      el('small', { text: 'chưa có thẻ nào đến hạn — thêm từ để có gì học' }),
-    ]);
-  } else {
-    // KHÔNG để màn này thành ngõ cụt. Đây đúng là lúc Huy đang rảnh và sẵn sàng học — đưa một câu
-    // chữ xám rồi bắt tự đi tìm mục khác là cách chắc chắn nhất để mất một phiên học.
-    action = el('div', {}, [
-      el('p', { class: 'empty', text: 'Không còn thẻ nào đến hạn — ôn dồn không giúp nhớ lâu hơn. Còn sức thì luyện đề:' }),
-      el('button', { class: 'primary', onClick: () => goTo('/exams') }, [
-        el('span', { text: 'Luyện đề' }),
-        el('small', { text: 'Part 5–7 và luyện nghe · chọn lượt 10–30 câu' }),
-      ]),
-      el('button', { class: 'secondary', onClick: () => goTo('/collocations') }, [
-        el('span', { text: 'Xem cụm từ TOEIC' }),
-        el('small', { text: '142 cụm tuyển chọn · đọc lướt cũng vào' }),
+    return todayPanel([
+      el('button', { class: 'primary', onClick: () => goTo('/triage') }, [
+        el('span', { text: 'Bắt đầu: phân loại từ vựng' }),
+        el('small', { text: 'chấm 20 từ đầu tiên (~2 phút) để app biết bạn cần học gì' }),
       ]),
     ]);
   }
-  return el('section', { class: 'panel today' }, [el('div', { class: 'panel-head' }, [el('span', { text: 'Hôm nay' })]), action]);
+
+  const picks = pickTwo(suggestSessions({
+    entries, states: store.states, questions: store.questions, listening: store.listening,
+    sets: store.sets, quizStates: store.quizStates, events: store.events,
+    collocationCards: store.collocationCards,
+  }));
+
+  if (picks.length === 0) {
+    // KHÔNG để màn này thành ngõ cụt. Đây đúng là lúc Huy đang rảnh và sẵn sàng học.
+    return todayPanel([
+      el('p', { class: 'empty', text: 'Hết sạch việc đến hạn. Còn sức thì đọc lướt cụm từ cũng vào:' }),
+      el('button', { class: 'primary', onClick: () => goTo('/collocations') }, [
+        el('span', { text: 'Xem cụm từ TOEIC' }),
+        el('small', { text: '142 cụm tuyển chọn' }),
+      ]),
+    ]);
+  }
+
+  return todayPanel([
+    el('p', { class: 'today-lead', text: picks.length > 1 ? 'Chọn một trong hai:' : 'Việc cần nhất lúc này:' }),
+    ...picks.map((s, i) => el('button', {
+      class: i === 0 ? 'primary pick' : 'secondary pick', onClick: () => goTo(s.path),
+    }, [
+      el('span', { text: s.title }),
+      el('small', { text: s.note }),
+      el('small', { class: 'pick-why', text: `vì ${s.reason}` }),
+    ])),
+  ]);
 }
+
+const todayPanel = (children) => el('section', { class: 'panel today' }, [
+  el('div', { class: 'panel-head' }, [el('span', { text: 'Hôm nay' })]),
+  ...children,
+]);
 
 /** Tiến độ từ vựng: một thanh xếp chồng theo mức + chú thích, bấm dòng để mở đúng danh sách trong kho. */
 function renderVocabPanel(store) {

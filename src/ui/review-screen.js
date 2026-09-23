@@ -40,9 +40,15 @@ function newLeft() {
   return Math.max(0, NEW_PER_ROUND - newThisRound.size);
 }
 
-/** Deck đã lọc theo tầng Huy chọn ở màn chính. */
+/**
+ * Thẻ của lượt ôn: từ vựng (đã lọc theo tầng) **CỘNG** cụm từ.
+ *
+ * Ôn chung một hàng đợi chứ không tách hai lượt: lịch FSRS tính theo từng thẻ, nên trộn vào không làm
+ * sai lịch của thẻ nào; mà tách ra thì Huy phải nhớ vào hai chỗ và cụm từ sẽ bị bỏ quên. Học MỚI thì
+ * vẫn tách hai (xem màn Từ vựng) vì lúc mới học, từ đơn và cụm là hai kiểu ghi nhớ khác nhau.
+ */
 function tieredEntries(store) {
-  return filterByTier(store.entries, getTier(TIER_ORDER));
+  return [...filterByTier(store.entries, getTier(TIER_ORDER)), ...(store.collocationCards ?? [])];
 }
 
 /** Hàng đợi của lượt hiện tại: hết hạn mức từ mới thì chỉ còn thẻ đến hạn. */

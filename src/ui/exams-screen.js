@@ -3,6 +3,8 @@
  * Các phần khác (Part 3–4, 6, 7, thi thử đủ bộ) sẽ thêm vào đây khi có (PLAN.md).
  */
 import { el, goTo } from './dom.js';
+import { navGroup } from './blocks.js';
+import { suggestSessions } from '../logic/suggest.js';
 import { quizQueue } from '../logic/quiz.js';
 import { LISTEN_ROUND_SIZE, estimateMinutes } from '../logic/listen.js';
 import { examOverview, weakestTypes } from '../logic/dashboard.js';
@@ -55,47 +57,63 @@ export function renderExams(store) {
   ]));
   if (last) sections.push(renderLastScore(last));
 
-  if (store.questions.length > 0) {
-    const size = getRoundSize();
-    const quiz = quizQueue(store.questions, store.quizStates, { size });
-    sections.push(
-      el('button', { class: 'secondary', onClick: () => goTo('/quiz') }, [
-        el('span', { text: 'Luyện Part 5' }),
-        el('small', { text: `${quiz.length} câu (như đề thật) · ~${Math.max(1, Math.round(quiz.length * PART5_TARGET_SECONDS / 60))} phút · ${accuracyNote(examOverview(events, 'part5'))}` }),
-      ]),
-      el('div', { class: 'chooser' }, [
-        el('span', { class: 'chooser-label', text: 'Mỗi lượt' }),
-        ...ROUND_SIZES.map((option) => el('button', {
-          class: option === size ? 'chip-btn active' : 'chip-btn',
-          text: String(option),
-          onClick: () => { setRoundSize(option); store.refresh(); },
-        })),
-        el('span', { class: 'chooser-label', text: 'câu' }),
-      ]),
-    );
-  }
+  // Gộp theo KỸ NĂNG thay vì liệt kê Part 2→7 thành một cột dài: lúc chọn, thứ Huy cân nhắc là
+  // "giờ có đeo tai nghe được không", chứ không phải số thứ tự Part.
+  const size = getRoundSize();
+  const doc = [];
+  const nghe = [];
 
+  // Gộp cho gọn thì dễ mất dấu "nên bắt đầu từ đâu". Dùng lại đúng bộ chấm của thẻ "Hôm nay"
+  // (logic/suggest.js) để đánh dấu MỘT phần đang cần nhất — không phải đoán theo số thứ tự Part.
+  const neediest = suggestSessions({
+    entries: [], states: store.states, questions: store.questions, listening: store.listening,
+    sets: store.sets, quizStates: store.quizStates, events,
+  }).find((x) => x.key.startsWith('part'))?.key;
+  const mark = (key, title) => (key === neediest ? `${title}  ← cần nhất` : title);
+
+  if (store.questions.length > 0) {
+    const quiz = quizQueue(store.questions, store.quizStates, { size });
+    doc.push({
+      title: mark('part5', PART_LABEL[5]),
+      note: `${quiz.length} câu · ~${Math.max(1, Math.round(quiz.length * PART5_TARGET_SECONDS / 60))} phút · ${accuracyNote(examOverview(events, 'part5'))}`,
+      path: '/quiz',
+    });
+  }
   if (store.listening.length > 0) {
     const round = quizQueue(store.listening, store.quizStates, { size: LISTEN_ROUND_SIZE });
-    sections.push(el('button', { class: 'secondary', onClick: () => goTo('/listen') }, [
-      el('span', { text: 'Luyện nghe Part 2' }),
-      el('small', { text: `${round.length} câu · ~${estimateMinutes(round.length)} phút · ${accuracyNote(examOverview(events, 'listening'))} · nên đeo tai nghe` }),
-    ]));
+    nghe.push({
+      title: mark('part2', PART_LABEL[2]),
+      note: `${round.length} câu · ~${estimateMinutes(round.length)} phút · ${accuracyNote(examOverview(events, 'listening'))}`,
+      path: '/listen',
+    });
   }
-
-  // Part 3, 4, 6, 7: mỗi phần một nút nếu đã có bộ đề.
   for (const p of SET_PARTS) {
     const bank = store.sets[p];
     if (bank.length === 0) continue;
     const round = setQueue(bank, store.quizStates, { size: SET_ROUND_SIZE[p] });
-    const listening = p === 3 || p === 4;
-    sections.push(el('button', { class: 'secondary', onClick: () => goTo(`/sets?part=${p}`) }, [
-      el('span', { text: `Luyện ${PART_LABEL[p].replace(' · ', ' — ')}` }),
-      el('small', { text: `${countAvailableSets(bank, store.quizStates)} bộ · lượt ${round.length} bộ ~${estimateSetMinutes(p, round)} phút · ${accuracyNote(examOverview(events, `part${p}`))}${listening ? ' · nên đeo tai nghe' : ''}` }),
-    ]));
+    const item = {
+      title: mark(`part${p}`, PART_LABEL[p]),
+      note: `${countAvailableSets(bank, store.quizStates)} bộ · lượt ${round.length} bộ ~${estimateSetMinutes(p, round)} phút · ${accuracyNote(examOverview(events, `part${p}`))}`,
+      path: `/sets?part=${p}`,
+    };
+    (p === 3 || p === 4 ? nghe : doc).push(item);
   }
 
-  if (store.questions.length === 0 && store.listening.length === 0 && SET_PARTS.every((p) => store.sets[p].length === 0)) {
+  sections.push(navGroup('Luyện phần Đọc', doc));
+  if (store.questions.length > 0) {
+    sections.push(el('div', { class: 'chooser' }, [
+      el('span', { class: 'chooser-label', text: 'Part 5 mỗi lượt' }),
+      ...ROUND_SIZES.map((option) => el('button', {
+        class: option === size ? 'chip-btn active' : 'chip-btn',
+        text: String(option),
+        onClick: () => { setRoundSize(option); store.refresh(); },
+      })),
+      el('span', { class: 'chooser-label', text: 'câu' }),
+    ]));
+  }
+  sections.push(navGroup('Luyện phần Nghe · nên đeo tai nghe', nghe));
+
+  if (doc.length === 0 && nghe.length === 0) {
     sections.push(el('p', { class: 'empty', text: 'Chưa có câu hỏi nào. Chạy pipeline sinh câu trước đã.' }));
   }
 
@@ -104,9 +122,9 @@ export function renderExams(store) {
   for (const [title, bank] of banks) {
     const rows = weakestTypes(bank, store.quizStates).filter((row) => row.accuracy < 0.8);
     if (rows.length === 0) continue;
-    sections.push(el('div', { class: 'gaps' }, [
-      el('div', { class: 'gaps-title', text: title }),
-      renderAccuracyBars(rows),
+    sections.push(el('details', { class: 'more-panel' }, [
+      el('summary', { text: `${title} — ${rows.length} dạng đang yếu` }),
+      el('div', { class: 'gaps' }, [renderAccuracyBars(rows)]),
     ]));
   }
   return el('div', {}, sections);

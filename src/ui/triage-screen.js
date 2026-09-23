@@ -50,16 +50,26 @@ function roundQueue(store) {
   return triageQueue(pool, store.states, left);
 }
 
-/** Deck đã lọc theo tầng Huy chọn ở màn chính. */
+/**
+ * Màn phân loại chạy hai chế độ: từ vựng (mặc định) và **cụm từ** (`#/triage?kind=colloc`).
+ * Tách hẳn khi học MỚI vì hai kiểu ghi nhớ khác nhau — nhìn `apply` rồi đoán nghĩa là một việc,
+ * nhớ `apply FOR chứ không phải apply TO` là việc khác. Ôn lại thì trộn chung (xem review-screen.js).
+ */
+let kind = 'vocab';
+
 function tieredEntries(store) {
+  if (kind === 'colloc') return store.collocationCards ?? [];
   return filterByTier(store.entries, getTier(TIER_ORDER));
 }
+
+/** Nhãn hiện trên màn, theo chế độ đang chạy. */
+const kindLabel = () => (kind === 'colloc' ? 'cụm từ' : 'từ');
 
 /** Từ đang hiện trên màn: từ đang xem lại nếu đi lùi, không thì đầu hàng đợi. */
 function currentEntry(store) {
   if (revisitIndex !== null) {
     const id = history[revisitIndex];
-    const found = store.entries.find((entry) => entry.id === id);
+    const found = tieredEntries(store).find((entry) => entry.id === id);
     if (found) return found;
     revisitIndex = null; // lịch sử trỏ vào từ không còn trong deck: quay về từ mới nhất
   }
@@ -70,7 +80,9 @@ function currentEntry(store) {
  * @param {object} store
  * @returns {HTMLElement}
  */
-export function renderTriage(store) {
+export function renderTriage(store, params) {
+  const want = params?.get('kind') === 'colloc' ? 'colloc' : 'vocab';
+  if (want !== kind) { kind = want; resetTriage(); }
   const entries = tieredEntries(store);
   const untriaged = countUntriaged(entries, store.states);
   const queue = roundQueue(store);
@@ -92,13 +104,13 @@ export function renderTriage(store) {
       backLink('vocab'),
       el('span', { class: 'progress', text: reviewing
         ? `xem lại từ đã chấm (${revisitIndex + 1}/${history.length})`
-        : `còn ${remaining} từ trong lượt · ${untriaged} từ ${tierNote()}` }),
+        : `còn ${remaining} ${kindLabel()} trong lượt · ${untriaged} ${kindLabel()} ${tierNote()}` }),
     ]),
     el('div', { class: 'card big' }, [
       ...renderWordHead(entry),
       el('div', { class: 'hint', text: reviewing
         ? `Trước đó bạn chấm: ${LEVEL_INFO[previous]?.label ?? '—'}. Chấm lại nếu cần.`
-        : 'Bạn dùng được từ này tới mức nào?' }),
+        : `Bạn dùng được ${kind === 'colloc' ? 'CỤM' : 'từ'} này tới mức nào?` }),
     ]),
     showMeaning ? renderMeaning(entry) : '',
     el('div', { class: 'actions four' }, LEVEL_ORDER.map((level) => {
@@ -131,6 +143,7 @@ export function renderTriage(store) {
 
 /** Ghi rõ đang phân loại trong tầng nào, để không tưởng deck chỉ còn bấy nhiêu từ. */
 function tierNote() {
+  if (kind === 'colloc') return 'chưa học';       // cụm từ không chia tầng
   const tier = getTier(TIER_ORDER);
   return tier === ALL_TIERS ? 'chưa phân loại' : `chưa phân loại ở tầng ${TIER_INFO[tier].label.toLowerCase()}`;
 }
@@ -140,6 +153,9 @@ function renderMeaning(entry) {
   const example = entry.examples?.[0];
   return el('div', { class: 'card back' }, [
     el('div', { class: 'meaning', text: entry.vi }),
+    // Với cụm từ, `note` là DẠNG SAI hay mắc ("✗ không dùng: do a decision"). Đó mới là thứ cần nhớ —
+    // nghĩa của `make a decision` thì đoán được, chọn nhầm động từ mới là chỗ mất điểm.
+    entry.note ? el('div', { class: 'colloc-wrong', text: entry.note }) : '',
     example
       ? el('div', { class: 'example' }, [
           el('div', { class: 'en', text: example.en }),
@@ -202,7 +218,7 @@ function renderDone(store, { finished, untriaged }) {
   if (untriaged === 0) {
     return sessionDone({
       title: 'Phân loại xong',
-      headline: `${doneCount} từ đã chấm`,
+      headline: `${doneCount} ${kindLabel()} đã chấm`,
       changed: 'Mọi từ trong deck đã được phân loại. Từ nào chưa thành thạo đã vào hàng đợi học.',
       actions: [library, backButton('vocab'), fixLast],
     });
@@ -211,8 +227,8 @@ function renderDone(store, { finished, untriaged }) {
   const later = skipped.size > 0 ? ` · ${skipped.size} từ để sau` : '';
   return sessionDone({
     title: finished ? 'Xong lượt này' : 'Hết từ rồi',
-    headline: `${doneCount} từ đã chấm`,
-    note: `còn ${untriaged} từ chưa phân loại${later}`,
+    headline: `${doneCount} ${kindLabel()} đã chấm`,
+    note: `còn ${untriaged} ${kindLabel()} chưa phân loại${later}`,
     changed: 'Từ nào chưa thành thạo đã vào hàng đợi học — mở Ôn tập từ vựng là học được ngay.',
     actions: [
       el('button', { class: 'primary', onClick: () => { resetTriage(); store.refresh(); } }, [

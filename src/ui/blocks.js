@@ -253,3 +253,29 @@ export function sessionDone({ title, headline, note, changed, extra = [], action
     ...actions,
   ]);
 }
+
+/**
+ * Một NHÓM mục điều hướng gọn: tiêu đề nhóm + các dòng xếp lưới.
+ *
+ * Trước đây mục Từ vựng và Bài thi bày 7–8 nút to full-width, mỗi nút hai dòng chữ, nên trên điện thoại
+ * phải cuộn rất nhiều mới thấy hết. Gộp theo nhóm + xếp hai cột trên màn rộng thì nhìn một lần là thấy
+ * hết, và biết mục nào họ hàng với mục nào.
+ *
+ * @param {string} title
+ * @param {Array<{title: string, note?: string, path?: string, onClick?: Function, primary?: boolean}>} items
+ * @returns {HTMLElement}
+ */
+export function navGroup(title, items) {
+  const live = items.filter(Boolean);
+  if (live.length === 0) return '';
+  return el('section', { class: 'nav-group' }, [
+    el('h2', { class: 'nav-group-title', text: title }),
+    el('div', { class: 'nav-grid' }, live.map((item) => el('button', {
+      class: item.primary ? 'nav-tile primary' : 'nav-tile',
+      onClick: item.onClick ?? (() => goTo(item.path)),
+    }, [
+      el('span', { text: item.title }),
+      item.note ? el('small', { text: item.note }) : '',
+    ]))),
+  ]);
+}

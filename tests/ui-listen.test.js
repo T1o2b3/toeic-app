@@ -38,11 +38,13 @@ beforeAll(async () => {
 });
 
 describe('mục Bài thi', () => {
-  it('có nút Luyện nghe Part 2 với số câu và gợi ý tai nghe', async () => {
+  it('Part 2 nằm trong nhóm "Luyện phần Nghe", có số câu và nhắc tai nghe', async () => {
     await go('#/exams');
-    expect(text()).toContain('Luyện nghe Part 2');
-    expect(text()).toContain('3 câu');
+    // Nhắc tai nghe nằm ở TIÊU ĐỀ NHÓM, không lặp lại trên từng nút (D52: gộp cho bớt cuộn).
+    expect(text()).toContain('Luyện phần Nghe');
     expect(text()).toContain('tai nghe');
+    expect(text()).toContain('Part 2 · Hỏi - đáp');
+    expect(text()).toContain('3 câu');
   });
 });
 

@@ -404,3 +404,30 @@ a.ext-link { color: var(--accent); font-size: 0.8rem; }
   .actions.four { grid-template-columns: 1fr 1fr; }
   button.grade { padding: 0.85rem 0.5rem; min-height: 3.5rem; }
 }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Gộp mục thành nhóm (D52): bớt cuộn ở mục Từ vựng và Bài thi.
+   ───────────────────────────────────────────────────────────────────────── */
+.nav-group { margin-bottom: 1.5rem; }
+.nav-group-title { font-size: 0.75rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05rem; margin: 0 0 0.5rem; }
+/* Hai cột khi đủ rộng: 6 mục thành 3 hàng thay vì 6 hàng. Trên điện thoại vẫn một cột cho dễ bấm. */
+.nav-grid { display: grid; grid-template-columns: 1fr; gap: 0.5rem; }
+@media (min-width: 30rem) { .nav-grid { grid-template-columns: 1fr 1fr; } }
+
+.nav-tile {
+  background: var(--surface); color: var(--fg); border: 1px solid var(--border);
+  text-align: left; padding: 0.7rem 0.85rem; width: 100%;
+}
+.nav-tile small { color: var(--muted); margin-top: 0.15rem; }
+.nav-tile.primary { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+.nav-tile.primary small { color: #fff; opacity: 0.85; }
+.nav-tile:active { transform: translateY(1px); }
+/* Mục "làm ngay" đứng một mình chiếm cả hàng — nó là việc chính, không phải một lựa chọn ngang hàng. */
+@media (min-width: 30rem) { .nav-tile.primary { grid-column: 1 / -1; } }
+
+/* Hai lựa chọn của thẻ "Hôm nay" (D52). */
+.today-lead { font-size: 0.85rem; color: var(--muted); margin: 0 0 0.6rem; }
+button.pick { text-align: left; }
+/* Lý do chọn — phần trả lời "sao lại là cái này", để Huy tin vào gợi ý thay vì bấm bừa. */
+.pick-why { font-style: italic; opacity: 0.85; margin-top: 0.15rem; }
+button.primary .pick-why { color: #fff; }

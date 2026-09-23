@@ -469,6 +469,35 @@ lúc nào không rõ, trái với chính khảo sát của project.
   hết việc đến hạn thì vẫn có nút.
 - **Không thêm** điểm, huy hiệu, bảng xếp hạng, thông báo đẩy. Ràng buộc #8 và RESEARCH.md vẫn đứng.
 
+**D52. Nút "hôm nay" cho HAI lựa chọn, chọn theo chỗ đang yếu.** Trước đây nút trỏ cứng: có việc từ
+vựng thì vào ôn thẻ, không thì vào Part 5 — bất kể đang hổng Part 7 hay chưa đụng Part 4 bao giờ.
+- Bộ chấm ở `logic/suggest.js`, một **bảng điểm 0–100 tra được** (`NEED`) thay vì rải công thức: thẻ quá
+  hạn tăng theo số lượng (3 thẻ = việc vặt, 25 thẻ = vượt mọi thứ, theo R6 + D03); phần **chưa làm câu
+  nào** = 70 (lỗ hổng lớn nhất vì không biết mình yếu tới đâu); làm dưới 5 câu = 55 "chưa đủ kết luận";
+  đủ số liệu thì càng sai càng cao. Mỗi gợi ý mang theo **lý do bằng chữ** để tin được mà bấm.
+- **Hai lựa chọn, bắt buộc khác loại** (từ vựng / cụm từ / đọc / nghe). Một lựa chọn duy nhất mà không
+  hợp hoàn cảnh là mất cả phiên: đang ngồi chỗ ồn thì không luyện nghe được.
+- `logic/today.js` bị **xoá** — `planToday`/`planTarget` không còn ai dùng.
+- Bộ chấm dùng lại ở màn Bài thi để đánh dấu "← cần nhất", nên gộp nhóm không làm mất dấu chỗ bắt đầu.
+
+**D53. Cụm từ là THẺ HỌC, dùng chung bộ máy từ vựng — học mới thì tách, ôn lại thì chung.**
+Bản D50 mới chỉ là danh sách tra cứu. Nay cụm từ vào hẳn vòng học.
+- **Không dựng hệ thống song song.** `reduceVocabState` chỉ khoá theo `wordId`, mọi hàm hàng đợi đều nhận
+  `entries` từ ngoài, nên chỉ cần `collocationEntries()` cho cụm một hình dạng giống mục deck là được
+  FSRS, 4 mức, đánh dấu, nhật ký append-only miễn phí. Id `col-xxxx` không đụng `tsl-`/`bsl-`.
+- **Học mới TÁCH** (`#/triage?kind=colloc`): nhìn `apply` đoán nghĩa là một việc, nhớ `apply FOR chứ
+  không phải apply TO` là việc khác. Màn đổi chữ theo chế độ ("Bạn dùng được CỤM này tới mức nào?").
+- **Ôn lại CHUNG một hàng đợi**: lịch FSRS tính theo từng thẻ nên trộn không làm sai lịch, mà tách ra thì
+  cụm từ sẽ bị bỏ quên.
+- Mặt sau thẻ cụm đặt **dạng sai vào chỗ dễ thấy** — thứ cần nhớ không phải nghĩa mà là "đừng viết
+  thành do a decision".
+- Thống kê từ vựng (`vocabProgress`, `countByLevel`) vẫn chỉ đếm deck, không cộng cụm vào.
+
+**D54. Mục Từ vựng và Bài thi gộp theo nhóm.** Trước đây mỗi mục là một nút full-width hai dòng, 7–8 nút
+xếp dọc. Nay `navGroup()` ở `blocks.js`: Từ vựng = **Học** / **Tra cứu & xem lại**; Bài thi = **Luyện phần
+Đọc** / **Luyện phần Nghe** (gộp theo KỸ NĂNG, vì lúc chọn Huy cân nhắc "giờ có đeo tai nghe được không",
+không phải số thứ tự Part). Hai cột từ 30rem trở lên; việc chính chiếm cả hàng. Bảng lỗ hổng gập vào.
+
 ## Câu hỏi còn mở
 - ~~Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng?~~ → **Đã giải quyết, xem D35** (chung repo, xét lại khi ~100 MB).
 - ~~Q2 (trước M2): xác nhận license của TSL 1.2 và NGSL.~~ → **Đã giải quyết, xem D18.**

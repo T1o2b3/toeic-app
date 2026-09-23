@@ -6,7 +6,7 @@
 ## Trạng thái hiện tại
 - Giai đoạn: 1 — MVP. **M0–M4 và M6 XONG. M5 code xong, chờ Huy cấu hình Supabase.**
 - **App đã dùng học thật được**: https://toeic-app.huybndc-451.workers.dev
-- Repo private: https://github.com/huybndc/toeic-app — **792 test pass**.
+- Repo private: https://github.com/huybndc/toeic-app — **801 test pass**.
 
 ## Dùng app thế nào (cho Huy)
 1. Mở link trên (máy Mac hoặc iPhone).
@@ -25,6 +25,48 @@
    \`Backspace\` lùi về từ trước, \`S\` để sau.
 6. **Lưu ý quan trọng:** dữ liệu hiện lưu RIÊNG trên từng máy (IndexedDB), chưa đồng bộ.
    Đồng bộ Mac ↔ iPhone là M5. Học trên một máy trước để tránh lệch dữ liệu.
+
+## Phiên 2026-09-24 — Gợi ý theo chỗ yếu · học cụm từ · gộp nhóm (D52–D54) — XONG, ĐÃ PUSH
+
+**1. Nút "hôm nay" → HAI lựa chọn, chọn theo chỗ đang yếu (D52).** Trước đây nút trỏ cứng vào ôn thẻ
+rồi Part 5, bất kể đang hổng phần nào.
+- `logic/suggest.js` mới: bảng điểm `NEED` 0–100 tra được. Thẻ quá hạn tăng theo SỐ LƯỢNG (3 thẻ = việc
+  vặt; 25 thẻ = vượt mọi thứ, theo R6 + D03) · phần **chưa làm câu nào** = 70 (hổng lớn nhất) · làm dưới
+  5 câu = 55 "chưa đủ kết luận" · đủ số liệu thì càng sai càng cao.
+- Mỗi lựa chọn kèm **lý do bằng chữ**: *"vì chưa làm câu nào — chỗ hổng lớn nhất"*.
+- **Hai lựa chọn bắt buộc KHÁC LOẠI** (từ vựng / cụm từ / đọc / nghe): một lựa chọn duy nhất mà không hợp
+  hoàn cảnh là mất cả phiên — đang ngồi chỗ ồn thì không luyện nghe được.
+- **Xoá `logic/today.js`** (`planToday`/`planTarget`) — không còn ai dùng. 14 test mới cho `suggest.js`.
+
+**2. Cụm từ học được như từ vựng (D53).** Huy: "collocation chỉ là liệt kê chứ không có chức năng học".
+- **Không dựng hệ thống song song.** `reduceVocabState` chỉ khoá theo `wordId` và mọi hàm hàng đợi đều
+  nhận `entries` từ ngoài → chỉ cần `collocationEntries()` cho cụm hình dạng giống mục deck là được FSRS,
+  4 mức, đánh dấu, nhật ký append-only miễn phí. Id `col-xxxx` không đụng `tsl-`/`bsl-`.
+- **Học MỚI tách riêng** (`#/triage?kind=colloc`, nút "Học cụm từ mới" ở mục Từ vựng). Màn đổi chữ theo
+  chế độ: *"Bạn dùng được CỤM này tới mức nào?"*, *"còn 142 cụm từ chưa học"*.
+- **ÔN LẠI chung một hàng đợi** với từ vựng — mục Từ vựng ghi *"7 thẻ (từ + cụm)"*.
+- Mặt sau thẻ cụm hiện **dạng sai** (`✗ không dùng: do a decision`) — thứ cần nhớ không phải nghĩa.
+- Đã chạy thật trọn vòng trên trình duyệt: học 3 cụm → lượt ôn có cả `vacation`, `client` lẫn
+  `make a decision`, `make an appointment`. 6 test mới ở `tests/ui-colloc-learn.test.js`.
+
+**3. Gộp nhóm cho bớt cuộn (D54).** Trước đây mỗi mục là một nút full-width hai dòng, 7–8 nút xếp dọc.
+- `navGroup()` ở `blocks.js` (dùng ở cả hai màn). **Từ vựng** = `Học` / `Tra cứu & xem lại`.
+  **Bài thi** = `Luyện phần Đọc` / `Luyện phần Nghe` — gộp theo KỸ NĂNG, vì lúc chọn Huy cân nhắc
+  "giờ có đeo tai nghe được không", không phải số thứ tự Part.
+- Hai cột từ 30rem trở lên; việc chính chiếm cả hàng. Bảng lỗ hổng gập vào `<details>`.
+- Đo ở 375×812: cả hai màn còn **~1,3–1,4 màn hình**.
+
+**4. Gợi ý phát triển tiếp — đã làm luôn:** dùng lại chính bộ chấm ở màn Bài thi để đánh dấu
+**"← cần nhất"** lên đúng một phần. Gộp nhóm cho gọn thì dễ mất dấu "nên bắt đầu từ đâu"; đánh dấu này
+trả lại điều đó mà không phải đọc bảng số. Có test canh "đúng một phần được đánh dấu".
+
+**801 test pass.** Đã kiểm thật trên trình duyệt ở 375×812, không lỗi console, build sạch.
+
+### Bước tiếp theo
+- Huy học thử vài lượt cụm từ rồi cho biết: 4 mức chấm (không biết / đoán được / quên chính tả / thành
+  thạo) có hợp với cụm từ không, hay cần thang khác (vd "nhớ cụm nhưng quên giới từ").
+- Chưa làm: gợi ý mới xét phần thi + từ vựng, **chưa xét dạng câu** (word-form, verb-tense…). Muốn nút
+  "hôm nay" chỉ thẳng "luyện dạng word-form" thì cần lọc câu theo `errorType` — việc riêng, chưa làm.
 
 ## Phiên 2026-09-23 (khuya) — Làm lại UX-UI quanh "động lực quay lại" (D51) — XONG, ĐÃ PUSH
 

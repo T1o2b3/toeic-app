@@ -95,12 +95,19 @@ const SETS = {
  *   test nào cần mặt cắt đề thật thì truyền vào một ngân hàng đủ 12 dạng)
  * @returns {Promise<object>} store, root và các hàm thao tác/đọc màn hình
  */
+/** Cụm từ mẫu — đủ để kiểm luồng học, không cần cả 142 cụm thật. */
+const COLLOCATIONS = [
+  { id: 'col-0001', chunk: 'pay attention to', vi: 'chú ý đến', wrong: 'give attention to', theme: 'Động từ + danh từ', example: 'Pay attention to the deadline.' },
+  { id: 'col-0002', chunk: 'comply with', vi: 'tuân thủ', wrong: 'comply to', theme: 'Động từ + giới từ' },
+];
+
 export async function bootApp(override = {}) {
   const questions = override.questions ? { ...QUESTIONS, entries: override.questions } : QUESTIONS;
   const fetchImpl = async (url) => {
     const data = String(url).includes('vocab-toeic-tsl') ? DECK
       : String(url).includes('questions-part5') ? questions
       : String(url).includes('listening-part2') ? LISTENING
+      : String(url).includes('collocations') ? { version: 1, entries: override.collocations ?? COLLOCATIONS }
       : /sets-part(\d)/.test(String(url)) ? { set: 'x', part: 0, version: 1, entries: SETS[Number(String(url).match(/sets-part(\d)/)[1])] ?? [] } : null;
     return data ? { ok: true, status: 200, json: async () => data } : { ok: false, status: 404 };
   };

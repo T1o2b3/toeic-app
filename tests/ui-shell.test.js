@@ -68,7 +68,7 @@ describe('dashboard khi chưa học gì', () => {
 
   it('người mới (chưa phân loại từ nào): nút chính mời phân loại từ vựng, không phải câu Part 5', async () => {
     expect(text()).toContain('Bắt đầu: phân loại từ vựng');
-    expect(text()).not.toContain('15 phút hôm nay');
+    expect(root.querySelectorAll('.panel.today button.pick')).toHaveLength(0);
     await click((t) => t.includes('Bắt đầu: phân loại'));
     expect(window.location.hash).toBe('#/triage');
     await go('#/');
@@ -87,7 +87,7 @@ describe('dashboard khi chưa học gì', () => {
   });
 
   it('không còn các nút chi tiết của mục Từ vựng / Bài thi ở trang chủ', () => {
-    for (const gone of ['Ôn tập từ vựng', 'Kho từ vựng', 'Luyện Part 5', 'Luyện nghe Part 2']) {
+    for (const gone of ['Ôn tập từ vựng', 'Kho từ vựng', 'Luyện phần Đọc', 'Luyện phần Nghe']) {
       expect(text(), gone).not.toContain(gone);
     }
   });
@@ -133,11 +133,20 @@ describe('dashboard sau khi học', () => {
     expect(kpi).toContain('1 câu · 7 ngày qua');
   });
 
-  it('đã có từ mới để học: nút "15 phút hôm nay" dẫn tới ôn thẻ (mô tả nêu số từ mới)', async () => {
-    expect(text()).toContain('15 phút hôm nay');
-    expect(text()).toMatch(/2 từ mới/);      // "không biết" và "đoán được" thành thẻ mới; "thành thạo" bị loại
-    await click((t) => t.includes('15 phút hôm nay'));
-    expect(window.location.hash).toBe('#/review');
+  it('thẻ "Hôm nay" cho HAI lựa chọn, mỗi lựa chọn nói rõ LÝ DO được chọn', async () => {
+    const picks = [...root.querySelectorAll('.panel.today button.pick')];
+    expect(picks).toHaveLength(2);
+    for (const b of picks) expect(b.querySelector('.pick-why').textContent).toMatch(/^vì .+/);
+    // Hai lựa chọn phải khác loại nhau, không phải hai phần nghe hay hai việc từ vựng.
+    expect(text()).toContain('Chọn một trong hai');
+  });
+
+  it('hai lựa chọn dẫn đúng chỗ khi bấm', async () => {
+    const first = root.querySelector('.panel.today button.pick');
+    const label = first.querySelector('span').textContent;
+    first.click();
+    await tick(50);
+    expect(window.location.hash, `nút "${label}"`).not.toBe('#/');
     await go('#/');
   });
 
@@ -183,8 +192,11 @@ describe('dashboard sau khi học', () => {
 describe('mục Từ vựng và Bài thi', () => {
   it('Từ vựng gom mọi nút học từ; ô tra nhanh chuyển sang Tra từ khi bấm Enter', async () => {
     await go('#/vocab');
-    for (const label of ['Ôn tập từ vựng', 'Phân loại từ vựng', 'Ôn chủ động', 'Kho từ vựng']) expect(text()).toContain(label);
-    expect(text()).not.toContain('Luyện Part 5');
+    for (const label of ['Ôn tập', 'Phân loại từ vựng', 'Ôn chủ động', 'Kho từ vựng']) expect(text()).toContain(label);
+    expect(text()).not.toContain('Luyện phần Đọc');
+    // Gộp thành nhóm để bớt cuộn: "Học" (việc tốn công) và "Tra cứu & xem lại" (mở ra xem rồi đóng).
+    expect([...root.querySelectorAll('.nav-group-title')].map((h) => h.textContent))
+      .toEqual(['Học', 'Tra cứu & xem lại']);
     const input = root.querySelector('input');
     input.value = 'amend';
     input.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
@@ -192,10 +204,15 @@ describe('mục Từ vựng và Bài thi', () => {
     expect(window.location.hash).toBe('#/lookup?q=amend');
   });
 
-  it('Bài thi gom luyện Part 5 và nghe, không có nút từ vựng', async () => {
+  it('Bài thi gom theo KỸ NĂNG (Đọc / Nghe), không có nút từ vựng', async () => {
     await go('#/exams');
-    expect(text()).toContain('Luyện Part 5');
-    expect(text()).toContain('Luyện nghe Part 2');
+    expect([...root.querySelectorAll('.nav-group-title')].map((h) => h.textContent))
+      .toEqual(['Luyện phần Đọc', 'Luyện phần Nghe · nên đeo tai nghe']);
+    expect(text()).toContain('Part 5 · Điền câu');
+    expect(text()).toContain('Part 2 · Hỏi - đáp');
+    // Gộp cho gọn nhưng vẫn phải chỉ ra chỗ bắt đầu: đúng MỘT phần được đánh dấu "cần nhất".
+    expect([...root.querySelectorAll('.nav-tile')].filter((b) => b.textContent.includes('cần nhất')))
+      .toHaveLength(1);
     expect(text()).toContain('đúng 100%');
     expect(text()).not.toContain('Kho từ vựng');
   });

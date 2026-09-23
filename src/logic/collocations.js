@@ -36,3 +36,29 @@ export function groupByTheme(list) {
   }
   return groups;
 }
+
+/**
+ * Biến cụm từ thành THẺ HỌC dùng chung bộ máy từ vựng (FSRS, phân loại, nhật ký).
+ *
+ * Cố ý không dựng một hệ thống học song song: `reduceVocabState` chỉ khoá theo `wordId` và mọi hàm
+ * hàng đợi (`reviewQueue`, `countUntriaged`, `reviewCounts`) đều nhận `entries` từ bên ngoài. Nên chỉ
+ * cần cho cụm từ một hình dạng giống mục deck là được lịch ôn, chấm 4 mức, đánh dấu và thống kê miễn phí.
+ * Id `col-xxxx` không đụng id deck (`tsl-`/`bsl-`) nên nhật ký chung vẫn phân biệt được.
+ *
+ * Mặt sau của thẻ cố tình đặt **dạng sai vào `note`**: lúc ôn, thứ cần nhớ không chỉ là "cụm này nghĩa gì"
+ * mà là "đừng viết thành give attention".
+ *
+ * @param {Array<object>} bank - nội dung collocations.json
+ * @returns {Array<object>} mục có hình dạng như deck từ vựng
+ */
+export function collocationEntries(bank) {
+  return (bank ?? []).map((c) => ({
+    id: c.id,
+    word: c.chunk,
+    vi: c.vi,
+    pos: [c.theme],
+    examples: c.example ? [{ en: c.example, vi: '' }] : [],
+    note: c.wrong ? `✗ không dùng: ${c.wrong}` : '',
+    isCollocation: true,
+  }));
+}
