@@ -114,9 +114,11 @@ export function part2Key(item) {
 
 export function mentionsChoiceLetter(text) {
   const value = String(text ?? '');
-  return /\((?:[ABC])\)/.test(value)
-    || /(?:câu|phương án|đáp án|đáp án đúng|lựa chọn|option|answer|choice)\s+(?:là\s+)?["'“‘]?[ABC]\b/i.test(value)
-    || /(?:câu|phương án|đáp án)\s+[ABC]\s*(?:,|và|hoặc)\s*[ABC]\b/i.test(value);
+  // A–D: dùng chung cho Part 2 (3 phương án) lẫn Part 5 và các bộ (4 phương án) — bỏ sót D là đổi chỗ sai (D64).
+  // `(?!\p{L})` thay cho `\b`: `\b` chỉ hiểu chữ ASCII nên "câu dễ", "câu bị động" bị đọc thành "câu D", "câu B".
+  return /\((?:[A-D])\)/.test(value)
+    || /(?:câu|phương án|đáp án|đáp án đúng|lựa chọn|option|answer|choice)\s+(?:là\s+)?["'“‘]?[A-D](?!\p{L})/iu.test(value)
+    || /(?:câu|phương án|đáp án)\s+[A-D]\s*(?:,|và|hoặc)\s*[A-D](?!\p{L})/iu.test(value);
 }
 
 /**

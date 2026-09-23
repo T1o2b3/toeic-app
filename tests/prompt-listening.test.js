@@ -105,6 +105,8 @@ describe('không được nhắc chữ cái phương án (vị trí sẽ bị xo
   it.each([
     'Đáp án đúng là B vì nói về giờ.', 'Câu A lặp lại từ "secure".', 'Phương án C trả lời câu hỏi Where.',
     'Bẫy: (B) nghe giống.', 'Câu B và C đều sai.', 'đáp án là C', 'Correct answer B is indirect.',
+    // Part 5 và các bộ có 4 phương án: chỉ nhắc D cũng phải bắt, không thì đổi chỗ xong lời giải nói sai (D64).
+    "Người học dễ chọn 'Having exhausted' (D) vì nhầm thể chủ động.", 'Phương án D sai vì thiếu giới từ.', 'Câu C hoặc D đều sai nghĩa.',
   ])('bắt: %s', (text) => {
     expect(mentionsChoiceLetter(text)).toBe(true);
   });
@@ -113,6 +115,8 @@ describe('không được nhắc chữ cái phương án (vị trí sẽ bị xo
     'Câu đáp nhắc tới "the HR desk" trả lời trực tiếp người cần liên hệ.',
     'Từ "secure" lặp lại từ "security" trong câu hỏi.',
     'A manager may approve it.', 'Người nói dùng mạo từ a hoặc an.', '', undefined,
+    // Chữ thường ngay trước chữ có dấu tiếng Việt không phải chữ cái phương án (bắt nhầm thật: p5-0207).
+    'Người học không dịch nghĩa toàn câu dễ bị sập bẫy.', 'Đây là câu bị động nên cần quá khứ phân từ.', 'Vế sau câu cũng dùng thì hiện tại.',
   ])('không bắt nhầm: %s', (text) => {
     expect(mentionsChoiceLetter(text)).toBe(false);
   });
