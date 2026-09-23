@@ -98,11 +98,13 @@ toeic-app/
   ✅ 2026-09-20: `#/exam` — đề đủ / Nghe / Đọc / từng Part, tính giờ, tự nộp khi hết giờ, kết quả + xem lại câu sai (D38).
   Đủ nội dung để dựng đúng 194 câu (đã kiểm bằng dữ liệu thật); mới đủ MỘT đề nên chưa có nhiều đề khác nhau.
 - [~] ~~M16. Làm dở trên máy này, tiếp trên máy khác~~ — **bỏ (D63)**: luôn làm trọn một lần ngồi; cùng máy thì đã tiếp được.
-- [ ] M21. Thi thử giống đề thật hơn (Huy gửi mô tả giao diện thi của IIG, 2026-09-20 — bảng đối chiếu đầy đủ
+- [x] M21. Thi thử giống đề thật hơn (Huy gửi mô tả giao diện thi của IIG, 2026-09-20 — bảng đối chiếu đầy đủ
   ở PROGRESS.md). Chỉ áp cho màn THI THỬ; màn luyện giữ nghe lại + chỉnh tốc độ.
   - [x] Audio phát MỘT LẦN, không tua, không nghe lại ✅ 2026-09-20 (Huy chốt làm mục này trước).
-  - [ ] Tự chuyển câu sau ~5 giây dừng.
-  - [ ] Đánh dấu câu chưa chắc để quay lại (chỉ có tác dụng ở phần Đọc).
+  - [x] Tự chuyển câu sau ~5 giây dừng ✅ 2026-09-23: nghe xong đếm ngược (Part 2 = 5 giây, bộ Part 3/4 = 5 giây × số câu,
+    mốc ở `pace.js`) rồi sang câu sau và PHÁT LUÔN. Tự bấm chuyển câu thì huỷ đếm; câu cuối phần Nghe không tự chuyển.
+  - [x] Đánh dấu câu chưa chắc để quay lại (phần Đọc) ✅ 2026-09-23: nút ⚐ mỗi câu, ⚑ trên ô danh sách câu, hộp nộp bài
+    nhắc số câu đang đánh dấu; lưu cùng bài làm dở. Kèm: nút "Danh sách câu (3/9)" hiện số câu đã làm của phần.
 
 ## Giai đoạn 5 — Hoàn thiện & mở rộng (tuần 9–10 trở đi, ~6 giờ + liên tục)
 - [ ] M17. Trang ngữ pháp & từ nối (tra cứu + liên kết câu từng sai).

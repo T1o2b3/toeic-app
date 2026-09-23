@@ -34,7 +34,7 @@ export function renderRunning(view) {
     el('div', { class: 'exam-bar' }, [
       el('span', { class: remaining <= 300 ? 'exam-clock low' : 'exam-clock', text: formatClock(remaining) }),
       el('span', { class: 'progress', text: `${many ? `${phase.label} · ` : ''}${PART_LABEL[Number(unit.part.slice(4))]} · ${unitRange(unit, numbers)}` }),
-      el('button', { class: 'link', text: view.showPalette ? 'Ẩn danh sách' : 'Danh sách câu', onClick: view.onTogglePalette }),
+      el('button', { class: 'link', text: `${view.showPalette ? 'Ẩn danh sách' : 'Danh sách câu'} (${view.phaseAnswered}/${view.phaseTotal})`, onClick: view.onTogglePalette }),
     ]),
     view.showPalette ? renderPalette(view) : '',
     renderUnit(unit, view.unitCtx, numbers),
@@ -88,11 +88,12 @@ function renderPalette(view) {
     const unit = units[i];
     const done = unit.questions.filter((q) => answers[q.id]).length;
     const state = done === 0 ? '' : done === unit.questions.length ? ' done' : ' part';
+    const flagged = unit.questions.some((q) => view.flags[q.id]);
     const list = unit.questions.map((q) => numbers.get(q.id));
     cells.push(el('button', {
-      class: `pal${state}${i === index ? ' current' : ''}`,
-      title: `${PART_LABEL[Number(unit.part.slice(4))]}: ${done}/${unit.questions.length} câu`,
-      text: list.length > 1 ? `${list[0]}–${list[list.length - 1]}` : String(list[0]),
+      class: `pal${state}${flagged ? ' flagged' : ''}${i === index ? ' current' : ''}`,
+      title: `${PART_LABEL[Number(unit.part.slice(4))]}: ${done}/${unit.questions.length} câu${flagged ? ' · có câu đánh dấu' : ''}`,
+      text: `${flagged ? '⚑ ' : ''}${list.length > 1 ? `${list[0]}–${list[list.length - 1]}` : String(list[0])}`,
       onClick: () => view.onJump(i),
     }));
   }
@@ -102,8 +103,9 @@ function renderPalette(view) {
 /** Hộp xác nhận nộp bài, nói rõ còn bao nhiêu câu chưa trả lời. */
 function renderConfirm(view) {
   const left = view.totalCount - view.answeredCount;
+  const flagged = view.flaggedCount > 0 ? ` ${view.flaggedCount} câu đang đánh dấu để xem lại.` : '';
   return confirmCard({
-    message: left > 0 ? `Còn ${left} câu chưa trả lời. Nộp bài bây giờ?` : 'Đã trả lời hết. Nộp bài?',
+    message: `${left > 0 ? `Còn ${left} câu chưa trả lời.` : 'Đã trả lời hết.'}${flagged} Nộp bài?`,
     confirmLabel: 'Nộp bài', onConfirm: view.onSubmit, onCancel: view.onCancel,
   });
 }

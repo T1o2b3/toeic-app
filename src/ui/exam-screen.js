@@ -14,9 +14,11 @@ import { examPhases, numberQuestions, formatClock } from '../logic/exam-time.js'
 import { estimateScore } from '../logic/score.js';
 import { clipSequence, turnSequence, audioUrl } from '../logic/listen.js';
 import { getListenSpeed } from '../data/prefs.js';
+import { targetFor } from '../logic/pace.js';
 import { createEvent } from '../logic/events.js';
 import { createPlayerSlot } from './audio-player.js';
 import { renderRunning, phaseNotice } from './exam-run.js';
+import { advanceText } from './exam-unit.js';
 import { renderResult } from './exam-result.js';
 import { renderSetup } from './exam-setup.js';
 
@@ -46,6 +48,8 @@ let heard = {};              // id đơn vị → số lần đã nghe
 let playError = null;
 let currentClip = null;      // Clip đang phát (để highlight UI)
 let activePart = null;       // Part đang chọn để xem lại ở màn kết quả
+let advanceAt = 0;           // mốc tự sang câu sau khi hết khoảng lặng sau đoạn nghe (0 = không đếm) — M21
+let flags = {};              // id câu → đánh dấu "chưa chắc, quay lại sau" (phần Đọc) — M21
 
 const slot = createPlayerSlot();
 const getPlayer = () => slot.get();
@@ -96,6 +100,7 @@ function restoreExamState(store) {
   startedAt = saved.startedAt;
   deadline = saved.deadline;
   heard = saved.heard ?? {};
+  flags = saved.flags ?? {};
   phase = 'running';
   timer = setInterval(() => tick(store), 1000);
 }
@@ -112,6 +117,8 @@ function start(store, mode) {
   phaseIndex = 0;
   index = 0;
   heard = {};
+  flags = {};
+  advanceAt = 0;
   confirming = false;
   switching = false;
   switched = false;
@@ -125,8 +132,14 @@ function start(store, mode) {
   store.refresh();
 }
 
-/** Mỗi giây: cập nhật đồng hồ tại chỗ; hết giờ thì sang phần sau hoặc tự nộp. */
+/** Mỗi giây: cập nhật đồng hồ tại chỗ; hết khoảng lặng thì sang câu sau; hết giờ thì sang phần sau hoặc tự nộp. */
 function tick(store) {
+  if (advanceAt) {
+    const left = Math.ceil((advanceAt - Date.now()) / 1000);
+    const note = document.querySelector('.advance-note');
+    if (note) note.textContent = advanceText(left);
+    if (left <= 0) autoAdvance(store);
+  }
   const remaining = Math.ceil((deadline - Date.now()) / 1000);
   const clock = document.querySelector('.exam-clock');
   if (clock) {
@@ -143,6 +156,7 @@ function nextPhase(store, timedOut) {
   getPlayer().stop();
   phaseIndex += 1;
   index = phases[phaseIndex].from;
+  advanceAt = 0;
   deadline = Date.now() + phases[phaseIndex].seconds * 1000;
   switching = false;
   switched = timedOut;
@@ -157,6 +171,7 @@ const unitQuestionCount = (u) => u.questions.length;
 const countAnswered = (list) => list.reduce((n, u) => n + u.questions.filter((q) => answers[q.id]).length, 0);
 const countQuestions = (list) => list.reduce((n, u) => n + unitQuestionCount(u), 0);
 const phaseUnits = () => units.slice(phases[phaseIndex].from, phases[phaseIndex].to);
+const isReadingUnit = (unit) => unit.part === 'part5' || unit.part === 'part6' || unit.part === 'part7';
 
 function renderRunningScreen(store) {
   const unit = units[index];
@@ -164,16 +179,20 @@ function renderRunningScreen(store) {
   const current = phaseUnits();
 
   const view = {
-    units, index, phases, phaseIndex, numbers, answers, showPalette, confirming, switching,
+    units, index, phases, phaseIndex, numbers, answers, flags, showPalette, confirming, switching,
     remaining: Math.max(0, Math.ceil((deadline - Date.now()) / 1000)),
     atLastUnitOfExam: index >= units.length - 1,
     totalCount: countQuestions(units),
     answeredCount: countAnswered(units),
     phaseTotal: countQuestions(current),
     phaseAnswered: countAnswered(current),
+    flaggedCount: units.reduce((n, u) => n + u.questions.filter((q) => flags[q.id]).length, 0),
     unitCtx: {
       answers, playing, heard: heard[unit.id] ?? 0, error: playError,
       highlight: currentClip,
+      advanceIn: advanceAt ? Math.max(0, Math.ceil((advanceAt - Date.now()) / 1000)) : 0,
+      flags: isReadingUnit(unit) ? flags : null,
+      toggleFlag: (id) => { flags = { ...flags, [id]: !flags[id] }; saveExamState(); store.refresh(); },
       pick: (id, letter) => { answers = { ...answers, [id]: letter }; confirming = false; saveExamState(); store.refresh(); },
       play: () => play(store, unit),
     },
@@ -196,6 +215,7 @@ function go(store, step) {
   getPlayer().stop();
   const { from, to } = phases[phaseIndex];
   index = Math.min(to - 1, Math.max(from, index + step));
+  advanceAt = 0;
   switched = false;
   playing = false;
   playError = null;
@@ -233,6 +253,11 @@ async function play(store, unit) {
     });
     if (outcome === 'done') {
       heard = { ...heard, [unit.id]: (heard[unit.id] ?? 0) + 1 };
+      // Như băng đề thật: nghe xong là khoảng lặng để chọn, rồi tự sang câu sau. Câu cuối của phần thì không —
+      // sang phần Đọc phải tự xác nhận (không quay lại được).
+      if (index < phases[phaseIndex].to - 1) {
+        advanceAt = Date.now() + targetFor(Number(unit.part.slice(4)), unit.questions.length) * 1000;
+      }
       saveExamState();
     }
   } catch (error) {
@@ -242,6 +267,14 @@ async function play(store, unit) {
     currentClip = null;
     store.refresh();
   }
+}
+
+/** Hết khoảng lặng sau đoạn nghe: sang đơn vị kế và PHÁT LUÔN, như băng đề thật chạy liền (M21). */
+function autoAdvance(store) {
+  advanceAt = 0;
+  go(store, 1);
+  const unit = units[index];
+  if (isAudioUnit(unit) && !(heard[unit.id] > 0)) play(store, unit);
 }
 
 /** Nộp bài. */
@@ -318,6 +351,8 @@ function reset() {
   playing = false;
   playError = null;
   heard = {};
+  flags = {};
+  advanceAt = 0;
   currentClip = null;
   activePart = null;
   index = 0;
@@ -332,7 +367,7 @@ export function resetExam() {
 function saveExamState(mode = form?.mode) {
   if (phase !== 'running') return;
   localStorage.setItem(STATE_KEY, JSON.stringify({
-    mode, seed, phaseIndex, index, answers, startedAt, deadline, heard,
+    mode, seed, phaseIndex, index, answers, startedAt, deadline, heard, flags,
   }));
 }
 

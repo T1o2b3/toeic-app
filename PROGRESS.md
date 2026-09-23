@@ -4,9 +4,9 @@
 > Huy: cách bắt đầu phiên mới xem mục "Bắt đầu một phiên làm việc mới" trong \`README.md\`.
 
 ## Trạng thái hiện tại
-- Giai đoạn: 1 — MVP. **M0–M6 XONG** (M5: Huy cấu hình Supabase xong 2026-09-23). M18, M13, M11 xong. M7 chờ Huy học thật.
+- **Phạm vi đã chốt (D63): app đủ dùng — chỉ còn THÊM NỘI DUNG.** M0–M6, M8–M13, M15, M18, M21 xong; M16 bỏ; M10 phụ/M14/M17/M19/M20 chỉ làm khi Huy yêu cầu. M7 chờ Huy học thật.
 - **App đã dùng học thật được**: https://toeic-app.huybndc-451.workers.dev
-- Repo private: https://github.com/huybndc/toeic-app — **840 test pass**.
+- Repo private: https://github.com/huybndc/toeic-app — **848 test pass**.
 
 ## Dùng app thế nào (cho Huy)
 1. Mở link trên (máy Mac hoặc iPhone).
@@ -25,6 +25,37 @@
    \`Backspace\` lùi về từ trước, \`S\` để sau.
 6. **Đồng bộ tự động** (D55) khi mở app, khi rời app và 15 giây sau khi học. Mục **Sao lưu** hiện lần chạy
    gần nhất; muốn chắc thì bấm **Đồng bộ ngay**. Mỗi máy chỉ cần đăng nhập một lần.
+
+## Phiên 2026-09-23 (tối, tiếp) — chốt phạm vi (D63) · sửa pipeline (D62) · M21 xong · nội dung CHỜ Gemini key
+
+**1. Huy chốt phạm vi (D63):** app đủ dùng; chỉ còn thêm nội dung + M21. M16 bỏ (luôn làm trọn một lần ngồi).
+
+**2. Sửa pipeline trước khi sinh nội dung (D62) — lỗi suýt xảy ra.** Pipeline ghi file đầu ra CHỈ từ `pipeline/.cache/`
+(gitignore, máy này không có) và đánh id theo `cache.size()+1` → chạy sẽ đánh lại id từ `p5-0001`, ghi đè 200 câu cũ
+(nhật ký học trỏ nhầm câu) và xoá MP3 của câu nghe cũ. Nay `openWorkCache` nạp file phát hành trước (bản phát hành thắng),
+mục đã phát hành giữ nguyên lúc ghi, `nextId` = số lớn nhất + 1. Đã kiểm: chạy lại cả 6 file → giống từng byte.
+
+**3. Sinh nội dung — CHƯA chạy được: `GEMINI_API_KEY` trong `.env` máy này để TRỐNG** (Huy mới điền 2 biến Supabase).
+Pipeline dừng ngay request đầu, không đụng file nào. edge-tts đã cài (`pipeline/.venv`, 7.2.8) cho Part 2/3/4.
+**Việc của Huy:** dán key vào `.env` (`nano .env`, sau `GEMINI_API_KEY=`) — lấy từ `.env` máy cũ hoặc aistudio.google.com/apikey.
+**Rồi Claude chạy** (nền, log ở `pipeline/.cache/run-*.log`):
+```bash
+node --env-file=.env pipeline/build-questions.js --target 400 > pipeline/.cache/run-part5.log 2>&1
+node --env-file=.env pipeline/build-listening.js --target 150 > pipeline/.cache/run-part2.log 2>&1
+```
+Sau đó: `npm run validate:content` + `npm test`, xem vài câu mới bằng mắt, commit `content:`. Hết hạn mức ngày thì mai chạy
+lại đúng lệnh đó (tiếp đúng chỗ dở). Rồi tới các bộ: `build-sets.js --part 3|4|6|7 --target …` (Part 7 thêm `--variant`).
+
+**4. M21 xong.** Thi thử phần Nghe: nghe xong đếm ngược 5 giây (bộ Part 3/4: 5 giây × số câu) rồi tự sang câu sau và PHÁT
+LUÔN, như băng đề thật. Phần Đọc: nút ⚐ đánh dấu câu chưa chắc, ⚑ hiện trên danh sách câu, hộp nộp bài nhắc lại.
+Đã chạy thật với âm thanh: câu 7 → đếm 5→1 → câu 8 tự phát → câu 9, không lỗi. **Huy thử trên iPhone** xem câu kế có tự
+phát không (Safari chỉ cho phát tiếp trên cùng phần tử Audio đã được chạm mở — thiết kế bộ phát dựa đúng vào điều đó).
+8 test mới; **848 test pass**.
+
+### Bước tiếp theo
+- **Huy:** điền `GEMINI_API_KEY` vào `.env` → báo Claude chạy pipeline (mục 3).
+- **Huy:** thử nghe chép + thi thử phần Nghe trên iPhone; kiểm tự đồng bộ trên bản deploy; học thật để đóng M7.
+- **Claude:** chỉ còn việc nội dung (D63). Không tự mở milestone mới.
 
 ## Phiên 2026-09-23 (19:30) — M13 xong (câu gốc khi gạt từ) · M11 xong (nghe chép)
 

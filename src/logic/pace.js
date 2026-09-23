@@ -15,7 +15,7 @@
  */
 
 /** Giây cho MỖI câu, theo từng Part. */
-export const TARGET_SECONDS = Object.freeze({ 3: 5, 4: 5, 5: 20, 6: 30, 7: 60 });
+export const TARGET_SECONDS = Object.freeze({ 2: 5, 3: 5, 4: 5, 5: 20, 6: 30, 7: 60 });
 
 /**
  * Nhịp chuẩn cho một bộ/lượt gồm `questionCount` câu (giây).

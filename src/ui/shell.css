@@ -133,6 +133,10 @@ button.pal { min-width: 2.4rem; padding: 0.3rem 0.4rem; font-size: 0.75rem; back
 button.pal.part { background: var(--hard-soft); }
 button.pal.done { background: var(--accent); color: #fff; border-color: var(--accent); }
 button.pal.current { outline: 2px solid var(--fg); outline-offset: 1px; }
+button.pal.flagged { border-color: var(--hard); border-width: 2px; }
+.flag-btn { font-size: 0.8rem; margin: 0.2rem 0; }
+.flag-btn.on { color: var(--hard); font-weight: 700; }
+.advance-note { margin-top: 0.6rem; color: var(--muted); font-size: 0.85rem; text-align: center; }
 .confirm { margin-top: 1rem; }
 .wrong-item { padding: 0.7rem 0; border-bottom: 1px solid var(--viz-grid); }
 .rev { font-size: 0.85rem; padding: 0.1rem 0; color: var(--fg); }

@@ -12,6 +12,21 @@ import { optionList, splitPane, questionLabel } from './blocks.js';
 const LETTERS4 = ['A', 'B', 'C', 'D'];
 const LETTERS3 = ['A', 'B', 'C'];
 
+/** Dòng đếm ngược khoảng lặng sau đoạn nghe — exam-screen cập nhật chữ tại chỗ mỗi giây. */
+export const advanceText = (seconds) => `Tự sang câu tiếp sau ${Math.max(0, seconds)} giây`;
+
+/**
+ * Nút đánh dấu "chưa chắc, quay lại sau" cho một câu phần Đọc (M21). `ctx.flags` null = đơn vị không đánh dấu được.
+ */
+function flagButton(ctx, id) {
+  if (!ctx.flags) return '';
+  const on = Boolean(ctx.flags[id]);
+  return el('button', {
+    class: on ? 'link flag-btn on' : 'link flag-btn', 'aria-pressed': String(on),
+    text: on ? '⚑ Đã đánh dấu' : '⚐ Đánh dấu', onClick: () => ctx.toggleFlag(id),
+  });
+}
+
 /**
  * Nút Nghe của một đơn vị âm thanh trong THI THỬ: mỗi đoạn phát ĐÚNG MỘT LẦN.
  */
@@ -28,6 +43,7 @@ function renderPlay(ctx, label) {
       el('small', { text: done ? 'đề thật không cho nghe lại' : 'phát MỘT lần duy nhất, không tua lại' }),
     ]),
     ctx.error ? el('div', { class: 'warn', text: ctx.error }) : '',
+    ctx.advanceIn > 0 ? el('div', { class: 'advance-note', text: advanceText(ctx.advanceIn) }) : '',
   ]);
 }
 
@@ -78,7 +94,7 @@ export function renderUnit(unit, ctx, numbers = new Map()) {
         number ? el('span', { class: 'q-no inline', text: `${number}.` }) : '',
         el('span', { class: 'stem' }, renderBlanks(item.stem)),
       ])],
-      [optionList({ letters: LETTERS4, textOf: (l) => item.options[l], picked: ctx.answers[item.id], onPick: (l) => ctx.pick(item.id, l) })],
+      [optionList({ letters: LETTERS4, textOf: (l) => item.options[l], picked: ctx.answers[item.id], onPick: (l) => ctx.pick(item.id, l) }), flagButton(ctx, item.id)],
     );
   }
 
@@ -98,6 +114,7 @@ export function renderUnit(unit, ctx, numbers = new Map()) {
     
     return el('section', { class: `set-q ${isHighlighted ? 'highlight' : ''}` }, [
       questionLabel(question, numberList[i] ?? i + 1),
+      flagButton(ctx, question.id),
       optionList({ 
         letters: LETTERS4, 
         textOf: (l) => question.options[l], 

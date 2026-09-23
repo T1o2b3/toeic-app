@@ -280,8 +280,80 @@ describe('đề đủ chia hai phần tính giờ riêng như đề thật (D39)
   });
 });
 
+describe('tự chuyển câu ở phần Nghe như băng đề thật (M21)', () => {
+  it('nghe xong: đếm ngược khoảng lặng 5 giây, rồi tự sang câu sau và PHÁT LUÔN', async () => {
+    await go('#/');                                         // bỏ màn kết quả của bài trước
+    vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval', 'Date'] });
+    try {
+      await start('Riêng Part 2');
+      await click((t) => t.includes('Nghe câu này'));
+      expect(text()).toContain('Tự sang câu tiếp sau 5 giây');
+      const played = fake.play.mock.calls.length;
+      vi.advanceTimersByTime(3000);
+      expect(root.querySelector('.advance-note').textContent).toBe('Tự sang câu tiếp sau 2 giây');   // chữ đổi tại chỗ
+      vi.advanceTimersByTime(2000);
+      await tick(30);
+      expect(text()).toContain('câu 8');
+      expect(fake.play.mock.calls).toHaveLength(played + 1);
+
+      // Tự bấm chuyển câu thì huỷ đếm ngược đang chạy (câu 8 vừa phát xong cũng đang đếm).
+      await key('ArrowLeft'); await tick(30);
+      vi.advanceTimersByTime(6000);
+      await tick(30);
+      expect(text()).toContain('câu 7');
+      expect(root.querySelector('.advance-note')).toBeNull();
+
+      // Câu cuối của phần: không tự chuyển — sang phần sau/nộp bài phải tự bấm.
+      await key('ArrowRight'); await key('ArrowRight'); await tick(30);
+      await click((t) => t.includes('Nghe câu này'));
+      expect(text()).toContain('câu 9');
+      expect(root.querySelector('.advance-note')).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+    await go('#/');
+  });
+});
+
+describe('đánh dấu câu chưa chắc ở phần Đọc (M21)', () => {
+  const flagButtons = () => [...root.querySelectorAll('.flag-btn')];
+
+  it('phần Nghe không có nút đánh dấu', async () => {
+    await start('Riêng Part 2');
+    expect(flagButtons()).toHaveLength(0);
+    await go('#/');
+  });
+
+  it('Part 6: mỗi câu một nút; bật thì ô trong danh sách câu có ⚑ và hộp nộp bài nhắc lại', async () => {
+    await start('Riêng Part 6');
+    expect(flagButtons()).toHaveLength(4);
+    flagButtons()[1].click();
+    await tick(30);
+    expect(flagButtons()[1].getAttribute('aria-pressed')).toBe('true');
+    expect(flagButtons()[1].textContent).toContain('Đã đánh dấu');
+    await click((t) => t.startsWith('Danh sách câu'));
+    expect(root.querySelector('.pal').classList.contains('flagged')).toBe(true);
+    expect(root.querySelector('.pal').textContent).toMatch(/^⚑ /);
+    await click((t) => t.startsWith('Ẩn danh sách'));
+    await click((t) => t.includes('Nộp bài'));
+    expect(text()).toContain('1 câu đang đánh dấu để xem lại');
+    flagButtons()[1].click();                               // bỏ đánh dấu
+    await tick(30);
+    expect(flagButtons()[1].getAttribute('aria-pressed')).toBe('false');
+    await go('#/');
+  });
+
+  it('nút Danh sách câu cho biết đã làm bao nhiêu câu của phần', async () => {
+    await start('Riêng Part 6');
+    await pick(0, 'B');
+    expect(text()).toContain('Danh sách câu (1/4)');
+    await go('#/');
+  });
+});
+
 describe('rời màn', () => {
   it('rời màn giải phóng bộ phát; quay lại vẫn thấy màn chọn chế độ (không kẹt bài cũ)', async () => {
+    await start('Riêng Part 2');                            // tự vào bài, không dựa vào test trước
     fake.dispose.mockClear();
     await go('#/');
     expect(fake.dispose).toHaveBeenCalled();
