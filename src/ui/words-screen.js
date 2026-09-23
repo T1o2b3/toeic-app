@@ -23,33 +23,23 @@ const FILTER_LABEL = {
   ...Object.fromEntries(LEVEL_ORDER.map((level) => [level, LEVEL_INFO[level].label])),
 };
 
+// Trạng thái riêng của màn này. Giữ ở đây (không trong DOM) vì mỗi lần ghi sự kiện thì cả màn được vẽ lại.
+// `null` = chưa vào màn này lần nào; app.js gọi resetWords() khi rời màn.
 let filter = null;
 let query = '';
 let shown = PAGE_SIZE;
 let openId = null;
-
-const searchInput = el('input', {
-  class: 'field', type: 'search', placeholder: 'Tìm từ hoặc nghĩa…',
-});
+let readParams = false;   // đã đọc địa chỉ cho lượt vào màn này chưa
 
 export function renderWords(store, params) {
-  const paramFilter = params?.get('f');
-  if (paramFilter) {
-    filter = normalizeFilter(paramFilter);
-  } else if (filter === null) {
-    filter = FILTERS.ALL;
+  // CHỈ đọc địa chỉ ở lần vẽ ĐẦU của lượt này. `store.refresh()` vẽ lại với đúng bộ params cũ,
+  // nên đọc mỗi lần vẽ sẽ ghi đè lựa chọn của người dùng: bấm chip lọc xong là bị kéo về `?f=` cũ,
+  // và đóng chi tiết một từ xong là bị `?open=` mở lại ngay.
+  if (!readParams) {
+    readParams = true;
+    filter = normalizeFilter(params?.get('f'));
+    openId = params?.get('open') ?? null;
   }
-  
-  const openParam = params?.get('open');
-  if (openParam) openId = openParam;
-
-  searchInput.value = query;
-  searchInput.oninput = () => {
-    query = searchInput.value;
-    shown = PAGE_SIZE;
-    openId = null;
-    store.refresh();
-  };
 
   const counts = countByFilter(store.entries, store.states, { capturedTotal: store.captured?.size ?? 0 });
 
@@ -84,18 +74,27 @@ export function renderWords(store, params) {
 
   const detailPanel = el('div', { class: 'word-detail-panel' });
   const updateDetail = () => {
-    if (!openId) {
-      detailPanel.innerHTML = '';
-      return;
-    }
-    const entry = store.entries.find(e => e.id === openId);
-    if (!entry) return;
+    const entry = openId ? store.entries.find((e) => e.id === openId) : null;
+    if (!entry) { detailPanel.replaceChildren(); return; }
     const state = store.states.get(entry.id);
-    const level = state?.triaged ? state.level : null;
-    
-    detailPanel.replaceChildren(renderWordDetail(store, entry, state, level));
+    detailPanel.replaceChildren(
+      renderWordDetail(store, entry, state, state?.triaged ? state.level : null),
+    );
   };
   updateDetail();
+
+  // Gõ tìm kiếm chỉ vẽ lại danh sách, KHÔNG vẽ lại cả màn: vẽ lại cả màn dựng ô nhập mới,
+  // con trỏ nhảy ra ngoài và Huy chỉ gõ được đúng một chữ cái mỗi lần.
+  const search = el('input', {
+    class: 'field', type: 'search', placeholder: 'Tìm từ hoặc nghĩa…', value: query, 'aria-label': 'Tìm từ',
+  });
+  search.addEventListener('input', () => {
+    query = search.value;
+    shown = PAGE_SIZE;
+    openId = null;
+    fill();
+    updateDetail();
+  });
 
   return el('div', {}, [
     el('div', { class: 'topbar' }, [
@@ -103,7 +102,7 @@ export function renderWords(store, params) {
       el('span', { class: 'progress', text: `${counts[FILTERS.ALL]} từ trong kho` }),
     ]),
     el('h1', { text: 'Kho từ vựng' }),
-    searchInput,
+    search,
     summary,
     el('div', { class: 'filters' }, FILTER_ORDER.map((key) => el('button', {
       class: key === filter ? 'chip-btn active' : 'chip-btn',
@@ -133,7 +132,7 @@ function renderOrphanRow(item) {
       ]),
       el('small', { text: `gặp ${item.count} lần trong ${item.questionIds.length} câu` }),
       el('a', {
-        class: 'ext-link', href: \`https://en.wiktionary.org/wiki/\${encodeURIComponent(item.word)}\`,
+        class: 'ext-link', href: `https://en.wiktionary.org/wiki/${encodeURIComponent(item.word)}`,
         target: '_blank', rel: 'noopener', text: 'Tra nghĩa ↗',
       }),
     ]),
@@ -161,7 +160,7 @@ function renderRow(store, entry) {
       el('strong', { text: entry.word }),
       state?.bookmarked ? el('span', { class: 'star', text: '★' }) : '',
       el('span', {
-        class: level ? \`lvl \${LEVEL_INFO[level].css}\` : 'lvl none',
+        class: level ? `lvl ${LEVEL_INFO[level].css}` : 'lvl none',
         text: level ? LEVEL_INFO[level].label : 'chưa phân loại',
       }),
     ]),
@@ -176,4 +175,5 @@ export function resetWords() {
   query = '';
   shown = PAGE_SIZE;
   openId = null;
+  readParams = false;
 }

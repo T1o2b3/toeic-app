@@ -9,6 +9,9 @@
   --hard: #a4762a;
   --good: #2f6f4e;
   --easy: #2f5f8f;
+  --good-soft: #eef6f1;
+  --again-soft: #fbeae6;
+  --chosen-soft: #f2f2ed;
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
   line-height: 1.6;
 }
@@ -20,6 +23,9 @@
   --muted: #a0a0a0;
   --border: #2a2a2a;
   --accent: #4fb47c;
+  --good-soft: #14301f;
+  --again-soft: #3a1a13;
+  --chosen-soft: #222222;
 }
 
 * { box-sizing: border-box; }
@@ -238,3 +244,136 @@ button.grade kbd {
 
 .colloc-detail { padding: 1rem 0; }
 .colloc-detail h2 { font-size: 1.2rem; margin-bottom: 1rem; }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Khôi phục các rule bị xoá nhầm ở commit a733474 nhưng code vẫn đang dùng.
+   Màu nền nhạt lấy từ biến (--good-soft…) để dark mode không bị chói.
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* Câu hỏi và phương án — dùng ở mọi màn luyện/thi (blocks.js) */
+.stem { font-size: 1.05rem; line-height: 1.7; }
+.options { display: grid; gap: 0.5rem; margin-top: 0.75rem; }
+/* Dùng .option (không phải button.option): sau khi chấm, màn bộ đề vẽ phương án bằng <div> để
+   từng từ bên trong gạt được — con của <button disabled> không nhận được sự kiện chạm (D45). */
+.option {
+  display: flex; align-items: flex-start; gap: 0.6rem; text-align: left;
+  padding: 0.7rem 0.8rem; background: var(--surface); width: 100%;
+  border: 1px solid var(--border); border-radius: 0.75rem; color: var(--fg);
+}
+.option .letter { font-weight: 700; color: var(--muted); min-width: 1.2rem; }
+.option .option-text { flex: 1; }
+.option.correct { border-color: var(--good); background: var(--good-soft); }
+.option.correct .letter { color: var(--good); }
+.option.wrong { border-color: var(--again); background: var(--again-soft); }
+.option.wrong .letter { color: var(--again); }
+/* Phương án đã chấm ở màn bộ đề: giữ nguyên độ đậm vì giờ là chữ để ĐỌC và chạm từng từ. */
+.option.static .stem { flex: 1; font-size: inherit; line-height: 1.6; }
+
+.verdict { margin-top: 0.75rem; font-weight: 700; }
+.verdict.ok { color: var(--good); }
+.verdict.no { color: var(--again); }
+
+/* Khối số liệu đóng khung — exam-result, exams-screen, practice-screen, vocab-screen */
+.gaps { border: 1px solid var(--border); border-radius: 0.75rem; padding: 0.75rem; margin-bottom: 0.75rem; background: var(--surface); }
+
+button:disabled { opacity: 0.45; cursor: default; }
+button.grade.chosen { background: var(--chosen-soft); box-shadow: inset 0 0 0 2px currentColor; }
+button.grade.again { color: var(--again); }
+button.grade.hard { color: var(--hard); }
+button.grade.good { color: var(--good); }
+button.grade.easy { color: var(--easy); }
+
+/* Hàng nút dính đáy màn hình (thẻ dài hơn màn hình điện thoại) */
+.actions.stick {
+  position: sticky; bottom: 0; margin-top: 1.25rem;
+  background: linear-gradient(to bottom, transparent, var(--bg) 25%);
+  padding: 0.75rem 0 calc(0.5rem + env(safe-area-inset-bottom));
+}
+/* Hàng công cụ dưới nút chấm ở màn phân loại: từ trước / để sau / hiện nghĩa */
+.tools { display: flex; justify-content: space-between; gap: 0.75rem; margin-top: 0.5rem; }
+
+/* Dòng thống kê bấm được ở màn chính */
+button.gap-link {
+  width: 100%; background: none; border: none; border-radius: 0; text-align: left;
+  color: inherit; padding: 0.15rem 0;
+}
+button.gap-link span { display: inline; }
+button.gap-link .gap-value { color: var(--muted); }
+
+/* Màn "hay sai" */
+.weak-list { list-style: none; padding: 0; margin: 0; }
+.weak-list li { border-bottom: 1px solid var(--border); padding: 0.6rem 0; }
+.weak-word { display: flex; align-items: center; gap: 0.5rem; }
+.badge { background: var(--again-soft); color: var(--again); border-radius: 999px; padding: 0 0.5rem; font-size: 0.75rem; }
+
+/* Gạt từ lạ lúc làm bài (D34, D45) */
+.stem .tok {
+  cursor: pointer; border-radius: 0.25rem; padding: 0 0.1rem;
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+}
+.stem .tok:hover { background: var(--border); }
+.stem .tok.selected { background: var(--accent); color: #fff; }
+.stem .tok.captured { text-decoration: underline dotted var(--accent); }
+.tray {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 0.6rem; min-height: 2.75rem;
+  margin: 0.6rem 0; padding: 0.5rem 0.75rem; border: 1.5px dashed var(--border); border-radius: 0.75rem;
+  font-size: 0.85rem; color: var(--muted);
+}
+.tray.over { border-color: var(--accent); background: var(--good-soft); }
+.tray-word { color: var(--fg); font-weight: 700; font-size: 1rem; }
+.tray-note { color: var(--muted); font-size: 0.8rem; }
+button.tray-add { background: var(--accent); color: #fff; border-color: var(--accent); padding: 0.35rem 0.9rem; font-weight: 600; }
+.option-capture { margin-top: 0.75rem; }
+.option-capture .chips { margin-top: 0.25rem; }
+@media (min-width: 62rem) { .tray.narrow-only { display: none; } }
+
+/* Đồng hồ nhịp ở màn bộ đề (D46) */
+.pace { font-size: 0.8rem; color: var(--muted); margin: 0.5rem 0; }
+.pace-clock { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--fg); }
+.pace.ok { color: var(--good); }
+.pace.slow { color: var(--hard); }
+
+/* Nút nghe — exam-unit, listen-screen, sets-screen */
+button.listen-play { width: 100%; padding: 1rem; text-align: center; font-weight: 700; }
+
+/* Vụn vặt còn thiếu */
+a.ext-link { color: var(--accent); font-size: 0.8rem; }
+.lookup-hint { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
+.word-detail { padding: 0 0 1rem; }
+.word-row.orphan .word-head.static { padding: 0.6rem 0.8rem; display: block; }
+.exam-running { position: relative; }
+.section { margin-bottom: 1.5rem; }
+
+/* ── Màn kết quả thi: xem lại câu sai chia tab theo Part (D50) ───────────── */
+.wrong-review { margin: 1.5rem 0; }
+.wrong-review h2 { font-size: 1.1rem; margin: 0 0 0.75rem; }
+.tab-group { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.75rem; }
+.tab-btn { background: var(--surface); color: var(--fg); padding: 0.35rem 0.75rem; font-size: 0.8rem; font-weight: 600; }
+.tab-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+.wrong-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.wrong-item { background: var(--surface); border: 1px solid var(--border); border-radius: 0.6rem; overflow: hidden; }
+.wrong-item-head { cursor: pointer; padding: 0.65rem 0.8rem; font-weight: 600; font-size: 0.9rem; list-style: none; }
+.wrong-item-head::-webkit-details-marker { display: none; }
+.wrong-item-head::before { content: '▸ '; color: var(--muted); }
+.wrong-item[open] .wrong-item-head::before { content: '▾ '; }
+.wrong-item-body { padding: 0 0.8rem 0.8rem; border-top: 1px solid var(--border); }
+.set-q-stem { font-size: 0.95rem; line-height: 1.6; margin: 0.75rem 0 0.5rem; }
+
+.options-review { display: flex; flex-direction: column; gap: 0.3rem; }
+.rev { padding: 0.4rem 0.6rem; border: 1px solid var(--border); border-radius: 0.5rem; font-size: 0.85rem; }
+.rev.correct { border-color: var(--good); background: var(--good-soft); color: var(--fg); }
+.rev.wrong { border-color: var(--again); background: var(--again-soft); color: var(--fg); }
+
+.analysis-box { margin-top: 0.75rem; padding: 0.6rem 0.75rem; background: var(--bg); border-radius: 0.5rem; }
+.analysis-label { font-size: 0.7rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05rem; margin-bottom: 0.25rem; }
+.analysis-label + .analysis-text { margin-bottom: 0.5rem; }
+.analysis-text { font-size: 0.85rem; line-height: 1.6; }
+.analysis-text.trap { color: var(--hard); }
+
+/* ── Chi tiết từ trong kho từ vựng ───────────────────────────────────────── */
+.vocab-list-wrap { min-width: 0; }
+.word-detail-content { display: flex; flex-direction: column; }
+.detail-meaning, .detail-collocations, .detail-note { margin-bottom: 1rem; }
+.note-text { font-size: 0.85rem; color: var(--muted); }
+.detail-footer { margin-top: auto; padding-top: 0.5rem; border-top: 1px solid var(--border); }

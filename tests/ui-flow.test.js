@@ -105,7 +105,7 @@ describe('kho từ vựng', () => {
 
   it('đổi mức một từ: ghi một sự kiện, từ khoá tìm kiếm vẫn giữ', async () => {
     await click((t) => t.includes('w07x'));
-    const picker = root.querySelector('.level-picker');
+    const picker = root.querySelector('.level-grid');
     expect(picker.querySelectorAll('button')).toHaveLength(4);
     const events = store.eventCount;
     await click((t) => t.startsWith('Quên chính tả'), picker);

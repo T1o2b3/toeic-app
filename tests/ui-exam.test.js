@@ -120,8 +120,9 @@ describe('làm bài Part 6 (bộ 4 câu)', () => {
     expect(text()).toContain('Part 6');
     expect(text()).toContain('điểm ƯỚC LƯỢNG');
     expect(text()).toContain('khoảng điểm càng rộng');       // làm 4 câu thì phải nói rõ là suy ra từ rất ít câu
+    // Tiêu đề nằm ở khối bao `.wrong-review`; `.wrong-list` chỉ chứa các câu (đổi khi chia tab theo Part).
+    expect(root.querySelector('.wrong-review').textContent).toMatch(/Xem lại \d câu sai hoặc bỏ trống/);
     const wrong = root.querySelector('.wrong-list');
-    expect(wrong.textContent).toMatch(/Xem lại \d câu sai hoặc bỏ trống/);
     expect(wrong.textContent).toContain('Bạn chưa trả lời câu này');
     expect(wrong.textContent).toContain('✓ đáp án đúng');
   });

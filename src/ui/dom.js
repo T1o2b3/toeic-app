@@ -19,10 +19,24 @@ export function el(tag, props = {}, children = []) {
     else if (key === 'onClick') node.addEventListener('click', value);
     else node.setAttribute(key, value);
   }
+  appendChildren(node, children);
+  return node;
+}
+
+/**
+ * Gắn con vào một nút, LÀM PHẲNG mảng lồng và bỏ qua null/undefined/false.
+ *
+ * Vì sao phải làm phẳng: viết `cond ? [a, b] : []` giữa danh sách con là cách tự nhiên để chèn
+ * hai phần tử có điều kiện, nhưng nếu không làm phẳng thì cả mảng bị `String()` và người dùng
+ * đọc được chữ "[object HTMLDivElement]" ngay trên màn hình (đã xảy ra ở màn kết quả thi).
+ * Bỏ qua null/false cũng vì lý do đó: `cond && el(...)` không được in ra chữ "false".
+ */
+function appendChildren(node, children) {
   for (const child of children) {
+    if (child === null || child === undefined || child === false) continue;
+    if (Array.isArray(child)) { appendChildren(node, child); continue; }
     node.append(child instanceof Node ? child : document.createTextNode(child));
   }
-  return node;
 }
 
 /**

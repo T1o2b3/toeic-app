@@ -20,22 +20,28 @@ let activeTheme = null;
  */
 export function renderCollocations(store) {
   const all = getAllCollocations(store);
-  const matches = filterCollocations(all, query);
-  const themes = groupCollocationsByTheme(matches);
-  const essential = getEssentialCollocations(matches);
 
+  const content = el('div', {});   // hộp chứa để vẽ lại riêng phần nội dung
+  const fill = () => {
+    const matches = filterCollocations(all, query);
+    const themes = groupCollocationsByTheme(matches);
+    content.replaceChildren(activeTheme
+      ? renderThemeDetail(themes, activeTheme, fill)
+      : renderThemeList(themes, getEssentialCollocations(matches), fill));
+  };
+  fill();
+
+  // Gõ tìm kiếm chỉ vẽ lại phần nội dung, KHÔNG vẽ lại cả màn — vẽ lại cả màn dựng ô nhập mới nên
+  // con trỏ nhảy ra ngoài và chỉ gõ được một chữ cái mỗi lần.
   const search = el('input', {
     class: 'field', type: 'search', placeholder: 'Tìm cụm từ hoặc từ chính…', value: query,
+    'aria-label': 'Tìm cụm từ',
   });
   search.addEventListener('input', () => {
     query = search.value;
     activeTheme = null;
-    store.refresh();
+    fill();
   });
-
-  const content = activeTheme 
-    ? renderThemeDetail(themes, activeTheme)
-    : renderThemeList(themes, essential);
 
   return el('div', {}, [
     el('div', { class: 'topbar' }, [
@@ -49,7 +55,7 @@ export function renderCollocations(store) {
 }
 
 /** Màn chính: Danh sách chủ đề + Top Essential */
-function renderThemeList(themes, essential) {
+function renderThemeList(themes, essential, fill) {
   const sections = [];
 
   // 1. Phần Essential (Lọc ra những cụm cực kỳ quan trọng)
@@ -70,7 +76,9 @@ function renderThemeList(themes, essential) {
         const count = themes.get(theme).length;
         return el('button', { 
           class: 'cat-btn', 
-          onClick: () => { activeTheme = theme; window.location.hash = '#/collocations'; } 
+          // Gán `location.hash` bằng đúng giá trị đang có thì trình duyệt KHÔNG phát sự kiện
+          // hashchange, nên màn không vẽ lại và bấm chủ đề trông như hỏng. Vẽ lại thẳng tay.
+          onClick: () => { activeTheme = theme; fill(); },
         }, [
           el('span', { text: theme }),
           el('span', { class: 'cat-count', text: `${count} cụm` }),
@@ -83,14 +91,14 @@ function renderThemeList(themes, essential) {
 }
 
 /** Màn chi tiết: Tất cả cụm từ trong một chủ đề */
-function renderThemeDetail(themes, theme) {
+function renderThemeDetail(themes, theme, fill) {
   const collocations = themes.get(theme) || [];
   
   return el('div', { class: 'colloc-detail' }, [
     el('button', { 
       class: 'link', 
       text: '← Quay lại danh sách chủ đề', 
-      onClick: () => { activeTheme = null; window.location.hash = '#/collocations'; } 
+      onClick: () => { activeTheme = null; fill(); },
     }),
     el('h2', { text: `Chủ đề: ${theme}` }),
     el('div', { class: 'colloc-list' }, collocations.map((c) => 

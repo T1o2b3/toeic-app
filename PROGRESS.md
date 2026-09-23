@@ -6,7 +6,7 @@
 ## Trạng thái hiện tại
 - Giai đoạn: 1 — MVP. **M0–M4 và M6 XONG. M5 code xong, chờ Huy cấu hình Supabase.**
 - **App đã dùng học thật được**: https://toeic-app.huybndc-451.workers.dev
-- Repo private: https://github.com/huybndc/toeic-app — **750+ test pass**.
+- Repo private: https://github.com/huybndc/toeic-app — **779 test pass**.
 
 ## Dùng app thế nào (cho Huy)
 1. Mở link trên (máy Mac hoặc iPhone).
@@ -25,6 +25,67 @@
    \`Backspace\` lùi về từ trước, \`S\` để sau.
 6. **Lưu ý quan trọng:** dữ liệu hiện lưu RIÊNG trên từng máy (IndexedDB), chưa đồng bộ.
    Đồng bộ Mac ↔ iPhone là M5. Học trên một máy trước để tránh lệch dữ liệu.
+
+## Phiên 2026-09-23 (chiều) — Dò và sửa lỗi sau đợt nâng cấp UI — XONG
+
+Huy báo "codebase đang bị lỗi syntax và lỗi UI nghiêm trọng". Dò ra **5 lỗi**, đều sinh ra từ ba
+commit nâng cấp UI trước đó (`a733474`, `9d4628b`, `1b298e5`, `ad1580d`). **779 test pass.**
+
+**1. Lỗi syntax làm TRẮNG MÀN HÌNH (nặng nhất).** `src/ui/words-screen.js` dòng 136 và 164 có dấu
+backtick bị escape (`\``) trong code — không phải trong chuỗi. File không parse được, mà đây là file
+`app.js` import, nên **cả app không chạy**, không chỉ màn Kho từ vựng.
+- *Bài học công cụ:* `node --check <file>` **KHÔNG bắt được lỗi này** — với file ESM (`"type": "module"`)
+  nó trả về exit 0 dù cú pháp sai. Muốn kiểm syntax thật thì dùng parser: `node_modules/.bin/esbuild
+  --loader=js --format=esm < file.js > /dev/null`. Đã suýt kết luận sai vì tin `node --check`.
+
+**2. 43 class CSS đang dùng mà không còn rule** — đây là "UI lộn xộn". Commit `a733474` xoá 164 dòng
+`style.css`, các commit sau chỉ hoàn lại một phần. Mất cả những thứ cốt lõi: `.options` / `.option-text`
+(phương án của MỌI màn luyện và thi), `.verdict`, `.gaps`, `.tray*` (khay gạt từ), `.pace*` (đồng hồ nhịp),
+`.weak-list`, `button:disabled`, `.tools`. Ngoài ra toàn bộ UI mới của màn kết quả (`.tab-group`,
+`.wrong-item-*`, `.analysis-*`) **chưa bao giờ có CSS**.
+- Đã khôi phục + viết mới, thêm 3 biến `--good-soft / --again-soft / --chosen-soft` để nền nhạt không
+  chói ở dark mode (bản cũ viết cứng `#eef6f1`).
+- *Cách tự kiểm về sau:* script đếm class dùng trong `src/ui/*.js` mà không có trong CSS — xem mục
+  "Kiểm tra nhanh" dưới đây.
+
+**3. Màn kết quả thi in ra chữ `[object HTMLDivElement]`.** `exam-result.js` viết
+`question.trap ? [el(...), el(...)] : []` giữa danh sách con, mà `el()` không làm phẳng mảng lồng nên cả
+mảng bị `String()`. Sửa ở GỐC: `el()` nay làm phẳng mảng lồng và bỏ qua `null/undefined/false`.
+
+**4. Kho từ vựng: bấm chip lọc không ăn gì.** `renderWords` đọc `?f=` và `?open=` ở MỌI lần vẽ, mà
+`store.refresh()` vẽ lại với đúng bộ params cũ → mọi lựa chọn bị kéo ngược về địa chỉ. Nay chỉ đọc địa chỉ
+ở lần vẽ đầu của mỗi lượt vào màn (`readParams`).
+- Kèm theo: ô tìm kiếm quay lại kiểu **chỉ vẽ lại danh sách**, không vẽ lại cả màn — vẽ lại cả màn dựng ô
+  nhập mới nên con trỏ nhảy ra ngoài, chỉ gõ được một chữ cái mỗi lần. Lỗi này màn Collocations cũng dính.
+
+**5. Màn Collocations: bấm chủ đề không có gì xảy ra.** Code gán `window.location.hash = '#/collocations'`
+trong khi đang ở đúng địa chỉ đó — gán hash bằng giá trị cũ thì trình duyệt **không** phát `hashchange`,
+nên màn không bao giờ vẽ lại. Nay gọi thẳng hàm vẽ lại.
+
+**6. Thi thử — hai lỗi ở phần "cứu bài thi" (M16).**
+- **Tự động phát audio sau 500 ms** khi bắt đầu bài / chuyển câu. Cộng với luật "phát MỘT lần, không nghe
+  lại" (M21) thì Huy **mất luôn đoạn nghe trước khi kịp đeo tai nghe**, nút khoá vĩnh viễn. Đây là hành vi
+  chưa từng được chốt trong DECISIONS.md (ràng buộc #9) — đã bỏ, quay lại "Huy bấm Nghe thì mới phát".
+  *Nếu Huy MUỐN tự phát cho giống phòng thi thật thì nói, mình làm kèm đếm ngược 5 giây chuẩn bị.*
+- **Khôi phục bài dở ra ĐỀ KHÁC.** `buildExamForm` xáo ngẫu nhiên, mà lúc khôi phục lại dựng đề bằng
+  `Math.random` → đề mới hoàn toàn, mọi câu đã trả lời không khớp câu nào, nhưng màn hình vẫn báo khôi
+  phục thành công. Nay lưu `seed` và dựng lại bằng `seededRandom(seed)` (mới, ở `src/logic/shuffle.js`).
+  Bản lưu cũ không có `seed` thì bỏ, còn hơn dựng sai. Bỏ luôn `console.log` gỡ lỗi còn sót.
+
+**Việc gọn làm thêm:** `.claude/launch.json` khai cổng 5180 nhưng vite chạy 5173 → sửa lại.
+
+### Kiểm tra nhanh (chạy trước khi commit)
+```bash
+npm test
+bash scripts/check_file_sizes.sh .
+for f in $(find src public pipeline tests -name '*.js'); do \
+  node_modules/.bin/esbuild --loader=js --format=esm < "$f" >/dev/null || echo "LỖI SYNTAX: $f"; done
+```
+
+### Bước tiếp theo
+- Huy mở app kiểm bằng mắt trên iPhone (mình mới xem trên Chromium 800×600): màn Kho từ vựng bố cục
+  hai cột có bị chật không, màn kết quả thi các tab theo Part có bấm được không.
+- M5 (đồng bộ Supabase) vẫn đang chờ Huy cấu hình — không đụng gì trong phiên này.
 
 ## Phiên 2026-09-23 — Nâng cấp UI & Cứu bài thi (D50) — XONG, ĐÃ PUSH
 Huy báo: kết quả thi bị scroll quá nhiều, UI từ vựng lộn xộn, muốn thêm Collocations, và bài thi bị mất khi refresh.

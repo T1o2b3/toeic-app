@@ -425,6 +425,23 @@ phủ sóng từ vựng Part 5 — mới thấy NAWL đóng góp 1 từ. Ghi l�
 - **Không ghi nhật ký** thời gian này: nhật ký là append-only và đang dùng cho thống kê, thêm sự kiện mỗi bộ chỉ
   để đo nhịp là làm nặng dữ liệu mà chưa có ai đọc tới. Khi nào M20 cần nhịp thì tính riêng.
 
+**D47. Cứu bài thi làm dở bằng HẠT GIỐNG (seed), không lưu cả đề.** `buildExamForm` xáo ngẫu nhiên, nên
+muốn dựng lại đúng đề cũ phải dựng lại đúng dãy số ngẫu nhiên cũ. Lưu `seed` (một số) vào `localStorage`
+rồi dựng lại bằng `seededRandom(seed)` — gọn hơn nhiều so với lưu toàn bộ id câu hỏi, và tự động đúng cả
+thứ tự lẫn cách chia bộ. Bản lưu cũ không có `seed` thì **bỏ đi** chứ không dựng bằng `Math.random`:
+dựng sai ra đề khác mà vẫn báo "khôi phục thành công" là mất bài trong im lặng — tệ hơn mất bài ra mặt.
+*(Sinh ra từ lỗi thật: bản M16 đầu tiên dựng lại bằng `Math.random`.)*
+
+**D48. Thi thử KHÔNG tự động phát âm thanh.** Đề thật có phát tự động, nhưng app chạy ở nhà: Huy bấm bắt
+đầu rồi mới đi lấy tai nghe. Cộng với luật "phát một lần, không nghe lại" (M21) thì tự phát = mất đoạn
+nghe vĩnh viễn. Giữ "bấm Nghe thì mới phát". Muốn giống phòng thi thì phải kèm đếm ngược chuẩn bị — để
+backlog, không làm lặng lẽ.
+
+**D49. `el()` tự làm phẳng mảng con và bỏ qua `null/undefined/false`.** Viết `cond ? [a, b] : []` giữa danh
+sách con là cách tự nhiên để chèn hai phần tử có điều kiện; không làm phẳng thì cả mảng bị `String()` và
+người dùng đọc được chữ `[object HTMLDivElement]` trên màn hình (đã xảy ra ở màn kết quả thi). Chặn ở hàm
+dựng DOM dùng chung thay vì sửa từng chỗ gọi.
+
 ## Câu hỏi còn mở
 - ~~Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng?~~ → **Đã giải quyết, xem D35** (chung repo, xét lại khi ~100 MB).
 - ~~Q2 (trước M2): xác nhận license của TSL 1.2 và NGSL.~~ → **Đã giải quyết, xem D18.**

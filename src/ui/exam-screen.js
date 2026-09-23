@@ -9,6 +9,7 @@
  * và một `exam.finished` tóm tắt. M16: Lưu trạng thái làm dở vào localStorage để không bị mất bài.
  */
 import { buildExamForm, formUnits, scoreExam, examSummaryPayload } from '../logic/exam.js';
+import { seededRandom } from '../logic/shuffle.js';
 import { examPhases, numberQuestions, formatClock } from '../logic/exam-time.js';
 import { estimateScore } from '../logic/score.js';
 import { clipSequence, turnSequence, audioUrl } from '../logic/listen.js';
@@ -25,6 +26,7 @@ const STATE_KEY = 'codex_toeic_exam_state';
 // Trạng thái của bài thi đang làm.
 let phase = 'setup';         // 'setup' | 'running' | 'result'
 let form = null;
+let seed = 0;             // hạt giống xáo đề — lưu lại để khôi phục ra ĐÚNG đề cũ
 let units = [];
 let phases = [];
 let phaseIndex = 0;
@@ -61,30 +63,7 @@ const isAudioUnit = (unit) => unit && (unit.part === 'part2' || unit.part === 'p
  * @returns {HTMLElement}
  */
 export function renderExam(store) {
-  if (phase === 'setup') {
-    const saved = loadExamState();
-    if (saved) {
-      console.log('[Exam] Phục hồi trạng thái từ localStorage:', saved);
-      const mode = saved.mode;
-      if (!mode) return renderSetup(banksOf(store), (m) => start(store, m));
-      
-      form = buildExamForm(banksOf(store), mode);
-      units = formUnits(form);
-      phases = examPhases(form);
-      numbers = numberQuestions(form);
-      
-      phase = 'running';
-      phaseIndex = saved.phaseIndex;
-      index = saved.index;
-      answers = saved.answers;
-      startedAt = saved.startedAt;
-      deadline = saved.deadline;
-      heard = saved.heard;
-      
-      timer = setInterval(() => tick(store), 1000);
-      store.refresh();
-    }
-  }
+  if (phase === 'setup') restoreExamState(store);
   if (phase === 'running') return renderRunningScreen(store);
   if (phase === 'result') return renderResult(result, () => { reset(); store.refresh(); }, {
     activePart,
@@ -93,9 +72,38 @@ export function renderExam(store) {
   return renderSetup(banksOf(store), (mode) => start(store, mode));
 }
 
+/**
+ * Khôi phục bài đang làm dở sau khi tải lại trang (M16).
+ *
+ * Phải dựng lại đề bằng ĐÚNG `seed` đã lưu: `buildExamForm` xáo ngẫu nhiên, nên dựng lại bằng
+ * `Math.random` sẽ ra một đề hoàn toàn khác — câu trả lời đã lưu không khớp câu nào và Huy mất sạch bài
+ * làm trong khi màn hình vẫn báo "đã khôi phục". Bản lưu cũ không có `seed` thì bỏ, còn hơn dựng sai.
+ */
+function restoreExamState(store) {
+  const saved = loadExamState();
+  if (!saved) return;
+  if (!saved.mode || typeof saved.seed !== 'number') { localStorage.removeItem(STATE_KEY); return; }
+
+  form = buildExamForm(banksOf(store), saved.mode, { random: seededRandom(saved.seed) });
+  units = formUnits(form);
+  if (units.length === 0) { localStorage.removeItem(STATE_KEY); form = null; return; }
+  phases = examPhases(form);
+  numbers = numberQuestions(form);
+  seed = saved.seed;
+  phaseIndex = saved.phaseIndex ?? 0;
+  index = saved.index ?? 0;
+  answers = saved.answers ?? {};
+  startedAt = saved.startedAt;
+  deadline = saved.deadline;
+  heard = saved.heard ?? {};
+  phase = 'running';
+  timer = setInterval(() => tick(store), 1000);
+}
+
 /** Bắt đầu một bài thi. */
 function start(store, mode) {
-  form = buildExamForm(banksOf(store), mode);
+  seed = Math.floor(Math.random() * 2 ** 31);
+  form = buildExamForm(banksOf(store), mode, { random: seededRandom(seed) });
   units = formUnits(form);
   if (units.length === 0) return;
   phases = examPhases(form);
@@ -114,12 +122,6 @@ function start(store, mode) {
   deadline = startedAt + phases[0].seconds * 1000;
   timer = setInterval(() => tick(store), 1000);
   saveExamState(mode);
-  
-  // Tự động phát câu đầu tiên nếu là bài nghe
-  if (isAudioUnit(units[0])) {
-    setTimeout(() => play(store, units[0]), 500);
-  }
-  
   store.refresh();
 }
 
@@ -148,11 +150,6 @@ function nextPhase(store, timedOut) {
   playError = null;
   currentClip = null;
   saveExamState();
-  
-  if (isAudioUnit(units[index])) {
-    setTimeout(() => play(store, units[index]), 500);
-  }
-  
   store.refresh();
 }
 
@@ -204,11 +201,6 @@ function go(store, step) {
   playError = null;
   currentClip = null;
   saveExamState();
-  
-  if (isAudioUnit(units[index]) && (heard[units[index].id] ?? 0) === 0) {
-    setTimeout(() => play(store, units[index]), 500);
-  }
-  
   store.refresh();
 }
 
@@ -312,6 +304,7 @@ function reset() {
   timer = null;
   phase = 'setup';
   form = null;
+  seed = 0;
   units = [];
   phases = [];
   phaseIndex = 0;
@@ -339,7 +332,7 @@ export function resetExam() {
 function saveExamState(mode = form?.mode) {
   if (phase !== 'running') return;
   localStorage.setItem(STATE_KEY, JSON.stringify({
-    mode, phaseIndex, index, answers, startedAt, deadline, heard,
+    mode, seed, phaseIndex, index, answers, startedAt, deadline, heard,
   }));
 }
 
