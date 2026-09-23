@@ -118,3 +118,20 @@ export async function loadSetBank(part, fetchImpl = fetch) {
     return [];
   }
 }
+
+/**
+ * Tải bộ collocation tuyển chọn (D50b). Thiếu file thì trả danh sách rỗng —
+ * màn Collocations tự báo "chưa có nội dung", phần còn lại của app vẫn chạy.
+ * @param {typeof fetch} [fetchImpl]
+ * @returns {Promise<object[]>}
+ */
+export async function loadCollocationBank(fetchImpl = fetch) {
+  try {
+    const response = await fetchImpl('/content/collocations.json');
+    if (!response.ok) return [];
+    const data = await response.json();
+    return Array.isArray(data?.entries) ? data.entries : [];
+  } catch {
+    return [];
+  }
+}

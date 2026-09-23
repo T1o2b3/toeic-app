@@ -231,19 +231,15 @@ button.grade kbd {
 .cat-count { display: block; font-size: 0.75rem; opacity: 0.8; font-weight: 400; }
 
 .colloc-list { display: flex; flex-direction: column; gap: 0.5rem; }
-.colloc-item { 
-  background: var(--surface); border: 1px solid var(--border); 
-  padding: 0.8rem; border-radius: 0.6rem; cursor: pointer;
-  display: flex; justify-content: space-between; align-items: center;
-}
-.colloc-item:active { transform: scale(0.98); }
-.colloc-main { display: flex; flex-direction: column; gap: 0.2rem; }
-.colloc-word { font-weight: 700; font-size: 0.95rem; }
+.colloc-item { background: var(--surface); border: 1px solid var(--border); padding: 0.7rem 0.8rem; border-radius: 0.6rem; }
+.colloc-main { display: flex; flex-direction: column; gap: 0.15rem; }
+.colloc-word { font-weight: 700; font-size: 1rem; }
 .colloc-phrase { color: var(--muted); font-size: 0.85rem; }
-.colloc-badge { font-size: 0.7rem; background: var(--border); padding: 0.1rem 0.4rem; border-radius: 4px; }
+/* Dạng sai hay mắc — phải đập vào mắt, đó mới là chỗ TOEIC bẫy. */
+.colloc-wrong { color: var(--again); font-size: 0.8rem; }
+.colloc-ex { font-size: 0.82rem; font-style: italic; opacity: 0.75; margin-top: 0.2rem; }
 
-.colloc-detail { padding: 1rem 0; }
-.colloc-detail h2 { font-size: 1.2rem; margin-bottom: 1rem; }
+.colloc-categories + * h2, .colloc-list + * { margin-top: 1rem; }
 
 /* ─────────────────────────────────────────────────────────────────────────
    Khôi phục các rule bị xoá nhầm ở commit a733474 nhưng code vẫn đang dùng.

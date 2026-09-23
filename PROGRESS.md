@@ -6,7 +6,7 @@
 ## Trạng thái hiện tại
 - Giai đoạn: 1 — MVP. **M0–M4 và M6 XONG. M5 code xong, chờ Huy cấu hình Supabase.**
 - **App đã dùng học thật được**: https://toeic-app.huybndc-451.workers.dev
-- Repo private: https://github.com/huybndc/toeic-app — **779 test pass**.
+- Repo private: https://github.com/huybndc/toeic-app — **789 test pass**.
 
 ## Dùng app thế nào (cho Huy)
 1. Mở link trên (máy Mac hoặc iPhone).
@@ -25,6 +25,38 @@
    \`Backspace\` lùi về từ trước, \`S\` để sau.
 6. **Lưu ý quan trọng:** dữ liệu hiện lưu RIÊNG trên từng máy (IndexedDB), chưa đồng bộ.
    Đồng bộ Mac ↔ iPhone là M5. Học trên một máy trước để tránh lệch dữ liệu.
+
+## Phiên 2026-09-23 (tối) — Làm lại Collocations + plugin — XONG, ĐÃ PUSH
+
+**Collocations: bỏ cách cũ, làm lại theo CỤM (D50).** Huy báo màn cũ "giống học từng từ vựng hơn là học
+thành từng cụm". Đo lại dữ liệu thì đúng: 6.882 cụm sinh theo từng từ, **95% là tính từ+danh từ mô tả**
+(`textile industry`, `corporate campus`) — từ vựng, không phải collocation.
+- Thay bằng **142 cụm tuyển thủ công**, chia 5 nhóm theo MẪU: Động từ+danh từ (55) · Động từ+giới từ (28)
+  · Tính từ+giới từ (20) · Danh từ+giới từ (14) · Cụm cố định văn phòng (25).
+- **140/142 cụm có kèm dạng SAI hay mắc**: `pay attention to` ✓ / `give attention to` ✗,
+  `do a decision` ✗, `comply to` ✗, `responsible of` ✗.
+- Ô tìm kiếm **tra được cả dạng sai** — gõ "give attention" ra "pay attention to". Đó mới là lúc cần tra.
+  Tìm được cả bằng nghĩa tiếng Việt không dấu ("chu y den").
+- File nội dung mới `public/content/collocations.json`; `src/logic/collocations.js` viết lại còn 38 dòng
+  (bỏ bảng tự phân loại chủ đề theo từ khoá — chủ đề giờ nằm sẵn trong dữ liệu).
+- **10 test mới** ở `tests/collocations.test.js`, canh cả chất lượng nội dung (id không trùng, mọi cụm
+  ≥ 2 chữ, > 80% có dạng sai). **789 test pass.**
+- Trường `collocations` của từng từ trong deck **giữ nguyên**, vẫn dùng làm ví dụ ở màn chi tiết từ.
+
+**Plugin Claude Code: cài thêm 2 cái để đỡ phải đọc lại codebase mỗi phiên.**
+- `serena` — MCP phân tích code theo ký hiệu (hàm/class), tìm và sửa đúng chỗ mà không phải đọc cả file.
+- `claude-md-management` — giữ CLAUDE.md khỏi lạc hậu, gom bài học mỗi phiên vào đó.
+- Tổng 7 plugin, always-on ~8.000 token/phiên. Chi tiết và quy tắc tối ưu ở
+  `.claude/skills/mini-project-setup/SKILL.md` mục "Plugin của Claude Code".
+- **Cần Huy làm:** MCP của plugin `cloudflare` chưa đăng nhập được (phiên này không chạy OAuth được).
+  Muốn dùng thì mở Claude Code ở terminal, gõ `/mcp` rồi cho phép `cloudflare`. Không làm cũng không sao —
+  14 skill Workers/Wrangler vẫn dùng được, chỉ mất phần gọi thẳng API Cloudflare.
+
+### Bước tiếp theo
+- Huy mở app xem mục **Từ vựng › Collocations**, kiểm giúp: 142 cụm này có đúng loại Huy muốn học không,
+  thiếu nhóm nào (vd cụm cho Part 7 đọc hiểu) thì nói, mình bổ sung.
+- Chưa có cơ chế **ôn tập** collocation (mới chỉ tra cứu). Muốn đưa vào lịch ôn FSRS như từ vựng thì
+  nói — đó là việc riêng, chưa làm.
 
 ## Phiên 2026-09-23 (chiều) — Dò và sửa lỗi sau đợt nâng cấp UI — XONG
 

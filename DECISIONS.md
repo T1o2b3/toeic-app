@@ -442,6 +442,19 @@ sách con là cách tự nhiên để chèn hai phần tử có điều kiện; 
 người dùng đọc được chữ `[object HTMLDivElement]` trên màn hình (đã xảy ra ở màn kết quả thi). Chặn ở hàm
 dựng DOM dùng chung thay vì sửa từng chỗ gọi.
 
+**D50. Collocation tuyển chọn thủ công, học theo CỤM, có kèm dạng SAI.** Bản đầu lấy trường
+`collocations` mà AI sinh cho từng từ trong deck: 6.882 cụm, nhưng 95% là tính từ+danh từ mô tả
+(`textile industry`, `corporate campus`) — đó là từ vựng, không phải collocation. Thứ TOEIC thật sự hỏi
+là cụm mà chọn sai động từ hoặc giới từ là sai cả câu.
+- Bộ mới: **142 cụm tuyển thủ công**, 5 nhóm theo MẪU chứ không theo chủ đề (`Động từ + danh từ`,
+  `Động từ + giới từ`, `Tính từ + giới từ`, `Danh từ + giới từ`, `Cụm cố định văn phòng`).
+- Mỗi cụm có **dạng sai hay mắc** (`pay attention to` ✓ / `give attention to` ✗) — 140/142 cụm có.
+  Ô tìm kiếm tra được cả dạng sai: gõ đúng cái mình đang viết sai thì ra ngay cụm đúng.
+- **Tuyển tay chứ không sinh bằng AI**, cũng không lọc lại từ bộ 6.882: chất lượng ở đây là chọn ĐÚNG
+  cụm hay gặp, việc mà đếm tần suất trên deck không làm được. Trường `collocations` của từng từ vẫn giữ
+  nguyên làm ví dụ trong màn chi tiết từ — không xoá, không sửa (ràng buộc #6).
+- File: `public/content/collocations.json`, tải như các bank khác, thiếu file thì màn tự báo chứ không sập.
+
 ## Câu hỏi còn mở
 - ~~Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng?~~ → **Đã giải quyết, xem D35** (chung repo, xét lại khi ~100 MB).
 - ~~Q2 (trước M2): xác nhận license của TSL 1.2 và NGSL.~~ → **Đã giải quyết, xem D18.**

@@ -1,0 +1,1140 @@
+{
+ "version": 1,
+ "note": "Collocation TOEIC tuyển chọn thủ công. KHÔNG sinh bằng AI, không lấy theo số lượng.",
+ "entries": [
+  {
+   "id": "col-0001",
+   "chunk": "make a decision",
+   "vi": "ra quyết định",
+   "theme": "Động từ + danh từ",
+   "wrong": "do a decision",
+   "example": "The board will make a decision by Friday."
+  },
+  {
+   "id": "col-0002",
+   "chunk": "make an appointment",
+   "vi": "đặt lịch hẹn",
+   "theme": "Động từ + danh từ",
+   "wrong": "take an appointment",
+   "example": "Please make an appointment with Dr. Lee."
+  },
+  {
+   "id": "col-0003",
+   "chunk": "make a reservation",
+   "vi": "đặt chỗ trước",
+   "theme": "Động từ + danh từ",
+   "wrong": "book a reservation",
+   "example": "I'd like to make a reservation for four."
+  },
+  {
+   "id": "col-0004",
+   "chunk": "make progress",
+   "vi": "tiến triển",
+   "theme": "Động từ + danh từ",
+   "wrong": "do progress",
+   "example": "We are making progress on the merger."
+  },
+  {
+   "id": "col-0005",
+   "chunk": "make an effort",
+   "vi": "nỗ lực",
+   "theme": "Động từ + danh từ",
+   "wrong": "do an effort",
+   "example": "Staff should make an effort to reduce waste."
+  },
+  {
+   "id": "col-0006",
+   "chunk": "make a payment",
+   "vi": "thanh toán",
+   "theme": "Động từ + danh từ",
+   "wrong": "do a payment",
+   "example": "You can make a payment online."
+  },
+  {
+   "id": "col-0007",
+   "chunk": "make a complaint",
+   "vi": "khiếu nại",
+   "theme": "Động từ + danh từ",
+   "wrong": "do a complaint",
+   "example": "Three customers made a complaint about delays."
+  },
+  {
+   "id": "col-0008",
+   "chunk": "make arrangements",
+   "vi": "thu xếp",
+   "theme": "Động từ + danh từ",
+   "wrong": "do arrangements",
+   "example": "We'll make arrangements for your transfer."
+  },
+  {
+   "id": "col-0009",
+   "chunk": "do research",
+   "vi": "nghiên cứu",
+   "theme": "Động từ + danh từ",
+   "wrong": "make research",
+   "example": "The team is doing research on packaging."
+  },
+  {
+   "id": "col-0010",
+   "chunk": "do business",
+   "vi": "làm ăn, giao dịch",
+   "theme": "Động từ + danh từ",
+   "wrong": "make business",
+   "example": "We've done business with them for years."
+  },
+  {
+   "id": "col-0011",
+   "chunk": "do paperwork",
+   "vi": "làm giấy tờ",
+   "theme": "Động từ + danh từ",
+   "wrong": "make paperwork",
+   "example": "You must do the paperwork before Friday."
+  },
+  {
+   "id": "col-0012",
+   "chunk": "do someone a favor",
+   "vi": "giúp ai một việc",
+   "theme": "Động từ + danh từ",
+   "wrong": "make someone a favor",
+   "example": "Could you do me a favor?"
+  },
+  {
+   "id": "col-0013",
+   "chunk": "take place",
+   "vi": "diễn ra",
+   "theme": "Động từ + danh từ",
+   "wrong": "happen place",
+   "example": "The conference takes place in May."
+  },
+  {
+   "id": "col-0014",
+   "chunk": "take effect",
+   "vi": "có hiệu lực",
+   "theme": "Động từ + danh từ",
+   "wrong": "make effect",
+   "example": "The new policy takes effect on July 1."
+  },
+  {
+   "id": "col-0015",
+   "chunk": "take advantage of",
+   "vi": "tận dụng",
+   "theme": "Động từ + danh từ",
+   "wrong": "take advantage from",
+   "example": "Take advantage of the early-bird discount."
+  },
+  {
+   "id": "col-0016",
+   "chunk": "take into account",
+   "vi": "tính đến, cân nhắc",
+   "theme": "Động từ + danh từ",
+   "wrong": "take in account",
+   "example": "We took shipping costs into account."
+  },
+  {
+   "id": "col-0017",
+   "chunk": "take responsibility for",
+   "vi": "chịu trách nhiệm về",
+   "theme": "Động từ + danh từ",
+   "wrong": "take responsibility of",
+   "example": "She took responsibility for the error."
+  },
+  {
+   "id": "col-0018",
+   "chunk": "take measures",
+   "vi": "áp dụng biện pháp",
+   "theme": "Động từ + danh từ",
+   "wrong": "do measures",
+   "example": "The city took measures to reduce traffic."
+  },
+  {
+   "id": "col-0019",
+   "chunk": "take steps",
+   "vi": "tiến hành các bước",
+   "theme": "Động từ + danh từ",
+   "wrong": "make steps",
+   "example": "We're taking steps to improve safety."
+  },
+  {
+   "id": "col-0020",
+   "chunk": "take a survey",
+   "vi": "làm khảo sát",
+   "theme": "Động từ + danh từ",
+   "wrong": "do a survey (khi là người trả lời)",
+   "example": "Customers were asked to take a short survey."
+  },
+  {
+   "id": "col-0021",
+   "chunk": "pay attention to",
+   "vi": "chú ý đến",
+   "theme": "Động từ + danh từ",
+   "wrong": "give attention to",
+   "example": "Pay attention to the revised deadline."
+  },
+  {
+   "id": "col-0022",
+   "chunk": "pay a visit",
+   "vi": "ghé thăm",
+   "theme": "Động từ + danh từ",
+   "wrong": "make a visit",
+   "example": "The inspector paid a visit to the plant."
+  },
+  {
+   "id": "col-0023",
+   "chunk": "pay a fine",
+   "vi": "nộp phạt",
+   "theme": "Động từ + danh từ",
+   "wrong": "give a fine",
+   "example": "Late filers must pay a fine."
+  },
+  {
+   "id": "col-0024",
+   "chunk": "pay in full",
+   "vi": "trả đủ",
+   "theme": "Động từ + danh từ",
+   "wrong": "pay fully",
+   "example": "The invoice must be paid in full."
+  },
+  {
+   "id": "col-0025",
+   "chunk": "give a presentation",
+   "vi": "thuyết trình",
+   "theme": "Động từ + danh từ",
+   "wrong": "make a presentation (được, nhưng give tự nhiên hơn)",
+   "example": "She gave a presentation on Q3 results."
+  },
+  {
+   "id": "col-0026",
+   "chunk": "give notice",
+   "vi": "báo trước (nghỉ việc/chấm dứt)",
+   "theme": "Động từ + danh từ",
+   "wrong": "give a notify",
+   "example": "He gave two weeks' notice."
+  },
+  {
+   "id": "col-0027",
+   "chunk": "give priority to",
+   "vi": "ưu tiên cho",
+   "theme": "Động từ + danh từ",
+   "wrong": "make priority to",
+   "example": "We give priority to returning clients."
+  },
+  {
+   "id": "col-0028",
+   "chunk": "give a discount",
+   "vi": "giảm giá",
+   "theme": "Động từ + danh từ",
+   "wrong": "do a discount",
+   "example": "They gave us a 10% discount."
+  },
+  {
+   "id": "col-0029",
+   "chunk": "meet a deadline",
+   "vi": "kịp hạn chót",
+   "theme": "Động từ + danh từ",
+   "wrong": "catch a deadline",
+   "example": "The team met the deadline."
+  },
+  {
+   "id": "col-0030",
+   "chunk": "meet requirements",
+   "vi": "đáp ứng yêu cầu",
+   "theme": "Động từ + danh từ",
+   "wrong": "fit requirements",
+   "example": "Applicants must meet all requirements."
+  },
+  {
+   "id": "col-0031",
+   "chunk": "meet demand",
+   "vi": "đáp ứng nhu cầu",
+   "theme": "Động từ + danh từ",
+   "wrong": "answer demand",
+   "example": "The factory expanded to meet demand."
+  },
+  {
+   "id": "col-0032",
+   "chunk": "meet expectations",
+   "vi": "đạt kỳ vọng",
+   "theme": "Động từ + danh từ",
+   "wrong": "reach expectations",
+   "example": "Sales did not meet expectations."
+  },
+  {
+   "id": "col-0033",
+   "chunk": "reach an agreement",
+   "vi": "đạt thoả thuận",
+   "theme": "Động từ + danh từ",
+   "wrong": "get an agreement",
+   "example": "Both sides reached an agreement."
+  },
+  {
+   "id": "col-0034",
+   "chunk": "reach a decision",
+   "vi": "đi đến quyết định",
+   "theme": "Động từ + danh từ",
+   "wrong": "arrive a decision",
+   "example": "The committee reached a decision."
+  },
+  {
+   "id": "col-0035",
+   "chunk": "reach a conclusion",
+   "vi": "đi đến kết luận",
+   "theme": "Động từ + danh từ",
+   "wrong": "make a conclusion",
+   "example": "Investigators reached a conclusion."
+  },
+  {
+   "id": "col-0036",
+   "chunk": "place an order",
+   "vi": "đặt hàng",
+   "theme": "Động từ + danh từ",
+   "wrong": "make an order",
+   "example": "Place your order before noon."
+  },
+  {
+   "id": "col-0037",
+   "chunk": "submit an application",
+   "vi": "nộp đơn",
+   "theme": "Động từ + danh từ",
+   "wrong": "send an application (được, nhưng submit chuẩn hơn)",
+   "example": "Submit your application by May 3."
+  },
+  {
+   "id": "col-0038",
+   "chunk": "submit a proposal",
+   "vi": "nộp đề xuất",
+   "theme": "Động từ + danh từ",
+   "wrong": "give a proposal",
+   "example": "Vendors must submit a proposal."
+  },
+  {
+   "id": "col-0039",
+   "chunk": "raise concerns",
+   "vi": "nêu quan ngại",
+   "theme": "Động từ + danh từ",
+   "wrong": "rise concerns",
+   "example": "Residents raised concerns about noise."
+  },
+  {
+   "id": "col-0040",
+   "chunk": "raise funds",
+   "vi": "gây quỹ",
+   "theme": "Động từ + danh từ",
+   "wrong": "rise funds",
+   "example": "The event raised funds for the library."
+  },
+  {
+   "id": "col-0041",
+   "chunk": "hold a meeting",
+   "vi": "tổ chức cuộc họp",
+   "theme": "Động từ + danh từ",
+   "wrong": "do a meeting",
+   "example": "We hold a meeting every Monday."
+  },
+  {
+   "id": "col-0042",
+   "chunk": "hold a position",
+   "vi": "giữ chức vụ",
+   "theme": "Động từ + danh từ",
+   "wrong": "take a position (nghĩa khác)",
+   "example": "She holds a senior position in finance."
+  },
+  {
+   "id": "col-0043",
+   "chunk": "run a business",
+   "vi": "điều hành doanh nghiệp",
+   "theme": "Động từ + danh từ",
+   "wrong": "do a business",
+   "example": "He runs a small catering business."
+  },
+  {
+   "id": "col-0044",
+   "chunk": "run a promotion",
+   "vi": "chạy chương trình khuyến mãi",
+   "theme": "Động từ + danh từ",
+   "wrong": "make a promotion",
+   "example": "The store is running a promotion."
+  },
+  {
+   "id": "col-0045",
+   "chunk": "conduct a survey",
+   "vi": "tiến hành khảo sát",
+   "theme": "Động từ + danh từ",
+   "wrong": "make a survey",
+   "example": "We conducted a customer survey."
+  },
+  {
+   "id": "col-0046",
+   "chunk": "conduct an interview",
+   "vi": "thực hiện phỏng vấn",
+   "theme": "Động từ + danh từ",
+   "wrong": "do an interview (nói được, viết dùng conduct)",
+   "example": "HR conducted three interviews."
+  },
+  {
+   "id": "col-0047",
+   "chunk": "issue a refund",
+   "vi": "hoàn tiền",
+   "theme": "Động từ + danh từ",
+   "wrong": "give back a refund",
+   "example": "We issued a full refund."
+  },
+  {
+   "id": "col-0048",
+   "chunk": "issue a permit",
+   "vi": "cấp giấy phép",
+   "theme": "Động từ + danh từ",
+   "wrong": "give a permit",
+   "example": "The city issued a building permit."
+  },
+  {
+   "id": "col-0049",
+   "chunk": "attend a meeting",
+   "vi": "dự họp",
+   "theme": "Động từ + danh từ",
+   "wrong": "join a meeting (khẩu ngữ)",
+   "example": "All managers must attend the meeting."
+  },
+  {
+   "id": "col-0050",
+   "chunk": "launch a product",
+   "vi": "tung sản phẩm",
+   "theme": "Động từ + danh từ",
+   "wrong": "open a product",
+   "example": "They launched a new product line."
+  },
+  {
+   "id": "col-0051",
+   "chunk": "fill a position",
+   "vi": "tuyển người vào vị trí",
+   "theme": "Động từ + danh từ",
+   "wrong": "fill in a position",
+   "example": "We're looking to fill the position."
+  },
+  {
+   "id": "col-0052",
+   "chunk": "waive a fee",
+   "vi": "miễn phí (bỏ khoản phí)",
+   "theme": "Động từ + danh từ",
+   "wrong": "cancel a fee",
+   "example": "The bank waived the transfer fee."
+  },
+  {
+   "id": "col-0053",
+   "chunk": "extend a deadline",
+   "vi": "gia hạn",
+   "theme": "Động từ + danh từ",
+   "wrong": "enlarge a deadline",
+   "example": "The deadline was extended to Friday."
+  },
+  {
+   "id": "col-0054",
+   "chunk": "renew a contract",
+   "vi": "gia hạn hợp đồng",
+   "theme": "Động từ + danh từ",
+   "wrong": "re-sign a contract",
+   "example": "We renewed the contract for a year."
+  },
+  {
+   "id": "col-0055",
+   "chunk": "process an order",
+   "vi": "xử lý đơn hàng",
+   "theme": "Động từ + danh từ",
+   "wrong": "handle an order (được, process chuẩn hơn)",
+   "example": "Your order is being processed."
+  },
+  {
+   "id": "col-0056",
+   "chunk": "apply for",
+   "vi": "nộp đơn xin (việc, giấy phép)",
+   "theme": "Động từ + giới từ",
+   "wrong": "apply to (to = gửi tới nơi nào)",
+   "example": "She applied for the analyst position."
+  },
+  {
+   "id": "col-0057",
+   "chunk": "comply with",
+   "vi": "tuân thủ",
+   "theme": "Động từ + giới từ",
+   "wrong": "comply to",
+   "example": "All vendors must comply with the policy."
+  },
+  {
+   "id": "col-0058",
+   "chunk": "depend on",
+   "vi": "phụ thuộc vào",
+   "theme": "Động từ + giới từ",
+   "wrong": "depend of",
+   "example": "Delivery time depends on the region."
+  },
+  {
+   "id": "col-0059",
+   "chunk": "consist of",
+   "vi": "gồm có",
+   "theme": "Động từ + giới từ",
+   "wrong": "consist in (nghĩa khác)",
+   "example": "The kit consists of six parts."
+  },
+  {
+   "id": "col-0060",
+   "chunk": "result in",
+   "vi": "dẫn đến (kết quả)",
+   "theme": "Động từ + giới từ",
+   "wrong": "result to",
+   "example": "The delay resulted in extra costs."
+  },
+  {
+   "id": "col-0061",
+   "chunk": "result from",
+   "vi": "bắt nguồn từ",
+   "theme": "Động từ + giới từ",
+   "wrong": "result of",
+   "example": "The shortage resulted from a strike."
+  },
+  {
+   "id": "col-0062",
+   "chunk": "account for",
+   "vi": "chiếm tỉ lệ; giải thích",
+   "theme": "Động từ + giới từ",
+   "wrong": "account of",
+   "example": "Exports account for 40% of revenue."
+  },
+  {
+   "id": "col-0063",
+   "chunk": "refer to",
+   "vi": "tham chiếu, nhắc đến",
+   "theme": "Động từ + giới từ",
+   "wrong": "refer at",
+   "example": "Please refer to page 12."
+  },
+  {
+   "id": "col-0064",
+   "chunk": "specialize in",
+   "vi": "chuyên về",
+   "theme": "Động từ + giới từ",
+   "wrong": "specialize on",
+   "example": "The firm specializes in tax law."
+  },
+  {
+   "id": "col-0065",
+   "chunk": "participate in",
+   "vi": "tham gia vào",
+   "theme": "Động từ + giới từ",
+   "wrong": "participate to",
+   "example": "Employees may participate in the program."
+  },
+  {
+   "id": "col-0066",
+   "chunk": "subscribe to",
+   "vi": "đăng ký (báo, dịch vụ)",
+   "theme": "Động từ + giới từ",
+   "wrong": "subscribe for",
+   "example": "Subscribe to our newsletter."
+  },
+  {
+   "id": "col-0067",
+   "chunk": "adhere to",
+   "vi": "bám sát, tuân theo",
+   "theme": "Động từ + giới từ",
+   "wrong": "adhere with",
+   "example": "Staff must adhere to safety rules."
+  },
+  {
+   "id": "col-0068",
+   "chunk": "benefit from",
+   "vi": "hưởng lợi từ",
+   "theme": "Động từ + giới từ",
+   "wrong": "benefit of",
+   "example": "Members benefit from free shipping."
+  },
+  {
+   "id": "col-0069",
+   "chunk": "cope with",
+   "vi": "đối phó với",
+   "theme": "Động từ + giới từ",
+   "wrong": "cope to",
+   "example": "The team coped with the workload."
+  },
+  {
+   "id": "col-0070",
+   "chunk": "deal with",
+   "vi": "giải quyết, xử lý",
+   "theme": "Động từ + giới từ",
+   "wrong": "deal to",
+   "example": "She deals with customer complaints."
+  },
+  {
+   "id": "col-0071",
+   "chunk": "focus on",
+   "vi": "tập trung vào",
+   "theme": "Động từ + giới từ",
+   "wrong": "focus in",
+   "example": "Let's focus on the budget."
+  },
+  {
+   "id": "col-0072",
+   "chunk": "rely on",
+   "vi": "trông cậy vào",
+   "theme": "Động từ + giới từ",
+   "wrong": "rely to",
+   "example": "We rely on local suppliers."
+  },
+  {
+   "id": "col-0073",
+   "chunk": "contribute to",
+   "vi": "đóng góp vào",
+   "theme": "Động từ + giới từ",
+   "wrong": "contribute in",
+   "example": "Feedback contributes to better service."
+  },
+  {
+   "id": "col-0074",
+   "chunk": "respond to",
+   "vi": "phản hồi",
+   "theme": "Động từ + giới từ",
+   "wrong": "respond at",
+   "example": "Please respond to the email today."
+  },
+  {
+   "id": "col-0075",
+   "chunk": "object to",
+   "vi": "phản đối",
+   "theme": "Động từ + giới từ",
+   "wrong": "object against",
+   "example": "Several members objected to the plan."
+  },
+  {
+   "id": "col-0076",
+   "chunk": "invest in",
+   "vi": "đầu tư vào",
+   "theme": "Động từ + giới từ",
+   "wrong": "invest on",
+   "example": "The company invested in new software."
+  },
+  {
+   "id": "col-0077",
+   "chunk": "consent to",
+   "vi": "đồng ý với",
+   "theme": "Động từ + giới từ",
+   "wrong": "consent on",
+   "example": "Patients must consent to the procedure."
+  },
+  {
+   "id": "col-0078",
+   "chunk": "substitute for",
+   "vi": "thay thế cho",
+   "theme": "Động từ + giới từ",
+   "wrong": "substitute to",
+   "example": "Margarine can substitute for butter."
+  },
+  {
+   "id": "col-0079",
+   "chunk": "compensate for",
+   "vi": "bù đắp cho",
+   "theme": "Động từ + giới từ",
+   "wrong": "compensate to",
+   "example": "We'll compensate customers for the delay."
+  },
+  {
+   "id": "col-0080",
+   "chunk": "register for",
+   "vi": "đăng ký tham dự",
+   "theme": "Động từ + giới từ",
+   "wrong": "register to",
+   "example": "Register for the workshop online."
+  },
+  {
+   "id": "col-0081",
+   "chunk": "enroll in",
+   "vi": "ghi danh vào",
+   "theme": "Động từ + giới từ",
+   "wrong": "enroll to",
+   "example": "Employees enrolled in the training."
+  },
+  {
+   "id": "col-0082",
+   "chunk": "interfere with",
+   "vi": "cản trở",
+   "theme": "Động từ + giới từ",
+   "wrong": "interfere to",
+   "example": "Construction may interfere with access."
+  },
+  {
+   "id": "col-0083",
+   "chunk": "proceed with",
+   "vi": "tiến hành",
+   "theme": "Động từ + giới từ",
+   "wrong": "proceed to (to = chuyển sang)",
+   "example": "We'll proceed with the renovation."
+  },
+  {
+   "id": "col-0084",
+   "chunk": "responsible for",
+   "vi": "chịu trách nhiệm về",
+   "theme": "Tính từ + giới từ",
+   "wrong": "responsible of",
+   "example": "He is responsible for scheduling."
+  },
+  {
+   "id": "col-0085",
+   "chunk": "eligible for",
+   "vi": "đủ điều kiện nhận",
+   "theme": "Tính từ + giới từ",
+   "wrong": "eligible to (+N)",
+   "example": "You are eligible for a bonus."
+  },
+  {
+   "id": "col-0086",
+   "chunk": "aware of",
+   "vi": "nhận biết, biết về",
+   "theme": "Tính từ + giới từ",
+   "wrong": "aware about",
+   "example": "Are you aware of the change?"
+  },
+  {
+   "id": "col-0087",
+   "chunk": "capable of",
+   "vi": "có khả năng",
+   "theme": "Tính từ + giới từ",
+   "wrong": "capable to",
+   "example": "The machine is capable of high output."
+  },
+  {
+   "id": "col-0088",
+   "chunk": "familiar with",
+   "vi": "quen thuộc với",
+   "theme": "Tính từ + giới từ",
+   "wrong": "familiar to (to = quen thuộc ĐỐI VỚI ai)",
+   "example": "She is familiar with the software."
+  },
+  {
+   "id": "col-0089",
+   "chunk": "compatible with",
+   "vi": "tương thích với",
+   "theme": "Tính từ + giới từ",
+   "wrong": "compatible to",
+   "example": "The app is compatible with older phones."
+  },
+  {
+   "id": "col-0090",
+   "chunk": "subject to",
+   "vi": "phụ thuộc vào, có thể thay đổi",
+   "theme": "Tính từ + giới từ",
+   "wrong": "subject of",
+   "example": "Prices are subject to change."
+  },
+  {
+   "id": "col-0091",
+   "chunk": "committed to",
+   "vi": "cam kết với",
+   "theme": "Tính từ + giới từ",
+   "wrong": "committed on",
+   "example": "We are committed to quality."
+  },
+  {
+   "id": "col-0092",
+   "chunk": "dedicated to",
+   "vi": "tận tâm với, dành riêng cho",
+   "theme": "Tính từ + giới từ",
+   "wrong": "dedicated for",
+   "example": "The room is dedicated to training."
+  },
+  {
+   "id": "col-0093",
+   "chunk": "satisfied with",
+   "vi": "hài lòng với",
+   "theme": "Tính từ + giới từ",
+   "wrong": "satisfied of",
+   "example": "Clients were satisfied with the result."
+  },
+  {
+   "id": "col-0094",
+   "chunk": "consistent with",
+   "vi": "nhất quán với",
+   "theme": "Tính từ + giới từ",
+   "wrong": "consistent to",
+   "example": "The data is consistent with our forecast."
+  },
+  {
+   "id": "col-0095",
+   "chunk": "essential to",
+   "vi": "thiết yếu đối với",
+   "theme": "Tính từ + giới từ",
+   "wrong": "essential of",
+   "example": "Training is essential to safety."
+  },
+  {
+   "id": "col-0096",
+   "chunk": "available to",
+   "vi": "sẵn có cho (ai)",
+   "theme": "Tính từ + giới từ",
+   "wrong": "available for (for = cho việc gì)",
+   "example": "The report is available to all staff."
+  },
+  {
+   "id": "col-0097",
+   "chunk": "accustomed to",
+   "vi": "quen với",
+   "theme": "Tính từ + giới từ",
+   "wrong": "accustomed with",
+   "example": "He is accustomed to early shifts."
+  },
+  {
+   "id": "col-0098",
+   "chunk": "comparable to",
+   "vi": "có thể so sánh với",
+   "theme": "Tính từ + giới từ",
+   "wrong": "comparable of",
+   "example": "Our prices are comparable to theirs."
+  },
+  {
+   "id": "col-0099",
+   "chunk": "dependent on",
+   "vi": "phụ thuộc vào",
+   "theme": "Tính từ + giới từ",
+   "wrong": "dependent of",
+   "example": "Funding is dependent on approval."
+  },
+  {
+   "id": "col-0100",
+   "chunk": "opposed to",
+   "vi": "phản đối",
+   "theme": "Tính từ + giới từ",
+   "wrong": "opposed against",
+   "example": "Residents are opposed to the plan."
+  },
+  {
+   "id": "col-0101",
+   "chunk": "suitable for",
+   "vi": "phù hợp cho",
+   "theme": "Tính từ + giới từ",
+   "wrong": "suitable to",
+   "example": "This model is suitable for small offices."
+  },
+  {
+   "id": "col-0102",
+   "chunk": "reluctant to",
+   "vi": "ngại, miễn cưỡng",
+   "theme": "Tính từ + giới từ",
+   "wrong": "reluctant for",
+   "example": "Investors were reluctant to commit."
+  },
+  {
+   "id": "col-0103",
+   "chunk": "entitled to",
+   "vi": "có quyền được hưởng",
+   "theme": "Tính từ + giới từ",
+   "wrong": "entitled for",
+   "example": "Full-time staff are entitled to leave."
+  },
+  {
+   "id": "col-0104",
+   "chunk": "an increase in",
+   "vi": "sự tăng về",
+   "theme": "Danh từ + giới từ",
+   "wrong": "an increase of (of = tăng bao nhiêu)",
+   "example": "There was an increase in demand."
+  },
+  {
+   "id": "col-0105",
+   "chunk": "demand for",
+   "vi": "nhu cầu đối với",
+   "theme": "Danh từ + giới từ",
+   "wrong": "demand of",
+   "example": "Demand for housing rose sharply."
+  },
+  {
+   "id": "col-0106",
+   "chunk": "access to",
+   "vi": "quyền truy cập vào",
+   "theme": "Danh từ + giới từ",
+   "wrong": "access of",
+   "example": "Employees have access to the archive."
+  },
+  {
+   "id": "col-0107",
+   "chunk": "a solution to",
+   "vi": "giải pháp cho",
+   "theme": "Danh từ + giới từ",
+   "wrong": "a solution of",
+   "example": "We found a solution to the issue."
+  },
+  {
+   "id": "col-0108",
+   "chunk": "the reason for",
+   "vi": "lý do cho",
+   "theme": "Danh từ + giới từ",
+   "wrong": "the reason of",
+   "example": "The reason for the delay is weather."
+  },
+  {
+   "id": "col-0109",
+   "chunk": "an effect on",
+   "vi": "tác động lên",
+   "theme": "Danh từ + giới từ",
+   "wrong": "an effect to",
+   "example": "Price has an effect on sales."
+  },
+  {
+   "id": "col-0110",
+   "chunk": "an impact on",
+   "vi": "ảnh hưởng tới",
+   "theme": "Danh từ + giới từ",
+   "wrong": "an impact to",
+   "example": "The law had an impact on exports."
+  },
+  {
+   "id": "col-0111",
+   "chunk": "an alternative to",
+   "vi": "phương án thay thế cho",
+   "theme": "Danh từ + giới từ",
+   "wrong": "an alternative of",
+   "example": "Rail is an alternative to driving."
+  },
+  {
+   "id": "col-0112",
+   "chunk": "an exception to",
+   "vi": "ngoại lệ của",
+   "theme": "Danh từ + giới từ",
+   "wrong": "an exception of",
+   "example": "This is an exception to the rule."
+  },
+  {
+   "id": "col-0113",
+   "chunk": "emphasis on",
+   "vi": "sự nhấn mạnh vào",
+   "theme": "Danh từ + giới từ",
+   "wrong": "emphasis to",
+   "example": "The course places emphasis on writing."
+  },
+  {
+   "id": "col-0114",
+   "chunk": "a shortage of",
+   "vi": "sự thiếu hụt",
+   "theme": "Danh từ + giới từ",
+   "wrong": "a shortage in",
+   "example": "There is a shortage of technicians."
+  },
+  {
+   "id": "col-0115",
+   "chunk": "a delay in",
+   "vi": "sự chậm trễ trong",
+   "theme": "Danh từ + giới từ",
+   "wrong": "a delay of (of = chậm bao lâu)",
+   "example": "A delay in shipping is expected."
+  },
+  {
+   "id": "col-0116",
+   "chunk": "confidence in",
+   "vi": "sự tin tưởng vào",
+   "theme": "Danh từ + giới từ",
+   "wrong": "confidence on",
+   "example": "Investors have confidence in the brand."
+  },
+  {
+   "id": "col-0117",
+   "chunk": "a decline in",
+   "vi": "sự giảm sút về",
+   "theme": "Danh từ + giới từ",
+   "wrong": "a decline of",
+   "example": "A decline in orders was reported."
+  },
+  {
+   "id": "col-0118",
+   "chunk": "in advance",
+   "vi": "trước, sớm",
+   "theme": "Cụm cố định văn phòng",
+   "wrong": "in advanced",
+   "example": "Payment is required in advance."
+  },
+  {
+   "id": "col-0119",
+   "chunk": "on schedule",
+   "vi": "đúng tiến độ",
+   "theme": "Cụm cố định văn phòng",
+   "wrong": "in schedule",
+   "example": "The project is on schedule."
+  },
+  {
+   "id": "col-0120",
+   "chunk": "behind schedule",
+   "vi": "chậm tiến độ",
+   "theme": "Cụm cố định văn phòng",
+   "wrong": "late schedule",
+   "example": "Construction is behind schedule."
+  },
+  {
+   "id": "col-0121",
+   "chunk": "at your earliest convenience",
+   "vi": "sớm nhất có thể (lịch sự)",
+   "theme": "Cụm cố định văn phòng",
+   "example": "Please reply at your earliest convenience."
+  },
+  {
+   "id": "col-0122",
+   "chunk": "in charge of",
+   "vi": "phụ trách",
+   "theme": "Cụm cố định văn phòng",
+   "wrong": "in charge for",
+   "example": "She is in charge of logistics."
+  },
+  {
+   "id": "col-0123",
+   "chunk": "on behalf of",
+   "vi": "thay mặt cho",
+   "theme": "Cụm cố định văn phòng",
+   "wrong": "in behalf of",
+   "example": "I'm writing on behalf of the team."
+  },
+  {
+   "id": "col-0124",
+   "chunk": "in accordance with",
+   "vi": "theo đúng, phù hợp với",
+   "theme": "Cụm cố định văn phòng",
+   "wrong": "in accordance to",
+   "example": "Work proceeded in accordance with the plan."
+  },
+  {
+   "id": "col-0125",
+   "chunk": "in response to",
+   "vi": "đáp lại",
+   "theme": "Cụm cố định văn phòng",
+   "wrong": "in response of",
+   "example": "In response to feedback, we extended hours."
+  },
+  {
+   "id": "col-0126",
+   "chunk": "in the event of",
+   "vi": "trong trường hợp",
+   "theme": "Cụm cố định văn phòng",
+   "wrong": "in the event that (+mệnh đề)",
+   "example": "In the event of a delay, call support."
+  },
+  {
+   "id": "col-0127",
+   "chunk": "subject to change",
+   "vi": "có thể thay đổi",
+   "theme": "Cụm cố định văn phòng",
+   "example": "The schedule is subject to change."
+  },
+  {
+   "id": "col-0128",
+   "chunk": "free of charge",
+   "vi": "miễn phí",
+   "theme": "Cụm cố định văn phòng",
+   "wrong": "free of cost",
+   "example": "Delivery is free of charge."
+  },
+  {
+   "id": "col-0129",
+   "chunk": "out of stock",
+   "vi": "hết hàng",
+   "theme": "Cụm cố định văn phòng",
+   "wrong": "out of store",
+   "example": "The item is currently out of stock."
+  },
+  {
+   "id": "col-0130",
+   "chunk": "under warranty",
+   "vi": "còn bảo hành",
+   "theme": "Cụm cố định văn phòng",
+   "wrong": "in warranty",
+   "example": "Repairs are free under warranty."
+  },
+  {
+   "id": "col-0131",
+   "chunk": "in writing",
+   "vi": "bằng văn bản",
+   "theme": "Cụm cố định văn phòng",
+   "wrong": "by writing",
+   "example": "Requests must be made in writing."
+  },
+  {
+   "id": "col-0132",
+   "chunk": "at no cost",
+   "vi": "không mất phí",
+   "theme": "Cụm cố định văn phòng",
+   "wrong": "at no charge (cũng dùng được)",
+   "example": "Upgrades are offered at no cost."
+  },
+  {
+   "id": "col-0133",
+   "chunk": "on a regular basis",
+   "vi": "đều đặn",
+   "theme": "Cụm cố định văn phòng",
+   "wrong": "in a regular basis",
+   "example": "Equipment is checked on a regular basis."
+  },
+  {
+   "id": "col-0134",
+   "chunk": "with regard to",
+   "vi": "về vấn đề",
+   "theme": "Cụm cố định văn phòng",
+   "wrong": "with regards to (regards = lời chào)",
+   "example": "With regard to your inquiry, see below."
+  },
+  {
+   "id": "col-0135",
+   "chunk": "no later than",
+   "vi": "không muộn hơn",
+   "theme": "Cụm cố định văn phòng",
+   "wrong": "not later as",
+   "example": "Submit no later than 5 p.m."
+  },
+  {
+   "id": "col-0136",
+   "chunk": "upon receipt",
+   "vi": "ngay khi nhận được",
+   "theme": "Cụm cố định văn phòng",
+   "wrong": "on receipt of (cũng đúng)",
+   "example": "Payment is due upon receipt."
+  },
+  {
+   "id": "col-0137",
+   "chunk": "as of",
+   "vi": "kể từ ngày",
+   "theme": "Cụm cố định văn phòng",
+   "wrong": "as from",
+   "example": "As of June 1, the office relocates."
+  },
+  {
+   "id": "col-0138",
+   "chunk": "due to",
+   "vi": "do, vì",
+   "theme": "Cụm cố định văn phòng",
+   "wrong": "due of",
+   "example": "The flight was delayed due to fog."
+  },
+  {
+   "id": "col-0139",
+   "chunk": "prior to",
+   "vi": "trước khi",
+   "theme": "Cụm cố định văn phòng",
+   "wrong": "prior of",
+   "example": "Please arrive prior to the session."
+  },
+  {
+   "id": "col-0140",
+   "chunk": "in bulk",
+   "vi": "với số lượng lớn",
+   "theme": "Cụm cố định văn phòng",
+   "wrong": "in bulks",
+   "example": "Buying in bulk lowers the unit price."
+  },
+  {
+   "id": "col-0141",
+   "chunk": "on short notice",
+   "vi": "báo gấp",
+   "theme": "Cụm cố định văn phòng",
+   "wrong": "in short notice",
+   "example": "She filled in on short notice."
+  },
+  {
+   "id": "col-0142",
+   "chunk": "at all times",
+   "vi": "mọi lúc",
+   "theme": "Cụm cố định văn phòng",
+   "wrong": "in all times",
+   "example": "Badges must be worn at all times."
+  }
+ ]
+}
