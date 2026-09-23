@@ -19,7 +19,7 @@ import { getListenSpeed } from '../data/prefs.js';
 import { createPlayerSlot } from './audio-player.js';
 import { renderStem, renderTray, resetCapture } from './capture-tray.js';
 import { renderQuestion, renderTranscript, renderHold, renderPace } from './set-blocks.js';
-import { splitPane, backLink, backButton, speedChooser, letterFromKey } from './blocks.js';
+import { splitPane, backLink, backButton, speedChooser, letterFromKey, sessionDone } from './blocks.js';
 import { formatClock } from '../logic/exam-time.js';
 import { createEvent } from '../logic/events.js';
 
@@ -88,13 +88,14 @@ export function renderSets(store, params) {
   const set = currentSet(store);
   if (!set) {
     const count = doneThisRound.size;
-    return el('div', {}, [
-      el('h1', { text: count > 0 ? 'Xong lượt này' : 'Hết bộ rồi' }),
-      el('p', { class: 'empty', text: count > 0
-        ? `Đã làm ${count} bộ. Câu nào sai sẽ quay lại ở lượt sau.`
-        : 'Đã làm hết các bộ hiện có.' }),
-      backButton('exams', { primary: true }),
-    ]);
+    return sessionDone({
+      title: count > 0 ? 'Xong lượt này' : 'Hết bộ rồi',
+      headline: count > 0 ? `${count} bộ đã làm` : 'Đã làm hết các bộ hiện có',
+      changed: count > 0
+        ? 'Câu nào sai sẽ quay lại ở lượt sau — không phải tự nhớ để luyện lại.'
+        : 'Chạy pipeline để có thêm bộ, hoặc chuyển sang phần khác.',
+      actions: [backButton('exams', { primary: true })],
+    });
   }
 
   if (isListening()) getPlayer().preload(set.audio.clips.map(audioUrl)).catch(() => {});

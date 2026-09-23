@@ -17,7 +17,7 @@ import { composeRound, questionNumber, groupBreakdown, PART5_GROUPS, PART5_COUNT
 import { pace } from '../logic/pace.js';
 import { roundProgress } from '../logic/round.js';
 import { renderStem, renderTray, renderOptionCapture, resetCapture } from './capture-tray.js';
-import { optionList, splitPane, backLink, backButton, verdictLine, explanationCard, letterFromKey } from './blocks.js';
+import { optionList, splitPane, backLink, backButton, verdictLine, explanationCard, letterFromKey, sessionDone } from './blocks.js';
 import { getRoundSize } from '../data/prefs.js';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
@@ -142,20 +142,22 @@ function renderSummary(store) {
     ]);
   });
 
-  return el('div', {}, [
-    el('h1', { text: 'Xong lượt Part 5' }),
-    el('div', { class: 'panel' }, [
-      el('div', { class: 'hero' }, [
-        el('span', { class: 'hero-value', text: `${correct}` }),
-        el('span', { class: 'hero-label', text: ` / ${results.length} câu đúng` }),
-        el('div', { class: 'hero-sub', text: `nhịp trung bình ${average} giây/câu · ${pace(average).onPace ? 'kịp nhịp đề thật' : 'đề thật cần ~20 giây/câu'}` }),
+  return sessionDone({
+    title: 'Xong lượt Part 5',
+    headline: `${correct} / ${results.length} câu đúng`,
+    note: `nhịp trung bình ${average} giây/câu · ${pace(average).onPace ? 'kịp nhịp đề thật' : 'đề thật cần ~20 giây/câu'}`,
+    changed: correct === results.length
+      ? 'Đúng hết. Lượt sau sẽ lấy câu mới.'
+      : 'Câu nào sai sẽ được ưu tiên quay lại ở lượt sau — không phải tự nhớ để luyện lại.',
+    extra: [el('div', { class: 'gaps' }, rows)],
+    actions: [
+      el('button', { class: 'primary', onClick: () => { newRound(store); } }, [
+        el('span', { text: 'Lượt mới' }),
+        el('small', { text: `${results.length} câu · ~${Math.max(1, Math.round(results.length * 20 / 60))} phút` }),
       ]),
-      ...rows,
-    ]),
-    el('p', { class: 'footnote left', text: 'Câu nào sai sẽ được ưu tiên quay lại ở lượt sau.' }),
-    el('button', { class: 'primary', onClick: () => { newRound(store); } }, [el('span', { text: 'Lượt mới' })]),
-    backButton('exams'),
-  ]);
+      backButton('exams'),
+    ],
+  });
 }
 
 /** Ghi kết quả trả lời. Sự kiện mang theo loại kiến thức để thống kê lỗ hổng. */

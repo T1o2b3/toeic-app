@@ -11,7 +11,7 @@
  */
 import { el, goTo } from './dom.js';
 import { renderWordHead } from './word-detail.js';
-import { backButton, backLink } from './blocks.js';
+import { backButton, backLink, sessionDone } from './blocks.js';
 import { triageQueue, countUntriaged } from '../logic/vocab-state.js';
 import { roundProgress } from '../logic/round.js';
 import { LEVEL_ORDER, LEVEL_INFO, payloadForLevel } from '../logic/vocab-levels.js';
@@ -200,26 +200,30 @@ function renderDone(store, { finished, untriaged }) {
   ]);
 
   if (untriaged === 0) {
-    return el('div', {}, [
-      el('h1', { text: 'Phân loại xong' }),
-      el('p', { class: 'empty', text: 'Mọi từ trong deck đã được phân loại.' }),
+    return sessionDone({
+      title: 'Phân loại xong',
+      headline: `${doneCount} từ đã chấm`,
+      changed: 'Mọi từ trong deck đã được phân loại. Từ nào chưa thành thạo đã vào hàng đợi học.',
+      actions: [library, backButton('vocab'), fixLast],
+    });
+  }
+
+  const later = skipped.size > 0 ? ` · ${skipped.size} từ để sau` : '';
+  return sessionDone({
+    title: finished ? 'Xong lượt này' : 'Hết từ rồi',
+    headline: `${doneCount} từ đã chấm`,
+    note: `còn ${untriaged} từ chưa phân loại${later}`,
+    changed: 'Từ nào chưa thành thạo đã vào hàng đợi học — mở Ôn tập từ vựng là học được ngay.',
+    actions: [
+      el('button', { class: 'primary', onClick: () => { resetTriage(); store.refresh(); } }, [
+        el('span', { text: `Làm tiếp ${Math.min(ROUND_SIZE, untriaged)} từ nữa` }),
+        el('small', { text: `~${Math.ceil(Math.min(ROUND_SIZE, untriaged) / 20)} phút` }),
+      ]),
       library,
       backButton('vocab'),
       fixLast,
-    ]);
-  }
-
-  const later = skipped.size > 0 ? ` ${skipped.size} từ để sau.` : '';
-  return el('div', {}, [
-    el('h1', { text: finished ? 'Xong lượt này' : 'Hết từ rồi' }),
-    el('p', { class: 'empty', text: `Đã phân loại ${doneCount} từ.${later} Còn ${untriaged} từ chưa phân loại.` }),
-    el('button', { class: 'primary', onClick: () => { resetTriage(); store.refresh(); } }, [
-      el('span', { text: `Làm tiếp ${Math.min(ROUND_SIZE, untriaged)} từ nữa` }),
-    ]),
-    library,
-    backButton('vocab'),
-    fixLast,
-  ]);
+    ],
+  });
 }
 
 /**

@@ -455,6 +455,20 @@ là cụm mà chọn sai động từ hoặc giới từ là sai cả câu.
   nguyên làm ví dụ trong màn chi tiết từ — không xoá, không sửa (ràng buộc #6).
 - File: `public/content/collocations.json`, tải như các bank khác, thiếu file thì màn tự báo chứ không sập.
 
+**D51. Động lực học lại: TIẾN ĐỘ CỘNG DỒN, không phải chuỗi ngày.** Huy nhận ra UX quan trọng với
+việc quay lại học (2026-09-23). Nhưng cách làm mặc định — streak, huy hiệu — đã bị RESEARCH.md xếp vào
+mục "cố ý không lấy" từ đầu: nhịp học 1–2 giờ/tuần (D03) làm chuỗi ngày đứt gần như mỗi tuần, biến mỗi
+lần mở app thành một lời nhắc vừa thất bại. Vậy mà màn chính vẫn đang hiện `Chuỗi N ngày` — thêm vào
+lúc nào không rõ, trái với chính khảo sát của project.
+- Thay `studyStreak` (ngày liên tiếp) bằng `activeWeeks` (**số tuần từng có học, chỉ tăng**). Nghỉ ba
+  tuần quay lại vẫn thấy nguyên công sức cũ. Kèm dấu ✓ khi tuần này đã học — đủ để biết còn nợ hay chưa,
+  không đủ để thành áp lực.
+- Ba cột động lực còn lại, tất cả đều hợp nhịp tuần: (1) **màn "xong một lượt" dùng chung**
+  (`sessionDone` ở `blocks.js`) trả lời "làm được bao nhiêu · đổi được cái gì · làm gì tiếp";
+  (2) **màn chính đặt việc-cần-làm lên trên**, biểu đồ 14 ngày gập lại; (3) **không màn nào là ngõ cụt** —
+  hết việc đến hạn thì vẫn có nút.
+- **Không thêm** điểm, huy hiệu, bảng xếp hạng, thông báo đẩy. Ràng buộc #8 và RESEARCH.md vẫn đứng.
+
 ## Câu hỏi còn mở
 - ~~Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng?~~ → **Đã giải quyết, xem D35** (chung repo, xét lại khi ~100 MB).
 - ~~Q2 (trước M2): xác nhận license của TSL 1.2 và NGSL.~~ → **Đã giải quyết, xem D18.**

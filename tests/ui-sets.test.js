@@ -138,7 +138,7 @@ describe('Part 6: đọc đoạn văn rồi trả lời từng chỗ trống', (
     expect(text()).toContain('Bộ tiếp theo');
     await key(' ');
     expect(text()).toContain('Xong lượt này');
-    expect(text()).toContain('Đã làm 1 bộ');
+    expect(text()).toContain('1 bộ đã làm');
   });
 });
 

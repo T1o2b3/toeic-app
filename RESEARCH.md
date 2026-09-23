@@ -57,5 +57,8 @@ Anki có hẳn mục "Falling behind" trong tài liệu — người học ngh�
 - **Streak / huy hiệu / bảng xếp hạng.** GenLang có "chuỗi ngày học Streak". PLAN.md đã ghi rõ không làm
   gamification: nhịp học của Huy là 1–2 giờ/tuần, streak theo ngày sẽ tạo cảm giác thất bại liên tục
   rồi dẫn tới bỏ app — đúng thứ D03 muốn tránh.
+  **Cập nhật 2026-09-23:** kết luận này TỪNG BỊ VI PHẠM — màn chính có lúc hiện `Chuỗi N ngày`. Đã gỡ,
+  thay bằng "N tuần đã học" (cộng dồn, không tụt). Xem D51. Ai định thêm streak lần nữa thì đọc lại
+  đoạn trên trước.
 - **Ép đăng nhập / khảo sát đầu vào dài.** Không liên quan: app cá nhân, một người dùng.
 - **Nội dung của họ.** Chỉ học cách trình bày, không lấy câu hỏi, không lấy đề (D17).

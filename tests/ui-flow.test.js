@@ -143,7 +143,7 @@ describe('ôn chủ động', () => {
     await key('2');
     expect(levelOf(fluentWord)).toBe('context');
     expect(store.eventCount).toBe(events + 1);
-    expect(text()).toContain('Nhớ 0/1');
+    expect(text()).toContain('Nhớ 0 / 1 từ');
     expect(text()).toContain('đã chuyển');
   });
 
@@ -157,7 +157,7 @@ describe('ôn chủ động', () => {
     const events = store.eventCount;
     await key('1');
     expect(store.eventCount).toBe(events);
-    expect(text()).toContain('Nhớ 1/1');
+    expect(text()).toContain('Nhớ 1 / 1 từ');
   });
 
   it('rời màn rồi vào lại thì trở về màn chọn nhóm (không kẹt giữa lượt cũ)', async () => {

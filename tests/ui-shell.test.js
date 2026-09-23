@@ -101,10 +101,23 @@ describe('dashboard sau khi học', () => {
     await key('a');                                        // 1 câu Part 5, đáp án A → đúng
     await tick(60);
     await go('#/');
-    expect(text()).toContain('Chuỗi 1 ngày');
+    expect(text()).toContain('1 tuần đã học');
     const today = root.querySelector('.viz-col.today');
     expect(today.getAttribute('title')).toMatch(/4 việc \(3 Từ vựng, 1 Đọc\)/);
     expect(root.querySelector('.viz-cols').getAttribute('aria-label')).toContain('4 việc');
+  });
+
+  it('thẻ "Hôm nay" LUÔN có ít nhất một nút — màn chính không được là ngõ cụt', () => {
+    // Quy tắc UX: lúc Huy mở app là lúc đang rảnh và sẵn sàng học. Mọi nhánh của thẻ "Hôm nay"
+    // (mới bắt đầu / có việc đến hạn / hết việc) đều phải đưa ra một chỗ để bấm, không được chỉ
+    // hiện một câu chữ xám rồi bắt tự đi tìm mục khác.
+    const today = root.querySelector('.panel.today');
+    expect(today.querySelectorAll('button').length).toBeGreaterThan(0);
+  });
+
+  it('huy hiệu đếm TUẦN, không đếm chuỗi ngày (RESEARCH.md: streak phản tác dụng ở nhịp 1–2h/tuần)', () => {
+    expect(text()).not.toContain('Chuỗi');
+    expect(root.querySelector('.weeks-badge').textContent).toMatch(/\d+ tuần đã học/);
   });
 
   it('học tuần này: ước tính từ số việc (3 từ × giây + 1 câu Part 5), thanh tiến độ khớp số phút', () => {

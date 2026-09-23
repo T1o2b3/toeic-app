@@ -6,7 +6,7 @@
  * (xem src/logic/practice.js để biết vì sao).
  */
 import { el } from './dom.js';
-import { backButton, backLink } from './blocks.js';
+import { backButton, backLink, sessionDone } from './blocks.js';
 import {
   POOLS, POOL_ORDER, POOL_INFO, PRACTICE_SIZE, countPools, pickRound, eventForResult,
 } from '../logic/practice.js';
@@ -112,13 +112,10 @@ function renderSummary(store, byId) {
   const forgot = results.filter((r) => !r.remembered);
   const demoted = forgot.filter((r) => r.demoted).length;
 
-  const sections = [
-    el('h1', { text: 'Xong lượt này' }),
-    el('p', { class: 'empty', text: `Nhớ ${remembered}/${results.length} từ.` }),
-  ];
+  const extra = [];
 
   if (forgot.length > 0) {
-    sections.push(el('div', { class: 'gaps' }, [
+    extra.push(el('div', { class: 'gaps' }, [
       el('div', { class: 'gaps-title', text: 'Những từ quên — nhìn lại một lần' }),
       ...forgot.map((r) => el('div', { class: 'forgot-row' }, [
         el('strong', { text: byId.get(r.id)?.word ?? r.id }),
@@ -126,20 +123,24 @@ function renderSummary(store, byId) {
       ])),
     ]));
   }
-  if (demoted > 0) {
-    sections.push(el('p', { class: 'empty', text: `${demoted} từ đã chuyển từ “thành thạo” về “đoán được” và sẽ vào hàng đợi học.` }));
-  }
-
   // Nhóm có thể đã cạn sau lượt này (vd hạ hết các từ thành thạo) nên phải đếm lại.
   const more = countPools(store.entries, store.states)[pool] > 0;
-  sections.push(
-    more ? el('button', { class: 'primary', onClick: () => start(store, pool) }, [el('span', { text: 'Ôn tiếp nhóm này' })]) : '',
-    el('button', { class: 'secondary', onClick: () => { resetPractice(); store.refresh(); } }, [
-      el('span', { text: 'Chọn nhóm khác' }),
-    ]),
-    backButton('vocab'),
-  );
-  return el('div', {}, sections);
+  return sessionDone({
+    title: 'Xong lượt này',
+    headline: `Nhớ ${remembered} / ${results.length} từ`,
+    note: forgot.length === 0 ? 'không quên từ nào' : `quên ${forgot.length} từ`,
+    changed: demoted > 0
+      ? `${demoted} từ đã chuyển từ “thành thạo” về “đoán được” và quay lại hàng đợi học.`
+      : 'Lượt ôn chủ động không đụng tới lịch ôn — học lúc nào cũng được.',
+    extra,
+    actions: [
+      more ? el('button', { class: 'primary', onClick: () => start(store, pool) }, [el('span', { text: 'Ôn tiếp nhóm này' })]) : '',
+      el('button', { class: more ? 'secondary' : 'primary', onClick: () => { resetPractice(); store.refresh(); } }, [
+        el('span', { text: 'Chọn nhóm khác' }),
+      ]),
+      backButton('vocab'),
+    ],
+  });
 }
 
 /** Từ đang hỏi, hoặc null nếu lượt đã xong. */

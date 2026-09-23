@@ -222,3 +222,34 @@ export function speedChooser(store) {
     })),
   ]);
 }
+
+/**
+ * Màn "xong một lượt" — dùng chung cho ôn thẻ, phân loại, Part 5, ôn chủ động, bộ đề.
+ *
+ * Đây là màn quyết định người học có quay lại hay không, nên nó phải trả lời đúng ba câu, theo thứ tự:
+ *   1. Vừa rồi mình làm được bao nhiêu?   → `headline` (con số to)
+ *   2. Việc đó đổi được cái gì?           → `changed` (dòng "nhờ lượt này thì…")
+ *   3. Giờ làm gì tiếp?                   → `actions`, luôn có ít nhất một nút
+ * Trước đây mỗi màn tự bày một kiểu, phần lớn chỉ có một câu chữ xám — làm xong không thấy gì thay đổi.
+ *
+ * @param {object} o
+ * @param {string} o.title
+ * @param {string} o.headline - con số/kết quả chính của lượt, vd "8 / 10 câu đúng"
+ * @param {string} [o.note] - một dòng giải thích dưới headline
+ * @param {string} [o.changed] - lượt này làm đổi điều gì (đây là phần tạo động lực)
+ * @param {Array<Node|string>} [o.extra] - khối chi tiết tuỳ màn (bảng, danh sách từ quên…)
+ * @param {Array<Node|string>} o.actions - nút; đặt nút muốn người học bấm nhất lên đầu
+ * @returns {HTMLElement}
+ */
+export function sessionDone({ title, headline, note, changed, extra = [], actions }) {
+  return el('div', { class: 'session-done' }, [
+    el('h1', { text: title }),
+    el('div', { class: 'done-card' }, [
+      el('div', { class: 'done-headline', text: headline }),
+      note ? el('div', { class: 'done-note', text: note }) : '',
+      changed ? el('div', { class: 'done-changed', text: changed }) : '',
+    ]),
+    ...extra,
+    ...actions,
+  ]);
+}

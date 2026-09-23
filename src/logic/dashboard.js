@@ -107,27 +107,38 @@ export function activityByDay(events, { now = Date.now(), days = 14 } = {}) {
   return list;
 }
 
+/** Một sự kiện có tính là "đã học" không. Đánh dấu từ (bookmark) thì không tính. */
+const isStudyEvent = (event) => VOCAB_EVENTS.has(event.type)
+  || (event.type === 'question.answered' && skillOfQuestion(event.payload?.questionId) !== 'other');
+
 /**
- * Số ngày liên tiếp có học, tính tới hôm nay. Hôm nay chưa học thì chuỗi vẫn còn nếu hôm qua có học
- * (chưa "đứt" — người học vẫn còn cả ngày hôm nay).
+ * Khoá tuần dạng `YYYY-Www`, tuần bắt đầu từ THỨ HAI (giờ địa phương).
+ * Dựng bằng Date(y, m, d + n) chứ không trừ mili giây: ngày đổi giờ mùa hè dài 23/25 tiếng.
+ */
+export function weekKey(when) {
+  const d = new Date(when);
+  const monday = new Date(d.getFullYear(), d.getMonth(), d.getDate() - ((d.getDay() + 6) % 7));
+  return `${monday.getFullYear()}-W${dayKey(monday).slice(5)}`;
+}
+
+/**
+ * **Số TUẦN đã có học, cộng dồn từ đầu — không bao giờ tụt.**
+ *
+ * Cố ý KHÔNG dùng chuỗi ngày liên tiếp: nhịp học của Huy là 1–2 giờ/tuần (D03), chuỗi theo ngày sẽ đứt
+ * gần như mỗi tuần và biến mọi lần mở app thành một lời nhắc "mày vừa thất bại" — đúng thứ RESEARCH.md
+ * xếp vào mục "cố ý không lấy" rồi lại bị thêm vào. Con số chỉ tăng thì nghỉ một tuần không mất gì,
+ * quay lại vẫn thấy toàn bộ công sức cũ còn nguyên.
+ *
  * @param {Array<object>} events
  * @param {number} [now]
- * @returns {number}
+ * @returns {{total: number, thisWeek: boolean}} total = số tuần từng có học; thisWeek = tuần này đã học chưa
  */
-export function studyStreak(events, now = Date.now()) {
-  const days = new Set();
+export function activeWeeks(events, now = Date.now()) {
+  const weeks = new Set();
   for (const event of events ?? []) {
-    if (VOCAB_EVENTS.has(event.type) || (event.type === 'question.answered' && skillOfQuestion(event.payload?.questionId) !== 'other')) {
-      days.add(dayKey(event.ts));
-    }
+    if (isStudyEvent(event)) weeks.add(weekKey(event.ts));
   }
-  let back = days.has(dayKey(now)) ? 0 : 1;
-  let streak = 0;
-  while (days.has(dayKey(startOfDay(now, back)))) {
-    streak += 1;
-    back += 1;
-  }
-  return streak;
+  return { total: weeks.size, thisWeek: weeks.has(weekKey(now)) };
 }
 
 /**

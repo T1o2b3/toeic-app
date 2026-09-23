@@ -3,7 +3,7 @@
  * Mỗi nút chấm hiện luôn lần ôn kế tiếp (RESEARCH.md R3), phím tắt 1-4 và Space (R4).
  */
 import { el, goTo } from './dom.js';
-import { backButton, backLink } from './blocks.js';
+import { backButton, backLink, sessionDone } from './blocks.js';
 import { reviewQueue, reviewCounts } from '../logic/vocab-state.js';
 import { reviewProgress } from '../logic/round.js';
 import { TIER_ORDER, filterByTier } from '../logic/deck-tiers.js';
@@ -24,6 +24,9 @@ let revealed = false;
  * và bộ đếm đứng yên ở 10 (xem src/logic/round.js).
  */
 let newThisRound = new Set();
+
+/** Số thẻ đã chấm trong lượt này — màn kết thúc cần đếm VIỆC ĐÃ LÀM, không lấy độ dài hàng đợi (quy tắc #7). */
+let gradedThisRound = 0;
 
 const GRADE_LABELS = [
   [GRADES.AGAIN, 'Quên', 'again', '1'],
@@ -106,25 +109,32 @@ export function renderReview(store) {
 /** Màn kết thúc: hết hạn mức từ mới của lượt, hoặc thật sự không còn gì đến hạn. */
 function renderDone(store, counts) {
   const moreNew = counts.fresh > 0 && newLeft() === 0;
+  const learned = newThisRound.size;
+  const actions = [];
 
-  return el('div', {}, [
-    el('h1', { text: moreNew ? 'Xong lượt này' : 'Xong phiên này' }),
-    el('p', { class: 'empty', text: moreNew
-      ? `Đã học ${newThisRound.size} từ mới trong lượt này. Còn ${counts.fresh} từ mới chưa học.`
-      : 'Không còn thẻ nào đến hạn. Ôn dồn không giúp nhớ lâu hơn.' }),
-    moreNew
-      ? el('button', { class: 'primary', onClick: () => { resetReview(); store.refresh(); } }, [
-          el('span', { text: `Học thêm ${Math.min(NEW_PER_ROUND, counts.fresh)} từ mới` }),
-        ])
-      : '',
-    !moreNew && store.questions.length > 0
-      ? el('button', { class: 'primary', onClick: () => goTo('/quiz') }, [
-          el('span', { text: 'Làm tiếp Part 5' }),
-          el('small', { text: 'phần còn lại của phiên hôm nay' }),
-        ])
-      : '',
-    backButton('vocab'),
-  ]);
+  if (moreNew) {
+    actions.push(el('button', { class: 'primary', onClick: () => { resetReview(); store.refresh(); } }, [
+      el('span', { text: `Học thêm ${Math.min(NEW_PER_ROUND, counts.fresh)} từ mới` }),
+      el('small', { text: `còn ${counts.fresh} từ mới trong kho` }),
+    ]));
+  }
+  if (store.questions.length > 0) {
+    actions.push(el('button', { class: moreNew ? 'secondary' : 'primary', onClick: () => goTo('/quiz') }, [
+      el('span', { text: 'Làm tiếp Part 5' }),
+      el('small', { text: 'phần còn lại của phiên hôm nay' }),
+    ]));
+  }
+  actions.push(backButton('vocab'));
+
+  return sessionDone({
+    title: moreNew ? 'Xong lượt này' : 'Xong phiên này',
+    headline: `${gradedThisRound} thẻ đã ôn`,
+    note: learned > 0 ? `trong đó ${learned} từ mới` : 'đều là từ ôn lại',
+    changed: moreNew
+      ? `Còn ${counts.fresh} từ mới chưa học — để dành cho lần sau cũng được.`
+      : 'Không còn thẻ nào đến hạn. Ôn dồn không giúp nhớ lâu hơn.',
+    actions,
+  });
 }
 
 /** Bốn nút chấm, mỗi nút kèm khoảng cách tới lần ôn kế tiếp. */
@@ -158,6 +168,7 @@ function renderBookmark(store, entry, state) {
 /** Ghi kết quả chấm rồi chuyển sang thẻ kế tiếp. */
 async function submitGrade(store, item, grade) {
   revealed = false;
+  gradedThisRound += 1;
   if (item.isNew) newThisRound.add(item.entry.id);
   await store.record('vocab.reviewed', { wordId: item.entry.id, grade });
 }
@@ -192,4 +203,5 @@ export function handleReviewKey(store, event) {
 export function resetReview() {
   revealed = false;
   newThisRound = new Set();
+  gradedThisRound = 0;
 }

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
-  dayKey, partOfQuestion, skillOfQuestion, activityByDay, studyStreak, examOverview, vocabProgress, weakestTypes,
+  dayKey, partOfQuestion, skillOfQuestion, activityByDay, activeWeeks, examOverview, vocabProgress, weakestTypes,
   estimateStudyMinutes, matureWords, matureTrend, combinedExam, STUDY_SECONDS, MATURE_DAYS,
 } from '../src/logic/dashboard.js';
 import { reduceVocabState } from '../src/logic/vocab-state.js';
@@ -74,29 +74,36 @@ describe('activityByDay', () => {
   });
 });
 
-describe('studyStreak', () => {
+describe('activeWeeks — số tuần đã học, KHÔNG BAO GIỜ tụt', () => {
   const learn = (y, m, d) => ev('vocab.reviewed', { wordId: 'a', grade: 'good' }, at(y, m, d));
 
-  it('đếm ngày liên tiếp tới hôm nay', () => {
-    expect(studyStreak([learn(2026, 9, 20), learn(2026, 9, 19), learn(2026, 9, 18)], NOW)).toBe(3);
+  it('nhiều ngày trong CÙNG một tuần chỉ tính là một tuần', () => {
+    // 2026-09-18 (T6), 19 (T7), 20 (CN) cùng tuần bắt đầu thứ Hai 14/9.
+    expect(activeWeeks([learn(2026, 9, 18), learn(2026, 9, 19), learn(2026, 9, 20)], NOW).total).toBe(1);
   });
 
-  it('hôm nay chưa học nhưng hôm qua có: chuỗi vẫn còn', () => {
-    expect(studyStreak([learn(2026, 9, 19), learn(2026, 9, 18)], NOW)).toBe(2);
+  it('nghỉ hẳn mấy tuần rồi học lại thì con số CỘNG THÊM, không reset', () => {
+    const events = [learn(2026, 8, 3), learn(2026, 8, 25), learn(2026, 9, 20)];
+    expect(activeWeeks(events, NOW).total).toBe(3);
   });
 
-  it('bỏ một ngày thì chuỗi đứt', () => {
-    expect(studyStreak([learn(2026, 9, 20), learn(2026, 9, 18)], NOW)).toBe(1);
-    expect(studyStreak([learn(2026, 9, 18)], NOW)).toBe(0);
+  it('nói rõ tuần NÀY đã học chưa', () => {
+    expect(activeWeeks([learn(2026, 9, 20)], NOW).thisWeek).toBe(true);
+    expect(activeWeeks([learn(2026, 8, 3)], NOW).thisWeek).toBe(false);
   });
 
-  it('không có sự kiện học thì 0; đánh dấu/gạt từ không tính', () => {
-    expect(studyStreak([], NOW)).toBe(0);
-    expect(studyStreak([ev('vocab.bookmarked', { wordId: 'a' }, NOW)], NOW)).toBe(0);
+  it('chưa học gì thì 0; đánh dấu từ không tính là học', () => {
+    expect(activeWeeks([], NOW).total).toBe(0);
+    expect(activeWeeks([ev('vocab.bookmarked', { wordId: 'a' }, NOW)], NOW).total).toBe(0);
   });
 
   it('làm câu hỏi cũng tính là học', () => {
-    expect(studyStreak([answered('l2-1', true, NOW)], NOW)).toBe(1);
+    expect(activeWeeks([answered('l2-1', true, NOW)], NOW).total).toBe(1);
+  });
+
+  it('tuần bắt đầu từ THỨ HAI: chủ nhật và thứ hai kế tiếp là HAI tuần khác nhau', () => {
+    // 2026-09-20 là chủ nhật, 2026-09-21 là thứ hai.
+    expect(activeWeeks([learn(2026, 9, 20), learn(2026, 9, 21)], NOW).total).toBe(2);
   });
 });
 

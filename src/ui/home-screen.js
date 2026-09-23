@@ -13,7 +13,7 @@ import { SKILL_LABEL } from '../logic/exam-time.js';
 import { countUntriaged } from '../logic/vocab-state.js';
 import { planToday, describePlan, planTarget } from '../logic/today.js';
 import {
-  activityByDay, studyStreak, examOverview, vocabProgress, weakestTypes,
+  activityByDay, activeWeeks, examOverview, vocabProgress, weakestTypes,
   estimateStudyMinutes, matureTrend, combinedExam, WEEKLY_GOAL_MINUTES, MATURE_DAYS,
 } from '../logic/dashboard.js';
 import { buildExport, exportFileName } from '../logic/export.js';
@@ -44,29 +44,32 @@ export function renderHome(store) {
   const now = Date.now();
   const events = store.events;
   const activity = activityByDay(events, { now, days: 14 });
-  const streak = studyStreak(events, now);
+  const weeks = activeWeeks(events, now);
   const theme = document.documentElement.getAttribute('data-theme') || 'light';
 
+  // Thứ tự: VIỆC CẦN LÀM trước, số liệu tiến bộ sau, phân tích chi tiết xuống cuối.
+  // Huy mở app lúc rảnh 10 phút — thứ đầu tiên chạm mắt phải là nút bắt đầu, không phải biểu đồ.
   return el('div', {}, [
     el('div', { class: 'dash-title' }, [
-      el('div', { style: 'display:flex; align-items:center; gap:1rem' }, [
+      el('div', { class: 'dash-title-main' }, [
         el('h1', { text: 'Tổng quan' }),
-        el('button', { 
-          class: 'theme-toggle', 
-          onClick: () => {
-            toggleTheme();
-            store.refresh();
-          }, 
-          text: theme === 'light' ? '🌙' : '☀️' 
+        el('button', {
+          class: 'theme-toggle',
+          'aria-label': theme === 'light' ? 'Chuyển sang nền tối' : 'Chuyển sang nền sáng',
+          onClick: () => { toggleTheme(); store.refresh(); },
+          text: theme === 'light' ? '🌙' : '☀️',
         }),
       ]),
-      streak > 0 ? el('span', { class: 'streak', text: `Chuỗi ${streak} ngày` }) : '',
+      renderWeeksBadge(weeks),
     ]),
     renderToday(store),
     renderKpis(store, events, now),
-    panel('14 ngày gần đây', null, [renderActivityChart(activity)]),
     renderVocabPanel(store),
     renderExamsPanel(store, events, now),
+    el('details', { class: 'more-panel' }, [
+      el('summary', { text: 'Xem hoạt động 14 ngày gần đây' }),
+      renderActivityChart(activity),
+    ]),
     el('button', { class: 'secondary', onClick: () => goTo('/sync') }, [
       el('span', { text: 'Đồng bộ giữa các máy' }),
       el('small', { text: isSupabaseConfigured() ? 'Mac ↔ iPhone' : 'chưa cấu hình — dữ liệu chỉ ở máy này' }),
@@ -76,6 +79,22 @@ export function renderHome(store) {
     ]),
     el('p', { class: 'footnote', text: `${store.eventCount} sự kiện đã ghi trên máy này · bản ${BUILD_TIME}` }),
   ]);
+}
+
+/**
+ * Huy hiệu góc phải: **số tuần đã học, cộng dồn** — thay cho "chuỗi N ngày" trước đây.
+ *
+ * Chuỗi ngày đứt mỗi khi nghỉ một hôm, mà nhịp của Huy là 1–2 giờ/tuần nên nó đứt gần như liên tục:
+ * mỗi lần mở app là một lời nhắc vừa thất bại. RESEARCH.md xếp streak vào mục "cố ý không lấy" vì
+ * đúng lý do này. Con số cộng dồn thì nghỉ bao lâu cũng không mất gì.
+ */
+function renderWeeksBadge({ total, thisWeek }) {
+  if (total === 0) return '';
+  return el('span', {
+    class: thisWeek ? 'weeks-badge done' : 'weeks-badge',
+    title: 'Số tuần từng có học — chỉ tăng, không bao giờ tụt',
+    text: thisWeek ? `${total} tuần đã học ✓` : `${total} tuần đã học`,
+  });
 }
 
 /**
@@ -149,7 +168,19 @@ function renderToday(store) {
       el('small', { text: 'chưa có thẻ nào đến hạn — thêm từ để có gì học' }),
     ]);
   } else {
-    action = el('p', { class: 'empty', text: 'Hôm nay không còn việc đến hạn. Luyện thêm ở mục Bài thi nhé.' });
+    // KHÔNG để màn này thành ngõ cụt. Đây đúng là lúc Huy đang rảnh và sẵn sàng học — đưa một câu
+    // chữ xám rồi bắt tự đi tìm mục khác là cách chắc chắn nhất để mất một phiên học.
+    action = el('div', {}, [
+      el('p', { class: 'empty', text: 'Không còn thẻ nào đến hạn — ôn dồn không giúp nhớ lâu hơn. Còn sức thì luyện đề:' }),
+      el('button', { class: 'primary', onClick: () => goTo('/exams') }, [
+        el('span', { text: 'Luyện đề' }),
+        el('small', { text: 'Part 5–7 và luyện nghe · chọn lượt 10–30 câu' }),
+      ]),
+      el('button', { class: 'secondary', onClick: () => goTo('/collocations') }, [
+        el('span', { text: 'Xem cụm từ TOEIC' }),
+        el('small', { text: '142 cụm tuyển chọn · đọc lướt cũng vào' }),
+      ]),
+    ]);
   }
   return el('section', { class: 'panel today' }, [el('div', { class: 'panel-head' }, [el('span', { text: 'Hôm nay' })]), action]);
 }

@@ -109,8 +109,10 @@ button.grade kbd {
 
 /* Dash Home */
 .dash-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-.streak { background: #fff3cd; color: #856404; font-size: 0.8rem; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 999px; border: 1px solid #ffeeba; }
-[data-theme="dark"] .streak { background: #453d1d; color: #ffecb3; border-color: #5c542a; }
+/* Số tuần đã học — cộng dồn, không bao giờ tụt (thay cho chuỗi ngày, xem home-screen.js). */
+.weeks-badge { background: var(--surface); color: var(--muted); font-size: 0.75rem; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 999px; border: 1px solid var(--border); white-space: nowrap; }
+.weeks-badge.done { color: var(--accent); border-color: var(--accent); }
+.dash-title-main { display: flex; align-items: center; gap: 1rem; }
 
 .panel { margin-bottom: 1.5rem; }
 .panel-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
@@ -373,3 +375,32 @@ a.ext-link { color: var(--accent); font-size: 0.8rem; }
 .detail-meaning, .detail-collocations, .detail-note { margin-bottom: 1rem; }
 .note-text { font-size: 0.85rem; color: var(--muted); }
 .detail-footer { margin-top: auto; padding-top: 0.5rem; border-top: 1px solid var(--border); }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   UX: màn "xong một lượt", và màn thẻ dùng hết chiều cao điện thoại.
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* Xong một lượt — chỗ quyết định người học có quay lại hay không (blocks.js sessionDone). */
+.session-done .done-card {
+  background: var(--surface); border: 2px solid var(--accent); border-radius: 1rem;
+  padding: 1.25rem 1rem; margin: 0.5rem 0 1.25rem; text-align: center;
+}
+.done-headline { font-size: 1.75rem; font-weight: 800; color: var(--accent); line-height: 1.2; }
+.done-note { font-size: 0.85rem; color: var(--muted); margin-top: 0.25rem; }
+/* Dòng "lượt này đổi được cái gì" — phần tạo động lực, tách khỏi con số bằng một đường kẻ. */
+.done-changed { font-size: 0.85rem; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border); text-align: left; }
+
+/* Phân tích chi tiết gập lại: màn chính lo "làm gì bây giờ", biểu đồ là thứ xem khi muốn. */
+.more-panel { margin-bottom: 1.5rem; }
+.more-panel > summary { cursor: pointer; font-size: 0.85rem; color: var(--muted); padding: 0.5rem 0; }
+.more-panel[open] > summary { margin-bottom: 0.5rem; }
+
+/* Màn ôn thẻ / phân loại trên điện thoại: thẻ chiếm chỗ thật, nút chấm dính đáy.
+   Trước đây thẻ nằm co ở đỉnh màn hình rồi bỏ trống hơn nửa màn phía dưới. */
+@media (max-width: 700px) {
+  .card.big { padding: 2.5rem 1rem; display: flex; flex-direction: column; justify-content: center; min-height: 40vh; }
+  .card.big .word { font-size: 2.4rem; }
+  /* Nút chấm: 4 cột trên 375px làm chữ vỡ thành 4 dòng. Xếp 2×2 cho đọc được và bấm trúng. */
+  .actions.four { grid-template-columns: 1fr 1fr; }
+  button.grade { padding: 0.85rem 0.5rem; min-height: 3.5rem; }
+}

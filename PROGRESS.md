@@ -6,7 +6,7 @@
 ## Trạng thái hiện tại
 - Giai đoạn: 1 — MVP. **M0–M4 và M6 XONG. M5 code xong, chờ Huy cấu hình Supabase.**
 - **App đã dùng học thật được**: https://toeic-app.huybndc-451.workers.dev
-- Repo private: https://github.com/huybndc/toeic-app — **789 test pass**.
+- Repo private: https://github.com/huybndc/toeic-app — **792 test pass**.
 
 ## Dùng app thế nào (cho Huy)
 1. Mở link trên (máy Mac hoặc iPhone).
@@ -25,6 +25,54 @@
    \`Backspace\` lùi về từ trước, \`S\` để sau.
 6. **Lưu ý quan trọng:** dữ liệu hiện lưu RIÊNG trên từng máy (IndexedDB), chưa đồng bộ.
    Đồng bộ Mac ↔ iPhone là M5. Học trên một máy trước để tránh lệch dữ liệu.
+
+## Phiên 2026-09-23 (khuya) — Làm lại UX-UI quanh "động lực quay lại" (D51) — XONG, ĐÃ PUSH
+
+Huy: "mục tiêu ban đầu không quá quan tâm UX-UI nhưng nhận ra phần này rất quan trọng trong việc kích
+thích học lại." Đã xem lại **toàn bộ 15 màn** trước khi đề xuất.
+
+**Phát hiện lớn nhất khi rà soát: app đang tự đi ngược khảo sát của chính nó.** `RESEARCH.md` mục
+"Điều CỐ Ý KHÔNG lấy" ghi rõ **không làm streak** — vì nhịp 1–2 giờ/tuần (D03) khiến chuỗi ngày đứt gần
+như mỗi tuần, biến mỗi lần mở app thành lời nhắc vừa thất bại. Vậy mà màn chính đang hiện `Chuỗi N ngày`.
+Đó chính là thứ đang làm hỏng đúng cái Huy muốn cải thiện.
+
+**Nguyên tắc chốt (D51): động lực = tiến độ CỘNG DỒN, không phải chuỗi ngày.** Bốn việc:
+
+**1. Bỏ "Chuỗi N ngày" → "N tuần đã học".** `studyStreak` (ngày liên tiếp, có tụt) bị xoá hẳn, thay bằng
+`activeWeeks` ở `logic/dashboard.js`: đếm số TUẦN từng có học, **chỉ tăng**. Nghỉ ba tuần quay lại vẫn
+thấy nguyên công sức cũ. Có dấu ✓ khi tuần này đã học — đủ biết còn nợ hay chưa, không đủ thành áp lực.
+Tuần tính từ **thứ Hai**; 6 test cũ của streak thay bằng 6 test mới (có case "nghỉ mấy tuần rồi học lại
+thì cộng thêm, không reset").
+
+**2. Màn "xong một lượt" dùng chung — chỗ quyết định có quay lại hay không.** Trước đây 5 màn kết thúc
+(ôn thẻ · phân loại · Part 5 · ôn chủ động · bộ đề) mỗi màn tự bày một kiểu, phần lớn chỉ có một câu chữ
+xám: làm xong không thấy gì thay đổi. Nay dùng chung `sessionDone()` ở `ui/blocks.js`, trả lời ba câu
+theo thứ tự: **làm được bao nhiêu** (con số to) · **đổi được cái gì** (dòng tạo động lực) · **làm gì tiếp**
+(luôn có nút). Vd ôn thẻ xong: "5 thẻ đã ôn · trong đó 4 từ mới · Không còn thẻ nào đến hạn…".
+Thêm `gradedThisRound` ở `review-screen.js` — đếm VIỆC ĐÃ LÀM, không lấy độ dài hàng đợi (quy tắc #7).
+
+**3. Màn chính đảo thứ tự: việc-cần-làm lên trên, phân tích xuống dưới.** Thứ tự mới: Hôm nay → 3 số
+liệu → Từ vựng → Bài thi → *(gập)* biểu đồ 14 ngày → đồng bộ. Đo trên 375×812: thẻ "Hôm nay" **nằm trọn
+trong màn đầu, không phải cuộn**. Biểu đồ 14 ngày vào `<details>` — màn chính lo "làm gì bây giờ".
+
+**4. Không màn nào được là ngõ cụt.** Hết việc đến hạn, màn chính trước đây chỉ hiện một câu chữ xám
+"Luyện thêm ở mục Bài thi nhé" — đúng lúc Huy đang rảnh và sẵn sàng học thì app không cho gì để bấm.
+Nay có nút *Luyện đề* và *Xem cụm từ TOEIC*. Có **test canh bất biến này**: thẻ "Hôm nay" luôn ≥ 1 nút.
+
+**Kèm theo — sửa bố cục điện thoại** (đo thật ở 375×812, không phải đoán):
+- Thẻ từ ở màn ôn/phân loại: cao **325px = 40% màn hình** (trước ~23%, hơn nửa màn dưới bỏ trống), chữ từ 38px.
+- 4 nút chấm: **2 cột × 114px** thay vì 4 cột làm chữ vỡ thành 4 dòng. Không tràn, không cuộn ngang.
+
+**792 test pass** (thêm 2 test bất biến UX). Đã kiểm thật trên trình duyệt ở 375×812 và 1280×900, build
+production sạch.
+
+### Cố ý KHÔNG làm
+Điểm, huy hiệu, bảng xếp hạng, thông báo đẩy, và **mọi thứ đếm theo ngày**. Ràng buộc #8 + RESEARCH.md.
+Đã ghi chú ngay trong RESEARCH.md rằng kết luận này từng bị vi phạm một lần.
+
+### Bước tiếp theo
+- Huy dùng thử 1–2 tuần rồi cho biết: màn "xong một lượt" có làm thấy đáng công không, hay vẫn nhạt.
+- Chưa đụng tới: màn Thi thử, Kho từ vựng, Tra từ (chưa thấy vấn đề về động lực ở đó).
 
 ## Phiên 2026-09-23 (tối) — Làm lại Collocations + plugin — XONG, ĐÃ PUSH
 
