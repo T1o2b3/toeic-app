@@ -97,10 +97,15 @@ báo Part 5 là 20 câu trong khi lượt thật 30 (nay mọi chỗ dùng `PART
   câu có lời giải không phải tiếng Việt ở cả 3 bộ sinh; 2 test mới canh (đã thử đỏ trên nội dung cũ).
 - Bỏ chữ "deck" và mã `toeic-tsl + toeic-bsl` khỏi màn hình. **806 test pass**, `validate:content` sạch.
 
+**12. Chế độ tối — sửa các chỗ còn chói/tàng hình.** Quét CSS tìm màu viết cứng: phương án đang chọn, dòng transcript
+đang phát, ô "làm dở" ở bảng câu thi thử đều là nền sáng cố định → nay dùng biến (`--good-soft`, `--hard-soft` mới).
+Biểu đồ chưa từng có bản tối: mức "Thành thạo" `#0d366b` trên nền `#161616` gần như tàng hình → thêm bộ màu tối, đã
+chạy `validate_palette` (skill dataviz) cho cả 3 màu chuỗi lẫn thang 4 mức, qua hết. Đã xem thật ở 375×812.
+
 ### Bước tiếp theo
-- **Đánh bóng phần B (Claude tự làm tiếp):** thang khoảng cách + cỡ chữ thống nhất (`--space-*`, `--text-*`), phản hồi
-  khi chọn đáp án đúng/sai (nháy màu nhẹ), trạng thái rỗng có hướng dẫn. Kiểm bằng mắt đủ 15 màn trước khi commit —
-  lần xoá CSS trước (2026-09-23) đã làm mất 43 class.
+- **Đánh bóng phần B — Claude đã tự cân nhắc lại và HOÃN:** thang khoảng cách/cỡ chữ thống nhất đụng toàn bộ CSS, rủi
+  ro vỡ cao mà người dùng gần như không thấy khác. Hiệu ứng khi chọn đáp án thì sẽ PHÁT LẠI mỗi lần màn vẽ lại
+  (vd chạm gạt từ sau khi trả lời) — phiền hơn là đẹp. Làm khi có lý do cụ thể.
 - **Huy kiểm tự đồng bộ trên bản deploy** (nhớ đối chiếu số hiệu bản build): Mac học 1 thẻ → chờ 20 giây →
   mở app trên iPhone (đăng nhập cùng tài khoản nếu chưa) → vào **Sao lưu**: dòng "Lần gần nhất … nhận về 1".
 - **M7 xong khi** Huy học thật 1 phiên trên Mac + 1 phiên trên iPhone. Gặp lỗi gì thì báo (kèm số hiệu bản build).

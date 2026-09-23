@@ -11,6 +11,7 @@
   --easy: #2f5f8f;
   --good-soft: #eef6f1;
   --again-soft: #fbeae6;
+  --hard-soft: #fdf6e7;
   --chosen-soft: #f2f2ed;
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
   line-height: 1.6;
@@ -25,6 +26,7 @@
   --accent: #4fb47c;
   --good-soft: #14301f;
   --again-soft: #3a1a13;
+  --hard-soft: #33280f;
   --chosen-soft: #222222;
 }
 

@@ -17,12 +17,20 @@ body.has-tabbar #app { padding-bottom: calc(5rem + env(safe-area-inset-bottom));
 
 /* ===== Dashboard (D36) =====
    Màu biểu đồ: 3 màu chuỗi đầu của bảng đã chạy validate_palette (xanh, cam, ngọc) và thang xanh có thứ tự
-   cho tiến độ từ vựng. Chưa có giao diện tối nên chỉ khai báo bản sáng; khi làm chế độ tối thì chỉ cần đổi ở đây. */
+   cho tiến độ từ vựng. */
 :root {
   --viz-s1: #2a78d6; --viz-s2: #eb6834; --viz-s3: #1baf7a;
   --viz-l0: #d9d8d2; --viz-l1: #86b6ef; --viz-l2: #3987e5; --viz-l3: #1c5cab; --viz-l4: #0d366b;
   --viz-grid: #ecebe6;
   --nav-width: 13.5rem;
+}
+/* Bản tối (D59): cùng các sắc đó, lấy bậc hợp nền tối — đã chạy validate_palette với nền #161616, qua hết.
+   Bản sáng để nguyên trên nền tối thì mức "Thành thạo" (#0d366b) gần như tàng hình (~1,5:1). Thang mức từ
+   vẫn đậm dần theo mức nhớ, bậc đậm nhất dừng ở #184f95 (2,23:1 — ngưỡng tối thiểu 2:1). */
+[data-theme="dark"] {
+  --viz-s1: #3987e5; --viz-s2: #d95926; --viz-s3: #199e70;
+  --viz-l0: #383835; --viz-l1: #86b6ef; --viz-l2: #5598e7; --viz-l3: #2a78d6; --viz-l4: #184f95;
+  --viz-grid: #2c2c2a;
 }
 .dash-title { display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.25rem; }
 .dash-title h1 { margin: 0; }
@@ -110,7 +118,7 @@ button.viz-row span { display: inline; }
 .passage .stem { white-space: pre-wrap; font-size: 0.98rem; }
 .set-q { margin: 1rem 0 0.4rem; padding-top: 0.6rem; border-top: 1px solid var(--border); }
 .set-q-stem { font-weight: 600; margin-bottom: 0.5rem; }
-.transcript-line.now { background: #eef6f1; border-radius: 0.4rem; }
+.transcript-line.now { background: var(--good-soft); border-radius: 0.4rem; }
 
 /* Thi thử (M15) */
 .exam-bar { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.75rem; position: sticky; top: 0; background: var(--bg); padding: 0.4rem 0; z-index: 5; }
@@ -118,11 +126,11 @@ button.viz-row span { display: inline; }
 .exam-clock.low { color: var(--again); }
 .exam-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 1rem; }
 .exam-nav button { margin-bottom: 0; text-align: center; }
-.option.picked { border-color: var(--accent); background: #eef6f1; }
+.option.picked { border-color: var(--accent); background: var(--good-soft); }
 .option.picked .letter { color: var(--accent); }
 .palette { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 0.75rem; }
 button.pal { min-width: 2.4rem; padding: 0.3rem 0.4rem; font-size: 0.75rem; background: var(--surface); border-radius: 0.5rem; }
-button.pal.part { background: #fdf6e7; }
+button.pal.part { background: var(--hard-soft); }
 button.pal.done { background: var(--accent); color: #fff; border-color: var(--accent); }
 button.pal.current { outline: 2px solid var(--fg); outline-offset: 1px; }
 .confirm { margin-top: 1rem; }
