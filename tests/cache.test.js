@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdtempSync, rmSync, writeFileSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { openCache, chunk, readCachedAi } from '../pipeline/lib/cache.js';
+import { openCache, chunk, readCachedAi, openWorkCache, nextId } from '../pipeline/lib/cache.js';
 import { createDeckValidator, findDuplicateIds } from '../pipeline/lib/validate-deck.js';
 
 describe('chunk', () => {
@@ -114,5 +114,48 @@ describe('readCachedAi', () => {
 
   it('không có gì trong cache thì trả null', () => {
     expect(readCachedAi(undefined, fallback)).toBeNull();
+  });
+});
+
+describe('openWorkCache — nội dung đã phát hành là nguồn chuẩn (D62)', () => {
+  let dir;
+  beforeEach(() => { dir = mkdtempSync(join(tmpdir(), 'toeic-work-')); });
+  afterEach(() => rmSync(dir, { recursive: true, force: true }));
+
+  const publish = (entries) => writeFileSync(join(dir, 'out.json'), JSON.stringify({ version: 1, entries }));
+
+  it('máy KHÔNG có cache: nạp đủ mục đã phát hành, để id mới đánh tiếp chứ không lại từ 1', () => {
+    publish([{ id: 'p5-0001', stem: 'a' }, { id: 'p5-0002', stem: 'b', status: 'retired' }]);
+    const { cache, published } = openWorkCache(join(dir, 'cache.json'), join(dir, 'out.json'));
+    expect(cache.size()).toBe(2);
+    expect(cache.get('p5-0002').status).toBe('retired');
+    expect([...published]).toEqual(['p5-0001', 'p5-0002']);
+    expect(nextId('p5-', Object.keys(cache.snapshot()))).toBe('p5-0003');
+  });
+
+  it('máy CÓ cache cũ: bản phát hành thắng (giữ chỗ sửa tay như lời giải đã dịch), nháp chưa phát hành vẫn còn', () => {
+    const old = openCache(join(dir, 'cache.json'));
+    old.set('p7-0001', { id: 'p7-0001', explanation: 'English text' });
+    old.set('p7-0002', { id: 'p7-0002', explanation: 'nháp chưa phát hành' });
+    old.save();
+    publish([{ id: 'p7-0001', explanation: 'Lời giải tiếng Việt' }]);
+    const { cache, published } = openWorkCache(join(dir, 'cache.json'), join(dir, 'out.json'));
+    expect(cache.get('p7-0001').explanation).toBe('Lời giải tiếng Việt');
+    expect(cache.has('p7-0002')).toBe(true);
+    expect(published.has('p7-0002')).toBe(false);
+  });
+
+  it('chưa có file phát hành thì chạy như trước; file phát hành HỎNG thì dừng (không được coi như rỗng rồi ghi đè)', () => {
+    expect(openWorkCache(join(dir, 'cache.json'), join(dir, 'none.json')).published.size).toBe(0);
+    writeFileSync(join(dir, 'out.json'), '{"entries": [');
+    expect(() => openWorkCache(join(dir, 'cache.json'), join(dir, 'out.json'))).toThrow();
+  });
+});
+
+describe('nextId', () => {
+  it('lấy số lớn nhất + 1, không dùng số lượng (có id bị bỏ vẫn không trùng)', () => {
+    expect(nextId('l2-', ['l2-0001', 'l2-0003'])).toBe('l2-0004');
+    expect(nextId('p3-', ['p3-0009', 'p4-0050', 'p3-0010'])).toBe('p3-0011');
+    expect(nextId('p5-', [])).toBe('p5-0001');
   });
 });

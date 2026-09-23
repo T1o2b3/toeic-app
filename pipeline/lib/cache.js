@@ -45,6 +45,49 @@ export function openCache(filePath) {
 }
 
 /**
+ * Mở cache làm việc của một pipeline sinh nội dung, NẠP TRƯỚC nội dung đã phát hành (D62).
+ *
+ * File đã phát hành (`public/content/*.json`, nằm trong git) là nguồn chuẩn; cache chỉ là kho nháp của máy đang
+ * chạy (nằm trong .gitignore — máy khác không có). Không nạp trước thì:
+ *   - máy KHÔNG có cache: id đánh lại từ 1, ghi đè câu cũ (nhật ký học trỏ nhầm câu — ràng buộc #6) và
+ *     bước dọn âm thanh xoá luôn MP3 của chúng;
+ *   - máy CÓ cache: mất chỗ sửa tay trên file phát hành (lời giải đã dịch D60, câu đánh dấu retired).
+ *
+ * @param {string} cachePath
+ * @param {string} publishedPath
+ * @returns {{cache: ReturnType<typeof openCache>, published: Set<string>}} `published`: id đã phát hành —
+ *   lúc ghi file giữ NGUYÊN các mục này, không lắp ráp/lọc lại
+ */
+export function openWorkCache(cachePath, publishedPath) {
+  const cache = openCache(cachePath);
+  const published = new Set();
+  if (existsSync(publishedPath)) {
+    // File hỏng thì để lỗi nổi lên: coi như rỗng rồi ghi đè là mất sạch nội dung đã phát hành.
+    for (const entry of JSON.parse(readFileSync(publishedPath, 'utf8')).entries ?? []) {
+      cache.set(entry.id, entry);
+      published.add(entry.id);
+    }
+  }
+  return { cache, published };
+}
+
+/**
+ * Id kế tiếp = số lớn nhất đang dùng + 1. Không dùng số lượng: lệch ngay khi có id bị bỏ, sinh ra id trùng.
+ * @param {string} prefix - vd "p5-", "l2-", "p3-"
+ * @param {Iterable<string>} ids
+ * @returns {string}
+ */
+export function nextId(prefix, ids) {
+  let max = 0;
+  for (const id of ids) {
+    if (!id.startsWith(prefix)) continue;
+    const n = Number(id.slice(prefix.length));
+    if (Number.isInteger(n) && n > max) max = n;
+  }
+  return `${prefix}${String(max + 1).padStart(4, '0')}`;
+}
+
+/**
  * Chia một mảng thành các lô nhỏ.
  * @template T
  * @param {T[]} items

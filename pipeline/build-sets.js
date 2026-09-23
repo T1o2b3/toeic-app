@@ -16,7 +16,7 @@ import { isWellFormedSet, setKey, crossCheckSets, assembleSet } from './lib/set-
 import { parseVocabResponse } from './lib/prompt-vocab.js';
 import { sleep } from './lib/ai-provider.js';
 import { createModelPair, aiStep, QUOTA_MESSAGE } from './lib/model-pair.js';
-import { openCache } from './lib/cache.js';
+import { openWorkCache, nextId } from './lib/cache.js';
 import { createValidator } from './lib/validate-deck.js';
 import { renderClips, AUDIO_FAILED_MESSAGE } from './lib/tts.js';
 import { removeOrphanAudio } from './lib/audio-files.js';
@@ -93,7 +93,7 @@ async function generate({ part, variant, target, batchSize, cache }) {
 
     const { agreed, rejected } = crossCheckSets(fresh, solved);
     for (const item of agreed) {
-      const id = `p${part}-${String(cache.size() + 1).padStart(4, '0')}`;
+      const id = nextId(`p${part}-`, Object.keys(cache.snapshot()));
       cache.set(id, {
         id, set: `part${part}-core`, part, status: 'active', kind: item.kind ?? (part === 7 ? variant : undefined) ?? defaultKind(part),
         title: String(item.title ?? '').trim(),
@@ -119,7 +119,8 @@ const defaultKind = (part) => ({ 3: 'conversation', 4: 'talk', 6: 'text-completi
 
 async function main() {
   const { part, variant, target, batchSize, generate: shouldGenerate } = parseArgs(process.argv.slice(2));
-  const cache = openCache(projectPath(`pipeline/.cache/sets-part${part}.json`));
+  const output = projectPath(`public/content/sets-part${part}.json`);
+  const { cache, published } = openWorkCache(projectPath(`pipeline/.cache/sets-part${part}.json`), output);
   if (shouldGenerate) await generate({ part, variant, target, batchSize, cache });
 
   // Ghi file: mọi bộ trong cache (Part 7 gồm cả ba dạng), sắp theo id. Giọng/đáp án gán theo thứ tự nên id phải ổn định.
@@ -128,7 +129,8 @@ async function main() {
 
   let offset = 0;
   const assembled = drafts.map((draft, index) => {
-    const result = assembleSet(draft, { part, index, questionOffset: offset });
+    // Bộ đã phát hành giữ nguyên (D62); vẫn cộng số câu vào offset để bộ mới xếp đáp án đúng như trước.
+    const result = published.has(draft.id) ? { entry: draft, clips: [] } : assembleSet(draft, { part, index, questionOffset: offset });
     offset += draft.questions.length;
     return result;
   });
@@ -147,7 +149,7 @@ async function main() {
     return;
   }
   mkdirSync(projectPath('public/content'), { recursive: true });
-  writeFileSync(projectPath(`public/content/sets-part${part}.json`), `${JSON.stringify(bank, null, 2)}\n`);
+  writeFileSync(output, `${JSON.stringify(bank, null, 2)}\n`);
   const questionCount = bank.entries.reduce((s, e) => s + e.questions.length, 0);
   console.log(`Đã ghi ${bank.entries.length} bộ (${questionCount} câu) vào public/content/sets-part${part}.json`);
 

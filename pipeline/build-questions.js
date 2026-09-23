@@ -15,7 +15,7 @@ import { parseVocabResponse } from './lib/prompt-vocab.js';
 import { isVietnameseOrEmpty } from './lib/prompt-listening.js';
 import { sleep } from './lib/ai-provider.js';
 import { createModelPair, aiStep, QUOTA_MESSAGE } from './lib/model-pair.js';
-import { openCache } from './lib/cache.js';
+import { openWorkCache, nextId } from './lib/cache.js';
 import { createValidator } from './lib/validate-deck.js';
 import { projectPath, today, flagNumber } from './lib/cli.js';
 
@@ -47,7 +47,7 @@ function pickErrorTypes(counts, howMany = 4) {
 
 async function main() {
   const { target, batchSize } = parseArgs(process.argv.slice(2));
-  const cache = openCache(CACHE);
+  const { cache, published } = openWorkCache(CACHE, OUTPUT);
 
   const pair = createModelPair();
   console.log(`Đã có sẵn: ${cache.size()} câu. Mục tiêu: ${target} câu.`);
@@ -97,7 +97,7 @@ async function main() {
 
     const { agreed, rejected } = crossCheck(fresh, solved);
     for (const { question, solvedAnswer } of agreed) {
-      const id = `p5-${String(cache.size() + 1).padStart(4, '0')}`;
+      const id = nextId('p5-', Object.keys(cache.snapshot()));
       cache.set(id, {
         id,
         set: 'part5-core',
@@ -123,7 +123,7 @@ async function main() {
   }
 
   const entries = Object.values(cache.snapshot())
-    .filter((q) => q.explanation.length >= 20)
+    .filter((q) => published.has(q.id) || q.explanation.length >= 20)
     .sort((a, b) => a.id.localeCompare(b.id));
 
   if (entries.length === 0) {

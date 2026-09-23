@@ -17,7 +17,7 @@ import { crossCheck } from './lib/prompt-question.js';
 import { parseVocabResponse } from './lib/prompt-vocab.js';
 import { sleep } from './lib/ai-provider.js';
 import { createModelPair, aiStep, QUOTA_MESSAGE } from './lib/model-pair.js';
-import { openCache } from './lib/cache.js';
+import { openWorkCache, nextId } from './lib/cache.js';
 import { createValidator } from './lib/validate-deck.js';
 import { assembleEntry } from './lib/listening-assemble.js';
 import { renderClips, AUDIO_FAILED_MESSAGE } from './lib/tts.js';
@@ -83,7 +83,7 @@ async function generate({ target, batchSize, cache }) {
 
     const { agreed, rejected } = crossCheck(fresh, solved);
     for (const { question, solvedAnswer } of agreed) {
-      const id = `l2-${String(cache.size() + 1).padStart(4, '0')}`;
+      const id = nextId('l2-', Object.keys(cache.snapshot()));
       cache.set(id, {
         id, set: 'part2-core', part: 2, status: 'active',
         question: question.question.trim(),
@@ -108,11 +108,11 @@ async function generate({ target, batchSize, cache }) {
 
 async function main() {
   const { target, batchSize, generate: shouldGenerate } = parseArgs(process.argv.slice(2));
-  const cache = openCache(CACHE);
+  const { cache, published } = openWorkCache(CACHE, OUTPUT);
   if (shouldGenerate) await generate({ target, batchSize, cache });
 
   const drafts = Object.values(cache.snapshot())
-    .filter((item) => item.explanation.length >= 20)
+    .filter((item) => published.has(item.id) || item.explanation.length >= 20)
     .sort((a, b) => a.id.localeCompare(b.id));
   if (drafts.length === 0) {
     console.error('Chưa có câu nào đạt — không ghi file.');
@@ -121,7 +121,8 @@ async function main() {
   }
 
   // Âm thanh: giọng và chữ cái đáp án phụ thuộc thứ tự câu, nên gán theo vị trí trong danh sách đã sắp.
-  const assembled = drafts.map((draft, index) => assembleEntry(draft, index));
+  // Câu đã phát hành giữ nguyên (D62) — lắp lại là đổi chỗ đáp án / giọng của câu đã có trong nhật ký học.
+  const assembled = drafts.map((draft, index) => (published.has(draft.id) ? { entry: draft, clips: [] } : assembleEntry(draft, index)));
   const clips = assembled.flatMap((a) => a.clips);
   const audio = await renderClips(clips, { publicDir: PUBLIC, command: EDGE_TTS, label: `${drafts.length} câu` });
   if (audio.failed > 0) {
