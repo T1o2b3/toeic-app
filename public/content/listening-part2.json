@@ -2666,6 +2666,1116 @@
         "question": "en-GB-SoniaNeural",
         "responses": "en-GB-RyanNeural"
       }
+    },
+    {
+      "id": "l2-0073",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "How are we going to fit the excess inventory from the Tokyo shipment?",
+      "responses": {
+        "A": "We cleared out aisle four yesterday.",
+        "B": "The Tokyo office is closed today.",
+        "C": "Yes, it fits perfectly."
+      },
+      "answer": "A",
+      "errorType": "wh-how",
+      "explanation": "Câu trả lời gián tiếp cực kỳ tự nhiên. Thay vì giải thích cách sắp xếp, người nói chỉ ra rằng lối đi số bốn đã được dọn sạch, ngụ ý rằng có đủ chỗ trống cho lô hàng mới.",
+      "trap": "Lựa chọn chứa bẫy lặp từ 'Tokyo' nhưng sai ngữ cảnh, và lựa chọn khác chứa bẫy trả lời 'Yes' cho câu hỏi Wh-.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "A",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/005a51e1801d6c23.mp3",
+        "A": "audio/f1cf3b17b538d632.mp3",
+        "B": "audio/c8f758871c20e780.mp3",
+        "C": "audio/25b8e21f235ab39d.mp3"
+      },
+      "voices": {
+        "question": "en-US-JennyNeural",
+        "responses": "en-AU-NatashaNeural"
+      }
+    },
+    {
+      "id": "l2-0074",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "The server migration is still scheduled for midnight, isn't it?",
+      "responses": {
+        "A": "No, I didn't see the schedule.",
+        "B": "Actually, IT postponed it until Sunday.",
+        "C": "At the corner of the server room."
+      },
+      "answer": "B",
+      "errorType": "tag-question",
+      "explanation": "Câu trả lời đính chính lại thông tin một cách lịch sự và tự nhiên, cung cấp thời gian mới được dời lại bởi bộ phận IT.",
+      "trap": "Lựa chọn chứa bẫy lặp từ 'schedule' nhưng không trả lời vào trọng tâm, và lựa chọn khác lặp từ 'server' nhưng trả lời cho câu hỏi Where.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "B",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/b1de213b50e0e91b.mp3",
+        "A": "audio/19ce8c0e06db1459.mp3",
+        "B": "audio/9738cb514dab4154.mp3",
+        "C": "audio/39605e9e324f9a60.mp3"
+      },
+      "voices": {
+        "question": "en-GB-RyanNeural",
+        "responses": "en-US-GuyNeural"
+      }
+    },
+    {
+      "id": "l2-0075",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "How soon do we need to finalize the catering menu for the gala?",
+      "responses": {
+        "A": "I really enjoyed the catering.",
+        "B": "It's a very formal gala.",
+        "C": "The guest count is due this Friday."
+      },
+      "answer": "C",
+      "errorType": "wh-when",
+      "explanation": "Câu trả lời gián tiếp chỉ ra thời hạn bằng cách liên kết nó với một đầu việc khác: số lượng khách mời phải được chốt vào thứ Sáu này.",
+      "trap": "Lựa chọn chứa bẫy lặp từ 'catering' để bày tỏ cảm xúc cá nhân, và lựa chọn khác lặp từ 'gala' để miêu tả tính chất sự kiện thay vì trả lời thời gian.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/c7d2f0011366cd9a.mp3",
+        "A": "audio/713283842b85f2e4.mp3",
+        "B": "audio/88947b027ea18fcd.mp3",
+        "C": "audio/d0efe15ba9099ceb.mp3"
+      },
+      "voices": {
+        "question": "en-AU-NatashaNeural",
+        "responses": "en-GB-SoniaNeural"
+      }
+    },
+    {
+      "id": "l2-0076",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "Why are we suddenly running low on packaging tape?",
+      "responses": {
+        "A": "The shipping department doubled their daily output.",
+        "B": "Yes, it's very low.",
+        "C": "I'll tape the box for you."
+      },
+      "answer": "A",
+      "errorType": "wh-why",
+      "explanation": "Câu trả lời giải thích nguyên nhân gián tiếp: do bộ phận giao hàng tăng gấp đôi công suất nên lượng băng keo đóng gói tiêu hao nhanh hơn.",
+      "trap": "Lựa chọn chứa bẫy trả lời 'Yes' kèm lặp từ 'low', và lựa chọn khác lặp từ 'tape' dưới dạng động từ hành động.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "A",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/c8703a69b4549487.mp3",
+        "A": "audio/2a212575b752a403.mp3",
+        "B": "audio/3ff32bfc0555bfc9.mp3",
+        "C": "audio/8d3b647859a3530d.mp3"
+      },
+      "voices": {
+        "question": "en-US-GuyNeural",
+        "responses": "en-US-JennyNeural"
+      }
+    },
+    {
+      "id": "l2-0077",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "Should we email the contract draft to the client or wait for their call?",
+      "responses": {
+        "A": "Yes, I checked my email.",
+        "B": "They said they'd contact us by Friday.",
+        "C": "The draft is on my desk."
+      },
+      "answer": "B",
+      "errorType": "choice",
+      "explanation": "Câu trả lời gián tiếp khuyên nên đợi bằng cách nhắc lại lời hẹn của khách hàng là sẽ chủ động liên hệ trước thứ Sáu.",
+      "trap": "Lựa chọn chứa bẫy trả lời 'Yes' cho câu hỏi lựa chọn kèm lặp từ 'email', và lựa chọn khác lặp từ 'draft' nhưng chỉ nói về vị trí tài liệu.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "B",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/c80e0755140f05ae.mp3",
+        "A": "audio/69d4e9f181c3bbbf.mp3",
+        "B": "audio/2157cd93ae147e57.mp3",
+        "C": "audio/178c9d79cebabcbc.mp3"
+      },
+      "voices": {
+        "question": "en-GB-SoniaNeural",
+        "responses": "en-GB-RyanNeural"
+      }
+    },
+    {
+      "id": "l2-0078",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "You've submitted the expense reports for the Chicago trip, haven't you?",
+      "responses": {
+        "A": "Chicago is very cold in winter.",
+        "B": "Yes, the report was very long.",
+        "C": "I'm still waiting for the hotel receipt."
+      },
+      "answer": "C",
+      "errorType": "tag-question",
+      "explanation": "Người nói giải thích lý do chưa nộp báo cáo chi phí vì còn thiếu hóa đơn khách sạn, một tình huống rất thực tế trong công sở.",
+      "trap": "Lựa chọn chứa bẫy lặp từ 'Chicago' nhưng nói về thời tiết, và lựa chọn khác lặp từ 'reports/report' nhưng nhận xét về độ dài của báo cáo.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/992a7a99e26dee77.mp3",
+        "A": "audio/393d377210173d50.mp3",
+        "B": "audio/2f0a8c8787460150.mp3",
+        "C": "audio/990c9e1887fc58c4.mp3"
+      },
+      "voices": {
+        "question": "en-US-JennyNeural",
+        "responses": "en-AU-NatashaNeural"
+      }
+    },
+    {
+      "id": "l2-0079",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "When is the catering company delivering the lunch platters?",
+      "responses": {
+        "A": "The meeting was pushed back to one o'clock.",
+        "B": "I love the lunch menu.",
+        "C": "Yes, they deliver worldwide."
+      },
+      "answer": "A",
+      "errorType": "wh-when",
+      "explanation": "Câu trả lời gián tiếp cực kỳ thông minh: vì cuộc họp đã bị lùi lại đến một giờ nên thời gian giao đồ ăn có thể cũng đã được điều chỉnh tương ứng.",
+      "trap": "Lựa chọn chứa bẫy lặp từ 'lunch' để bày tỏ sở thích cá nhân, và lựa chọn khác chứa bẫy trả lời 'Yes' kèm lặp từ 'delivering/deliver'.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "A",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/0c0c4e65e4f424dd.mp3",
+        "A": "audio/05a1fa97d3d65e63.mp3",
+        "B": "audio/9fcf5ef9e023d053.mp3",
+        "C": "audio/43ccc44dde4f3856.mp3"
+      },
+      "voices": {
+        "question": "en-GB-RyanNeural",
+        "responses": "en-US-GuyNeural"
+      }
+    },
+    {
+      "id": "l2-0080",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "Did the shipment of microchips clear customs at the port of Seattle?",
+      "responses": {
+        "A": "Yes, I prefer Seattle.",
+        "B": "Actually, there's a paperwork delay.",
+        "C": "Customs are very traditional."
+      },
+      "answer": "B",
+      "errorType": "yes-no",
+      "explanation": "Câu trả lời gián tiếp chỉ ra rằng lô hàng chưa thông quan do gặp sự cố về giấy tờ, thay vì trả lời Có/Không trực tiếp.",
+      "trap": "Sử dụng bẫy lặp từ 'Seattle' và 'customs', đồng thời bẫy trả lời trực tiếp 'Yes' nhưng thông tin sau đó hoàn toàn lạc đề.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "B",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/756d8915f14b3eb8.mp3",
+        "A": "audio/ac1d40742503b8ea.mp3",
+        "B": "audio/951491f436c41dea.mp3",
+        "C": "audio/af540a20203a5b3d.mp3"
+      },
+      "voices": {
+        "question": "en-AU-NatashaNeural",
+        "responses": "en-GB-SoniaNeural"
+      }
+    },
+    {
+      "id": "l2-0081",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "Should we reschedule the performance review or just push through it today?",
+      "responses": {
+        "A": "I have a performance tonight.",
+        "B": "Yes, we should.",
+        "C": "My schedule is completely clear after lunch."
+      },
+      "answer": "C",
+      "errorType": "choice",
+      "explanation": "Câu trả lời gián tiếp chọn phương án tiếp tục họp hôm nay bằng cách thông báo lịch trình trống vào buổi chiều.",
+      "trap": "Bẫy lặp từ 'performance' và bẫy trả lời 'Yes' cho câu hỏi lựa chọn.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/6dc8fb8f304ab1d5.mp3",
+        "A": "audio/cccad4c391ad5057.mp3",
+        "B": "audio/2ea567cebbc83f13.mp3",
+        "C": "audio/cab3bc50971a0d3e.mp3"
+      },
+      "voices": {
+        "question": "en-US-GuyNeural",
+        "responses": "en-US-JennyNeural"
+      }
+    },
+    {
+      "id": "l2-0082",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "Why don't we run the system diagnostic before updating the server?",
+      "responses": {
+        "A": "We already did, and everything's green.",
+        "B": "It was updated yesterday.",
+        "C": "The server is in the basement."
+      },
+      "answer": "A",
+      "errorType": "request-suggestion",
+      "explanation": "Cách nói tự nhiên, gián tiếp từ chối gợi ý vì việc đó đã được thực hiện xong và hệ thống hoạt động tốt.",
+      "trap": "Bẫy lặp từ 'updating' thành 'updated', và lặp từ 'server' trong câu trả lời sai loại thông tin.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "A",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/830b24d26344625a.mp3",
+        "A": "audio/fecfb62fc9143fe9.mp3",
+        "B": "audio/3a8ac0be65d6d464.mp3",
+        "C": "audio/9aba0c972842ce2f.mp3"
+      },
+      "voices": {
+        "question": "en-GB-SoniaNeural",
+        "responses": "en-GB-RyanNeural"
+      }
+    },
+    {
+      "id": "l2-0083",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "Do you know if the client accepted our revised pricing model?",
+      "responses": {
+        "A": "No, I don't know how to model.",
+        "B": "They're still consulting their legal team.",
+        "C": "The price is fifty dollars."
+      },
+      "answer": "B",
+      "errorType": "indirect",
+      "explanation": "Câu trả lời gián tiếp cho biết khách hàng chưa quyết định vì đang tham khảo ý kiến của bộ phận pháp lý.",
+      "trap": "Bẫy lặp từ 'model' với nghĩa khác và bẫy lặp từ đồng âm/gần nghĩa 'pricing' thành 'price'.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "B",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/02eca86a88153203.mp3",
+        "A": "audio/1de7efade27d201c.mp3",
+        "B": "audio/9858a772ce3cef90.mp3",
+        "C": "audio/1ddbd958d5e38ae8.mp3"
+      },
+      "voices": {
+        "question": "en-US-JennyNeural",
+        "responses": "en-AU-NatashaNeural"
+      }
+    },
+    {
+      "id": "l2-0084",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "What's causing the bottleneck at the loading dock this morning?",
+      "responses": {
+        "A": "Yes, it's very cold this morning.",
+        "B": "I'll dock the boat there.",
+        "C": "One of the forklifts broke down."
+      },
+      "answer": "C",
+      "errorType": "wh-what",
+      "explanation": "Câu trả lời đưa ra nguyên nhân trực tiếp gây ra sự tắc nghẽn là do xe nâng bị hỏng.",
+      "trap": "Bẫy trả lời 'Yes' cho câu hỏi Wh-question, lặp từ 'morning' và lặp từ 'dock' với nghĩa khác.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/787cfe6013416558.mp3",
+        "A": "audio/dd27421882b4516d.mp3",
+        "B": "audio/efff664bc7e493fb.mp3",
+        "C": "audio/2cf9f9a8906dd2b3.mp3"
+      },
+      "voices": {
+        "question": "en-GB-RyanNeural",
+        "responses": "en-US-GuyNeural"
+      }
+    },
+    {
+      "id": "l2-0085",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "You've already finalized the budget projections for next quarter, haven't you?",
+      "responses": {
+        "A": "I'm still waiting on the sales data.",
+        "B": "The projection screen is broken.",
+        "C": "Yes, it's a quarter past three."
+      },
+      "answer": "A",
+      "errorType": "tag-question",
+      "explanation": "Câu trả lời gián tiếp phủ nhận việc đã hoàn thành bằng cách giải thích lý do chưa xong.",
+      "trap": "Bẫy lặp từ 'projections' thành 'projection' và lặp từ 'quarter' với nghĩa chỉ thời gian.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "A",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/666018a862cbc4ee.mp3",
+        "A": "audio/37c74d213695f136.mp3",
+        "B": "audio/058829324320c0f7.mp3",
+        "C": "audio/167b41686dfc9f9b.mp3"
+      },
+      "voices": {
+        "question": "en-AU-NatashaNeural",
+        "responses": "en-GB-SoniaNeural"
+      }
+    },
+    {
+      "id": "l2-0086",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "Could you ask the caterer if they offer gluten-free options?",
+      "responses": {
+        "A": "No, I don't eat gluten.",
+        "B": "I'll send them a quick email now.",
+        "C": "The catering was excellent."
+      },
+      "answer": "B",
+      "errorType": "request-suggestion",
+      "explanation": "Câu trả lời thể hiện sự đồng ý thực hiện yêu cầu bằng hành động cụ thể ngay lập tức.",
+      "trap": "Bẫy lặp từ 'gluten' nhưng nói về sở thích cá nhân thay vì trả lời yêu cầu, và bẫy lặp từ gốc 'caterer' thành 'catering'.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "B",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/55045b238e4d86fb.mp3",
+        "A": "audio/09f49ca4cacd944f.mp3",
+        "B": "audio/590878816a1f0ed2.mp3",
+        "C": "audio/13b32d60c64252b9.mp3"
+      },
+      "voices": {
+        "question": "en-US-GuyNeural",
+        "responses": "en-US-JennyNeural"
+      }
+    },
+    {
+      "id": "l2-0087",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "Has the IT department resolved the printer connectivity issue yet?",
+      "responses": {
+        "A": "I just printed the report.",
+        "B": "Yes, it's a very complex issue.",
+        "C": "They're waiting for a replacement part."
+      },
+      "answer": "C",
+      "errorType": "yes-no",
+      "explanation": "Câu trả lời gián tiếp cho biết vấn đề chưa được giải quyết vì đang chờ linh kiện thay thế.",
+      "trap": "Bẫy lặp từ 'printer' thành 'printed' và bẫy trả lời 'Yes' nhưng lặp lại từ 'issue' mà không giải quyết được câu hỏi.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/0eb36a714870cb47.mp3",
+        "A": "audio/85600be1615c075a.mp3",
+        "B": "audio/4daf3389b619ce78.mp3",
+        "C": "audio/6981ea7f2d68091e.mp3"
+      },
+      "voices": {
+        "question": "en-GB-SoniaNeural",
+        "responses": "en-GB-RyanNeural"
+      }
+    },
+    {
+      "id": "l2-0088",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "Are we shipping these fragile components by air or sea?",
+      "responses": {
+        "A": "Neither, we're using a local courier.",
+        "B": "The air conditioning is on.",
+        "C": "Yes, by sea."
+      },
+      "answer": "A",
+      "errorType": "choice",
+      "explanation": "Câu trả lời bác bỏ cả hai lựa chọn trong câu hỏi và đưa ra giải pháp thay thế là dùng dịch vụ chuyển phát nhanh địa phương.",
+      "trap": "Bẫy trả lời 'Yes' cho câu hỏi lựa chọn và bẫy lặp từ 'air' với nghĩa hoàn toàn khác.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "A",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/8e6040a828a05a93.mp3",
+        "A": "audio/8091f2cc9871b7c7.mp3",
+        "B": "audio/1794bdc0f10baf81.mp3",
+        "C": "audio/e10707591a626939.mp3"
+      },
+      "voices": {
+        "question": "en-US-JennyNeural",
+        "responses": "en-AU-NatashaNeural"
+      }
+    },
+    {
+      "id": "l2-0089",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "Do you have any idea who can cover Sarah's shift tomorrow?",
+      "responses": {
+        "A": "She shifted the gears.",
+        "B": "Let me check the part-time roster.",
+        "C": "Yes, tomorrow is Tuesday."
+      },
+      "answer": "B",
+      "errorType": "indirect",
+      "explanation": "Câu trả lời gián tiếp đề xuất một hành động để tìm ra người thay thế.",
+      "trap": "Bẫy lặp từ 'shift' với nghĩa khác và bẫy trả lời 'Yes' đi kèm thông tin lặp lại từ 'tomorrow' nhưng lạc đề.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "B",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/7b74714ac5190d04.mp3",
+        "A": "audio/51587f4a4b6e01d8.mp3",
+        "B": "audio/5659401847958031.mp3",
+        "C": "audio/7b27b3075bba9870.mp3"
+      },
+      "voices": {
+        "question": "en-GB-RyanNeural",
+        "responses": "en-US-GuyNeural"
+      }
+    },
+    {
+      "id": "l2-0090",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "Which feedback from the focus group should we prioritize?",
+      "responses": {
+        "A": "The group meets on Friday.",
+        "B": "I'll give you some feedback.",
+        "C": "The complaints about the user interface."
+      },
+      "answer": "C",
+      "errorType": "wh-what",
+      "explanation": "Câu trả lời trực tiếp chỉ ra phần phản hồi cần ưu tiên là các khiếu nại về giao diện người dùng.",
+      "trap": "Bẫy lặp từ 'group' và 'feedback' trong các ngữ cảnh không liên quan đến việc lựa chọn ưu tiên.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/3170413433f1db94.mp3",
+        "A": "audio/65ed85985384caaa.mp3",
+        "B": "audio/d4daf8da17bc6bf4.mp3",
+        "C": "audio/873fcdaccc15b0c9.mp3"
+      },
+      "voices": {
+        "question": "en-AU-NatashaNeural",
+        "responses": "en-GB-SoniaNeural"
+      }
+    },
+    {
+      "id": "l2-0091",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "We're meeting in the main conference room, aren't we?",
+      "responses": {
+        "A": "Actually, it's been moved to Room 4B.",
+        "B": "The conference was very informative.",
+        "C": "Yes, I met him yesterday."
+      },
+      "answer": "A",
+      "errorType": "tag-question",
+      "explanation": "Câu trả lời gián tiếp sửa lại thông tin sai trong câu hỏi đuôi bằng cách thông báo địa điểm mới.",
+      "trap": "Bẫy lặp từ 'conference' và bẫy lặp từ biến thể 'meeting' thành 'met' nhưng nói về thì quá khứ.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "A",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/0b763a7a32e99393.mp3",
+        "A": "audio/88fa58062b95295e.mp3",
+        "B": "audio/d9688f33d3879d35.mp3",
+        "C": "audio/70ba54be3e14e4cd.mp3"
+      },
+      "voices": {
+        "question": "en-US-GuyNeural",
+        "responses": "en-US-JennyNeural"
+      }
+    },
+    {
+      "id": "l2-0092",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "Let's review the vendor contract before the legal team gets involved.",
+      "responses": {
+        "A": "The vendor sells office supplies.",
+        "B": "I've already flagged the key clauses.",
+        "C": "No, I don't like legal dramas."
+      },
+      "answer": "B",
+      "errorType": "request-suggestion",
+      "explanation": "Câu trả lời thể hiện sự chủ động hợp tác bằng cách thông báo đã đánh dấu sẵn các điều khoản quan trọng.",
+      "trap": "Bẫy lặp từ 'vendor' và 'legal' trong các câu trả lời không liên quan đến hành động xem xét hợp đồng.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "B",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/d21027c1dd18b11a.mp3",
+        "A": "audio/bae7e2a4b6fa3a3f.mp3",
+        "B": "audio/6480ed83622b4ea0.mp3",
+        "C": "audio/2cd9c66d6a603317.mp3"
+      },
+      "voices": {
+        "question": "en-GB-SoniaNeural",
+        "responses": "en-GB-RyanNeural"
+      }
+    },
+    {
+      "id": "l2-0093",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "Did the inventory audit reveal any major discrepancies?",
+      "responses": {
+        "A": "Yes, I love auditing classes.",
+        "B": "An inventory of the warehouse.",
+        "C": "We're still reconciling the numbers."
+      },
+      "answer": "C",
+      "errorType": "yes-no",
+      "explanation": "Câu trả lời gián tiếp cho biết kết quả chưa có vì vẫn đang trong quá trình đối chiếu số liệu.",
+      "trap": "Bẫy lặp từ 'audit' thành 'auditing' và lặp từ 'inventory' trong câu trả lời không hoàn chỉnh.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/69a3ba8d4d470005.mp3",
+        "A": "audio/dbf1813ea38af8bb.mp3",
+        "B": "audio/9cd9bcee0a1018fd.mp3",
+        "C": "audio/271e9fb4dd3152e6.mp3"
+      },
+      "voices": {
+        "question": "en-US-JennyNeural",
+        "responses": "en-AU-NatashaNeural"
+      }
+    },
+    {
+      "id": "l2-0094",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "Should we submit the draft now or wait for the director's input?",
+      "responses": {
+        "A": "He's out of the office until Monday.",
+        "B": "Yes, the draft is ready.",
+        "C": "I'll input the data."
+      },
+      "answer": "A",
+      "errorType": "choice",
+      "explanation": "Câu trả lời gián tiếp đưa ra thông tin về sự vắng mặt của giám đốc để người hỏi tự hiểu là phải nộp bản thảo trước hoặc đợi lâu.",
+      "trap": "Bẫy trả lời 'Yes' cho câu hỏi lựa chọn kèm lặp từ 'draft', và bẫy lặp từ 'input' với vai trò động từ.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "A",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/7cc245a9e07cbfb6.mp3",
+        "A": "audio/eece338c59b082dd.mp3",
+        "B": "audio/8b50fa99efba7897.mp3",
+        "C": "audio/c86b94607c11a3ba.mp3"
+      },
+      "voices": {
+        "question": "en-GB-RyanNeural",
+        "responses": "en-US-GuyNeural"
+      }
+    },
+    {
+      "id": "l2-0095",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "Could you tell me who authorized this software installation?",
+      "responses": {
+        "A": "The installation took two hours.",
+        "B": "That would be the IT director.",
+        "C": "Yes, I can tell you."
+      },
+      "answer": "B",
+      "errorType": "indirect",
+      "explanation": "Câu trả lời cung cấp trực tiếp danh tính người chịu trách nhiệm là giám đốc công nghệ thông tin.",
+      "trap": "Bẫy lặp từ 'installation' và bẫy trả lời 'Yes, I can' một cách sáo rỗng mà không đưa ra thông tin thực tế.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "B",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/57a77e0560c74f06.mp3",
+        "A": "audio/37dd52a77bb49deb.mp3",
+        "B": "audio/d3e43cea9d164326.mp3",
+        "C": "audio/880bf38e475626ff.mp3"
+      },
+      "voices": {
+        "question": "en-AU-NatashaNeural",
+        "responses": "en-GB-SoniaNeural"
+      }
+    },
+    {
+      "id": "l2-0096",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "What did the client say about our proposed timeline?",
+      "responses": {
+        "A": "Yes, it's a very tight timeline.",
+        "B": "The client is always right.",
+        "C": "They want to launch two weeks earlier."
+      },
+      "answer": "C",
+      "errorType": "wh-what",
+      "explanation": "Câu trả lời cung cấp thông tin chi tiết về yêu cầu đẩy nhanh tiến độ của khách hàng.",
+      "trap": "Bẫy trả lời 'Yes' cho câu hỏi Wh-question kèm lặp từ 'timeline', và bẫy lặp từ 'client' mang tính sáo rỗng.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/9d66926a4626e51b.mp3",
+        "A": "audio/20cd22fe478111e7.mp3",
+        "B": "audio/3c6f1b177aad1e8b.mp3",
+        "C": "audio/e85ebe5d7969ac34.mp3"
+      },
+      "voices": {
+        "question": "en-US-GuyNeural",
+        "responses": "en-US-JennyNeural"
+      }
+    },
+    {
+      "id": "l2-0097",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "You've already booked a table for the client lunch, haven't you?",
+      "responses": {
+        "A": "They actually requested a dinner instead.",
+        "B": "I read that book last week.",
+        "C": "Yes, the table is made of oak."
+      },
+      "answer": "A",
+      "errorType": "tag-question",
+      "explanation": "Câu trả lời gián tiếp phủ nhận việc đặt bàn ăn trưa bằng cách giải thích khách hàng đã đổi sang ăn tối.",
+      "trap": "Bẫy lặp từ 'booked' thành danh từ 'book' và lặp từ 'table' với nghĩa mô tả chất liệu bàn.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "A",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/8272bf669f4bb65e.mp3",
+        "A": "audio/898c4b24485ffe78.mp3",
+        "B": "audio/c04613bd22a9705f.mp3",
+        "C": "audio/fa671a6c83db475c.mp3"
+      },
+      "voices": {
+        "question": "en-GB-SoniaNeural",
+        "responses": "en-GB-RyanNeural"
+      }
+    },
+    {
+      "id": "l2-0098",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "Would you mind double-checking the tracking number for the express shipment?",
+      "responses": {
+        "A": "No, I don't mind the cold.",
+        "B": "I'm on it right now.",
+        "C": "The shipment arrived yesterday."
+      },
+      "answer": "B",
+      "errorType": "request-suggestion",
+      "explanation": "Lối nói tự nhiên, ngắn gọn thể hiện sự đồng ý thực hiện yêu cầu kiểm tra ngay lập tức.",
+      "trap": "Bẫy trả lời nghĩa đen của từ 'mind' nhưng lạc đề, và bẫy lặp từ 'shipment' để đưa ra thông tin không liên quan.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "B",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/bd6c9ab6982f9265.mp3",
+        "A": "audio/e24ae0bedb4db702.mp3",
+        "B": "audio/3accbb337a00f48a.mp3",
+        "C": "audio/08764ea52d452f61.mp3"
+      },
+      "voices": {
+        "question": "en-US-JennyNeural",
+        "responses": "en-AU-NatashaNeural"
+      }
+    },
+    {
+      "id": "l2-0099",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "Is the main conference room's projector working again?",
+      "responses": {
+        "A": "I'm working on a new project.",
+        "B": "Yes, the room is very spacious.",
+        "C": "We had to call a technician."
+      },
+      "answer": "C",
+      "errorType": "yes-no",
+      "explanation": "Câu trả lời gián tiếp cho biết máy chiếu vẫn hỏng nên đã phải gọi nhân viên kỹ thuật đến sửa.",
+      "trap": "Bẫy lặp từ 'working' và biến thể 'projector' thành 'project', cùng bẫy trả lời 'Yes' nhưng lặp từ 'room' lạc đề.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/4fb79aa282de60cd.mp3",
+        "A": "audio/8a8f6363cfdb5932.mp3",
+        "B": "audio/1629a01de7f83062.mp3",
+        "C": "audio/7c0047c2c311d407.mp3"
+      },
+      "voices": {
+        "question": "en-GB-RyanNeural",
+        "responses": "en-US-GuyNeural"
+      }
+    },
+    {
+      "id": "l2-0100",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "Do you know when the new office chairs are scheduled to arrive?",
+      "responses": {
+        "A": "The delivery truck is downstairs.",
+        "B": "Yes, I like the new chairs.",
+        "C": "I scheduled an appointment."
+      },
+      "answer": "A",
+      "errorType": "indirect",
+      "explanation": "Câu trả lời gián tiếp thông báo hàng đã đến nơi bằng cách nói xe giao hàng đang ở dưới lầu.",
+      "trap": "Bẫy trả lời 'Yes' kèm lặp từ 'chairs' nhưng không trả lời về thời gian, và bẫy lặp từ 'scheduled' với nghĩa lên lịch hẹn.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "A",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/958558d2184ecc6a.mp3",
+        "A": "audio/259f5061736bdd37.mp3",
+        "B": "audio/d03d161fa28ecf09.mp3",
+        "C": "audio/72150ce7a53637c1.mp3"
+      },
+      "voices": {
+        "question": "en-AU-NatashaNeural",
+        "responses": "en-GB-SoniaNeural"
+      }
+    },
+    {
+      "id": "l2-0101",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "Which marketing agency did we end up hiring for the product launch?",
+      "responses": {
+        "A": "The launch was a huge success.",
+        "B": "We decided to keep it in-house.",
+        "C": "Yes, we hired them."
+      },
+      "answer": "B",
+      "errorType": "wh-what",
+      "explanation": "Câu trả lời gián tiếp cho biết công ty không thuê ngoài mà tự thực hiện chiến dịch quảng bá sản phẩm mới.",
+      "trap": "Bẫy lặp từ 'launch' và bẫy trả lời 'Yes' cho câu hỏi Wh-question kèm lặp từ 'hired'.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "B",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/5bc9abfd5df1e2a2.mp3",
+        "A": "audio/ab9daf0f5a4be0a6.mp3",
+        "B": "audio/0023838a75be9a05.mp3",
+        "C": "audio/83b79fe721d030f6.mp3"
+      },
+      "voices": {
+        "question": "en-US-GuyNeural",
+        "responses": "en-US-JennyNeural"
+      }
+    },
+    {
+      "id": "l2-0102",
+      "set": "part2-core",
+      "part": 2,
+      "status": "active",
+      "question": "The catering invoice has already been approved, hasn't it?",
+      "responses": {
+        "A": "I love catering events.",
+        "B": "Yes, I approve of this.",
+        "C": "It's still sitting on the manager's desk."
+      },
+      "answer": "C",
+      "errorType": "tag-question",
+      "explanation": "Câu trả lời gián tiếp cho biết hóa đơn chưa được duyệt vì vẫn đang nằm trên bàn làm việc của quản lý.",
+      "trap": "Bẫy lặp từ 'catering' và bẫy trả lời 'Yes' kèm lặp từ 'approved' thành 'approve' nhưng mang tính bày tỏ quan điểm cá nhân.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part2-v3",
+        "batch": "2026-09-23",
+        "date": "2026-09-23"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      },
+      "audio": {
+        "question": "audio/5b87857adb870f29.mp3",
+        "A": "audio/efadd66980b70f2e.mp3",
+        "B": "audio/465374cb6bffd943.mp3",
+        "C": "audio/1e7a0d064ffbbbb4.mp3"
+      },
+      "voices": {
+        "question": "en-GB-SoniaNeural",
+        "responses": "en-GB-RyanNeural"
+      }
     }
   ]
 }

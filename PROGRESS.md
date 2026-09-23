@@ -35,16 +35,25 @@
 (nhật ký học trỏ nhầm câu) và xoá MP3 của câu nghe cũ. Nay `openWorkCache` nạp file phát hành trước (bản phát hành thắng),
 mục đã phát hành giữ nguyên lúc ghi, `nextId` = số lớn nhất + 1. Đã kiểm: chạy lại cả 6 file → giống từng byte.
 
-**3. Sinh nội dung — CHƯA chạy được: `GEMINI_API_KEY` trong `.env` máy này để TRỐNG** (Huy mới điền 2 biến Supabase).
-Pipeline dừng ngay request đầu, không đụng file nào. edge-tts đã cài (`pipeline/.venv`, 7.2.8) cho Part 2/3/4.
-**Việc của Huy:** dán key vào `.env` (`nano .env`, sau `GEMINI_API_KEY=`) — lấy từ `.env` máy cũ hoặc aistudio.google.com/apikey.
-**Rồi Claude chạy** (nền, log ở `pipeline/.cache/run-*.log`):
+**3. Sinh nội dung (đang làm dở, chạy tiếp được bất cứ lúc nào).** Huy đã điền `GEMINI_API_KEY` (lần đầu dán nhầm vào
+`~/.env` vì terminal đứng ở thư mục nhà — nhớ `pwd` trước khi `nano .env`). Máy này nay đã có `pipeline/.cache/` và
+edge-tts (`pipeline/.venv`).
+- **Part 5: 200 → 256 câu** (dừng tay ở 256 để chừa hạn mức cho Part 2). Tỉ lệ đạt ~30%: model kiểm định loại câu
+  "quá dễ" — đúng thiết kế; các dạng đang tới lượt (danh động từ, giới từ) khó ra câu không lộ.
+- **Part 2: 72 → 102 câu** + 120 MP3 (2,2 MB). Dừng vì Gemini báo **503 "high demand"** — thử lại hết lượt mất ~20 phút
+  mỗi lần, KHÔNG phải lỗi code. Lần kẹt đầu tưởng do lô to (24 câu) nên đã hạ lô xuống 12.
+- **Lỗi bắt được khi đọc thử câu mới (D64):** 200 câu Part 5 cũ có đáp án A = 67% (D chỉ 5 câu). Câu mới nay được cân
+  bằng lúc ghi file. Kèm sửa bộ lọc "lời giải nhắc chữ cái": bắt đủ A–D, và hết bắt nhầm "câu dễ"/"câu bị động" (`\b`
+  chỉ hiểu chữ ASCII) — lỗi này làm bản thảo Part 2/bộ đề bị loại oan từ trước tới nay.
+- **Chạy tiếp** (tiếp đúng chỗ dở; log ghi thẳng ra file):
 ```bash
 node --env-file=.env pipeline/build-questions.js --target 400 > pipeline/.cache/run-part5.log 2>&1
-node --env-file=.env pipeline/build-listening.js --target 150 > pipeline/.cache/run-part2.log 2>&1
+node --env-file=.env pipeline/build-listening.js --target 150 --batch-size 12 > pipeline/.cache/run-part2.log 2>&1
 ```
-Sau đó: `npm run validate:content` + `npm test`, xem vài câu mới bằng mắt, commit `content:`. Hết hạn mức ngày thì mai chạy
-lại đúng lệnh đó (tiếp đúng chỗ dở). Rồi tới các bộ: `build-sets.js --part 3|4|6|7 --target …` (Part 7 thêm `--variant`).
+  Sau đó: `npm run validate:content` + `npm test`, đọc thử vài câu mới, commit `content:`. Rồi tới các bộ:
+  `build-sets.js --part 3|4|6|7 --target …` (Part 7 thêm `--variant single|double|triple`).
+- **Chờ Huy quyết (không gấp):** xáo thứ tự phương án lúc HIỆN câu để hết hẳn lệch A của 200 câu cũ (~1 giờ) — hay để
+  mức lệch còn lại (A ~55% ngân hàng hiện tại, giảm dần khi thêm câu).
 
 **4. M21 xong.** Thi thử phần Nghe: nghe xong đếm ngược 5 giây (bộ Part 3/4: 5 giây × số câu) rồi tự sang câu sau và PHÁT
 LUÔN, như băng đề thật. Phần Đọc: nút ⚐ đánh dấu câu chưa chắc, ⚑ hiện trên danh sách câu, hộp nộp bài nhắc lại.
@@ -53,7 +62,7 @@ phát không (Safari chỉ cho phát tiếp trên cùng phần tử Audio đã �
 8 test mới; **848 test pass**.
 
 ### Bước tiếp theo
-- **Huy:** điền `GEMINI_API_KEY` vào `.env` → báo Claude chạy pipeline (mục 3).
+- **Claude:** chạy tiếp nội dung (mục 3) khi Gemini bớt quá tải.
 - **Huy:** thử nghe chép + thi thử phần Nghe trên iPhone; kiểm tự đồng bộ trên bản deploy; học thật để đóng M7.
 - **Claude:** chỉ còn việc nội dung (D63). Không tự mở milestone mới.
 
