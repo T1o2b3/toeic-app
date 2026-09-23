@@ -6,7 +6,7 @@
 ## Trạng thái hiện tại
 - Giai đoạn: 1 — MVP. **M0–M6 XONG** (M5: Huy cấu hình Supabase xong 2026-09-23). M18 xong (ping). Tiếp theo: **M7** (README + sửa lỗi phát sinh).
 - **App đã dùng học thật được**: https://toeic-app.huybndc-451.workers.dev
-- Repo private: https://github.com/huybndc/toeic-app — **802 test pass**.
+- Repo private: https://github.com/huybndc/toeic-app — **806 test pass**.
 
 ## Dùng app thế nào (cho Huy)
 1. Mở link trên (máy Mac hoặc iPhone).
@@ -90,6 +90,12 @@ báo Part 5 là 20 câu trong khi lượt thật 30 (nay mọi chỗ dùng `PART
 - Sửa: menu trái ở nền tối có mảng sáng chói (màu viết cứng) · `toggleTheme` văng lỗi ở duyệt riêng tư Safari.
 - Đã kiểm: 802 test pass (test canh sẵn lỗi "mở app không có thanh điều hướng" — đã thử đưa lỗi vào, 2 test đỏ),
   trình duyệt 375×812 + 1280×800 sáng/tối, không lỗi console, build có đủ thẻ meta.
+
+**11. Phân tích bằng tiếng Việt (D60)** — Huy: "phần phân tích toàn tiếng Anh mình không hiểu".
+- 37 dạng câu có tên Việt (`ERROR_TYPE_LABEL`), dùng ở bảng lỗ hổng (màn chính + Bài thi), thẻ dạng câu Part 5, Part 2.
+- 40 lời giải/bẫy Part 7 tiếng Anh (bộ p7-0001…0010, model flash-lite bỏ qua lời dặn) → đã dịch. Pipeline nay loại
+  câu có lời giải không phải tiếng Việt ở cả 3 bộ sinh; 2 test mới canh (đã thử đỏ trên nội dung cũ).
+- Bỏ chữ "deck" và mã `toeic-tsl + toeic-bsl` khỏi màn hình. **806 test pass**, `validate:content` sạch.
 
 ### Bước tiếp theo
 - **Đánh bóng phần B (Claude tự làm tiếp):** thang khoảng cách + cỡ chữ thống nhất (`--space-*`, `--text-*`), phản hồi

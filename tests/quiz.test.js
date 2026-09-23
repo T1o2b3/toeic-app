@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
+import { isVietnameseOrEmpty } from '../pipeline/lib/prompt-listening.js';
 import { reduceQuizState, gradeAnswer, quizQueue, accuracyByErrorType, ERROR_TYPE_LABEL, errorTypeLabel } from '../src/logic/quiz.js';
 
 const T0 = Date.UTC(2026, 8, 19, 10, 0, 0);
@@ -113,8 +114,8 @@ describe('accuracyByErrorType', () => {
   });
 });
 
-describe('errorTypeLabel — tên dạng câu bằng tiếng Việt', () => {
-  it('MỌI dạng câu có trong nội dung đều có tên tiếng Việt (pipeline thêm dạng mới thì phải đặt tên)', () => {
+describe('nội dung hiển thị bằng tiếng Việt', () => {
+  it('MỌI dạng câu có tên tiếng Việt; MỌI lời giải/bẫy viết bằng tiếng Việt', () => {
     const load = (file) => JSON.parse(readFileSync(`public/content/${file}`, 'utf8')).entries;
     const questions = [
       ...load('questions-part5.json'), ...load('listening-part2.json'),
@@ -122,6 +123,9 @@ describe('errorTypeLabel — tên dạng câu bằng tiếng Việt', () => {
     ];
     const missing = [...new Set(questions.map((q) => q.errorType))].filter((type) => !(type in ERROR_TYPE_LABEL));
     expect(missing).toEqual([]);
+    // Cùng dữ liệu đó: lời giải và bẫy phải là tiếng Việt (10 bộ Part 7 từng lọt 40 lời giải tiếng Anh).
+    const english = questions.filter((q) => !isVietnameseOrEmpty(q.explanation) || !isVietnameseOrEmpty(q.trap));
+    expect(english.map((q) => q.id)).toEqual([]);
   });
 
   it('dạng lạ thì trả nguyên mã, không để trống', () => {

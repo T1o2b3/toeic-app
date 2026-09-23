@@ -28,8 +28,8 @@
           },
           "answer": "A",
           "errorType": "detail",
-          "explanation": "The text states that if replacement parts are unavailable, a temporary loaner unit will be provided at no extra cost.",
-          "trap": "The text mentions parts might be missing, but it does not guarantee the technician will have them, and it explicitly denies the extra fee mentioned in another option."
+          "explanation": "Bài viết nói nếu không có sẵn linh kiện thay thế, công ty sẽ cho mượn tạm một máy khác, không tính thêm phí.",
+          "trap": "Bài có nhắc chuyện có thể thiếu linh kiện, nhưng không hứa kỹ thuật viên mang sẵn; và bài nói rõ KHÔNG thu thêm phí — trái với một phương án khác."
         },
         {
           "id": "p7-0001-2",
@@ -42,8 +42,8 @@
           },
           "answer": "B",
           "errorType": "inference",
-          "explanation": "The email describes it as the 'primary' printer and mentions providing a loaner to 'minimize disruption,' implying it is critical for operations.",
-          "trap": "The text calls it 'primary' but does not specify that it was bought from this specific vendor or how long it has been broken."
+          "explanation": "Email gọi đây là máy in 'primary' (chính) và cho mượn máy tạm để 'minimize disruption' (giảm gián đoạn) — suy ra máy in rất quan trọng cho công việc hằng ngày.",
+          "trap": "Bài gọi nó là máy in 'primary', nhưng không nói máy mua từ chính nhà cung cấp này hay đã hỏng bao lâu."
         }
       ],
       "gen": {
@@ -82,8 +82,8 @@
           },
           "answer": "C",
           "errorType": "reference",
-          "explanation": "In this context, 'backlog' refers to the accumulation of unfulfilled orders that have caused the delay.",
-          "trap": "The term is often associated with production shortages, but here it refers to the accumulation of orders waiting to be shipped."
+          "explanation": "Trong ngữ cảnh này, 'backlog' là lượng đơn hàng dồn lại chưa xử lý kịp, gây ra việc giao trễ.",
+          "trap": "Từ này hay đi với chuyện thiếu hàng khi sản xuất, nhưng ở đây nó chỉ các đơn đang chờ gửi đi."
         },
         {
           "id": "p7-0002-2",
@@ -96,8 +96,8 @@
           },
           "answer": "D",
           "errorType": "detail",
-          "explanation": "The text explicitly states that the customer will receive an updated confirmation email once the package is dispatched.",
-          "trap": "The text mentions a 15% discount on the current invoice, not a future one, and it does not offer a full refund."
+          "explanation": "Bài nói rõ khách sẽ nhận email xác nhận cập nhật khi gói hàng được gửi đi.",
+          "trap": "Bài nhắc giảm 15% cho hoá đơn HIỆN TẠI chứ không phải lần mua sau, và không hề có hoàn tiền toàn bộ."
         }
       ],
       "gen": {
@@ -136,8 +136,8 @@
           },
           "answer": "A",
           "errorType": "purpose",
-          "explanation": "The primary goal of the email is to request a reschedule because the sender has to travel to headquarters.",
-          "trap": "The sender mentions the Q4 marketing strategy, but that is the topic of the meeting, not the reason for the email."
+          "explanation": "Mục đích chính của email là xin dời lịch hẹn vì người gửi phải đi công tác tới trụ sở chính.",
+          "trap": "Người gửi có nhắc 'Q4 marketing strategy', nhưng đó là chủ đề cuộc họp, không phải lý do viết email."
         },
         {
           "id": "p7-0003-2",
@@ -150,8 +150,8 @@
           },
           "answer": "B",
           "errorType": "inference",
-          "explanation": "The email mentions discussing the 'Q4 marketing strategy,' which is a future business plan.",
-          "trap": "The sender mentions going to Chicago, but it does not say the meeting was supposed to be there, and it does not suggest it is their first meeting."
+          "explanation": "Email nói sẽ bàn về 'Q4 marketing strategy' (chiến lược marketing quý 4) — tức là kế hoạch kinh doanh sắp tới.",
+          "trap": "Người gửi có nhắc việc đi Chicago, nhưng không nói cuộc họp vốn định tổ chức ở đó, cũng không nói đây là lần gặp đầu tiên."
         }
       ],
       "gen": {
@@ -190,8 +190,8 @@
           },
           "answer": "C",
           "errorType": "purpose",
-          "explanation": "The sender explicitly asks to shift the meeting time due to a scheduling conflict.",
-          "trap": "Mentioning the board review or the analyst might distract the reader, but they are supporting details, not the main reason for the email."
+          "explanation": "Người gửi nói thẳng là muốn đổi giờ cuộc họp vì bị trùng lịch.",
+          "trap": "Chuyện buổi duyệt của hội đồng hay nhà phân tích dễ làm phân tâm, nhưng đó chỉ là chi tiết phụ, không phải lý do chính của email."
         },
         {
           "id": "p7-0004-2",
@@ -204,8 +204,8 @@
           },
           "answer": "D",
           "errorType": "inference",
-          "explanation": "The sender acknowledges that her calendar is quite packed, implying she is very busy.",
-          "trap": "The text mentions Tuesday afternoon as an option, but it does not state her preference."
+          "explanation": "Người gửi thừa nhận lịch của bà ấy khá kín — suy ra bà ấy rất bận.",
+          "trap": "Bài có đưa chiều thứ Ba làm một lựa chọn, nhưng không nói bà ấy thích giờ đó."
         }
       ],
       "gen": {
@@ -244,8 +244,8 @@
           },
           "answer": "A",
           "errorType": "detail",
-          "explanation": "The text states that presenting the corporate ID at the check-in desk ensures the billing is routed to his firm.",
-          "trap": "Reimbursement or submitting receipts are common business practices but are not mentioned in this specific document."
+          "explanation": "Bài nói xuất trình mã nhân viên công ty (corporate ID) ở quầy nhận phòng thì hoá đơn sẽ được chuyển về công ty ông ấy.",
+          "trap": "Hoàn tiền hay nộp hoá đơn là việc hay gặp khi đi công tác, nhưng tài liệu này không hề nhắc tới."
         },
         {
           "id": "p7-0005-2",
@@ -258,8 +258,8 @@
           },
           "answer": "B",
           "errorType": "not-stated",
-          "explanation": "The document mentions a room upgrade, but no information regarding the cost or upgrade of the flight is provided.",
-          "trap": "The text mentions an upgrade for the hotel, which might lead the reader to assume a flight upgrade is also discussed."
+          "explanation": "Tài liệu chỉ nhắc nâng hạng PHÒNG khách sạn; không có thông tin nào về nâng hạng hay giá vé máy bay.",
+          "trap": "Bài có chữ 'upgrade' cho khách sạn, dễ khiến người đọc tưởng cũng có nâng hạng chuyến bay."
         }
       ],
       "gen": {
@@ -298,8 +298,8 @@
           },
           "answer": "C",
           "errorType": "purpose",
-          "explanation": "The text states the webinar is to explain the new expense reporting software that will be mandatory.",
-          "trap": "The text mentions budget adjustments and marketing, but these are separate topics from the webinar's purpose."
+          "explanation": "Bài nói buổi webinar nhằm hướng dẫn phần mềm báo cáo chi phí mới, sắp bắt buộc dùng.",
+          "trap": "Bài có nhắc điều chỉnh ngân sách và marketing, nhưng đó là chuyện khác, không phải mục đích của webinar."
         },
         {
           "id": "p7-0006-2",
@@ -312,8 +312,8 @@
           },
           "answer": "D",
           "errorType": "reference",
-          "explanation": "Adhere to the figures means to follow or comply with the set budget limits.",
-          "trap": "Modify is a distractor because the text mentions 'adjustments' elsewhere, but 'adhere' is the opposite of changing."
+          "explanation": "'Adhere to the figures' nghĩa là tuân theo, làm đúng các mức ngân sách đã đặt ra.",
+          "trap": "'Modify' (sửa đổi) là bẫy vì chỗ khác trong bài có chữ 'adjustments', nhưng 'adhere' lại ngược với thay đổi."
         }
       ],
       "gen": {
@@ -352,8 +352,8 @@
           },
           "answer": "A",
           "errorType": "detail",
-          "explanation": "The launch date is December 1st, which is at the end of the year.",
-          "trap": "The battery life is 24 hours (one day), not two days, and the material is titanium, not steel."
+          "explanation": "Ngày ra mắt là 1 tháng 12 — tức là cuối năm.",
+          "trap": "Pin dùng được 24 giờ (một ngày) chứ không phải hai ngày, và vỏ máy là titan chứ không phải thép."
         },
         {
           "id": "p7-0007-2",
@@ -366,8 +366,8 @@
           },
           "answer": "B",
           "errorType": "inference",
-          "explanation": "The text states that early-bird discounts are available until November 25, implying a time-limited offer.",
-          "trap": "The leather case is only for the first 500 customers at the Seattle store, not for all pre-orders."
+          "explanation": "Bài nói giảm giá đặt sớm (early-bird) chỉ áp dụng tới 25 tháng 11 — suy ra ưu đãi có thời hạn.",
+          "trap": "Bao da chỉ tặng 500 khách đầu tiên ở cửa hàng Seattle, không phải cho mọi đơn đặt trước."
         }
       ],
       "gen": {
@@ -406,8 +406,8 @@
           },
           "answer": "C",
           "errorType": "gist",
-          "explanation": "The notice informs staff about maintenance work that requires the building to be closed.",
-          "trap": "Security is mentioned, but it is a consequence of the closure, not the main topic."
+          "explanation": "Thông báo cho nhân viên biết tòa nhà phải đóng cửa để bảo trì, nâng cấp hệ thống.",
+          "trap": "Có nhắc chuyện an ninh, nhưng đó là hệ quả của việc đóng cửa, không phải chủ đề chính."
         },
         {
           "id": "p7-0008-2",
@@ -420,8 +420,8 @@
           },
           "answer": "D",
           "errorType": "detail",
-          "explanation": "The notice explicitly tells employees to retrieve critical files or equipment before 5:30 P.M. on Friday.",
-          "trap": "While permits are mentioned, they are for exceptions, not a general recommendation for all employees."
+          "explanation": "Thông báo dặn rõ nhân viên lấy hồ sơ hoặc thiết bị quan trọng trước 5:30 chiều thứ Sáu.",
+          "trap": "Có nhắc giấy phép ra vào, nhưng đó là cho trường hợp ngoại lệ, không phải lời khuyên cho mọi nhân viên."
         }
       ],
       "gen": {
@@ -460,8 +460,8 @@
           },
           "answer": "A",
           "errorType": "purpose",
-          "explanation": "The document serves to inform department heads about a mandatory leadership workshop and the requirements associated with it.",
-          "trap": "The document mentions operational strategy and performance reviews, but these are context or consequences, not the main reason for the communication."
+          "explanation": "Văn bản báo cho các trưởng phòng về một buổi workshop lãnh đạo bắt buộc và các yêu cầu đi kèm.",
+          "trap": "Văn bản có nhắc chiến lược vận hành và đánh giá hiệu suất, nhưng đó là bối cảnh hoặc hệ quả, không phải lý do chính."
         },
         {
           "id": "p7-0009-2",
@@ -474,8 +474,8 @@
           },
           "answer": "B",
           "errorType": "detail",
-          "explanation": "The text states that missing the event without an approved exemption will be reflected in the annual performance review.",
-          "trap": "The text mentions an October 20th deadline, not the end of October, and does not mention sending delegates."
+          "explanation": "Bài nói vắng mặt mà không được miễn sẽ bị ghi vào đánh giá hiệu suất hằng năm.",
+          "trap": "Hạn trong bài là ngày 20 tháng 10, không phải cuối tháng 10; và bài không nói được cử người đi thay."
         }
       ],
       "gen": {
@@ -514,8 +514,8 @@
           },
           "answer": "C",
           "errorType": "inference",
-          "explanation": "The text explicitly asks the client to notify security because the staff lacks authorization to use the elevator, implying the client must intervene to ensure access.",
-          "trap": "While the text mentions the elevator, it does not state it is the only way to reach the floor, only that the staff needs authorization to use it."
+          "explanation": "Bài yêu cầu khách báo trước cho bảo vệ vì nhân viên giao hàng không được phép dùng thang máy — suy ra khách phải tự lo để người giao vào được tòa nhà.",
+          "trap": "Bài có nhắc thang máy, nhưng không nói đó là đường DUY NHẤT lên tầng, chỉ nói nhân viên cần được cho phép mới dùng được."
         },
         {
           "id": "p7-0010-2",
@@ -528,8 +528,8 @@
           },
           "answer": "D",
           "errorType": "not-stated",
-          "explanation": "The email explicitly mentions that the gluten-free substitution is provided at no additional cost, making the claim of an additional fee incorrect.",
-          "trap": "The text mentions gluten-free options and costs, which might lead a reader to assume there is a fee, but the text explicitly says there is none."
+          "explanation": "Email nói rõ đổi sang món không gluten KHÔNG tính thêm tiền — nên 'phí thêm cho món không gluten' là điều không được nêu.",
+          "trap": "Bài có nhắc món không gluten và chi phí, dễ khiến người đọc tưởng có thu phí, nhưng bài nói rõ là không."
         }
       ],
       "gen": {

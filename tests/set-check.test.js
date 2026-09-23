@@ -47,6 +47,8 @@ describe('isWellFormedQuestion', () => {
     ['lời giải quá ngắn', { explanation: 'ngắn' }],
     ['lời giải nhắc chữ cái', { explanation: 'Đáp án B đúng vì nói về giờ giao hàng trễ.' }],
     ['bẫy nhắc chữ cái', { trap: 'Câu A hấp dẫn vì có từ giống.' }],
+    ['lời giải bằng tiếng Anh (flash-lite từng làm thế)', { explanation: 'The text states that the delivery was late by two days.' }],
+    ['bẫy bằng tiếng Anh', { trap: 'It repeats a word from the passage but changes the meaning.' }],
   ])('loại: %s', (_n, over) => expect(isWellFormedQuestion(question(over))).toBe(false));
 });
 

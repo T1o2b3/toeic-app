@@ -119,6 +119,18 @@ export function mentionsChoiceLetter(text) {
     || /(?:câu|phương án|đáp án)\s+[ABC]\s*(?:,|và|hoặc)\s*[ABC]\b/i.test(value);
 }
 
+/**
+ * Văn bản có phải tiếng Việt không (có chữ mang dấu tiếng Việt). Prompt dặn viết lời giải bằng tiếng Việt, nhưng
+ * model yếu (flash-lite) từng bỏ qua: 10 bộ Part 7 đầu ra lời giải toàn tiếng Anh mà vẫn qua kiểm định.
+ * Không có chữ nào thì coi là đạt (trường tuỳ chọn như `trap` có thể trống).
+ * @param {unknown} text
+ * @returns {boolean}
+ */
+export function isVietnameseOrEmpty(text) {
+  const value = String(text ?? '').trim();
+  return value === '' || /[àáảãạăằắẳẵặâầấẩẫậđèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵ]/i.test(value);
+}
+
 export function isWellFormedPart2(item) {
   if (typeof item?.question !== 'string' || item.question.trim().split(/\s+/).length < 3) return false;
   if (!['A', 'B', 'C'].includes(item?.answer)) return false;
@@ -129,5 +141,6 @@ export function isWellFormedPart2(item) {
   }
   const unique = new Set(['A', 'B', 'C'].map((key) => item.responses[key].trim().toLowerCase()));
   if (unique.size !== 3) return false;
+  if (!isVietnameseOrEmpty(item.explanation) || !isVietnameseOrEmpty(item.trap)) return false;
   return !mentionsChoiceLetter(item.explanation) && !mentionsChoiceLetter(item.trap);
 }

@@ -542,6 +542,17 @@ không có icon khi thêm ra màn hình iPhone. Làm các thứ RẺ mà thấy 
   tải + phải cache offline) · viết lại bằng framework · thư viện animation · minh hoạ/hình ảnh trang trí.
 - Hiệu ứng chỉ khi ĐỔI MÀN; vẽ lại trong cùng màn (lật thẻ, chấm câu) không có hiệu ứng — chỉ làm chậm tay.
 
+**D60. Mọi chữ phân tích hiện cho người học phải là tiếng Việt; được dịch lời giải tại chỗ.** (Huy báo 2026-09-23:
+"phần phân tích toàn tiếng Anh mình không hiểu".)
+- **Tên dạng câu:** mã `errorType` (`word-form`, `wh-why`…) giữ nguyên trong dữ liệu và nhật ký; màn hình đọc
+  `ERROR_TYPE_LABEL` ở `logic/quiz.js`. Test canh: dạng nào có trong nội dung mà thiếu tên Việt là đỏ.
+- **Lời giải Part 7:** 10 bộ đầu (`p7-0001`–`p7-0010`, model flash-lite) có 40 lời giải/bẫy tiếng Anh → Claude dịch
+  tại chỗ. **Làm rõ ràng buộc #6 "ID vĩnh viễn":** ràng buộc đó giữ câu HỎI (đề, phương án, đáp án) không đổi dưới
+  cùng một id vì nhật ký trỏ vào id. Lời giải là chữ hiển thị kèm theo, sửa không làm sai lịch sử làm bài.
+- **Chặn từ gốc:** `isVietnameseOrEmpty` (pipeline/lib/prompt-listening.js) — bộ sinh Part 2, Part 5, Part 3/4/6/7
+  loại câu có lời giải không phải tiếng Việt. Test nội dung: mọi lời giải/bẫy trong `public/content` là tiếng Việt.
+- Bỏ luôn chữ "deck" và mã bộ từ (`toeic-tsl + toeic-bsl`) khỏi màn hình → "bộ từ", "N từ TOEIC".
+
 ## Câu hỏi còn mở
 - ~~Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng?~~ → **Đã giải quyết, xem D35** (chung repo, xét lại khi ~100 MB).
 - ~~Q2 (trước M2): xác nhận license của TSL 1.2 và NGSL.~~ → **Đã giải quyết, xem D18.**

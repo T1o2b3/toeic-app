@@ -12,6 +12,7 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { buildQuestionPrompt, buildVerifyPrompt, crossCheck, questionKey, ERROR_TYPES, QUESTION_PROMPT_VERSION } from './lib/prompt-question.js';
 import { parseVocabResponse } from './lib/prompt-vocab.js';
+import { isVietnameseOrEmpty } from './lib/prompt-listening.js';
 import { sleep } from './lib/ai-provider.js';
 import { createModelPair, aiStep, QUOTA_MESSAGE } from './lib/model-pair.js';
 import { openCache } from './lib/cache.js';
@@ -80,9 +81,10 @@ async function main() {
     if (draft.status === 'error') break;
     const drafted = draft.value;
 
-    // Bỏ câu trùng với câu đã có trước khi tốn một request kiểm định.
+    // Bỏ câu trùng và câu có lời giải không phải tiếng Việt trước khi tốn một request kiểm định.
     const seen = new Set(Object.values(cache.snapshot()).map(questionKey));
-    const fresh = drafted.filter((q) => !seen.has(questionKey(q)));
+    const fresh = drafted.filter((q) => !seen.has(questionKey(q))
+      && isVietnameseOrEmpty(q.explanation) && isVietnameseOrEmpty(q.trap));
 
     const check = await aiStep({
       pair, role: 'solver', provider: solver,

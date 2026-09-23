@@ -1,7 +1,7 @@
 /**
  * Kiểm tra cấu trúc, đối chiếu kiểm định và lắp ráp các bộ Part 3, 4, 6, 7. Hàm thuần, không gọi mạng.
  */
-import { mentionsChoiceLetter, part2Key } from './prompt-listening.js';
+import { mentionsChoiceLetter, part2Key, isVietnameseOrEmpty } from './prompt-listening.js';
 import { SET_TYPES, materialText, configKey } from './prompt-sets.js';
 import { audioPath } from './tts.js';
 
@@ -12,7 +12,7 @@ const QUESTION_RANGE = { 3: [3, 3], 4: [3, 3], 6: [4, 4], '7-single': [2, 4], '7
 const PASSAGE_COUNT = { 6: 1, '7-single': 1, '7-double': 2, '7-triple': 3 };
 
 /**
- * Câu hỏi có hợp lệ không: đủ 4 phương án khác nhau, đáp án A-D, lời giải không nhắc chữ cái.
+ * Câu hỏi có hợp lệ không: đủ 4 phương án khác nhau, đáp án A-D, lời giải tiếng Việt không nhắc chữ cái.
  * @param {unknown} q
  * @returns {boolean}
  */
@@ -24,6 +24,7 @@ export function isWellFormedQuestion(q) {
   if (new Set(options.map((o) => o.trim().toLowerCase())).size !== 4) return false;
   if (options.some((o) => /^(all of the above|none of the above|both|either)\b/i.test(o.trim()))) return false;
   if (typeof q.explanation !== 'string' || q.explanation.trim().length < 20) return false;
+  if (!isVietnameseOrEmpty(q.explanation) || !isVietnameseOrEmpty(q.trap)) return false;
   return !mentionsChoiceLetter(q.explanation) && !mentionsChoiceLetter(q.trap);
 }
 
