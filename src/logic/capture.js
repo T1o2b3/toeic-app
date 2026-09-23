@@ -187,7 +187,7 @@ export function planCapture(word, { questionId, index, states, captured = new Ma
   if (!entry) {
     return {
       events, entry: null,
-      notice: `Đã ghi “${word}” — chưa có trong deck, xem ở Kho từ vựng › Đã gạt.`,
+      notice: `Đã ghi “${word}” — chưa có trong bộ từ, xem ở Kho từ vựng › Đã gạt.`,
     };
   }
 

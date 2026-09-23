@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { reduceQuizState, gradeAnswer, quizQueue, accuracyByErrorType } from '../src/logic/quiz.js';
+import { readFileSync } from 'node:fs';
+import { reduceQuizState, gradeAnswer, quizQueue, accuracyByErrorType, ERROR_TYPE_LABEL, errorTypeLabel } from '../src/logic/quiz.js';
 
 const T0 = Date.UTC(2026, 8, 19, 10, 0, 0);
 const ev = (type, payload, ts = T0) => ({ id: `e-${ts}-${Math.random()}`, deviceId: 'mac', ts, type, payload });
@@ -109,5 +110,22 @@ describe('accuracyByErrorType', () => {
 
   it('chưa làm câu nào thì không có thống kê', () => {
     expect(accuracyByErrorType(QUESTIONS, new Map())).toEqual([]);
+  });
+});
+
+describe('errorTypeLabel — tên dạng câu bằng tiếng Việt', () => {
+  it('MỌI dạng câu có trong nội dung đều có tên tiếng Việt (pipeline thêm dạng mới thì phải đặt tên)', () => {
+    const load = (file) => JSON.parse(readFileSync(`public/content/${file}`, 'utf8')).entries;
+    const questions = [
+      ...load('questions-part5.json'), ...load('listening-part2.json'),
+      ...[3, 4, 6, 7].flatMap((part) => load(`sets-part${part}.json`).flatMap((set) => set.questions)),
+    ];
+    const missing = [...new Set(questions.map((q) => q.errorType))].filter((type) => !(type in ERROR_TYPE_LABEL));
+    expect(missing).toEqual([]);
+  });
+
+  it('dạng lạ thì trả nguyên mã, không để trống', () => {
+    expect(errorTypeLabel('word-form')).toBe('Từ loại');
+    expect(errorTypeLabel('dang-moi')).toBe('dang-moi');
   });
 });

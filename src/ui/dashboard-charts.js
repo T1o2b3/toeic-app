@@ -11,6 +11,7 @@
  */
 import { el } from './dom.js';
 import { SKILL_LABEL } from '../logic/exam-time.js';
+import { errorTypeLabel } from '../logic/quiz.js';
 import { LEVEL_INFO } from '../logic/vocab-levels.js';
 
 const WEEKDAY = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
@@ -149,8 +150,8 @@ export function renderLevelBar(progress, onPick) {
 export function renderAccuracyBars(rows) {
   return el('div', { class: 'viz-hbars' }, rows.map((row) => {
     const percent = Math.round(row.accuracy * 100);
-    return el('div', { class: 'viz-hbar', title: `${row.part ? `${row.part} · ` : ''}${row.errorType}: ${percent}% đúng trên ${row.attempts} câu` }, [
-      el('div', { class: 'viz-hbar-label', text: `${row.part ? `${row.part} · ` : ''}${row.errorType}` }),
+    return el('div', { class: 'viz-hbar', title: `${row.part ? `${row.part} · ` : ''}${errorTypeLabel(row.errorType)}: ${percent}% đúng trên ${row.attempts} câu` }, [
+      el('div', { class: 'viz-hbar-label', text: `${row.part ? `${row.part} · ` : ''}${errorTypeLabel(row.errorType)}` }),
       el('div', { class: 'viz-track' }, [el('div', { class: 'viz-fill', style: `width:${Math.max(percent, 2)}%` })]),
       el('div', { class: 'viz-hbar-value', text: `${percent}%` }),
     ]);

@@ -269,7 +269,7 @@ describe('Tra từ', () => {
 
   it('từ không có trong deck: cho ghi lại để học sau và tra từ điển ngoài', async () => {
     await typeInto('zoning');
-    expect(text()).toContain('Không có “zoning” trong deck');
+    expect(text()).toContain('Không có “zoning” trong bộ từ');
     expect(root.querySelector('a.ext-link').href).toContain('wiktionary.org/wiki/zoning');
     const events = store.eventCount;
     await click((t) => t.includes('Ghi lại “zoning”'));

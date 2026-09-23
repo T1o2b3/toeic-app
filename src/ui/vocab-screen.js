@@ -36,7 +36,7 @@ export function renderVocab(store) {
   const sections = [
     el('h1', { text: 'Từ vựng' }),
     el('p', { class: 'subtitle', text: tier === ALL_TIERS
-      ? `${store.entries.length} từ · ${(store.decks ?? [store.deck]).map((d) => d.deck).join(' + ')}`
+      ? `${store.entries.length} từ TOEIC`
       : `Tầng ${TIER_INFO[tier].label.toLowerCase()} · ${entries.length}/${store.entries.length} từ` }),
     renderSearchShortcut(),
     renderTierChooser(store, tier),

@@ -49,7 +49,7 @@ export function renderLookup(store, params) {
 
   return el('div', {}, [
     el('h1', { text: 'Tra từ' }),
-    el('p', { class: 'subtitle', text: `Tìm trong ${store.searchIndex.length} từ của deck, kể cả từ chưa học.` }),
+    el('p', { class: 'subtitle', text: `Tìm trong ${store.searchIndex.length} từ của bộ từ TOEIC, kể cả từ chưa học.` }),
     input,
     results,
   ]);
@@ -149,7 +149,7 @@ function renderNotFound(store, text) {
   } else {
     actions.push(el('button', { class: 'primary', onClick: () => record(store, word) }, [
       el('span', { text: `＋ Ghi lại “${word}” để học sau` }),
-      el('small', { text: 'chưa có nghĩa trong deck — bạn tra ở dưới rồi học sau' }),
+      el('small', { text: 'chưa có nghĩa trong bộ từ — bạn tra ở dưới rồi học sau' }),
     ]));
   }
 
@@ -160,7 +160,7 @@ function renderNotFound(store, text) {
     ]));
   }
   return el('div', { class: 'lookup-none' }, [
-    el('p', { class: 'empty', text: `Không có “${text}” trong deck.` }),
+    el('p', { class: 'empty', text: `Không có “${text}” trong bộ từ.` }),
     ...actions,
   ]);
 }

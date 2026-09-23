@@ -12,7 +12,7 @@
  * từng câu và nói nhịp sau khi trả lời — nhắc, không ép.
  */
 import { el } from './dom.js';
-import { gradeAnswer } from '../logic/quiz.js';
+import { gradeAnswer, errorTypeLabel } from '../logic/quiz.js';
 import { composeRound, questionNumber, groupBreakdown, PART5_GROUPS, PART5_COUNT } from '../logic/part5.js';
 import { pace } from '../logic/pace.js';
 import { roundProgress } from '../logic/round.js';
@@ -120,9 +120,11 @@ export function renderQuiz(store) {
 /** Tên nhóm của một dạng câu, hiện SAU khi trả lời để biết mình yếu mảng nào. */
 function groupLabel(errorType) {
   for (const [, group] of Object.entries(PART5_GROUPS)) {
-    if (group.types.includes(errorType)) return `${group.label} · ${errorType}`;
+    if (!group.types.includes(errorType)) continue;
+    const name = errorTypeLabel(errorType);
+    return name === group.label ? name : `${group.label} · ${name}`; // "Từ loại · Từ loại" thì in một lần
   }
-  return errorType;
+  return errorTypeLabel(errorType);
 }
 
 /** Tổng kết lượt: đúng bao nhiêu, nhịp thế nào, yếu nhóm nào — đọc được ngay như bảng điểm nhỏ. */

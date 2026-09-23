@@ -46,7 +46,7 @@ describe('gạt từ lạ lúc làm Part 5 (D34)', () => {
     await tick(80);
     expect(store.eventCount).toBe(events + 1);
     expect(store.captured.get('zoning').count).toBe(1);
-    expect(root.querySelector('.tray').textContent).toContain('chưa có trong deck');
+    expect(root.querySelector('.tray').textContent).toContain('chưa có trong bộ từ');
     expect(token('zoning').classList.contains('captured')).toBe(true);
   });
 

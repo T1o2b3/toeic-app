@@ -100,7 +100,7 @@ describe('planCapture', () => {
   it('từ chưa có trong deck: chỉ ghi vocab.captured, báo rõ chưa có nghĩa', () => {
     const plan = planCapture('zoning', { questionId: 'p5-1', index, states: none });
     expect(plan.events).toEqual([{ type: 'vocab.captured', payload: { word: 'zoning', questionId: 'p5-1' } }]);
-    expect(plan.notice).toContain('chưa có trong deck');
+    expect(plan.notice).toContain('chưa có trong bộ từ');
   });
 
   it('từ trong deck, chưa phân loại: ghi thêm phân loại "không biết" để vào hàng đợi học', () => {

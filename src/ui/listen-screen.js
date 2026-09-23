@@ -6,7 +6,7 @@
  * Kết quả ghi bằng cùng sự kiện `question.answered` như Part 5 nên thống kê lỗ hổng dùng chung.
  */
 import { el } from './dom.js';
-import { quizQueue, gradeAnswer } from '../logic/quiz.js';
+import { quizQueue, gradeAnswer, errorTypeLabel } from '../logic/quiz.js';
 import { roundProgress } from '../logic/round.js';
 import { LISTEN_ROUND_SIZE, clipSequence, canAnswer, audioUrl } from '../logic/listen.js';
 import { getListenSpeed } from '../data/prefs.js';
@@ -84,7 +84,7 @@ export function renderListen(store) {
     el('div', { class: 'topbar' }, [
       backLink('exams'),
       // Dạng câu hỏi chỉ hiện SAU khi trả lời: biết trước "wh-where" là đã đoán được câu đáp (cùng lý do D39).
-      el('span', { class: 'progress', text: `còn ${remaining} câu${result ? ` · ${question.errorType}` : ''}` }),
+      el('span', { class: 'progress', text: `còn ${remaining} câu${result ? ` · ${errorTypeLabel(question.errorType)}` : ''}` }),
     ]),
     el('div', { class: 'card big' }, [
       el('button', { class: 'primary listen-play', onClick: () => play(store, question) }, [

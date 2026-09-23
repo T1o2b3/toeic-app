@@ -128,7 +128,7 @@ function renderOrphanRow(item) {
     el('div', { class: 'word-head static' }, [
       el('span', { class: 'wh-main' }, [
         el('strong', { text: item.word }),
-        el('span', { class: 'lvl none', text: 'chưa có trong deck' }),
+        el('span', { class: 'lvl none', text: 'chưa có trong bộ từ' }),
       ]),
       el('small', { text: `gặp ${item.count} lần trong ${item.questionIds.length} câu` }),
       el('a', {

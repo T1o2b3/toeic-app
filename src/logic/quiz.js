@@ -129,3 +129,59 @@ export function accuracyByErrorType(questions, states) {
     .map((bucket) => ({ ...bucket, accuracy: (bucket.attempts - bucket.wrong) / bucket.attempts }))
     .sort((a, b) => a.accuracy - b.accuracy);
 }
+
+/**
+ * Tên tiếng Việt của từng dạng câu (`errorType`). Mã tiếng Anh giữ nguyên trong dữ liệu và nhật ký sự kiện
+ * (ID vĩnh viễn), chỉ đổi chữ HIỂN THỊ — trước đây màn phân tích in thẳng `word-form`, `wh-why`... khó hiểu.
+ * Tên trong ngoặc là chữ tiếng Anh thật xuất hiện trong đề, để nhận ra khi gặp.
+ */
+export const ERROR_TYPE_LABEL = Object.freeze({
+  // Part 5–6: ngữ pháp và từ vựng
+  'word-form': 'Từ loại',
+  participle: 'Phân từ (V-ing / V-ed)',
+  vocabulary: 'Từ vựng',
+  'verb-tense': 'Thì động từ',
+  'subject-verb-agreement': 'Hoà hợp chủ ngữ – động từ',
+  pronoun: 'Đại từ',
+  preposition: 'Giới từ',
+  conjunction: 'Liên từ',
+  'relative-clause': 'Mệnh đề quan hệ',
+  comparison: 'So sánh',
+  quantifier: 'Từ chỉ số lượng',
+  'infinitive-gerund': 'To V hay V-ing',
+  'grammar-in-context': 'Ngữ pháp theo ngữ cảnh',
+  'vocab-in-context': 'Từ vựng theo ngữ cảnh',
+  'connector-in-context': 'Từ nối theo ngữ cảnh',
+  'sentence-insertion': 'Chèn câu vào đoạn',
+  // Part 2: kiểu câu hỏi / câu nói mở đầu
+  'wh-who': 'Hỏi ai (Who)',
+  'wh-what': 'Hỏi cái gì (What)',
+  'wh-when': 'Hỏi khi nào (When)',
+  'wh-where': 'Hỏi ở đâu (Where)',
+  'wh-why': 'Hỏi tại sao (Why)',
+  'wh-how': 'Hỏi thế nào (How)',
+  'yes-no': 'Câu hỏi Có/Không',
+  'tag-question': 'Câu hỏi đuôi',
+  choice: 'Câu hỏi lựa chọn (A hay B)',
+  'request-suggestion': 'Lời đề nghị, yêu cầu',
+  statement: 'Câu nói, không phải câu hỏi',
+  indirect: 'Trả lời vòng vo, gián tiếp',
+  // Part 3, 4, 7: đọc/nghe hiểu
+  gist: 'Ý chính, mục đích chung',
+  detail: 'Chi tiết cụ thể',
+  inference: 'Suy luận',
+  purpose: 'Mục đích',
+  'speaker-intent': 'Ý người nói',
+  'next-action': 'Việc sắp làm tiếp',
+  'not-stated': 'Điều KHÔNG được nhắc',
+  reference: 'Từ này chỉ cái gì',
+  'cross-reference': 'Đối chiếu nhiều đoạn',
+});
+
+/**
+ * @param {string} errorType
+ * @returns {string} tên tiếng Việt; dạng lạ (pipeline mới thêm) thì trả nguyên mã, không để trống
+ */
+export function errorTypeLabel(errorType) {
+  return ERROR_TYPE_LABEL[errorType] ?? errorType;
+}
