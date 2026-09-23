@@ -64,6 +64,8 @@ toeic-app/
   cả `vocab-toeic-tsl.json` lẫn `questions-part5.json`; nút xuất JSON hoạt động.
 - [ ] **M7. Đệm + dùng thật (ngày 7, ~0,5–1h).** Sửa lỗi phát sinh, viết README.
   Xong khi: Huy dùng MVP học thật 1 phiên trên mỗi thiết bị.
+  🔄 2026-09-23: README có tin nhắn soạn sẵn gửi bạn bè; sửa 2 chỗ vướng của người mới (xem PROGRESS.md).
+  Còn lại: Huy học thật 1 phiên trên Mac + iPhone với tự đồng bộ.
 
 ## Giai đoạn 2 — Luyện nghe (tuần 2–4, ~10 giờ)
 - [x] M8. Pipeline audio: script hội thoại (có filler), edge-tts 4 giọng, MP3 mono, hash tên file; quyết Q1.

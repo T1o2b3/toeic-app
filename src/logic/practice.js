@@ -36,7 +36,7 @@ export const POOL_INFO = Object.freeze({
     hint: 'xem mình có thật sự còn nhớ không — quên thì đưa lại vào danh sách học',
   },
   [POOLS.WEAK]: { label: 'Từ hay sai', hint: 'những từ từng bấm "Quên" nhiều nhất' },
-  [POOLS.BOOKMARKED]: { label: 'Từ đã đánh dấu ★', hint: 'những từ Huy tự đánh dấu cần để ý' },
+  [POOLS.BOOKMARKED]: { label: 'Từ đã đánh dấu ★', hint: 'những từ bạn tự đánh dấu cần để ý' },
   [POOLS.LEARNING]: { label: 'Từ đang học', hint: 'ôn thêm ngoài lịch, không làm đổi lịch' },
 });
 

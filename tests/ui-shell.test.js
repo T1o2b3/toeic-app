@@ -66,11 +66,12 @@ describe('dashboard khi chưa học gì', () => {
     expect(text()).not.toContain('Chuỗi');
   });
 
-  it('người mới (chưa phân loại từ nào): nút chính mời phân loại từ vựng, không phải câu Part 5', async () => {
+  it('người mới (chưa phân loại từ nào): nút chính mời phân loại từ vựng, qua màn chọn tầng từ trước', async () => {
     expect(text()).toContain('Bắt đầu: phân loại từ vựng');
     expect(root.querySelectorAll('.panel.today button.pick')).toHaveLength(0);
     await click((t) => t.includes('Bắt đầu: phân loại'));
-    expect(window.location.hash).toBe('#/triage');
+    expect(window.location.hash).toBe('#/vocab');
+    expect(text()).toContain('Tầng từ');
     await go('#/');
   });
 

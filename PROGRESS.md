@@ -70,10 +70,19 @@ gh run list --workflow keep-supabase-awake.yml --limit 1
 **7. Đăng ký tài khoản để MỞ (D56)** — Huy chia sẻ link cho bạn bè; bước H bỏ. Backup tự động bỏ (D57).
 Huy đã đặt 2 secret, workflow ping chạy tay lần đầu **thành công** (Supabase trả `[]`). **M18 → [x].**
 
+**8. M7 — nhìn app bằng mắt người mới** (bạn bè của Huy, D56). Xoá dữ liệu tab thử, chạy ở 375×812:
+- Nút "Bắt đầu" của người mới nay sang **màn Từ vựng** (có hàng "Tầng từ") thay vì vào thẳng phân loại —
+  trước đây ai cũng bắt đầu từ `mister`, `vacation`, người 800+ dễ tưởng app không hợp mình.
+- Màn Sao lưu khi chưa đăng nhập: một dòng nói tiến độ đang nằm ở đâu, Safari xoá sau 7 ngày không mở, cách
+  "Thêm vào MH chính".
+- Bỏ các câu chỉ đúng với Huy: "cả 3 máy", "Mac ↔ iPhone", "từ Huy tự đánh dấu".
+- README: mục **"Gửi app cho bạn bè"** — tin nhắn soạn sẵn để copy (repo private, bạn bè không đọc được README).
+
 ### Bước tiếp theo
 - **Huy kiểm tự đồng bộ trên bản deploy** (nhớ đối chiếu số hiệu bản build): Mac học 1 thẻ → chờ 20 giây →
   mở app trên iPhone (đăng nhập cùng tài khoản nếu chưa) → vào **Sao lưu**: dòng "Lần gần nhất … nhận về 1".
-- **M7:** README có phần "cách dùng" cho bạn bè (người mới, không biết code) + sửa lỗi phát sinh.
+- **M7 xong khi** Huy học thật 1 phiên trên Mac + 1 phiên trên iPhone. Gặp lỗi gì thì báo (kèm số hiệu bản build).
+- Sau M7, theo PLAN: M10 còn dở (bảng/biểu Part 3, đánh dấu câu chứa đáp án) · M11 dictation · M13 chạm từ lưu deck.
 
 ## Phiên 2026-09-24 — Gợi ý theo chỗ yếu · học cụm từ · gộp nhóm (D52–D54) — XONG, ĐÃ PUSH
 

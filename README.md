@@ -3,6 +3,22 @@
 PWA ôn TOEIC Listening & Reading, miễn phí 100%, đồng bộ Mac + iPhone.
 Xem `PLAN.md` (lộ trình), `DECISIONS.md` (quyết định + lý do), `PROGRESS.md` (trạng thái hiện tại).
 
+## Gửi app cho bạn bè
+
+Repo là private nên bạn bè không đọc được file này. Copy tin nhắn dưới đây gửi họ:
+
+```
+App ôn TOEIC (miễn phí, không quảng cáo): https://toeic-app.huybndc-451.workers.dev
+1. iPhone: mở bằng Safari → nút Chia sẻ → "Thêm vào MH chính". Mac/PC: mở bằng trình duyệt là được.
+2. Tab "Sao lưu" → nhập email + mật khẩu → "Lần đầu dùng? Tạo tài khoản". Không tạo thì tiến độ
+   chỉ nằm trong trình duyệt đó, Safari có thể xoá nếu 7 ngày không mở.
+3. Màn chính → "Bắt đầu" → chọn tầng từ hợp trình độ (800+ thì chọn Trung cấp/Cao cấp) → chấm 20 từ.
+   Sau đó mỗi lần mở app cứ bấm theo gợi ý ở ô "Hôm nay".
+Dùng cùng tài khoản trên máy khác thì tiến độ tự đồng bộ.
+```
+
+Mỗi người chỉ thấy dữ liệu của chính mình (RLS — D56). Khi nào cần đóng đăng ký lại: xem D56.
+
 ## Chạy
 
 ```bash
@@ -17,7 +33,7 @@ npm run build    # build ra dist/
 Áp dụng cho MỌI lần quay lại project, kể cả sau nhiều tuần.
 
 ### 1. Mở đúng thư mục
-Mở Claude Code với thư mục `toeic_app` (không phải thư mục cha). Claude tự đọc `CLAUDE.md`.
+Mở Claude Code với thư mục `toeic-app` (không phải thư mục cha). Claude tự đọc `CLAUDE.md`.
 
 ### 2. Gõ câu mở đầu này
 ```

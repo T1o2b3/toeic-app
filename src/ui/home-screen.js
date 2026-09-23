@@ -72,7 +72,7 @@ export function renderHome(store) {
     ]),
     el('button', { class: 'secondary', onClick: () => goTo('/sync') }, [
       el('span', { text: 'Đồng bộ giữa các máy' }),
-      el('small', { text: isSupabaseConfigured() ? 'Mac ↔ iPhone' : 'chưa cấu hình — dữ liệu chỉ ở máy này' }),
+      el('small', { text: isSupabaseConfigured() ? 'dùng chung tiến độ trên mọi máy' : 'chưa cấu hình — dữ liệu chỉ ở máy này' }),
     ]),
     el('div', { class: 'actions' }, [
       el('button', { class: 'link', text: '⬇ Xuất dữ liệu ra file', onClick: () => downloadBackup(store) }),
@@ -157,9 +157,11 @@ function renderToday(store) {
 
   if (newcomer && countUntriaged(entries, store.states) > 0) {
     return todayPanel([
-      el('button', { class: 'primary', onClick: () => goTo('/triage') }, [
+      // Sang màn Từ vựng chứ không thẳng vào phân loại: hàng "Tầng từ" nằm ở đó. Vào thẳng thì ai cũng
+      // bắt đầu từ `mister`, `vacation` — người 800+ lướt 20 từ quá dễ rồi tưởng app không hợp mình.
+      el('button', { class: 'primary', onClick: () => goTo('/vocab') }, [
         el('span', { text: 'Bắt đầu: phân loại từ vựng' }),
-        el('small', { text: 'chấm 20 từ đầu tiên (~2 phút) để app biết bạn cần học gì' }),
+        el('small', { text: 'chọn tầng từ hợp trình độ, rồi chấm 20 từ đầu (~2 phút) để app biết bạn cần học gì' }),
       ]),
     ]);
   }

@@ -136,11 +136,19 @@ export function renderSync(store) {
     passwordInput.addEventListener('keydown', enter(doSignIn));
 
     children.push(
+      // Người mới (bạn bè của Huy — D56) không biết tiến độ đang nằm ở đâu. Safari xoá dữ liệu trang web
+      // không được mở trong 7 ngày (trừ app đã thêm ra màn hình chính) — nhịp 1–2 buổi/tuần là chạm.
+      el('p', {
+        class: 'empty',
+        text: 'Chưa đăng nhập thì tiến độ chỉ nằm trong trình duyệt này — Safari có thể tự xoá nếu 7 ngày '
+          + 'không mở. Tạo tài khoản để giữ tiến độ và học tiếp trên máy khác. Trên iPhone: Safari → nút '
+          + 'Chia sẻ → "Thêm vào MH chính" để dùng như app, học được cả khi không có mạng.',
+      }),
       emailInput,
       passwordInput,
       el('button', { class: 'primary', onClick: doSignIn }, [
         el('span', { text: 'Đăng nhập' }),
-        el('small', { text: 'dùng chung tài khoản này trên cả 3 máy' }),
+        el('small', { text: 'dùng một tài khoản cho mọi máy của bạn' }),
       ]),
       el('div', { class: 'actions' }, [
         el('button', {
