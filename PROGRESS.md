@@ -46,6 +46,8 @@ thành từng cụm". Đo lại dữ liệu thì đúng: 6.882 cụm sinh theo t
 **Plugin Claude Code: cài thêm 2 cái để đỡ phải đọc lại codebase mỗi phiên.**
 - `serena` — MCP phân tích code theo ký hiệu (hàm/class), tìm và sửa đúng chỗ mà không phải đọc cả file.
 - `claude-md-management` — giữ CLAUDE.md khỏi lạc hậu, gom bài học mỗi phiên vào đó.
+- **Đã `brew install uv`** vì `serena` gọi `uvx`; không có nó thì MCP im lặng không khởi động.
+- **MCP chỉ nạp lúc mở phiên mới** — Huy `/clear` rồi bắt đầu phiên sau thì serena mới có tác dụng.
 - Tổng 7 plugin, always-on ~8.000 token/phiên. Chi tiết và quy tắc tối ưu ở
   `.claude/skills/mini-project-setup/SKILL.md` mục "Plugin của Claude Code".
 - **Cần Huy làm:** MCP của plugin `cloudflare` chưa đăng nhập được (phiên này không chạy OAuth được).

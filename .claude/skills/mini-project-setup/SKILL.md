@@ -91,7 +91,7 @@ dùng tới. Đó là "always-on token". Cài nhiều plugin = mỗi phiên tố
 4. **Một plugin một việc.** Đừng cài hai plugin cùng lo một chuyện (vd hai bộ code-review).
 5. **Rà lại mỗi khi mở milestone mới:** `claude plugin list`, cái nào cả milestone trước không đụng tới thì tắt.
 
-**Đang cài cho project này (tổng always-on ~6.400 token):**
+**Đang cài cho project này (tổng always-on ~8.000 token):**
 
 | Plugin | Dùng để làm gì | Always-on |
 |---|---|---|
@@ -100,6 +100,16 @@ dùng tới. Đó là "always-on token". Cài nhiều plugin = mỗi phiên tố
 | `ponytail@ponytail` | Ép chọn giải pháp đơn giản nhất chạy được (YAGNI). **Có 3 hook chạy ở mọi prompt.** | ~1.000 |
 | `modern-web-guidance@claude-plugins-official` | Cập nhật best practice web hiện đại — hợp với người mới học web/PWA. | ~760 |
 | `frontend-design@claude-plugins-official` | Làm giao diện có gu, tránh kiểu "AI generic". | ~80 |
+| `serena@claude-plugins-official` | **MCP đọc code theo ký hiệu** (hàm, class) qua language server — tìm và sửa đúng chỗ mà không phải đọc cả file. Đây là cái giảm token nhiều nhất. Cần `uv` (đã cài bằng `brew install uv`). | MCP |
+| `claude-md-management@claude-plugins-official` | Giữ CLAUDE.md khỏi lạc hậu, gom bài học mỗi phiên vào đó. | ~600 |
+
+**Plugin có MCP server thì phải kiểm thêm hai thứ**, cài xong chưa chắc chạy:
+1. **Lệnh nền có sẵn chưa.** Xem `.mcp.json` của plugin trong `~/.claude/plugins/cache/<marketplace>/<ten>/`.
+   `serena` gọi `uvx` — máy không có `uv` thì MCP im lặng không khởi động. Đã `brew install uv`.
+2. **Có cần đăng nhập không.** `cloudflare` cần OAuth: mở Claude Code ở terminal, gõ `/mcp`, cho phép.
+   Chưa đăng nhập thì 14 skill vẫn dùng được, chỉ mất phần gọi thẳng API.
+
+MCP server chỉ nạp lúc **mở phiên mới** — cài xong phải `/clear` hoặc mở phiên khác mới dùng được.
 
 **Cài thêm:**
 ```bash
