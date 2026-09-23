@@ -3,7 +3,7 @@
  * Không dùng mã OTP qua email vì Supabase chặn việc sửa mẫu email khi chưa có SMTP riêng (D25c).
  */
 import { el, goTo } from './dom.js';
-import { signUp, signIn, getCurrentUser, signOut, syncEvents, isSupabaseConfigured, getConfigError, MIN_PASSWORD_LENGTH } from '../data/sync.js';
+import { signUp, signIn, getCurrentUser, signOut, syncEvents, isSupabaseConfigured, getConfigError, MIN_PASSWORD_LENGTH, autoSyncStatus, AUTO_SYNC_DELAY_MS } from '../data/sync.js';
 import { describeSync } from '../logic/sync.js';
 
 /** Trạng thái riêng của màn. */
@@ -80,6 +80,13 @@ export function renderSync(store) {
   if (stage === 'signed-in') {
     children.push(
       el('p', { class: 'subtitle', text: `Đang đăng nhập: ${user?.email ?? ''}` }),
+      el('p', {
+        class: 'empty',
+        text: `App tự đồng bộ khi mở, khi rời app và ${AUTO_SYNC_DELAY_MS / 1000} giây sau khi học xong. `
+          + (autoSyncStatus.at
+            ? `Lần gần nhất ${new Date(autoSyncStatus.at).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}: ${autoSyncStatus.text}.`
+            : 'Chưa chạy lần nào kể từ khi mở app.'),
+      }),
       el('button', {
         class: 'primary',
         onClick: () => !busy && run(store, async () => {
@@ -91,7 +98,7 @@ export function renderSync(store) {
         }),
       }, [
         el('span', { text: busy ? 'Đang đồng bộ...' : 'Đồng bộ ngay' }),
-        el('small', { text: 'gửi phần máy chủ thiếu, nhận phần máy này thiếu' }),
+        el('small', { text: 'không cần chờ — gửi phần máy chủ thiếu, nhận phần máy này thiếu' }),
       ]),
       el('div', { class: 'actions' }, [
         el('button', {

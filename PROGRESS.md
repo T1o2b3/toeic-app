@@ -6,7 +6,7 @@
 ## Trạng thái hiện tại
 - Giai đoạn: 1 — MVP. **M0–M6 XONG** (M5: Huy cấu hình Supabase xong 2026-09-23). Còn **bước H** (khoá đăng ký) — xem phiên mới nhất bên dưới.
 - **App đã dùng học thật được**: https://toeic-app.huybndc-451.workers.dev
-- Repo private: https://github.com/huybndc/toeic-app — **803 test pass**.
+- Repo private: https://github.com/huybndc/toeic-app — **806 test pass**.
 
 ## Dùng app thế nào (cho Huy)
 1. Mở link trên (máy Mac hoặc iPhone).
@@ -23,10 +23,10 @@
 5. **Xem lại / tự ôn:** \`Kho từ vựng\` để xem các từ đã chấm và đổi mức; \`Ôn chủ động\` để tự kiểm tra
    một nhóm từ (nhất là nhóm "thành thạo" — quên thì từ tự quay lại danh sách học). Ở màn phân loại,
    \`Backspace\` lùi về từ trước, \`S\` để sau.
-6. **Đồng bộ (thủ công):** mục **Sao lưu** → **Đồng bộ ngay**. Bấm khi BẮT ĐẦU và khi XONG mỗi buổi học,
-   trên máy đang dùng — app chưa tự đồng bộ, quên bấm thì hai máy lệch nhau (ôn trùng thẻ).
+6. **Đồng bộ tự động** (D55) khi mở app, khi rời app và 15 giây sau khi học. Mục **Sao lưu** hiện lần chạy
+   gần nhất; muốn chắc thì bấm **Đồng bộ ngay**. Mỗi máy chỉ cần đăng nhập một lần.
 
-## Phiên 2026-09-23 (18:40) — Supabase chạy thật · sửa lỗi đồng bộ quá 1000 sự kiện — XONG
+## Phiên 2026-09-23 (18:40) — Supabase chạy thật · sửa lỗi đồng bộ quá 1000 sự kiện · tự đồng bộ — XONG
 
 Huy đã cấu hình Supabase xong, đăng nhập và đồng bộ được trên bản deploy (524 sự kiện ở Mac).
 
@@ -45,8 +45,8 @@ dư, còn màn hình vẫn báo "Đồng bộ xong". Nay đọc theo trang (`ord
 khi trang RỖNG (đúng cả khi Max rows bị chỉnh nhỏ hơn 1000). 2 test mới ở `tests/sync.test.js` với máy
 chủ giả cắt ở 1000 và 300 dòng — đã kiểm test ĐỎ trên code cũ. Truy vấn mới đã thử trên Supabase thật.
 
-**4. Máy này chưa có `node_modules`** (repo mới chép sang) → đã `npm ci`. Cũng chưa có `.env` —
-chỉ cần khi chạy pipeline hoặc `npm run dev` có đồng bộ; bản deploy lấy biến từ Cloudflare.
+**4. Máy này chưa có `node_modules`** (repo mới chép sang) → đã `npm ci`. Huy đã tự tạo `.env` bằng `nano`
+(có 2 biến Supabase). Bản deploy vẫn lấy biến từ Cloudflare, không từ `.env`.
 
 ### ⚠️ VIỆC CỦA HUY — còn đúng một bước (bước H, ~3 phút)
 Kiểm tra lúc 18:40: **`disable_signup: false` — ai có link app cũng tạo được tài khoản** (không cần
@@ -54,11 +54,17 @@ xác nhận email). RLS vẫn giữ họ không đọc được dữ liệu củ
 Supabase → **Authentication → Sign In / Providers → TẮT "Allow new users to sign up" → Save.**
 Tài khoản của Huy đã có, không bị ảnh hưởng. Claude kiểm lại được bằng lệnh đọc `/auth/v1/settings`.
 
+**5. Tự đồng bộ (D55) — Huy đồng ý.** `startAutoSync(store)` ở `src/data/sync.js`, gắn ở `src/main.js`
+(không ở `mountApp` → test giao diện không gọi mạng). Chạy lúc mở app, lúc quay lại/rời app, lúc có mạng
+lại, và 15 giây sau sự kiện cuối. Màn Đồng bộ hiện lần chạy gần nhất. 3 test mới (hẹn giờ giả): đồng bộ
+ngay khi mở · chờ yên 15 giây, vẽ lại màn không tính · chưa đăng nhập thì không gọi máy chủ. Đã kiểm test
+đỏ khi bỏ chốt "sự kiện vừa kéo về không hẹn đồng bộ". Chạy thử trình duyệt với `.env` thật: không lỗi
+console, chưa đăng nhập thì không có request nào tới Supabase. **806 test pass.**
+**CHƯA kiểm được nhánh ĐÃ đăng nhập trên trình duyệt** (cần mật khẩu của Huy) — Huy kiểm ở bước dưới.
+
 ### Bước tiếp theo
-- **Huy xác nhận iPhone:** đăng nhập cùng tài khoản trên iPhone → Đồng bộ ngay → phải "nhận về ~524".
-- **Đề xuất, chờ Huy chốt — tự đồng bộ:** gọi `syncEvents` lúc mở app và lúc xong một lượt (khi đã đăng
-  nhập, lỗi mạng thì im lặng bỏ qua). Nút thủ công là phương án LÙI của M5; mục tiêu gốc là tự động.
-  Đổi quyết định nên phải hỏi (ràng buộc #9).
+- **Huy kiểm tự đồng bộ trên bản deploy** (nhớ đối chiếu số hiệu bản build): Mac học 1 thẻ → chờ 20 giây →
+  mở app trên iPhone (đăng nhập cùng tài khoản nếu chưa) → vào **Sao lưu**: dòng "Lần gần nhất … nhận về 1".
 - **M18 nên làm sớm:** gói Free tự tạm dừng sau 7 ngày không có request; nhịp học 1–2 giờ/tuần (D03) thì
   rất dễ chạm. Ping chỉ cần URL + publishable key (công khai, không phải bí mật) → không cần secret nhạy
   cảm cho phần ping; phần backup thì cần.

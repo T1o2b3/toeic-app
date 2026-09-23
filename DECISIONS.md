@@ -498,6 +498,20 @@ xếp dọc. Nay `navGroup()` ở `blocks.js`: Từ vựng = **Học** / **Tra c
 Đọc** / **Luyện phần Nghe** (gộp theo KỸ NĂNG, vì lúc chọn Huy cân nhắc "giờ có đeo tai nghe được không",
 không phải số thứ tự Part). Hai cột từ 30rem trở lên; việc chính chiếm cả hàng. Bảng lỗ hổng gập vào.
 
+**D55. Tự đồng bộ, nút "Đồng bộ ngay" giữ lại để thử tay.** (Huy đồng ý 2026-09-23: "nếu tự động đồng bộ
+thì càng tốt".) M5 chọn nút bấm tay làm phương án LÙI; mục tiêu gốc là tự động. Bấm tay thì dễ quên, mà quên
+là hai máy lệch nhau → ôn trùng thẻ, lịch FSRS sai.
+- **Khi nào chạy:** lúc mở app · lúc quay lại hoặc rời app (`visibilitychange` — trên iPhone, rời app thường
+  là lần cuối JS còn được chạy) · lúc có mạng lại (`online`) · **15 giây sau sự kiện cuối** (đang học liên tục
+  thì dời hẹn, không gọi mạng mỗi thẻ).
+- **Im lặng khi lỗi:** chưa đăng nhập (kiểm bằng `getSession`, không gọi mạng) hay mất mạng thì bỏ qua;
+  màn Đồng bộ hiện lần chạy gần nhất + kết quả/lỗi để Huy biết nó có chạy thật.
+- Sự kiện vừa KÉO VỀ không hẹn lần đồng bộ mới (không có gì để đẩy ngược lên).
+- Không đồng bộ theo thời gian thực (Supabase Realtime): cần giữ kết nối mở, tốn pin iPhone, và Huy không
+  dùng hai máy cùng lúc.
+- Giới hạn đã biết: mỗi lần vẫn đọc lại cả bảng (~3 MB/lần ở 10k sự kiện, gói Free 5 GB/tháng). Chạm ngưỡng
+  thì chuyển sang chỉ đọc dòng mới hơn lần trước.
+
 ## Câu hỏi còn mở
 - ~~Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng?~~ → **Đã giải quyết, xem D35** (chung repo, xét lại khi ~100 MB).
 - ~~Q2 (trước M2): xác nhận license của TSL 1.2 và NGSL.~~ → **Đã giải quyết, xem D18.**
