@@ -76,7 +76,9 @@ toeic-app/
 - [x] M10. Part 3–4: đọc trước câu hỏi có giờ, transcript đánh dấu câu chứa đáp án, bảng/biểu đơn giản bằng HTML.
   ✅ 2026-09-20 (phần chính): Part 3 = 13 bộ/39 câu, Part 4 = 10 bộ/30 câu, âm thanh nhiều giọng, xem trước câu hỏi, transcript sau khi
   trả lời. Chưa làm: bảng/biểu trong Part 3, đánh dấu câu chứa đáp án trong transcript.
-- [ ] M11. Dictation câu nghe sai.
+- [x] M11. Dictation câu nghe sai.
+  ✅ 2026-09-23: `#/dictation` (mục Bài thi, chỉ hiện khi đã sai câu nghe nào đó): Part 2 + từng lượt lời Part 3, chấm theo từ,
+  chép đúng hết thì không quay lại (D61). Part 4 chưa có (một file dài — Backlog).
 
 ## Giai đoạn 3 — Đọc mở rộng + phân tích (tuần 5–6, ~7 giờ)
 - [x] M12. Part 6, Part 7 (single/double/triple), đo thời gian từng câu.
@@ -129,3 +131,5 @@ toeic-app/
   `vocab.captured` chưa có trong deck, sinh nghĩa + ví dụ như deck TSL/BSL. Khi có, các từ đó tự thành thẻ học
   (app tra lại theo deck hiện tại nên không phải sửa nhật ký).
 - Kéo thả bằng pointer events để dùng được trên cảm ứng — hiện iPhone dùng chạm-rồi-bấm (D34).
+- **Nghe chép Part 4** (D61): pipeline tách âm thanh bài nói theo từng câu (edge-tts có mốc thời gian từng từ), để có đoạn
+  ≤ 30 từ. Kèm: coi "3" = "three" khi chấm nếu thấy hay bị chấm oan.

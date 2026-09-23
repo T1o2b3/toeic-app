@@ -22,7 +22,7 @@ const TABS = Object.freeze([
 ]);
 
 /** Màn phiên học: ẩn thanh dưới đáy. Màn lạ không có trong TABS lẫn danh sách này thì vẫn hiện, không tô mục nào. */
-const SESSION_SCREENS = Object.freeze(['triage', 'review', 'practice', 'quiz', 'listen', 'sets', 'exam']);
+const SESSION_SCREENS = Object.freeze(['triage', 'review', 'practice', 'quiz', 'listen', 'dictation', 'sets', 'exam']);
 
 /**
  * Mục nào đang sáng.

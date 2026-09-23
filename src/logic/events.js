@@ -11,6 +11,7 @@ export const EVENT_TYPES = Object.freeze([
   'vocab.reviewed',
   'vocab.bookmarked',
   'vocab.captured',
+  'dictation.checked',
   'question.answered',
   'question.reported',
   'exam.finished',

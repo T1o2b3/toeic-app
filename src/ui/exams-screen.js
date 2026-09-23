@@ -7,7 +7,8 @@ import { navGroup } from './blocks.js';
 import { suggestSessions } from '../logic/suggest.js';
 import { quizQueue } from '../logic/quiz.js';
 import { LISTEN_ROUND_SIZE, estimateMinutes } from '../logic/listen.js';
-import { examOverview, weakestTypes } from '../logic/dashboard.js';
+import { examOverview, weakestTypes, STUDY_SECONDS } from '../logic/dashboard.js';
+import { DICTATION_ROUND_SIZE, dictationUnits, reduceDictation, countPending } from '../logic/dictation.js';
 import { PART5_TARGET_SECONDS, PART5_COUNT } from '../logic/part5.js';
 import { latestEstimate, formatBand, GOAL_SCORE } from '../logic/score.js';
 import { SKILL_LABEL } from '../logic/exam-time.js';
@@ -94,6 +95,18 @@ export function renderExams(store) {
       path: `/sets?part=${p}`,
     };
     (p === 3 || p === 4 ? nghe : doc).push(item);
+  }
+  // Nghe chép (M11) chỉ hiện khi có đoạn để chép — tức là đã từng sai câu nghe nào đó.
+  const dictLeft = countPending(
+    dictationUnits({ listening: store.listening, sets: store.sets, quizStates: store.quizStates }), reduceDictation(events),
+  );
+  if (dictLeft > 0) {
+    const round = Math.min(DICTATION_ROUND_SIZE, dictLeft);
+    nghe.push({
+      title: 'Nghe chép câu nghe sai',
+      note: `${dictLeft} đoạn · lượt ${round} đoạn ~${Math.max(1, Math.round(round * STUDY_SECONDS['dictation.checked'] / 60))} phút · gõ lại từng chữ`,
+      path: '/dictation',
+    });
   }
 
   sections.push(navGroup('Luyện phần Đọc', doc));

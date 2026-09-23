@@ -97,6 +97,7 @@ export function activityByDay(events, { now = Date.now(), days = 14 } = {}) {
     const bucket = buckets.get(dayKey(event.ts));
     if (!bucket) continue;
     if (VOCAB_EVENTS.has(event.type)) bucket.vocab += 1;
+    else if (event.type === 'dictation.checked') bucket.listening += 1;
     else if (event.type === 'question.answered') {
       const skill = skillOfQuestion(event.payload?.questionId);
       if (skill !== 'other') bucket[skill] += 1;
@@ -108,7 +109,7 @@ export function activityByDay(events, { now = Date.now(), days = 14 } = {}) {
 }
 
 /** Một sự kiện có tính là "đã học" không. Đánh dấu từ (bookmark) thì không tính. */
-const isStudyEvent = (event) => VOCAB_EVENTS.has(event.type)
+const isStudyEvent = (event) => VOCAB_EVENTS.has(event.type) || event.type === 'dictation.checked'
   || (event.type === 'question.answered' && skillOfQuestion(event.payload?.questionId) !== 'other');
 
 /**
@@ -225,6 +226,7 @@ export const STUDY_SECONDS = Object.freeze({
   part2: 35,                                  // nghe câu hỏi + 3 câu đáp + chọn
   part3: 45, part4: 45,                       // phần chia đều cho 3 câu của một đoạn hội thoại/bài nói
   part5: 25, part6: 45, part7: 60,            // đọc đoạn dài mất nhiều thời gian hơn
+  'dictation.checked': 45,                     // nghe lại vài lần rồi gõ một đoạn (M11)
 });
 
 /**
@@ -241,7 +243,7 @@ export function estimateStudyMinutes(events, { now = Date.now(), days = 7 } = {}
   let seconds = 0;
   for (const event of events ?? []) {
     if (event.ts < from || event.ts >= end) continue;
-    if (VOCAB_EVENTS.has(event.type)) seconds += STUDY_SECONDS[event.type];
+    if (VOCAB_EVENTS.has(event.type) || event.type === 'dictation.checked') seconds += STUDY_SECONDS[event.type];
     else if (event.type === 'question.answered') {
       const part = partOfQuestion(event.payload?.questionId);
       if (part !== 'other') seconds += STUDY_SECONDS[part];

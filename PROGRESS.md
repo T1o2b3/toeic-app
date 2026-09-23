@@ -4,9 +4,9 @@
 > Huy: cách bắt đầu phiên mới xem mục "Bắt đầu một phiên làm việc mới" trong \`README.md\`.
 
 ## Trạng thái hiện tại
-- Giai đoạn: 1 — MVP. **M0–M6 XONG** (M5: Huy cấu hình Supabase xong 2026-09-23). M18, M13 xong. M7 chờ Huy học thật. Claude đang làm: **M11** (nghe chép).
+- Giai đoạn: 1 — MVP. **M0–M6 XONG** (M5: Huy cấu hình Supabase xong 2026-09-23). M18, M13, M11 xong. M7 chờ Huy học thật.
 - **App đã dùng học thật được**: https://toeic-app.huybndc-451.workers.dev
-- Repo private: https://github.com/huybndc/toeic-app — **815 test pass**.
+- Repo private: https://github.com/huybndc/toeic-app — **840 test pass**.
 
 ## Dùng app thế nào (cho Huy)
 1. Mở link trên (máy Mac hoặc iPhone).
@@ -26,7 +26,7 @@
 6. **Đồng bộ tự động** (D55) khi mở app, khi rời app và 15 giây sau khi học. Mục **Sao lưu** hiện lần chạy
    gần nhất; muốn chắc thì bấm **Đồng bộ ngay**. Mỗi máy chỉ cần đăng nhập một lần.
 
-## Phiên 2026-09-23 (19:30) — M13 xong: lưu câu gốc khi gạt từ
+## Phiên 2026-09-23 (19:30) — M13 xong (câu gốc khi gạt từ) · M11 xong (nghe chép)
 
 **1. M13 — câu gốc.** Trước đây `vocab.captured` chỉ có `questionId`; ở bộ Part 3/4/6/7 đó là id CẢ BỘ nên không suy ra được
 từ nằm ở câu nào. Nay:
@@ -42,10 +42,21 @@ từ nằm ở câu nào. Nay:
 - Nhận xét phụ (không sửa, đúng thiết kế): các từ phổ thông như `schedule`, `project`, `ensure` báo "chưa có trong bộ từ"
   vì bộ TSL/BSL chỉ gồm từ NGOÀI NGSL — sẽ có khi làm M19 (deck NGSL).
 
+**2. M11 — nghe chép (D61).** `logic/dictation.js` (chấm theo từ + chọn đoạn) · `ui/dictation-screen.js` (`#/dictation`).
+- Mục Bài thi › nhóm Nghe có nút **"Nghe chép câu nghe sai"** — chỉ hiện khi đã sai ít nhất một câu nghe.
+- Luồng: ▶ Nghe (con trỏ vào luôn ô gõ) → gõ → `Enter` chấm → xem chữ gạch ngang (gõ sai/thừa) / gạch dưới (bỏ lỡ) + chữ gốc
+  gạt từ được → `Space` sang đoạn kế và PHÁT LUÔN. Đang gõ thì `Esc` = nghe lại. Lượt 8 đoạn.
+- Chữ đang gõ không mất khi màn vẽ lại (đổi tốc độ, đồng bộ kéo sự kiện về) — có test, đã thử gỡ chốt thì test đỏ.
+- 25 test mới; **840 test pass**. Đã chạy thật trên trình duyệt với âm thanh thật (nền tối, 560px): phát, Esc, Enter, Space
+  đều đúng, không lỗi console.
+- Ô nhập toàn app lên 16px: dưới 16px iPhone tự phóng to trang khi chạm vào ô (ô Tìm từ cũng đang bị).
+
 ### Bước tiếp theo
-- **M11 — nghe chép (dictation) câu nghe sai** (Claude tự làm tiếp): tận dụng MP3 + transcript sẵn có; chấm theo từ, bỏ qua
-  hoa/thường và dấu câu. Logic chấm ở `src/logic/` + test trước, rồi mới nối màn.
+- **Huy thử nghe chép:** làm vài câu Part 2 (cố ý sai một câu nếu cần) → Bài thi › Nghe chép câu nghe sai. Nhớ đối chiếu số
+  hiệu bản build sau deploy.
 - Huy: kiểm tự đồng bộ trên bản deploy + học thật 1 phiên Mac + 1 phiên iPhone để đóng M7 (xem phiên 18:40 bên dưới).
+- **Claude tự làm tiếp** (theo giá trị): M21 phần còn lại (đánh dấu câu chưa chắc ở phần Đọc của thi thử; tự chuyển câu
+  sau ~5 giây ở phần Nghe) → M10 phần còn lại (đánh dấu câu chứa đáp án trong transcript Part 3/4) → M16.
 
 ## Phiên 2026-09-23 (18:40) — Supabase chạy thật · tự đồng bộ · M18 · người mới · đánh bóng giao diện (A)
 

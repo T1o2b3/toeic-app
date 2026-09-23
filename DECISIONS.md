@@ -553,6 +553,19 @@ không có icon khi thêm ra màn hình iPhone. Làm các thứ RẺ mà thấy 
   loại câu có lời giải không phải tiếng Việt. Test nội dung: mọi lời giải/bẫy trong `public/content` là tiếng Việt.
 - Bỏ luôn chữ "deck" và mã bộ từ (`toeic-tsl + toeic-bsl`) khỏi màn hình → "bộ từ", "N từ TOEIC".
 
+**D61. Nghe chép (M11): chép lại từng đoạn thuộc câu nghe từng sai, chấm theo từ.** (Claude tự chọn làm, 2026-09-23 — memory
+`autonomy-next-steps`.)
+- **Đoạn lấy từ đâu:** câu nghe TỪNG sai (kể cả đã làm lại đúng). Part 2 = câu hỏi + 3 câu đáp (câu đáp sai cũng là chỗ
+  nghe nhầm). Part 3/4 = từng lượt lời, vì mỗi lượt là MỘT file âm thanh riêng — không cắt được nhỏ hơn. Lượt quá 30 từ
+  thì bỏ (nhớ không nổi, thành bài trí nhớ) → bài nói Part 4 (một file ~100 từ) chưa chép được; muốn có thì pipeline
+  phải tách file theo câu (Backlog).
+- **Chấm:** dãy con chung dài nhất theo từ, bỏ qua hoa/thường và dấu câu; gạch nối = khoảng trắng. Chép đúng 100% (không
+  thiếu, không thừa) thì đoạn đó không quay lại; chưa đúng thì quay lại ở lượt sau. "3" ≠ "three" (chưa làm bảng số).
+- **Nhật ký:** sự kiện mới `dictation.checked {unitId, correct, total, perfect}`, id đoạn = id nội dung + vị trí
+  (`l2-0001:A`, `p3-0001:2`). Tính vào thời gian học (45 giây/đoạn) và cột Nghe của biểu đồ hoạt động.
+- **Tắt tự sửa chính tả** ở ô gõ (iPhone sửa hộ thì không còn biết mình nghe ra chữ gì). Kèm sửa ô nhập toàn app lên
+  16px — dưới 16px iPhone tự phóng to trang khi chạm vào ô (ô Tìm từ cũng bị).
+
 ## Câu hỏi còn mở
 - ~~Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng?~~ → **Đã giải quyết, xem D35** (chung repo, xét lại khi ~100 MB).
 - ~~Q2 (trước M2): xác nhận license của TSL 1.2 và NGSL.~~ → **Đã giải quyết, xem D18.**

@@ -34,6 +34,12 @@ describe('estimateStudyMinutes', () => {
     expect(estimateStudyMinutes(events, { now: NOW })).toBe(0);
   });
 
+  it('nghe chép (M11) tính vào thời gian học và vào cột Nghe của biểu đồ hoạt động', () => {
+    const events = Array.from({ length: 4 }, (_, i) => ev('dictation.checked', { unitId: `l2-1:${i}`, correct: 3, total: 4, perfect: false }, at(2026, 9, 20, 9) + i));
+    expect(estimateStudyMinutes(events, { now: NOW })).toBe(Math.round((4 * cost['dictation.checked']) / 60));
+    expect(activityByDay(events, { now: NOW, days: 1 })[0]).toMatchObject({ listening: 4, total: 4 });
+  });
+
   it('việc cuối ngày hôm nay vẫn được tính; không có sự kiện thì 0', () => {
     const late = [answered('l2-1', true, at(2026, 9, 20, 23)), answered('l2-2', true, at(2026, 9, 20, 23))];
     expect(estimateStudyMinutes(late, { now: NOW })).toBe(Math.round((2 * cost.part2) / 60));

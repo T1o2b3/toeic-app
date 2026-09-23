@@ -12,6 +12,7 @@ import { renderSync, resetSync } from './sync-screen.js';
 import { renderWords, resetWords } from './words-screen.js';
 import { renderPractice, handlePracticeKey, resetPractice } from './practice-screen.js';
 import { renderListen, handleListenKey, resetListen } from './listen-screen.js';
+import { renderDictation, handleDictationKey, resetDictation } from './dictation-screen.js';
 import { renderSets, handleSetsKey, resetSets } from './sets-screen.js';
 import { renderExam, handleExamKey, resetExam } from './exam-screen.js';
 import { renderVocab } from './vocab-screen.js';
@@ -30,6 +31,7 @@ const SCREENS = {
   words: renderWords,
   practice: renderPractice,
   listen: renderListen,
+  dictation: renderDictation,
   vocab: renderVocab,
   exams: renderExams,
   lookup: renderLookup,
@@ -44,6 +46,7 @@ const KEY_HANDLERS = {
   quiz: handleQuizKey,
   practice: handlePracticeKey,
   listen: handleListenKey,
+  dictation: handleDictationKey,
   sets: handleSetsKey,
   exam: handleExamKey,
 };
@@ -92,7 +95,7 @@ export function mountApp(root, store) {
   startRouter((route) => {
     const changed = route.name !== current.name;
     if (changed) {
-      resetTriage(); resetReview(); resetQuiz(); resetSync(); resetWords(); resetPractice(); resetListen(); resetLookup(); resetSets(); resetExam(); resetCollocations();
+      resetTriage(); resetReview(); resetQuiz(); resetSync(); resetWords(); resetPractice(); resetListen(); resetDictation(); resetLookup(); resetSets(); resetExam(); resetCollocations();
     }
     current = route;
     if (!changed) { updateTabBar(nav, current.name); draw(); } // cả lần mở app đầu tiên (màn chính)
