@@ -4,6 +4,25 @@
  */
 import { el } from './dom.js';
 import { LEVEL_ORDER, LEVEL_INFO, payloadForLevel } from '../logic/vocab-levels.js';
+import { metSentences } from '../logic/capture.js';
+
+/** Số câu gốc tối đa hiện ra — mới nhất trước. */
+const MET_SHOWN = 2;
+
+/**
+ * Câu gốc người học đã gạt từ này ra (M13): gặp lại đúng câu mình từng vấp giúp nhớ hơn ví dụ soạn sẵn.
+ * @param {object} store
+ * @param {object} entry
+ * @returns {HTMLElement|string}
+ */
+function renderMet(store, entry) {
+  const sentences = metSentences(store?.captured, store?.wordIndex, entry.id).slice(-MET_SHOWN).reverse();
+  if (sentences.length === 0) return '';
+  return el('div', { class: 'met' }, [
+    el('div', { class: 'section-label', text: 'Câu bạn đã gặp' }),
+    ...sentences.map((text) => el('div', { class: 'met-text', text })),
+  ]);
+}
 
 /**
  * Vẽ chi tiết một từ.
@@ -40,6 +59,7 @@ export function renderWordDetail(store, entry, state, level) {
         el('div', { class: 'ex-vi', text: ex.vi }),
       ])),
     ]) : '',
+    renderMet(store, entry),
     entry.collocations?.length ? el('div', { class: 'detail-collocations' }, [
       el('div', { class: 'section-label', text: 'Collocations' }),
       el('div', { class: 'chips' }, entry.collocations.map((c) => el('span', { class: 'chip', text: c }))),
@@ -78,9 +98,11 @@ export function renderWordHead(entry) {
 }
 
 /**
- * Mặt sau: nghĩa, ví dụ, collocation, bẫy.
+ * Mặt sau: nghĩa, ví dụ, câu đã gặp, collocation, bẫy.
+ * @param {object} entry
+ * @param {object} [store] - có thì hiện thêm câu gốc đã gạt
  */
-export function renderWordBack(entry) {
+export function renderWordBack(entry, store) {
   const parts = [el('div', { class: 'meaning', text: entry.vi })];
   for (const example of entry.examples ?? []) {
     parts.push(el('div', { class: 'example' }, [
@@ -88,6 +110,7 @@ export function renderWordBack(entry) {
       el('div', { class: 'ex-vi', text: example.vi }),
     ]));
   }
+  parts.push(renderMet(store, entry));
   if (entry.collocations?.length) {
     parts.push(el('div', { class: 'chips' }, entry.collocations.map((c) => el('span', { class: 'chip', text: c }))));
   }

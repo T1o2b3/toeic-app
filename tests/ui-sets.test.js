@@ -123,6 +123,15 @@ describe('Part 6: đọc đoạn văn rồi trả lời từng chỗ trống', (
     expect(captured.at(-1).payload.questionId).toBe('p6-0001');     // ghi theo BỘ, như khay của tài liệu
   });
 
+  it('gạt từ trong đoạn văn: câu gốc là đúng CÂU chứa từ, không phải cả đoạn (M13)', async () => {
+    [...root.querySelectorAll('.passage .tok')].find((t) => t.textContent === 'Friday').click();
+    await tick();
+    root.querySelector('.tray-add').click();
+    await tick(80);
+    expect(store.captured.get('friday').sentences)
+      .toEqual(['Dear staff, the ledger [1] updated on Friday and we [2] every report before the deadline.']);
+  });
+
   it('chấm xong: đồng hồ chốt lại và nói rõ nhanh/chậm hơn chuẩn bao nhiêu', () => {
     expect(root.querySelector('.pace-clock')).toBeNull();           // hết chạy, còn lại là con số đã chốt
     expect(text()).toContain('chuẩn 02:00 cho 4 câu — nhanh hơn');
@@ -180,6 +189,7 @@ describe('Part 3: nghe hội thoại', () => {
     root.querySelector('.tray-add').click();
     await tick(80);
     expect(store.captured.get('warehouse').questionIds).toEqual(['p3-0001']);
+    expect(store.captured.get('warehouse').sentences).toEqual(['Well, let me check the warehouse records.']);   // câu gốc là DÒNG đó, không phải cả bài (M13)
   });
 
   it('câu trả lời của bộ nghe ghi cùng loại sự kiện và id dạng p3-0001-n', () => {

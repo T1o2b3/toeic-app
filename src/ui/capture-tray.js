@@ -6,7 +6,7 @@
  * chạm-để-chọn rồi bấm "Cần học" — cả hai đường cùng gọi `capture`.
  */
 import { el } from './dom.js';
-import { tokenize, normalizeWord, planCapture } from '../logic/capture.js';
+import { tokenize, normalizeWord, planCapture, sentenceAround } from '../logic/capture.js';
 import { renderBlanks } from './exam-unit.js';
 
 /**
@@ -26,11 +26,17 @@ function keepScroll() {
 /** Từ đang được chọn (chuẩn hoá), chờ bấm "Cần học". */
 let selected = null;
 
+/** Câu gốc của từ đang được chọn — ghi kèm khi gạt (M13). */
+let selectedSentence = null;
+
 /** Thông báo kết quả của lần gạt gần nhất. */
 let notice = null;
 
 /** Đang ghi sự kiện: chặn bấm/thả hai lần thật nhanh ghi trùng. */
 let busy = false;
+
+/** Kiểu dữ liệu riêng mang câu gốc theo khi kéo thả (trình duyệt cho đặt nhiều kiểu cùng lúc). */
+const SENTENCE_TYPE = 'application/x-toeic-sentence';
 
 const HINT = 'Gặp từ lạ? Chạm vào từ trong câu (hoặc kéo vào đây) để thêm vào danh sách cần học — nghĩa xem sau, không hiện lúc làm bài.';
 
@@ -42,9 +48,13 @@ const HINT = 'Gặp từ lạ? Chạm vào từ trong câu (hoặc kéo vào đ�
  * @returns {HTMLElement}
  */
 export function renderStem(store, question, { numbers = [] } = {}) {
+  let offset = 0;
   const parts = tokenize(question.stem).flatMap((token) => {
+    const start = offset;
+    const end = (offset += token.text.length);
     // Phần không phải từ có thể chứa chỗ trống (---- hoặc [1]); in nó thành ô trống thay vì gạch nối thô.
     if (!token.word) return renderBlanks(token.text, numbers);
+    const around = () => sentenceAround(question.stem, start, end);
 
     const classes = ['tok'];
     if (store.captured.has(token.word)) classes.push('captured');
@@ -54,11 +64,13 @@ export function renderStem(store, question, { numbers = [] } = {}) {
     node.addEventListener('click', () => {
       const restore = keepScroll();
       selected = selected === token.word ? null : token.word;
+      selectedSentence = selected && around();
       store.refresh();
       restore();
     });
     node.addEventListener('dragstart', (event) => {
       event.dataTransfer.setData('text/plain', token.word);
+      event.dataTransfer.setData(SENTENCE_TYPE, around());
       event.dataTransfer.effectAllowed = 'copy';
     });
     return [node];
@@ -78,7 +90,7 @@ export function renderTray(store, question, { extra = '' } = {}) {
   if (selected) {
     content = [
       el('span', { class: 'tray-word', text: `“${selected}”` }),
-      el('button', { class: 'tray-add', text: '＋ Cần học', onClick: () => capture(store, question, selected) }),
+      el('button', { class: 'tray-add', text: '＋ Cần học', onClick: () => capture(store, question, selected, selectedSentence) }),
       el('button', { class: 'link', text: 'Bỏ chọn', onClick: () => { const restore = keepScroll(); selected = null; store.refresh(); restore(); } }),
     ];
   } else {
@@ -94,7 +106,7 @@ export function renderTray(store, question, { extra = '' } = {}) {
   tray.addEventListener('drop', (event) => {
     event.preventDefault();
     tray.classList.remove('over');
-    capture(store, question, event.dataTransfer.getData('text/plain'));
+    capture(store, question, event.dataTransfer.getData('text/plain'), event.dataTransfer.getData(SENTENCE_TYPE));
   });
   return tray;
 }
@@ -128,14 +140,14 @@ export function renderOptionCapture(store, question) {
 }
 
 /** Ghi một từ vào danh sách cần học rồi báo kết quả. */
-async function capture(store, question, raw) {
+async function capture(store, question, raw, sentence) {
   const word = normalizeWord(raw);
   if (!word || busy) return;
   busy = true;
   const restore = keepScroll();
   try {
     const plan = planCapture(word, {
-      questionId: question.id, index: store.wordIndex, states: store.states, captured: store.captured,
+      questionId: question.id, sentence, index: store.wordIndex, states: store.states, captured: store.captured,
     });
     selected = null;
     notice = plan.notice;

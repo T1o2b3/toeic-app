@@ -14,10 +14,11 @@ beforeAll(async () => {
 
 describe('gạt từ lạ lúc làm Part 5 (D34)', () => {
   const token = (w) => [...root.querySelectorAll('.stem .tok')].find((t) => t.textContent === w);
-  const drop = async (dropWord) => {
+  const lastCaptured = () => store.exportEvents().filter((e) => e.type === 'vocab.captured').at(-1).payload;
+  const drop = async (dropWord, sentence = '') => {
     const tray = root.querySelector('.tray');
     const event = new window.Event('drop', { bubbles: true, cancelable: true });
-    event.dataTransfer = { getData: () => dropWord };
+    event.dataTransfer = { getData: (type) => (type === 'text/plain' ? dropWord : sentence) };
     tray.dispatchEvent(event);
     await tick(80);
   };
@@ -46,6 +47,7 @@ describe('gạt từ lạ lúc làm Part 5 (D34)', () => {
     await tick(80);
     expect(store.eventCount).toBe(events + 1);
     expect(store.captured.get('zoning').count).toBe(1);
+    expect(lastCaptured().sentence).toBe('The council will ---- the ledger rules and zoning laws quickly.');   // câu gốc (M13)
     expect(root.querySelector('.tray').textContent).toContain('chưa có trong bộ từ');
     expect(token('zoning').classList.contains('captured')).toBe(true);
   });
@@ -65,9 +67,10 @@ describe('gạt từ lạ lúc làm Part 5 (D34)', () => {
 
   it('kéo một từ thả vào khay cũng gạt được (đường dành cho Mac)', async () => {
     const events = store.eventCount;
-    await drop('quickly');
+    await drop('quickly', 'Câu kéo theo.');
     expect(store.eventCount).toBe(events + 1);
     expect(store.captured.has('quickly')).toBe(true);
+    expect(lastCaptured().sentence).toBe('Câu kéo theo.');
   });
 
   it('gạt lại cùng từ ở cùng câu: không ghi trùng', async () => {
@@ -126,6 +129,16 @@ describe('gạt từ lạ lúc làm Part 5 (D34)', () => {
     const orphans = [...root.querySelectorAll('.word-row.orphan')].map((r) => r.querySelector('strong').textContent);
     expect(orphans.sort()).toEqual(['quickly', 'suspend', 'zoning']);
     expect(root.querySelector('.orphan a.ext-link').href).toContain('wiktionary.org');
+    const zoningRow = [...root.querySelectorAll('.word-row.orphan')].find((r) => r.textContent.includes('zoning'));
+    expect(zoningRow.querySelector('.met-text').textContent).toContain('zoning laws quickly');
+  });
+
+  it('chi tiết từ trong deck hiện "Câu bạn đã gặp" — đúng câu đã gạt từ ra (M13)', async () => {
+    await go('#/');                                 // màn chỉ đọc ?open= ở lượt vào đầu tiên
+    await go('#/words?f=captured&open=tsl-0045');
+    const panel = root.querySelector('.word-detail-panel');
+    expect(panel.textContent).toContain('Câu bạn đã gặp');
+    expect(panel.querySelector('.met-text').textContent).toContain('the ledger rules');
   });
 
   it('rời màn rồi vào lại: khay quay về gợi ý, không còn từ đang chọn', async () => {

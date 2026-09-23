@@ -131,6 +131,7 @@ function renderOrphanRow(item) {
         el('span', { class: 'lvl none', text: 'chưa có trong bộ từ' }),
       ]),
       el('small', { text: `gặp ${item.count} lần trong ${item.questionIds.length} câu` }),
+      item.sentences.length ? el('div', { class: 'met-text', text: item.sentences.at(-1) }) : '',
       el('a', {
         class: 'ext-link', href: `https://en.wiktionary.org/wiki/${encodeURIComponent(item.word)}`,
         target: '_blank', rel: 'noopener', text: 'Tra nghĩa ↗',

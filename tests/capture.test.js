@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   normalizeWord, tokenize, buildWordIndex, baseForms, lookupDeckEntry,
-  reduceCaptured, splitCaptured, planCapture,
+  reduceCaptured, splitCaptured, planCapture, sentenceAround, metSentences,
 } from '../src/logic/capture.js';
 import { reduceVocabState } from '../src/logic/vocab-state.js';
 import { EVENT_TYPES, createEvent } from '../src/logic/events.js';
@@ -183,5 +183,62 @@ describe('reduceCaptured / splitCaptured', () => {
     const { entryIds, unmatched } = splitCaptured(captured, index);
     expect([...entryIds]).toEqual([byWord('amend').id]);
     expect(unmatched.map((u) => u.word)).toEqual(['zoning']);
+  });
+});
+
+describe('câu gốc của từ đã gạt (M13)', () => {
+  const none = reduceVocabState([]);
+  const at = (text, word) => { const i = text.indexOf(word); return sentenceAround(text, i, i + word.length); };
+
+  it('lấy đúng câu chứa từ trong cả đoạn văn, cắt ở dấu chấm/hỏi/than và xuống dòng', () => {
+    const passage = 'Dear Ms. Lee,\nThank you for your order. The invoice is attached! Is the address correct? Best.';
+    expect(at(passage, 'invoice')).toBe('The invoice is attached!');
+    expect(at(passage, 'address')).toBe('Is the address correct?');
+    expect(at(passage, 'Thank')).toBe('Thank you for your order.');
+    expect(at(passage, 'Lee')).toBe('Dear Ms. Lee,');   // "Ms." là danh xưng, không phải hết câu
+  });
+
+  it('"9 a.m. on Monday" không bị cắt đôi (sau dấu chấm là chữ thường)', () => {
+    expect(at('The shop opens at 9 a.m. on Monday. Call us.', 'Monday')).toBe('The shop opens at 9 a.m. on Monday.');
+  });
+
+  it('câu Part 5 dài (~170 ký tự) vẫn giữ nguyên cả câu, không bị cắt', () => {
+    const p5 = 'Please ensure that your team updates the project calendar ------- so that all departments remain aligned with the revised delivery schedule for the software launch.';
+    expect(at(p5, 'calendar')).toBe(p5);
+  });
+
+  it('câu Part 5 có chỗ trống giữ nguyên chỗ trống', () => {
+    expect(at('The board ------- the zoning plan last week.', 'zoning')).toBe('The board ------- the zoning plan last week.');
+  });
+
+  it('đoạn không có dấu câu mà quá dài thì cắt quanh từ, có dấu …', () => {
+    const long = `${'word '.repeat(80)}invoice ${'more '.repeat(80)}`;
+    const out = at(long, 'invoice');
+    expect(out.length).toBeLessThanOrEqual(2 * 150 + 2 + 7);
+    expect(out).toContain('invoice');
+    expect(out.startsWith('…')).toBe(true);
+    expect(out.endsWith('…')).toBe(true);
+  });
+
+  it('planCapture ghi câu gốc vào sự kiện; không có câu thì không thêm trường rỗng', () => {
+    const withSentence = planCapture('zoning', { questionId: 'p5-1', sentence: ' The zoning plan. ', index, states: none });
+    expect(withSentence.events[0].payload).toEqual({ word: 'zoning', questionId: 'p5-1', sentence: 'The zoning plan.' });
+    const without = planCapture('zoning', { questionId: 'p5-1', sentence: '  ', index, states: none });
+    expect(without.events[0].payload).toEqual({ word: 'zoning', questionId: 'p5-1' });
+  });
+
+  it('gom câu theo từ (không trùng), và gom cả biến thể về cùng mục deck', () => {
+    const captured = reduceCaptured([
+      ev('vocab.captured', { word: 'raised', questionId: 'a', sentence: 'Prices were raised.' }),
+      ev('vocab.captured', { word: 'raised', questionId: 'b', sentence: 'Prices were raised.' }),
+      ev('vocab.captured', { word: 'raising', questionId: 'c', sentence: 'We are raising funds.' }),
+      ev('vocab.captured', { word: 'raise', questionId: 'd' }),                 // sự kiện cũ, chưa có câu
+      ev('vocab.captured', { word: 'zoning', questionId: 'e', sentence: 'The zoning plan.' }),
+    ]);
+    expect(captured.get('raised').sentences).toEqual(['Prices were raised.']);
+    expect(captured.get('raise').sentences).toEqual([]);
+    expect(metSentences(captured, index, byWord('raise').id)).toEqual(['Prices were raised.', 'We are raising funds.']);
+    expect(metSentences(captured, index, byWord('amend').id)).toEqual([]);
+    expect(metSentences(undefined, index, 'x')).toEqual([]);
   });
 });

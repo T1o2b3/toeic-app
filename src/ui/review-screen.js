@@ -105,7 +105,7 @@ export function renderReview(store) {
       ]),
     );
   } else {
-    children.push(renderWordBack(entry), renderGradeButtons(store, item));
+    children.push(renderWordBack(entry, store), renderGradeButtons(store, item));
   }
 
   children.push(renderBookmark(store, entry, state));

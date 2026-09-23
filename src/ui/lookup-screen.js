@@ -108,7 +108,7 @@ function renderDetail(store, entry, state) {
   const action = lookupAction(entry, state);
   return el('div', { class: 'word-detail' }, [
     entry.pos?.length ? el('div', { class: 'pos', text: entry.pos.join(' · ') }) : '',
-    renderWordBack(entry),
+    renderWordBack(entry, store),
     entry.synonyms?.length ? el('div', { class: 'chips' }, [
       el('span', { class: 'chooser-label', text: 'Đồng nghĩa' }),
       ...entry.synonyms.map((w) => el('span', { class: 'chip', text: w })),

@@ -82,7 +82,10 @@ toeic-app/
 - [x] M12. Part 6, Part 7 (single/double/triple), đo thời gian từng câu.
   ✅ 2026-09-20 (nội dung + màn luyện): Part 6 = 4 bộ/16 câu, Part 7 = 15 bộ/45 câu (đơn 10 · đôi 2 · ba 3), qua kiểm định
   chéo. Part 7 nay = 20 bộ/59 câu. Đo thời gian từng câu: chưa làm.
-- [ ] M13. Chạm từ trong bài đọc/transcript → lưu vào deck `my-words` kèm câu gốc.
+- [x] M13. Chạm từ trong bài đọc/transcript → lưu vào deck `my-words` kèm câu gốc.
+  ✅ 2026-09-23 (phần app): gạt được ở Part 5, Part 2, bộ 3/4/6/7, transcript; sự kiện `vocab.captured` nay lưu đúng CÂU chứa từ
+  (không phải cả đoạn); câu hiện ở Kho từ vựng và mặt sau thẻ ôn ("Câu bạn đã gặp"). Phần pipeline sinh nghĩa cho từ chưa có
+  trong bộ → Backlog "Deck `my-words`".
 - [ ] M14. Dashboard cơ bản: tỉ lệ đúng theo part và loại lỗi, xu hướng.
 
 ## Giai đoạn 4 — Thi thử (tuần 7–8, ~7 giờ)

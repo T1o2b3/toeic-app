@@ -51,6 +51,39 @@ export function tokenize(text) {
   return tokens;
 }
 
+/** Câu gốc dài hơn số ký tự này (đoạn không có dấu câu, bảng biểu) thì cắt quanh từ. */
+const SENTENCE_WINDOW = 150;
+
+/** Hết câu: dấu . ! ? rồi khoảng trắng và KHÔNG phải chữ thường ("9 a.m. on" không cắt), hoặc xuống dòng. */
+const SENTENCE_END = /[.!?]+["'’”)]*(?=\s+[^\sa-z])|\n/g;
+
+/** Danh xưng có dấu chấm nhưng không phải hết câu ("Ms. Lee"). */
+const TITLE_BEFORE = /\b(?:Mr|Mrs|Ms|Dr|St|Jr)\.$/;
+
+/**
+ * Câu chứa đoạn [start, end) — để lưu "câu gốc" khi gạt một từ khỏi đoạn văn dài (M13).
+ * @param {string} text
+ * @param {number} start
+ * @param {number} end
+ * @returns {string}
+ */
+export function sentenceAround(text, start, end) {
+  const source = String(text ?? '');
+  let from = 0;
+  let to = source.length;
+  for (const match of source.matchAll(SENTENCE_END)) {
+    const stop = match[0] === '\n' ? match.index : match.index + match[0].length;
+    if (TITLE_BEFORE.test(source.slice(0, stop))) continue;
+    if (stop <= start) from = match.index + match[0].length;
+    else { to = stop; break; }
+  }
+  if (to - from <= 2 * SENTENCE_WINDOW) return source.slice(from, to).trim();
+
+  const left = Math.max(from, start - SENTENCE_WINDOW);
+  const right = Math.min(to, end + SENTENCE_WINDOW);
+  return `${left > from ? '…' : ''}${source.slice(left, right).trim()}${right < to ? '…' : ''}`;
+}
+
 /**
  * Chỉ mục từ → mục deck, dựng một lần để tra nhanh (deck có ~2400 từ).
  * @param {Array<object>} entries
@@ -117,7 +150,7 @@ export function lookupDeckEntry(word, index) {
 /**
  * Gom các sự kiện `vocab.captured` thành danh sách từ đã gạt.
  * @param {Array<{type: string, ts: number, payload: object}>} events
- * @returns {Map<string, {word: string, wordId: string|null, count: number, questionIds: string[], firstTs: number, lastTs: number}>}
+ * @returns {Map<string, {word: string, wordId: string|null, count: number, questionIds: string[], sentences: string[], firstTs: number, lastTs: number}>}
  */
 export function reduceCaptured(events) {
   const captured = new Map();
@@ -126,12 +159,14 @@ export function reduceCaptured(events) {
     const word = normalizeWord(event.payload?.word);
     if (!word) continue;
 
-    const item = captured.get(word) ?? { word, wordId: null, count: 0, questionIds: [], firstTs: event.ts, lastTs: event.ts };
+    const item = captured.get(word) ?? { word, wordId: null, count: 0, questionIds: [], sentences: [], firstTs: event.ts, lastTs: event.ts };
     item.count += 1;
     item.lastTs = event.ts;
     if (typeof event.payload.wordId === 'string' && event.payload.wordId) item.wordId = event.payload.wordId;
     const questionId = event.payload.questionId;
     if (typeof questionId === 'string' && !item.questionIds.includes(questionId)) item.questionIds.push(questionId);
+    const sentence = event.payload.sentence;
+    if (typeof sentence === 'string' && sentence && !item.sentences.includes(sentence)) item.sentences.push(sentence);
     captured.set(word, item);
   }
   return captured;
@@ -157,6 +192,22 @@ export function splitCaptured(captured, index) {
 }
 
 /**
+ * Các câu gốc đã gặp của một mục deck, gom qua mọi biến thể đã gạt (raised, raising → raise).
+ * @param {Map<string, object>} captured - reduceCaptured
+ * @param {Map<string, object>} index - buildWordIndex
+ * @param {string} entryId
+ * @returns {string[]}
+ */
+export function metSentences(captured, index, entryId) {
+  const out = [];
+  for (const item of captured?.values?.() ?? []) {
+    if (lookupDeckEntry(item.word, index)?.id !== entryId) continue;
+    for (const sentence of item.sentences) if (!out.includes(sentence)) out.push(sentence);
+  }
+  return out;
+}
+
+/**
  * Cần ghi những sự kiện gì khi gạt một từ, và báo gì cho người dùng.
  *
  * Luôn ghi `vocab.captured` (nhật ký "gặp từ này ở câu nào"). Riêng từ đã có trong deck thì ghi thêm
@@ -167,12 +218,13 @@ export function splitCaptured(captured, index) {
  * @param {string} word - đã chuẩn hoá
  * @param {object} context
  * @param {string} [context.questionId]
+ * @param {string} [context.sentence] - câu gốc chứa từ (sentenceAround)
  * @param {Map<string, object>} context.index - buildWordIndex
  * @param {Map<string, object>} context.states - trạng thái từ vựng
  * @param {Map<string, object>} [context.captured]
  * @returns {{events: Array<{type: string, payload: object}>, notice: string, entry: object|null}}
  */
-export function planCapture(word, { questionId, index, states, captured = new Map() }) {
+export function planCapture(word, { questionId, sentence, index, states, captured = new Map() }) {
   const previous = captured?.get(word);
   if (questionId && previous?.questionIds.includes(questionId)) {
     return { events: [], entry: null, notice: `“${word}” đã được thêm từ câu này rồi.` };
@@ -181,6 +233,7 @@ export function planCapture(word, { questionId, index, states, captured = new Ma
   const entry = lookupDeckEntry(word, index);
   const payload = { word };
   if (questionId) payload.questionId = questionId;
+  if (sentence?.trim()) payload.sentence = sentence.trim();
   if (entry) payload.wordId = entry.id;
   const events = [{ type: 'vocab.captured', payload }];
 

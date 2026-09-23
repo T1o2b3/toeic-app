@@ -94,6 +94,9 @@ button.link.active { color: var(--accent); font-weight: 600; }
 .example .vi { color: var(--muted); font-size: 0.9rem; }
 .chips { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.75rem; }
 .chip { background: var(--border); color: var(--fg); border-radius: 999px; padding: 0.15rem 0.6rem; font-size: 0.8rem; }
+/* Câu gốc đã gạt từ (M13) */
+.met { margin: 0.75rem 0; }
+.met-text { border-left: 3px solid var(--accent); padding-left: 0.75rem; margin: 0.35rem 0; font-size: 0.95rem; font-style: italic; }
 .note { margin-top: 0.75rem; padding: 0.6rem 0.75rem; background: var(--border); color: var(--fg); border-radius: 0.5rem; font-size: 0.85rem; opacity: 0.7; }
 
 /* Nút chấm điểm */

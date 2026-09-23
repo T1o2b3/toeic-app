@@ -91,7 +91,7 @@ function renderCard(store, entry) {
       ]),
     ]));
   } else {
-    children.push(renderWordBack(entry), el('div', { class: 'actions two stick' }, [
+    children.push(renderWordBack(entry, store), el('div', { class: 'actions two stick' }, [
       el('button', { class: 'grade good', onClick: () => answer(store, entry, true) }, [
         el('span', { text: 'Vẫn nhớ' }),
         el('kbd', { text: '1' }),

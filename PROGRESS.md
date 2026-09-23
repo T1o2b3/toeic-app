@@ -4,9 +4,9 @@
 > Huy: cách bắt đầu phiên mới xem mục "Bắt đầu một phiên làm việc mới" trong \`README.md\`.
 
 ## Trạng thái hiện tại
-- Giai đoạn: 1 — MVP. **M0–M6 XONG** (M5: Huy cấu hình Supabase xong 2026-09-23). M18 xong (ping). Tiếp theo: **M7** (README + sửa lỗi phát sinh).
+- Giai đoạn: 1 — MVP. **M0–M6 XONG** (M5: Huy cấu hình Supabase xong 2026-09-23). M18, M13 xong. M7 chờ Huy học thật. Claude đang làm: **M11** (nghe chép).
 - **App đã dùng học thật được**: https://toeic-app.huybndc-451.workers.dev
-- Repo private: https://github.com/huybndc/toeic-app — **806 test pass**.
+- Repo private: https://github.com/huybndc/toeic-app — **815 test pass**.
 
 ## Dùng app thế nào (cho Huy)
 1. Mở link trên (máy Mac hoặc iPhone).
@@ -25,6 +25,27 @@
    \`Backspace\` lùi về từ trước, \`S\` để sau.
 6. **Đồng bộ tự động** (D55) khi mở app, khi rời app và 15 giây sau khi học. Mục **Sao lưu** hiện lần chạy
    gần nhất; muốn chắc thì bấm **Đồng bộ ngay**. Mỗi máy chỉ cần đăng nhập một lần.
+
+## Phiên 2026-09-23 (19:30) — M13 xong: lưu câu gốc khi gạt từ
+
+**1. M13 — câu gốc.** Trước đây `vocab.captured` chỉ có `questionId`; ở bộ Part 3/4/6/7 đó là id CẢ BỘ nên không suy ra được
+từ nằm ở câu nào. Nay:
+- `sentenceAround()` (`logic/capture.js`) lấy đúng câu chứa từ: cắt ở `. ! ?` + chữ không-thường, và ở xuống dòng; không cắt
+  ở "Ms. Lee", "9 a.m. on". Đoạn không có dấu câu mà dài hơn 300 ký tự thì cắt quanh từ, có `…`.
+  (Đã sửa một lần: trần ban đầu 150 ký tự cắt mất đuôi câu Part 5 thật dài 170 ký tự — thấy khi chạy trình duyệt.)
+- Chạm → "Cần học" và kéo thả (câu đi kèm trong `dataTransfer`, kiểu `application/x-toeic-sentence`) đều ghi `payload.sentence`.
+  Gạt từ trong PHƯƠNG ÁN (chip sau khi trả lời) thì không có câu — đúng, vì từ đó không nằm trong câu hỏi.
+- Hiện ở: Kho từ vựng › Đã gạt (dòng từ chưa có trong bộ), bảng chi tiết từ, **mặt sau thẻ ôn/ôn chủ động/tra từ**
+  ("Câu bạn đã gặp", 2 câu mới nhất, gom cả biến thể raised/raising → raise).
+- Sự kiện cũ không có câu vẫn đọc bình thường (không hiện mục đó). 9 test mới; **815 test pass**.
+- Đã xem thật trên trình duyệt (nền tối): Part 7 "repair" → đúng câu; "request" ở dòng Subject → đúng dòng đó.
+- Nhận xét phụ (không sửa, đúng thiết kế): các từ phổ thông như `schedule`, `project`, `ensure` báo "chưa có trong bộ từ"
+  vì bộ TSL/BSL chỉ gồm từ NGOÀI NGSL — sẽ có khi làm M19 (deck NGSL).
+
+### Bước tiếp theo
+- **M11 — nghe chép (dictation) câu nghe sai** (Claude tự làm tiếp): tận dụng MP3 + transcript sẵn có; chấm theo từ, bỏ qua
+  hoa/thường và dấu câu. Logic chấm ở `src/logic/` + test trước, rồi mới nối màn.
+- Huy: kiểm tự đồng bộ trên bản deploy + học thật 1 phiên Mac + 1 phiên iPhone để đóng M7 (xem phiên 18:40 bên dưới).
 
 ## Phiên 2026-09-23 (18:40) — Supabase chạy thật · tự đồng bộ · M18 · người mới · đánh bóng giao diện (A)
 
