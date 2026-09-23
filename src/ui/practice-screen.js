@@ -1,22 +1,27 @@
 /**
  * Ôn chủ động: tự chọn nhóm từ để kiểm tra trí nhớ, ngoài lịch FSRS (D32).
  *
- * Luồng: chọn nhóm → mỗi lượt vài từ, nhìn từ và tự nhớ nghĩa → lật thẻ → "Vẫn nhớ" / "Quên rồi"
- * → tổng kết. Không đụng lịch ôn; chỉ riêng từ đã chấm "thành thạo" mà quên thì bị hạ mức
+ * Luồng: chọn nhóm → mỗi lượt vài từ, CHỌN nghĩa đúng trong 4 lựa chọn (D66) → xem giải thích → tổng kết. Không đụng lịch ôn; chỉ riêng từ đã chấm "thành thạo" mà quên thì bị hạ mức
  * (xem src/logic/practice.js để biết vì sao).
  */
 import { el } from './dom.js';
-import { backButton, backLink, sessionDone } from './blocks.js';
+import { backButton, backLink, sessionDone, letterFromKey } from './blocks.js';
 import {
   POOLS, POOL_ORDER, POOL_INFO, PRACTICE_SIZE, countPools, pickRound, eventForResult,
 } from '../logic/practice.js';
-import { renderWordBack, renderWordHead } from './word-detail.js';
+import { renderChoiceCard } from './word-detail.js';
+import { buildChoice } from '../logic/vocab-choice.js';
+import { onceShuffled } from '../logic/shuffle.js';
 
 // Danh sách từ của lượt được chốt một lần lúc bắt đầu và giữ nguyên tới hết lượt.
 let pool = null;      // nhóm đang ôn; null = đang ở màn chọn nhóm
 let roundIds = [];
 let results = [];     // [{id, remembered, demoted}], độ dài = số từ đã làm
-let revealed = false;
+let picked = null;    // chữ cái vừa chọn; khác null = đang xem kết quả của từ vừa làm
+let entries = [];     // cả bộ từ, để rút phương án nhiễu
+
+/** Câu trắc nghiệm của từ đang hỏi, dựng MỘT lần (vẽ lại không đổi phương án). */
+const shown = onceShuffled((entry) => ({ id: entry.id, ...buildChoice(entry, entries) }));
 
 /**
  * @param {object} store
@@ -25,9 +30,10 @@ let revealed = false;
 export function renderPractice(store) {
   if (pool === null || roundIds.length === 0) return renderPick(store);
 
+  entries = store.entries;
   const byId = new Map(store.entries.map((entry) => [entry.id, entry]));
-  if (results.length >= roundIds.length) return renderSummary(store, byId);
-  return renderCard(store, byId.get(roundIds[results.length]));
+  const entry = currentEntry(store);
+  return entry ? renderCard(store, entry) : renderSummary(store, byId);
 }
 
 /** Màn chọn nhóm: mỗi nhóm hiện số từ thật, nhóm rỗng thì mờ đi và không bấm được. */
@@ -61,48 +67,33 @@ function start(store, chosen) {
   pool = chosen;
   roundIds = ids;
   results = [];
-  revealed = false;
+  picked = null;
+  shown.reset();
   store.refresh();
 }
 
-/** Một thẻ: hiện từ → lật → chấm. */
+/** Một thẻ: hiện từ → chọn nghĩa → xem giải thích. */
 function renderCard(store, entry) {
   const fluentPool = pool === POOLS.FLUENT;
   const left = roundIds.length - results.length;
+  const choice = shown.get(entry);
+  const last = results.at(-1);
+  const verdict = !picked ? '' : last.remembered ? 'Đúng — vẫn nhớ'
+    : `Sai — đáp án: ${choice.options[choice.answer]}${last.demoted ? ' · đưa lại vào danh sách học' : ''}`;
 
   const children = [
     el('div', { class: 'topbar' }, [
       el('button', { class: 'link', text: '← Chọn nhóm khác', onClick: () => { resetPractice(); store.refresh(); } }),
       el('span', { class: 'progress', text: `còn ${left} từ · ${POOL_INFO[pool].label}` }),
     ]),
-    el('div', { class: 'card big' }, [
-      ...renderWordHead(entry),
-      el('div', { class: 'hint', text: fluentPool
-        ? 'Bạn chấm từ này là thành thạo — còn nhớ nghĩa không?'
-        : 'Còn nhớ nghĩa của từ này không?' }),
-    ]),
+    ...renderChoiceCard(store, entry, choice, {
+      picked, verdict, onPick: (letter) => answer(store, entry, choice, letter),
+      hint: fluentPool ? 'Bạn chấm từ này là thành thạo — nghĩa là gì?' : undefined,
+    }),
+    picked ? el('div', { class: 'actions' }, [
+      el('button', { class: 'primary', onClick: () => next(store) }, [el('span', { text: 'Từ tiếp' }), el('small', { text: 'phím Space' })]),
+    ]) : '',
   ];
-
-  if (!revealed) {
-    children.push(el('div', { class: 'actions' }, [
-      el('button', { class: 'primary', onClick: () => { revealed = true; store.refresh(); } }, [
-        el('span', { text: 'Hiện nghĩa' }),
-        el('small', { text: 'nhớ thử trước rồi mới lật — phím Space' }),
-      ]),
-    ]));
-  } else {
-    children.push(renderWordBack(entry, store), el('div', { class: 'actions two stick' }, [
-      el('button', { class: 'grade good', onClick: () => answer(store, entry, true) }, [
-        el('span', { text: 'Vẫn nhớ' }),
-        el('kbd', { text: '1' }),
-      ]),
-      el('button', { class: 'grade again', onClick: () => answer(store, entry, false) }, [
-        el('span', { text: 'Quên rồi' }),
-        el('small', { text: fluentPool ? 'đưa lại vào danh sách học' : 'không đổi lịch ôn' }),
-        el('kbd', { text: '2' }),
-      ]),
-    ]));
-  }
   return el('div', {}, children);
 }
 
@@ -143,46 +134,46 @@ function renderSummary(store, byId) {
   });
 }
 
-/** Từ đang hỏi, hoặc null nếu lượt đã xong. */
+/** Từ đang hiện: từ vừa trả lời (đang xem kết quả), hoặc từ kế tiếp; null nếu lượt đã xong. */
 function currentEntry(store) {
-  if (pool === null || results.length >= roundIds.length) return null;
-  return store.entries.find((entry) => entry.id === roundIds[results.length]) ?? null;
+  if (pool === null) return null;
+  const id = picked ? roundIds[results.length - 1] : roundIds[results.length];
+  return id ? store.entries.find((entry) => entry.id === id) ?? null : null;
 }
 
-/** Ghi kết quả một từ rồi sang từ kế tiếp. */
-async function answer(store, entry, remembered) {
-  // Chặn bấm hai lần: chỉ nhận đúng từ đang hỏi.
-  if (roundIds[results.length] !== entry.id) return;
-
+/** Chấm lựa chọn: đúng = vẫn nhớ. Chỉ quên một từ "thành thạo" mới ghi sự kiện (xem logic/practice.js). */
+async function answer(store, entry, choice, letter) {
+  if (picked || roundIds[results.length] !== entry.id) return;     // chặn bấm hai lần
+  picked = letter;
+  const remembered = letter === choice.answer;
   const change = eventForResult(entry.id, store.states.get(entry.id), remembered);
   results.push({ id: entry.id, remembered, demoted: change !== null });
-  revealed = false;
-
   if (change) await store.record(change.type, change.payload);
   else store.refresh();
 }
 
+/** Sang từ kế tiếp (hoặc màn tổng kết). */
+function next(store) {
+  picked = null;
+  shown.reset();
+  store.refresh();
+}
+
 /**
- * Phím tắt: Space lật thẻ, 1 = vẫn nhớ, 2 = quên rồi.
- * Space KHÔNG chấm "nhớ" sau khi lật (khác màn ôn thẻ): tự kiểm tra mà gõ nhầm thành "nhớ"
- * thì kết quả mất ý nghĩa — đây là điều duy nhất màn này cần đúng.
+ * Phím tắt: 1–4 hoặc A–D để chọn; chọn rồi thì Space/Enter sang từ kế.
  * @param {object} store
  * @param {KeyboardEvent} event
  */
 export function handlePracticeKey(store, event) {
   const entry = currentEntry(store);
   if (!entry) return;
-
-  if (!revealed) {
-    if (event.key === ' ' || event.key === 'Enter') {
-      event.preventDefault();
-      revealed = true;
-      store.refresh();
-    }
+  if (picked) {
+    if (event.key === ' ' || event.key === 'Enter') { event.preventDefault(); next(store); }
     return;
   }
-  if (event.key === '1') answer(store, entry, true);
-  else if (event.key === '2') answer(store, entry, false);
+  const choice = shown.get(entry);
+  const letter = letterFromKey(event, Object.keys(choice.options));
+  if (letter) answer(store, entry, choice, letter);
 }
 
 /** Đặt lại khi rời màn hoặc khi chọn nhóm khác. */
@@ -190,5 +181,6 @@ export function resetPractice() {
   pool = null;
   roundIds = [];
   results = [];
-  revealed = false;
+  picked = null;
+  shown.reset();
 }

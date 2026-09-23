@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { shuffle, seededRandom, seededOrder, shuffleChoices, originalLetter, mentionsChoiceLetter } from '../src/logic/shuffle.js';
+import { shuffle, seededRandom, seededOrder, shuffleChoices, originalLetter, mentionsChoiceLetter, interleaveEvenly } from '../src/logic/shuffle.js';
 import { mentionsChoiceLetter as pipelineMentions } from '../pipeline/lib/prompt-listening.js';
 
 const ids = (list) => list.map((x) => x.id);
@@ -84,5 +84,32 @@ describe('mentionsChoiceLetter — bản của app phải khớp bản của pip
 describe('shuffle (có sẵn)', () => {
   it('giữ đủ phần tử', () => {
     expect(shuffle([1, 2, 3, 4], seededRandom(1)).sort()).toEqual([1, 2, 3, 4]);
+  });
+});
+
+describe('interleaveEvenly — trộn ĐỀU các nhóm (D66)', () => {
+  const group = (name, n) => Array.from({ length: n }, (_, i) => ({ id: `${name}-${i}` }));
+  const groups = [group('core', 400), group('mid', 800), group('col', 142)];
+  const nameOf = (x) => x.id.split('-')[0];
+
+  it('nhóm nhỏ không bị chìm: 30 thẻ đầu chia đều mỗi nhóm 10 (xáo chung thì cụm chỉ ~3)', () => {
+    const head = interleaveEvenly(groups, 5).slice(0, 30).map(nameOf);
+    for (const name of ['core', 'mid', 'col']) expect(head.filter((n) => n === name)).toHaveLength(10);
+  });
+
+  it('trong mỗi hàng thứ tự nhóm ngẫu nhiên — không lặp một nhịp cố định', () => {
+    const heads = new Set(Array.from({ length: 12 }, (_, s) => nameOf(interleaveEvenly(groups, s + 1)[0])));
+    expect(heads.size).toBeGreaterThan(1);
+    const rows = interleaveEvenly(groups, 5).slice(0, 30).map(nameOf);
+    const firsts = new Set([0, 3, 6, 9, 12, 15, 18, 21, 24, 27].map((i) => rows[i]));
+    expect(firsts.size).toBeGreaterThan(1);
+  });
+
+  it('nhóm hết thì các nhóm còn lại vẫn trộn tiếp; không mất phần tử; cùng hạt giống → cùng thứ tự', () => {
+    const all = interleaveEvenly(groups, 5);
+    expect(all).toHaveLength(1342);
+    expect(new Set(all.map((x) => x.id)).size).toBe(1342);
+    expect(all.slice(-50).every((x) => nameOf(x) === 'mid')).toBe(true);   // nhóm lớn nhất kéo dài tới cuối
+    expect(interleaveEvenly(groups, 5).map((x) => x.id)).toEqual(all.map((x) => x.id));
   });
 });

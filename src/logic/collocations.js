@@ -59,6 +59,7 @@ export function collocationEntries(bank) {
     pos: [c.theme],
     examples: c.example ? [{ en: c.example, vi: '' }] : [],
     note: c.wrong ? `✗ không dùng: ${c.wrong}` : '',
+    wrong: c.wrong ?? '',      // dạng sai hay mắc — làm phương án nhiễu khi ôn trắc nghiệm (D66)
     isCollocation: true,
   }));
 }

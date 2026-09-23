@@ -5,6 +5,7 @@
 import { el } from './dom.js';
 import { LEVEL_ORDER, LEVEL_INFO, payloadForLevel } from '../logic/vocab-levels.js';
 import { metSentences } from '../logic/capture.js';
+import { optionList } from './blocks.js';
 
 /** Số câu gốc tối đa hiện ra — mới nhất trước. */
 const MET_SHOWN = 2;
@@ -116,4 +117,36 @@ export function renderWordBack(entry, store) {
   }
   if (entry.note) parts.push(el('div', { class: 'note', text: entry.note }));
   return el('div', { class: 'card back' }, parts);
+}
+
+/**
+ * Thẻ trắc nghiệm (D66), dùng chung cho Ôn tập và Ôn chủ động: mặt trước + các lựa chọn; chọn xong mới lộ
+ * đúng/sai và phần giải thích (nghĩa đầy đủ, ví dụ, câu đã gặp…). Từ: chọn nghĩa. Cụm: chọn đúng cụm.
+ * @param {object} store
+ * @param {object} entry
+ * @param {{kind: string, options: Record<string, string>, answer: string, example?: string|null}} choice - buildChoice
+ * @param {{picked: string|null, onPick: (letter: string) => void, verdict?: string, hint?: string}} state
+ * @returns {Array<HTMLElement|string>}
+ */
+export function renderChoiceCard(store, entry, choice, { picked, onPick, verdict = '', hint }) {
+  const colloc = choice.kind === 'colloc';
+  const front = el('div', { class: 'card big' }, colloc
+    ? [
+        el('div', { class: 'word', text: entry.vi }),
+        choice.example ? el('div', { class: 'example' }, [el('div', { class: 'en', text: choice.example })]) : '',
+        el('div', { class: 'hint', text: hint ?? 'Cụm nào dùng ĐÚNG?' }),
+      ]
+    : [...renderWordHead(entry), el('div', { class: 'hint', text: hint ?? 'Nghĩa của từ này là gì?' })]);
+
+  const parts = [front, optionList({
+    letters: Object.keys(choice.options), textOf: (l) => choice.options[l],
+    picked, answer: picked ? choice.answer : null, locked: Boolean(picked), onPick,
+  })];
+  if (picked) {
+    parts.push(
+      el('div', { class: `verdict ${picked === choice.answer ? 'ok' : 'no'}`, text: verdict }),
+      renderWordBack(entry, store),
+    );
+  }
+  return parts;
 }

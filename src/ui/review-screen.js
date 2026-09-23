@@ -1,23 +1,36 @@
 /**
- * Màn ôn thẻ: hiện từ -> tự nhớ -> lật thẻ -> tự chấm.
- * Mỗi nút chấm hiện luôn lần ôn kế tiếp (RESEARCH.md R3), phím tắt 1-4 và Space (R4).
+ * Màn ôn thẻ (D66): hiện từ → CHỌN nghĩa đúng trong 4 lựa chọn → lộ đúng/sai, giải thích và lần ôn kế tiếp.
+ * Chọn đúng = "Tốt", chọn sai = "Quên" (lịch FSRS tính bằng ngày — D66). Phím 1–4 / A–D chọn, Space sang thẻ kế.
  */
 import { el, goTo } from './dom.js';
-import { backButton, backLink, sessionDone } from './blocks.js';
+import { backButton, backLink, sessionDone, letterFromKey } from './blocks.js';
 import { reviewQueue, reviewCounts } from '../logic/vocab-state.js';
 import { reviewProgress } from '../logic/round.js';
 import { TIER_ORDER, studyEntries } from '../logic/deck-tiers.js';
-import { randomSeed } from '../logic/shuffle.js';
+import { randomSeed, onceShuffled } from '../logic/shuffle.js';
+import { buildChoice } from '../logic/vocab-choice.js';
 import { getTier } from '../data/prefs.js';
 import { previewIntervals, GRADES } from '../logic/scheduler.js';
 import { formatDuration } from '../logic/format.js';
-import { renderWordBack, renderWordHead } from './word-detail.js';
+import { renderChoiceCard } from './word-detail.js';
 
 /** Hạn mức từ MỚI mỗi lượt — không nhồi quá nhiều thứ mới một lúc (D03). */
 const NEW_PER_ROUND = 10;
 
-/** Trạng thái chỉ của riêng màn này: đã lật thẻ hay chưa. */
-let revealed = false;
+/** Chữ cái vừa chọn; null = chưa trả lời thẻ đang hiện. */
+let picked = null;
+
+/** Thẻ đang xem kết quả — phải giữ lại, vì ghi xong thì nó rời hàng đợi (hết đến hạn). */
+let locked = null;
+
+/** "3 ngày" — lần ôn kế tiếp của thẻ vừa trả lời. */
+let nextIn = '';
+
+/** Cả bộ từ + cụm, để rút phương án nhiễu. Cập nhật mỗi lần vẽ. */
+let allCards = [];
+
+/** Câu trắc nghiệm của thẻ đang hiện, dựng MỘT lần (vẽ lại không đổi phương án). */
+const shown = onceShuffled((entry) => ({ id: entry.id, ...buildChoice(entry, allCards) }));
 
 /**
  * Từ MỚI đã đưa ra trong lượt này. Không có nó thì hạn mức maxNew vô tác dụng:
@@ -28,13 +41,6 @@ let newThisRound = new Set();
 
 /** Số thẻ đã chấm trong lượt này — màn kết thúc cần đếm VIỆC ĐÃ LÀM, không lấy độ dài hàng đợi (quy tắc #7). */
 let gradedThisRound = 0;
-
-const GRADE_LABELS = [
-  [GRADES.AGAIN, 'Quên', 'again', '1'],
-  [GRADES.HARD, 'Khó', 'hard', '2'],
-  [GRADES.GOOD, 'Tốt', 'good', '3'],
-  [GRADES.EASY, 'Dễ', 'easy', '4'],
-];
 
 /** Số từ mới còn được phép đưa ra trong lượt này. */
 function newLeft() {
@@ -54,9 +60,9 @@ function roundQueue(store) {
   return reviewQueue(studyList(store), store.states, { maxNew: newLeft(), seed });
 }
 
-/** Lấy thẻ đang ôn, hoặc null nếu hết. */
+/** Thẻ đang hiện: thẻ vừa trả lời (đang xem kết quả), hoặc đầu hàng đợi. */
 function currentItem(store) {
-  return roundQueue(store)[0] ?? null;
+  return locked ?? roundQueue(store)[0] ?? null;
 }
 
 /**
@@ -71,43 +77,31 @@ export function renderReview(store) {
     newPerRound: NEW_PER_ROUND,
     newDoneCount: newThisRound.size,
   });
+  allCards = [...store.entries, ...(store.collocationCards ?? [])];
   const item = currentItem(store);
-
-  if (!item) {
-    revealed = false;
-    return renderDone(store, counts);
-  }
+  if (!item) return renderDone(store, counts);
 
   const { entry, state } = item;
+  const choice = shown.get(entry);
+  const right = picked === choice.answer;
+  const verdict = right
+    ? `Đúng — ôn lại sau ${nextIn}`
+    : `Sai — đáp án: ${choice.options[choice.answer]} · ôn lại sau ${nextIn}`;
 
-  const front = el('div', { class: 'card big' }, [
-    ...renderWordHead(entry),
-    state.lapses > 0 ? el('div', { class: 'warn', text: `Đã quên ${state.lapses} lần` }) : '',
-  ]);
-
-  const children = [
+  return el('div', {}, [
     el('div', { class: 'topbar' }, [
       backLink('vocab'),
       el('span', { class: 'progress', text: `còn ${remaining} thẻ` }),
     ]),
-    front,
-  ];
-
-  if (!revealed) {
-    children.push(
-      el('div', { class: 'actions' }, [
-        el('button', {
-          class: 'primary',
-          onClick: () => { revealed = true; store.refresh(); },
-        }, [el('span', { text: 'Hiện nghĩa' }), el('small', { text: 'phím Space' })]),
-      ]),
-    );
-  } else {
-    children.push(renderWordBack(entry, store), renderGradeButtons(store, item));
-  }
-
-  children.push(renderBookmark(store, entry, state));
-  return el('div', {}, children);
+    ...renderChoiceCard(store, entry, choice, {
+      picked, verdict, onPick: (letter) => pick(store, item, choice, letter),
+      hint: state.lapses > 0 && !picked ? `Đã quên ${state.lapses} lần — nghĩa là gì?` : undefined,
+    }),
+    picked ? el('div', { class: 'actions' }, [
+      el('button', { class: 'primary', onClick: () => next(store) }, [el('span', { text: 'Thẻ tiếp' }), el('small', { text: 'phím Space' })]),
+    ]) : '',
+    renderBookmark(store, entry, state),
+  ]);
 }
 
 /** Màn kết thúc: hết hạn mức từ mới của lượt, hoặc thật sự không còn gì đến hạn. */
@@ -141,23 +135,6 @@ function renderDone(store, counts) {
   });
 }
 
-/** Bốn nút chấm, mỗi nút kèm khoảng cách tới lần ôn kế tiếp. */
-function renderGradeButtons(store, item) {
-  const preview = previewIntervals(item.state.card);
-
-  return el('div', { class: 'actions four' },
-    GRADE_LABELS.map(([grade, label, className, key]) =>
-      el('button', {
-        class: `grade ${className}`,
-        onClick: () => grade && submitGrade(store, item, grade),
-      }, [
-        el('span', { text: label }),
-        el('small', { text: formatDuration(preview[grade]) }),
-        el('kbd', { text: key }),
-      ])),
-  );
-}
-
 /** Nút đánh dấu từ cần để ý lại sau. */
 function renderBookmark(store, entry, state) {
   return el('div', { class: 'actions' }, [
@@ -169,44 +146,49 @@ function renderBookmark(store, entry, state) {
   ]);
 }
 
-/** Ghi kết quả chấm rồi chuyển sang thẻ kế tiếp. */
-async function submitGrade(store, item, grade) {
-  revealed = false;
+/** Chấm lựa chọn: đúng = "Tốt", sai = "Quên". Ghi xong thẻ vẫn hiện (khoá) để xem giải thích. */
+async function pick(store, item, choice, letter) {
+  if (picked) return;
+  const grade = letter === choice.answer ? GRADES.GOOD : GRADES.AGAIN;
+  picked = letter;
+  locked = item;
+  nextIn = formatDuration(previewIntervals(item.state.card)[grade]);
   gradedThisRound += 1;
   if (item.isNew) newThisRound.add(item.entry.id);
   await store.record('vocab.reviewed', { wordId: item.entry.id, grade });
 }
 
+/** Sang thẻ kế tiếp. */
+function next(store) {
+  picked = null;
+  locked = null;
+  shown.reset();
+  store.refresh();
+}
+
 /**
- * Phím tắt màn ôn: Space để lật, 1-4 để chấm (RESEARCH.md R4).
+ * Phím tắt: 1–4 hoặc A–D để chọn; chọn rồi thì Space/Enter sang thẻ kế.
  * @param {object} store
  * @param {KeyboardEvent} event
  */
 export function handleReviewKey(store, event) {
   const item = currentItem(store);
   if (!item) return;
-
-  if (!revealed && (event.key === ' ' || event.key === 'Enter')) {
-    event.preventDefault();
-    revealed = true;
-    store.refresh();
+  if (picked) {
+    if (event.key === ' ' || event.key === 'Enter') { event.preventDefault(); next(store); }
     return;
   }
-  if (!revealed) return;
-
-  if (event.key === ' ' || event.key === 'Enter') {
-    event.preventDefault();
-    submitGrade(store, item, GRADES.GOOD);
-    return;
-  }
-  const match = GRADE_LABELS.find(([, , , key]) => key === event.key);
-  if (match) submitGrade(store, item, match[0]);
+  const choice = shown.get(item.entry);
+  const letter = letterFromKey(event, Object.keys(choice.options));
+  if (letter) pick(store, item, choice, letter);
 }
 
 /** Đặt lại khi rời màn hoặc khi bắt đầu lượt mới. */
 export function resetReview() {
   seed = randomSeed();
-  revealed = false;
+  picked = null;
+  locked = null;
+  shown.reset();
   newThisRound = new Set();
   gradedThisRound = 0;
 }

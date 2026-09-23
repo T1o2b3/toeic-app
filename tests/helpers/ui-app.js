@@ -137,6 +137,13 @@ export async function bootApp(override = {}) {
       target.click();
       await tick();
     },
+    /** Chấm thẻ phân loại đang hiện, nhưng BỎ QUA thẻ cụm từ (D66 trộn cụm vào) — cho test cần đúng một TỪ. */
+    triageWord: async (k) => {
+      const busy = () => root.textContent.includes('Bạn dùng được CỤM');
+      for (let i = 0; i < 20 && busy(); i += 1) { window.dispatchEvent(new KeyboardEvent('keydown', { key: 's' })); await tick(); }
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: k }));
+      await tick();
+    },
     levelOf: (w) => store.states.get([...store.entries, ...store.collocationCards].find((e) => e.word === w).id)?.level,
   };
 }

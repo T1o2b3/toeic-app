@@ -6,7 +6,7 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { bootApp } from './helpers/ui-app.js';
 
-let store; let root; let tick; let go; let key; let text; let click;
+let store; let root; let tick; let go; let key; let text; let click; let triageWord;
 
 const nav = () => document.querySelector('nav.tabbar');
 const tabs = () => [...nav().querySelectorAll('a.tab')].map((a) => a.textContent);
@@ -20,7 +20,7 @@ const typeInto = async (value) => {
 };
 
 beforeAll(async () => {
-  ({ store, root, tick, go, key, text, click } = await bootApp());
+  ({ store, root, tick, go, key, text, click, triageWord } = await bootApp());
 });
 
 describe('điều hướng chính: cột trái trên máy tính, thanh đáy trên điện thoại (D43)', () => {
@@ -97,7 +97,7 @@ describe('dashboard khi chưa học gì', () => {
 describe('dashboard sau khi học', () => {
   it('số liệu phản ánh đúng việc đã làm hôm nay', async () => {
     await go('#/triage');
-    await key('4'); await key('1'); await key('2');        // 3 việc từ vựng
+    await triageWord('4'); await triageWord('1'); await triageWord('2');   // 3 việc từ vựng (bỏ qua thẻ cụm)
     await go('#/quiz');
     await key('a');                                        // 1 câu Part 5, đáp án A → đúng
     await tick(60);

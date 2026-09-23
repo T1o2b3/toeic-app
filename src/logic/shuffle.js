@@ -51,18 +51,37 @@ export function shuffle(list, random = Math.random) {
  * @returns {T[]}
  */
 export function seededOrder(list, seed, keyOf = (item) => item.id) {
-  const rank = (key) => {
-    let h = (seed ^ 0x9e3779b9) >>> 0;
-    for (let i = 0; i < key.length; i += 1) {
-      h = Math.imul(h ^ key.charCodeAt(i), 0x5bd1e995);
-      h ^= h >>> 15;
-    }
-    h = Math.imul(h ^ (h >>> 13), 0xc2b2ae35);
-    return (h ^ (h >>> 16)) >>> 0;
-  };
   return list
-    .map((item) => { const key = String(keyOf(item)); return { item, key, rank: rank(key) }; })
+    .map((item) => { const key = String(keyOf(item)); return { item, key, rank: hashKey(seed, key) }; })
     .sort((a, b) => a.rank - b.rank || a.key.localeCompare(b.key))
+    .map((x) => x.item);
+}
+
+/** Băm (hạt giống, khoá) ra số nguyên 32 bit không dấu, trải đều. */
+function hashKey(seed, key) {
+  let h = (seed ^ 0x9e3779b9) >>> 0;
+  for (let i = 0; i < key.length; i += 1) {
+    h = Math.imul(h ^ key.charCodeAt(i), 0x5bd1e995);
+    h ^= h >>> 15;
+  }
+  h = Math.imul(h ^ (h >>> 13), 0xc2b2ae35);
+  return (h ^ (h >>> 16)) >>> 0;
+}
+
+/**
+ * Trộn ĐỀU nhiều nhóm (D66): mục thứ k của mỗi nhóm cùng rơi vào "hàng" k, thứ tự trong hàng ngẫu nhiên.
+ * Xáo chung một chỗ thì nhóm nhỏ bị chìm — 142 cụm giữa ~2.300 từ chỉ ra ~1 cụm mỗi 16 thẻ. Cố định theo `seed`.
+ * @template T
+ * @param {T[][]} groups
+ * @param {number} seed
+ * @param {(item: T) => string} [keyOf]
+ * @returns {T[]}
+ */
+export function interleaveEvenly(groups, seed, keyOf = (item) => item.id) {
+  return groups
+    .flatMap((group) => seededOrder(group, seed, keyOf)
+      .map((item, row) => ({ item, at: row + hashKey(seed ^ 0x5f3759df, String(keyOf(item))) / 2 ** 32 })))
+    .sort((a, b) => a.at - b.at)
     .map((x) => x.item);
 }
 

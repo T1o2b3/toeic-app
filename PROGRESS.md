@@ -6,19 +6,20 @@
 ## Trạng thái hiện tại
 - **Phạm vi đã chốt (D63): app đủ dùng — chỉ còn THÊM NỘI DUNG.** M0–M6, M8–M13, M15, M18, M21 xong; M16 bỏ; M10 phụ/M14/M17/M19/M20 chỉ làm khi Huy yêu cầu. M7 chờ Huy học thật.
 - **App đã dùng học thật được**: https://toeic-app.huybndc-451.workers.dev
-- Repo private: https://github.com/huybndc/toeic-app — **882 test pass**.
+- Repo private: https://github.com/huybndc/toeic-app — **896 test pass**.
 
 ## Dùng app thế nào (cho Huy)
 1. Mở link trên (máy Mac hoặc iPhone).
 2. **Chọn tầng từ trước đã** — màn chính có hàng nút \`Tầng từ: Tất cả · Cơ bản · Trung cấp · Cao cấp\`.
    Ở mức 850 thì **bỏ qua "Cơ bản"** (400 từ hay gặp nhất, Huy đã biết hết) — chọn **Trung cấp**
-   hoặc **Cao cấp**. Không chọn thì mặc định là Tất cả và sẽ bắt đầu từ \`mister\`, \`vacation\`.
-3. Bấm **Phân loại từ vựng** — lướt 20 từ một lượt, tự chấm **4 mức**:
+   hoặc **Cao cấp**. Không chọn thì mặc định là Tất cả — trộn đều mọi tầng và cụm từ (D66).
+3. Bấm **Phân loại từ vựng** — lướt 20 thẻ một lượt (từ + cụm, xáo ngẫu nhiên), tự chấm **4 mức**:
    \`1\` không biết · \`2\` đoán được theo ngữ cảnh · \`3\` hiểu nghĩa nhưng quên chính tả · \`4\` thành thạo.
    Nghĩa hiện sẵn để đối chiếu; bấm \`Space\` để ẩn/hiện nếu muốn lướt nhanh.
    Chỉ mức 4 mới bị loại khỏi danh sách học.
-4. Về màn chính bấm **Ôn tập từ vựng**. Xem từ → \`Space\` lật thẻ → tự chấm Quên/Khó/Tốt/Dễ (\`1\`–\`4\`).
-   Mỗi nút ghi sẵn lần ôn kế tiếp là bao lâu nữa. Mỗi lượt tối đa 10 từ mới, ôn hết thì bấm
+4. Về màn chính bấm **Ôn tập từ vựng**. Xem từ → **chọn nghĩa đúng** trong 4 lựa chọn (\`1\`–\`4\`); thẻ cụm thì
+   xem nghĩa → chọn đúng cụm. Chọn xong mới hiện giải thích + "ôn lại sau N ngày"; \`Space\` sang thẻ kế (D66).
+   Mỗi lượt tối đa 10 từ mới, ôn hết thì bấm
    "Học thêm 10 từ mới" nếu còn sức.
 5. **Xem lại / tự ôn:** \`Kho từ vựng\` để xem các từ đã chấm và đổi mức; \`Ôn chủ động\` để tự kiểm tra
    một nhóm từ (nhất là nhóm "thành thạo" — quên thì từ tự quay lại danh sách học). Ở màn phân loại,
@@ -64,6 +65,14 @@ phát không (Safari chỉ cho phát tiếp trên cùng phần tử Audio đã �
 vẫn ghi chữ cái gốc → hết lệch "đáp án A" của 200 câu cũ mà không sửa nội dung. Từ vựng: phân loại trộn từ + cụm từ,
 thứ tự ngẫu nhiên mỗi lượt; ôn tập xen từ mới giữa thẻ đến hạn. Đã xem thật: phân loại ra `enlargement, usage, fog…,
 comparable to [cụm]`, vào lại ra thứ tự khác; cùng câu Part 5 vào hai lần thì `inadequate` ở A rồi ở D. **882 test pass.**
+
+**6. Ôn từ vựng bằng trắc nghiệm, lịch tính bằng ngày, trộn đều (D66) — Huy yêu cầu 2026-09-24.** Huy báo: chưa thấy
+xáo, Ôn tập không có cụm, khoảng ôn 1–5–10 phút vô lý, muốn chọn đáp án thay tự chấm. Kiểm trước: bản deploy ĐÃ có
+code D65 (tìm thấy chữ mới trong bundle) — lý do thật là Ôn tập chỉ gồm thẻ đã phân loại, và xáo chung làm cụm chỉ ~6%.
+Đã làm: FSRS bỏ bước phút (sai → 1 ngày, đúng → 3 → 14 → 57 ngày); Ôn tập + Ôn chủ động thành trắc nghiệm 4 lựa chọn
+(từ → nghĩa Việt; cụm → chọn đúng cụm, có dạng sai hay mắc); phân loại trộn ĐỀU tầng + cụm (12 thẻ thật ra 3 cụm).
+Đã xem thật trên trình duyệt: thẻ cụm "phương án thay thế cho" → `an alternative of` / `an alternative to`…, chọn xong
+hiện giải thích + "ôn lại sau 1 ngày". **896 test pass.**
 
 ### Bước tiếp theo
 - **Claude:** chạy tiếp nội dung (mục 3) khi Gemini bớt quá tải — lần gần nhất (01:20) `gemini-3.5-flash` hết hạn mức

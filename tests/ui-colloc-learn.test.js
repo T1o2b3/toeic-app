@@ -33,9 +33,15 @@ describe('học cụm từ mới — tách riêng khỏi từ vựng', () => {
     expect(last.payload.wordId).toMatch(/^col-/);
   });
 
-  it('quay lại phân loại TỪ VỰNG thì hiện từ đơn, không lẫn cụm', async () => {
+  it('phân loại mặc định TRỘN ĐỀU từ và cụm (D66): vài thẻ đầu đã có cả hai', async () => {
+    await go('#/');
     await go('#/triage');
-    expect(root.querySelector('.word').textContent).not.toContain(' ');   // từ đơn không có khoảng trắng
+    const kinds = new Set();
+    for (let i = 0; i < 6 && root.querySelector('.word'); i += 1) {
+      kinds.add(text().includes('Bạn dùng được CỤM') ? 'cụm' : 'từ');
+      await key('s');                                      // "để sau": chỉ lướt, không ghi gì
+    }
+    expect(kinds).toEqual(new Set(['từ', 'cụm']));
   });
 });
 
@@ -44,19 +50,21 @@ describe('ôn lại — trộn chung một hàng đợi', () => {
     await go('#/vocab');
     expect(text()).toContain('thẻ (từ + cụm)');
     await go('#/review');
-    // Ôn tới khi gặp một thẻ là cụm từ (có khoảng trắng trong từ) hoặc hết lượt.
+    // Ôn tới khi gặp một thẻ cụm (hỏi "Cụm nào dùng ĐÚNG?") hoặc hết lượt. Thẻ từ: chọn 1 rồi Space sang thẻ kế.
     let sawCollocation = false;
     for (let i = 0; i < 12; i += 1) {
-      const word = root.querySelector('.word')?.textContent;
-      if (!word) break;
-      if (word.includes(' ')) { sawCollocation = true; break; }
-      await key(' '); await key('3'); await tick(40);
+      if (!root.querySelector('.option')) break;
+      if (text().includes('Cụm nào dùng ĐÚNG?')) { sawCollocation = true; break; }
+      await key('1'); await tick(40); await key(' '); await tick(20);
     }
     expect(sawCollocation, 'phải gặp ít nhất một cụm từ trong lượt ôn').toBe(true);
   });
 
-  it('mặt sau của thẻ cụm nhắc luôn DẠNG SAI hay mắc', async () => {
-    await key(' ');
+  it('thẻ cụm: hỏi bằng nghĩa tiếng Việt, DẠNG SAI hay mắc nằm trong lựa chọn; chọn xong mặt sau nhắc lại', async () => {
+    const options = [...root.querySelectorAll('.option-text')].map((n) => n.textContent);
+    expect(options.some((t) => ['give attention to', 'comply to'].includes(t))).toBe(true);
+    expect(root.querySelector('.card.back')).toBeNull();
+    await key('1');
     await tick(30);
     expect(text()).toMatch(/không dùng:/);
   });

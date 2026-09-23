@@ -17,8 +17,8 @@ import { roundProgress } from '../logic/round.js';
 import { LEVEL_ORDER, LEVEL_INFO, payloadForLevel } from '../logic/vocab-levels.js';
 import { stepBack, stepForward, canStepBack } from '../logic/triage-history.js';
 import { getShowMeaning, setShowMeaning, getTier } from '../data/prefs.js';
-import { TIER_ORDER, TIER_INFO, ALL_TIERS, studyEntries } from '../logic/deck-tiers.js';
-import { seededOrder, randomSeed } from '../logic/shuffle.js';
+import { TIER_ORDER, TIER_INFO, ALL_TIERS, studyGroups } from '../logic/deck-tiers.js';
+import { interleaveEvenly, randomSeed } from '../logic/shuffle.js';
 
 /** Số từ mỗi lượt phân loại — đủ ngắn để làm xong trong một lần ngồi. */
 const ROUND_SIZE = 20;
@@ -50,8 +50,9 @@ let seed = randomSeed();
 function roundQueue(store) {
   const left = Math.max(0, ROUND_SIZE - doneThisRound.size);
   if (left === 0) return [];
-  // Sắp TRƯỚC rồi mới bỏ từ "để sau": thứ tự theo hash nên bỏ bớt không làm từ khác nhảy chỗ.
-  const pool = seededOrder(tieredEntries(store), seed).filter((entry) => !skipped.has(entry.id));
+  // Trộn ĐỀU các nhóm (tầng + cụm từ, D66) trên cả kho, RỒI mới bỏ từ "để sau"/đã chấm: kho không đổi trong lượt
+  // nên thứ tự cố định — chấm xong một từ thì từ khác không nhảy chỗ.
+  const pool = interleaveEvenly(tieredGroups(store), seed).filter((entry) => !skipped.has(entry.id));
   return triageQueue(pool, store.states, left);
 }
 
@@ -61,10 +62,12 @@ function roundQueue(store) {
  */
 let kind = 'vocab';
 
-function tieredEntries(store) {
-  if (kind === 'colloc') return store.collocationCards ?? [];
-  return studyEntries(store.entries, getTier(TIER_ORDER), store.collocationCards ?? []);
+function tieredGroups(store) {
+  if (kind === 'colloc') return [store.collocationCards ?? []];
+  return studyGroups(store.entries, getTier(TIER_ORDER), store.collocationCards ?? []);
 }
+
+const tieredEntries = (store) => tieredGroups(store).flat();
 
 /** Nhãn hiện trên màn, theo chế độ đang chạy. */
 const kindLabel = () => (kind === 'colloc' ? 'cụm từ' : 'từ/cụm');

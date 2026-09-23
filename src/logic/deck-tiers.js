@@ -78,13 +78,20 @@ export function untriagedByTier(entries, states) {
 }
 
 /**
- * Thẻ để phân loại/ôn: từ ở tầng đang chọn CỘNG mọi cụm từ (cụm không chia tầng) — trộn chung một hàng,
- * không tách hai nơi (D65; trước đây học mới cụm từ tách riêng — D53).
+ * Thẻ để phân loại/ôn, CHIA NHÓM: mỗi tầng một nhóm (chọn "Tất cả" thì đủ 3 tầng) + nhóm cụm từ (cụm không chia
+ * tầng). Màn phân loại trộn đều các nhóm (`interleaveEvenly`, D66); trước đây học mới cụm từ tách riêng (D53).
  * @param {Array<object>} entries
  * @param {string} tier
  * @param {Array<object>} [collocationCards]
- * @returns {Array<object>}
+ * @returns {Array<object>[]} nhóm rỗng bị bỏ
  */
+export function studyGroups(entries, tier, collocationCards = []) {
+  const tiers = TIER_ORDER.includes(tier) ? [tier] : TIER_ORDER;
+  return [...tiers.map((t) => entries.filter((entry) => tierOfEntry(entry) === t)), collocationCards]
+    .filter((group) => group.length > 0);
+}
+
+/** Cùng các thẻ đó nhưng gộp phẳng — cho các chỗ chỉ đếm hoặc tự sắp (ôn tập, số liệu mục Từ vựng). */
 export function studyEntries(entries, tier, collocationCards = []) {
-  return [...filterByTier(entries, tier), ...collocationCards];
+  return studyGroups(entries, tier, collocationCards).flat();
 }

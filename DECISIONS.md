@@ -611,6 +611,25 @@ thể xáo trộn mọi lần thì tốt nhất… khi học từ vựng thì m�
   chưa biết trước từ đoán được". Chọn tầng vẫn giữ (Huy ở 850 bỏ tầng Cơ bản); chọn "Tất cả" là trộn đều mọi tầng.
 - Test giao diện cũ chọn đáp án theo chữ cái (Part 2 trước khi trả lời không có chữ để chọn theo nội dung) nên
   `bootApp` cố định `Math.random ≈ 1` (Fisher–Yates giữ nguyên thứ tự); `tests/ui-shuffle.test.js` chạy ngẫu nhiên thật.
+- *Sửa ở D66:* xáo chung một chỗ thì cụm từ chỉ ~6% (142/2.500) → gần như không gặp. Nay trộn ĐỀU theo nhóm.
+
+**D66. Ôn từ vựng bằng TRẮC NGHIỆM, lịch tính bằng NGÀY, trộn ĐỀU theo nhóm.** (Huy, 2026-09-24: "không ai lại ôn lại
+sau 1-5-10 phút… thay vì chỉ là cho chọn nhớ hay quên thì bỏ hẳn format này đi, mà thay vào đó là chọn đáp án";
+"vẫn chưa thấy xuất hiện cụm từ trong phần ôn tập".)
+- **Lịch:** ts-fsrs `enable_short_term: false` — bỏ các bước học 1–10 phút. Thẻ mới: sai → 1 ngày, đúng → 3 ngày; đúng
+  liên tiếp → 14 → 57 → 196 ngày. Lịch cũ tự tính lại từ nhật ký (D23), không mất gì.
+- **Trắc nghiệm thay tự chấm** ở Ôn tập VÀ Ôn chủ động (`logic/vocab-choice.js`, khối `renderChoiceCard`):
+  từ → chọn nghĩa tiếng Việt ngắn trong 4; cụm → xem nghĩa, chọn ĐÚNG cụm, luôn có dạng sai hay mắc trong lựa chọn
+  (thứ cần nhớ của cụm là dạng, không phải nghĩa) + câu ví dụ che chỗ cụm. Chọn xong mới hiện giải thích.
+  Đúng = "Tốt", sai = "Quên" (Ôn chủ động: sai một từ "thành thạo" thì hạ mức, như D32).
+- **Không cần AI sinh thêm:** trường `vi` sẵn có đã là bản dịch ngắn (trung vị 25 ký tự). Chỉ bỏ phần trong ngoặc vì
+  có chỗ lộ đáp án ("phúc lợi phụ (fringe benefits)"). Phương án nhiễu: nghĩa của từ CÙNG từ loại, cùng bộ và hạng
+  tần suất gần (30 ứng viên gần nhất), loại nghĩa trùng/đồng nghĩa để không có hai đáp án cùng đúng.
+  Giới hạn đã biết: nhiễu chọn theo từ loại + độ khó, không theo NGHĨA gần — muốn nhiễu khó hơn thì phải AI sinh.
+- **Trộn đều theo nhóm** (`interleaveEvenly`): phân loại lấy mục thứ k của mỗi nhóm (Cơ bản / Trung cấp / Cao cấp /
+  Cụm từ) vào "hàng" k, thứ tự trong hàng ngẫu nhiên → một lượt 20 thẻ có ~5 cụm. Cụm vào Ôn tập SAU khi đã phân loại
+  (như mọi thẻ); vì thế Ôn tập trước đây không có cụm nào — Huy chưa từng phân loại cụm.
+- Bảng tiến độ ở Tổng quan vẫn đếm TỪ trên thang "/ N từ" (không tính cụm).
 
 ## Câu hỏi còn mở
 - ~~Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng?~~ → **Đã giải quyết, xem D35** (chung repo, xét lại khi ~100 MB).

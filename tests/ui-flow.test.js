@@ -30,6 +30,8 @@ describe('màn phân loại', () => {
 
   it('bộ đếm đi 20 → 18 sau hai từ (quy tắc số 7)', async () => {
     await go('#/triage');
+    // Thẻ đầu phải là TỪ (chấm "thành thạo"): kho từ và ôn chủ động ở dưới chỉ liệt kê từ, không liệt kê cụm.
+    for (let i = 0; i < 20 && text().includes('Bạn dùng được CỤM'); i += 1) await key('s');
     first = word();
     expect(text()).toContain('còn 20 từ/cụm trong lượt');
     await key('4');
@@ -126,23 +128,30 @@ describe('ôn chủ động', () => {
     expect([...root.querySelectorAll('button.secondary')].some((b) => b.disabled)).toBe(true);
   });
 
-  it('chưa lật thì phím 1/2 không chấm; Space lật; Space lần nữa KHÔNG chấm "nhớ"', async () => {
+  // Trắc nghiệm (D66): phương án của từ "wNNx" là "nghĩa số NN".
+  const optionFor = (right) => [...root.querySelectorAll('.option')]
+    .find((b) => (b.querySelector('.option-text').textContent === `nghĩa số ${fluentWord.slice(1, 3)}`) === right);
+
+  it('4 lựa chọn nghĩa; chưa chọn thì CHƯA lộ giải thích; Space không tự chấm', async () => {
     await click((t) => t.includes('Kiểm tra từ đã thành thạo'));
     fluentWord = word();
-    await key('2');
-    expect(word()).toBe(fluentWord);
+    expect(root.querySelectorAll('.option')).toHaveLength(4);
+    expect(root.querySelector('.card.back')).toBeNull();
+    const events = store.eventCount;
     await key(' ');
-    expect(root.querySelector('.card.back')).not.toBeNull();
-    await key(' ');
-    expect(root.querySelector('.card.back')).not.toBeNull();
-    expect(word()).toBe(fluentWord);
+    expect(root.querySelector('.card.back')).toBeNull();
+    expect(store.eventCount).toBe(events);
   });
 
-  it('quên một từ "thành thạo" thì hạ xuống "đoán được" (ghi đúng một sự kiện)', async () => {
+  it('chọn sai một từ "thành thạo": lộ đáp án + giải thích, hạ xuống "đoán được" (ghi đúng một sự kiện)', async () => {
     const events = store.eventCount;
-    await key('2');
+    optionFor(false).click();
+    await tick(40);
+    expect(text()).toContain('Sai — đáp án: nghĩa số');
+    expect(root.querySelector('.card.back')).not.toBeNull();
     expect(levelOf(fluentWord)).toBe('context');
     expect(store.eventCount).toBe(events + 1);
+    await key(' ');
     expect(text()).toContain('Nhớ 0 / 1 từ');
     expect(text()).toContain('đã chuyển');
   });
@@ -153,10 +162,12 @@ describe('ôn chủ động', () => {
     await go('#/');
     await go('#/practice');
     await click((t) => t.includes('Kiểm tra từ đã thành thạo'));
-    await key(' ');
     const events = store.eventCount;
-    await key('1');
+    optionFor(true).click();
+    await tick(40);
+    expect(text()).toContain('Đúng — vẫn nhớ');
     expect(store.eventCount).toBe(events);
+    await key(' ');
     expect(text()).toContain('Nhớ 1 / 1 từ');
   });
 
@@ -165,5 +176,47 @@ describe('ôn chủ động', () => {
     await go('#/practice');
     expect(text()).toContain('Ôn chủ động');
     expect(text()).toContain('Kiểm tra từ đã thành thạo');
+  });
+});
+
+describe('ôn tập: trắc nghiệm, lịch tính bằng ngày (D66)', () => {
+  const reviewed = () => store.exportEvents().filter((e) => e.type === 'vocab.reviewed');
+  /** Chữ của lựa chọn đúng cho thẻ đang hiện: từ "wNNx" → "nghĩa số NN"; cụm (hỏi bằng nghĩa) → chính cụm đó. */
+  const rightText = () => {
+    const shown = root.querySelector('.card.big .word').textContent;
+    const colloc = store.collocationCards.find((c) => c.vi === shown);
+    return colloc ? colloc.word : `nghĩa số ${shown.slice(1, 3)}`;
+  };
+  const pickOption = async (right) => {
+    const target = rightText();
+    [...root.querySelectorAll('.option')].find((b) => (b.querySelector('.option-text').textContent === target) === right).click();
+    await tick(40);
+  };
+
+  it('4 lựa chọn, chưa chọn thì chưa lộ giải thích', async () => {
+    await go('#/review');
+    expect(root.querySelectorAll('.option')).toHaveLength(4);
+    expect(root.querySelector('.card.back')).toBeNull();
+    expect(text()).not.toMatch(/\d+ phút/);                  // không còn nút chấm "1 phút / 10 phút"
+  });
+
+  it('chọn ĐÚNG → ghi "good", báo ôn lại sau vài NGÀY, hiện giải thích; Space sang thẻ kế', async () => {
+    const before = reviewed().length;
+    await pickOption(true);
+    expect(reviewed()).toHaveLength(before + 1);
+    expect(reviewed().at(-1).payload.grade).toBe('good');
+    expect(text()).toMatch(/Đúng — ôn lại sau \d+ ngày/);
+    expect(root.querySelector('.card.back')).not.toBeNull();
+    await key(' ');
+    expect(root.querySelector('.card.back')).toBeNull();
+  });
+
+  it('chọn SAI → ghi "again", lộ đáp án đúng, ôn lại sau 1 ngày (không phải vài phút)', async () => {
+    const before = reviewed().length;
+    const right = rightText();
+    await pickOption(false);
+    expect(reviewed()).toHaveLength(before + 1);
+    expect(reviewed().at(-1).payload.grade).toBe('again');
+    expect(text()).toContain(`Sai — đáp án: ${right} · ôn lại sau 1 ngày`);
   });
 });

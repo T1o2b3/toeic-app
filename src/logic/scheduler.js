@@ -24,8 +24,12 @@ const RATING_BY_GRADE = {
   [GRADES.EASY]: Rating.Easy,
 };
 
-/** Nhịp học của Huy là 1–2 giờ/tuần (D03) nên cho phép quên nhiều hơn một chút để hàng đợi không phình. */
-const scheduler = fsrs(generatorParameters({ request_retention: 0.9, enable_fuzz: true }));
+/**
+ * Nhịp học của Huy là 1–2 giờ/tuần (D03). `enable_short_term: false` bỏ các bước học ngắn 1–10 phút (D66 — Huy:
+ * "không ai lại ôn lại sau 1-5-10 phút, nó không phải là lặp lại ngắt quãng nữa"): thẻ mới đi thẳng vào lịch
+ * tính bằng NGÀY — sai → 1 ngày, đúng → 3 → 14 → 57 ngày… Lịch cũ tự tính lại từ nhật ký (D23), không mất gì.
+ */
+const scheduler = fsrs(generatorParameters({ request_retention: 0.9, enable_fuzz: true, enable_short_term: false }));
 
 /**
  * Trạng thái ban đầu của một từ chưa học.

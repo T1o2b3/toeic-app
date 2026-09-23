@@ -31,13 +31,23 @@ describe('reviewCard', () => {
     expect(secondGap).toBeGreaterThan(firstGap);
   });
 
-  it('quên (again) làm giảm độ bền trí nhớ và kéo hạn ôn về gần', () => {
+  it('quên (again) làm giảm độ bền trí nhớ và kéo hạn ôn về gần — nhưng vẫn là NGÀY hôm sau', () => {
     let card = reviewCard(createNewCard(NOW), GRADES.GOOD, NOW);
     const strong = card.stability;
 
-    card = reviewCard(card, GRADES.AGAIN, later(60 * 24));
+    card = reviewCard(card, GRADES.AGAIN, later(60 * 24 * 3));
     expect(card.stability).toBeLessThan(strong);
-    expect(new Date(card.due) - later(60 * 24)).toBeLessThan(24 * 60 * 60 * 1000);
+    expect(new Date(card.due) - later(60 * 24 * 3)).toBe(24 * 60 * 60 * 1000);
+  });
+
+  it('không còn khoảng ôn tính bằng PHÚT (D66): thẻ mới sai → 1 ngày, đúng → vài ngày', () => {
+    const DAY = 24 * 60 * 60 * 1000;
+    const base = createNewCard(NOW);
+    for (const grade of Object.values(GRADES)) {
+      expect(new Date(reviewCard(base, grade, NOW).due) - NOW).toBeGreaterThanOrEqual(DAY);
+    }
+    expect(new Date(reviewCard(base, GRADES.AGAIN, NOW).due) - NOW).toBe(DAY);
+    expect(new Date(reviewCard(base, GRADES.GOOD, NOW).due) - NOW).toBeGreaterThanOrEqual(2 * DAY);
   });
 
   it('easy cho khoảng cách dài hơn good', () => {
