@@ -43,7 +43,8 @@ export function renderSync(store) {
         el('div', { text: '1. Tạo project trên supabase.com (gói free).' }),
         el('div', { text: '2. Chạy file supabase/schema.sql trong SQL Editor.' }),
         el('div', { text: '3. Tắt "Confirm email" ở Authentication → Sign In / Providers → Email.' }),
-        el('div', { text: '4. Thêm VITE_SUPABASE_URL và VITE_SUPABASE_ANON_KEY vào .env rồi build lại.' }),
+        el('div', { text: '4. Thêm VITE_SUPABASE_URL và VITE_SUPABASE_ANON_KEY (publishable key) vào .env, và trên Cloudflare ở Settings → Build → Variables and secrets, rồi build lại.' }),
+        el('div', { text: 'Checklist đầy đủ: mục "VIỆC CỦA HUY" trong PROGRESS.md.' }),
       ]),
       el('button', { class: 'secondary', onClick: () => goTo('/') }, [el('span', { text: 'Về Tổng quan' })]),
     ]);

@@ -4,7 +4,7 @@
 > Huy: cách bắt đầu phiên mới xem mục "Bắt đầu một phiên làm việc mới" trong \`README.md\`.
 
 ## Trạng thái hiện tại
-- Giai đoạn: 1 — MVP. **M0–M4 và M6 XONG. M5 code xong, chờ Huy cấu hình Supabase.**
+- Giai đoạn: 1 — MVP. **M0–M4 và M6 XONG. M5 code xong, chờ Huy cấu hình Supabase** — checklist từng bước ở mục "VIỆC CỦA HUY" bên dưới.
 - **App đã dùng học thật được**: https://toeic-app.huybndc-451.workers.dev
 - Repo private: https://github.com/huybndc/toeic-app — **801 test pass**.
 
@@ -445,25 +445,87 @@ Màn chính hiện số hiệu bản build ở dòng cuối (\`bản 2026-09-19 
 bộ nhớ đệm của service worker $\rightarrow$ tải lại trang (Mac: Cmd+Shift+R; iPhone: đóng hẳn app rồi mở lại).
 App đã có cơ chế tự tải lại khi thấy bản mới, nhưng lần đầu ngay sau khi deploy vẫn có thể lệch.
 
-## VIỆC CỦA HUY — kích hoạt đồng bộ (M5), khoảng 15 phút
+## VIỆC CỦA HUY — kích hoạt đồng bộ (M5): checklist cấu hình Supabase, khoảng 20–25 phút
 
-Đăng nhập bằng **email + mật khẩu** (D25c — đã đổi từ OTP vì Supabase chặn sửa mẫu email
-khi chưa có SMTP riêng).
+> Viết lại 2026-09-23. Bản cũ có hai chỗ lệch với giao diện hiện nay: (1) trên Cloudflare phải đặt biến ở
+> mục biến của **Build**, không phải biến lúc chạy của Worker; (2) Supabase nay gọi key công khai là
+> **Publishable key** (`sb_publishable_…`), tên cũ `anon` chỉ còn ở tab Legacy.
+> Đăng nhập bằng **email + mật khẩu** (D25c), không dùng mã OTP.
 
-1. supabase.com $\rightarrow$ New project. Name \`toeic-app\`, Region **Singapore**, gói Free.
-   Lưu lại Database Password nó sinh ra.
-2. **SQL Editor** $\rightarrow$ New query $\rightarrow$ dán toàn bộ \`supabase/schema.sql\` $\rightarrow$ **Run**.
-   Kết quả cuối phải là \`rowsecurity = true\` cho CẢ HAI bảng. Nếu không, DỪNG LẠI.
-3. **Authentication $\rightarrow$ Sign In / Providers $\rightarrow$ Email**:
-   - Công tắc **Email** (provider) phải **BẬT**. Tắt nó thì API trả \`Email logins are disabled\`.
-   - Chỉ tắt riêng **Confirm email** bên trong. Bấm Save.
-4. **Project Settings $\rightarrow$ API**: copy **Project URL** và **anon public** key.
-   KHÔNG dùng \`service_role\` key (ràng buộc #3).
-5. Thêm vào \`.env\`: \`VITE_SUPABASE_URL=...\` và \`VITE_SUPABASE_ANON_KEY=...\`
-6. Cloudflare $\rightarrow$ toeic-app $\rightarrow$ Settings $\rightarrow$ Variables: thêm đúng 2 biến đó $\rightarrow$ deploy lại.
-7. Mở app $\rightarrow$ **Đồng bộ giữa các máy** $\rightarrow$ nhập email + mật khẩu (từ 8 ký tự) $\rightarrow$
-   **Lần đầu dùng? Tạo tài khoản** $\rightarrow$ sau đó bấm **Đồng bộ ngay**.
-8. Máy thứ hai: cùng email + mật khẩu đó, bấm **Đăng nhập** rồi **Đồng bộ ngay**.
+**Bốn khái niệm cần biết trước (đọc 1 phút):**
+- **Supabase** = cơ sở dữ liệu Postgres + đăng nhập, chạy trên mây, gói Free. App chỉ gửi lên nhật ký sự kiện và cài đặt.
+- **RLS (Row Level Security)** = luật "mỗi tài khoản chỉ đọc/ghi được dòng của mình", do chính database áp đặt.
+  Key của app nằm công khai trong code frontend, nên RLS là lớp bảo vệ DUY NHẤT (ràng buộc #4).
+- **Publishable key** (`sb_publishable_…`, bản cũ là `anon`) được phép nằm trong app. **Secret key**
+  (`sb_secret_…`, bản cũ là `service_role`) bỏ qua mọi RLS → **không bao giờ** dán vào app (ràng buộc #3).
+- **Biến lúc build**: Vite chép giá trị `VITE_…` vào file JS lúc build. Máy build của Cloudflare phải thấy
+  biến thì app mới có — đặt nhầm chỗ là app vẫn báo "Chưa cấu hình Supabase".
+
+### A. Tạo project (~3 phút) — đã tạo từ trước thì dùng lại, bỏ qua A
+- [ ] supabase.com → đăng nhập (bằng GitHub cho nhanh) → **New project**.
+- [ ] Name `toeic-app` · Region **Southeast Asia (Singapore)** · Plan **Free**.
+- [ ] Database Password: bấm **Generate**, lưu vào trình quản lý mật khẩu (app không dùng, nhưng mất thì khó lấy lại).
+- [ ] Chờ project chạy xong (~1–2 phút).
+
+### B. Tạo bảng + bật RLS (~3 phút) — Huy tự làm bước này
+- [ ] Mở `supabase/schema.sql` trong repo, copy **toàn bộ**.
+- [ ] Dashboard → **SQL Editor** → **New query** → dán → **Run**. Nếu Supabase cảnh báo "destructive operation"
+      (do các dòng `drop policy if exists`) thì xác nhận Run — file chạy lại bao nhiêu lần cũng an toàn.
+- [ ] Bảng kết quả cuối: `events | true` và `settings | true`. **Có `false` → DỪNG, báo lại, không dùng tiếp.**
+- [ ] Kiểm chéo: **Table Editor** → hai bảng `events`, `settings` KHÔNG có nhãn "Unrestricted"/"RLS disabled".
+
+### C. Bật đăng nhập email + mật khẩu (~2 phút)
+- [ ] **Authentication → Sign In / Providers**.
+- [ ] Provider **Email**: **BẬT** (tắt thì app báo `Email logins are disabled`).
+- [ ] **Confirm email**: **TẮT** → **Save** (không tắt thì tạo tài khoản xong bị báo "đang bắt xác nhận email").
+- [ ] **Allow new users to sign up**: để BẬT tạm thời — sẽ tắt ở bước H.
+
+### D. Lấy URL + key (~1 phút)
+- [ ] **Project Settings → API Keys** → copy **Publishable key** (`sb_publishable_…`).
+      Chỉ thấy tab Legacy thì lấy key `anon` `public`.
+- [ ] **Project URL**: nút **Connect** ở đầu trang project (hoặc **Project Settings → Data API**).
+      Đúng dạng `https://<mã-project>.supabase.co` — KHÔNG có `/` hay `/rest/v1` ở cuối.
+- [ ] ❌ KHÔNG copy `sb_secret_…` hay `service_role`.
+
+### E. Chạy thử trên Mac trước (tuỳ chọn, nên làm, ~3 phút)
+- [ ] Mở `.env` ở thư mục repo, điền (không ngoặc kép, không khoảng trắng):
+      `VITE_SUPABASE_URL=https://<mã-project>.supabase.co` và `VITE_SUPABASE_ANON_KEY=sb_publishable_…`
+      (tên biến vẫn là `ANON_KEY` — chỉ là cái tên, publishable key dùng được y hệt).
+- [ ] `npm run dev` → mở link → **Đồng bộ giữa các máy** (nút gần cuối màn chính).
+      Thấy ô email/mật khẩu = đúng. Thấy "Cấu hình Supabase đang sai" → dòng lỗi chỉ đúng chỗ sai
+      (thiếu biến / URL sai dạng / dán nhầm URL vào ô key).
+- [ ] Xong thì tắt `npm run dev` (`Ctrl+C`).
+
+### F. Đưa lên bản deploy trên Cloudflare (~3 phút + chờ build)
+- [ ] dash.cloudflare.com → **Workers & Pages** → `toeic-app` → **Settings** → mục **Build** →
+      **Variables and secrets** → **Add**: `VITE_SUPABASE_URL` và `VITE_SUPABASE_ANON_KEY`, kiểu **Text** là đủ
+      (cả hai vốn công khai trong code app).
+- [ ] ⚠️ KHÔNG đặt ở mục **Variables and Secrets** riêng của Worker (biến lúc chạy) — Vite lúc build không thấy chúng.
+- [ ] Build lại: tab **Deployments** → bản build mới nhất → **Retry build** (hoặc đợi lần push kế tiếp lên `main`).
+- [ ] Mở app → tải lại trang (Mac `Cmd+Shift+R`; iPhone đóng hẳn app rồi mở lại) → **đối chiếu số hiệu bản build**
+      ở cuối màn chính với giờ build mới → vào màn Đồng bộ. Vẫn "Chưa cấu hình" = biến đặt sai mục ở trên.
+
+### G. Tạo tài khoản + đồng bộ hai máy (~3 phút)
+- [ ] Máy 1 (Mac): màn Đồng bộ → email + mật khẩu (từ 8 ký tự) → **Lần đầu dùng? Tạo tài khoản** → **Đồng bộ ngay**
+      → phải ra "Đồng bộ xong: gửi lên N sự kiện".
+- [ ] Kiểm tra: Supabase → **Table Editor → events** có khoảng N dòng.
+- [ ] Máy 2 (iPhone): cùng email + mật khẩu → **Đăng nhập** (KHÔNG tạo tài khoản mới) → **Đồng bộ ngay**.
+- [ ] Quay lại Mac bấm **Đồng bộ ngay** lần nữa. Máy nào trước cũng được: đồng bộ là GỘP nhật ký hai chiều, không đè.
+- [ ] Thử thật: ôn 1 thẻ trên iPhone → Đồng bộ → Mac Đồng bộ → thẻ đó đã được tính ôn trên Mac.
+
+### H. Khoá cửa (~3 phút) — đây là nửa sau của tiêu chí M5 "user khác không đọc được dữ liệu"
+- [ ] Cửa sổ ẩn danh → mở app → **Tạo tài khoản** bằng email thứ hai (vd `huybndc+test@gmail.com`) → **Đồng bộ ngay**
+      → dòng thông báo KHÔNG được có chữ "nhận về" (không thấy sự kiện nào của Huy).
+- [ ] Supabase → **Authentication → Users** → xoá tài khoản test.
+- [ ] **Authentication → Sign In / Providers** → **TẮT "Allow new users to sign up"** → Save.
+      Lý do: key công khai + không cần xác nhận email = ai cũng tạo được tài khoản và lấp đầy 500 MB của gói Free.
+      Huy chỉ cần MỘT tài khoản cho mọi máy.
+
+### Sau khi xong
+- Project Free **tự tạm dừng sau 7 ngày không hoạt động**. Nghỉ học hơn một tuần mà đồng bộ báo lỗi → vào dashboard
+  bấm **Restore project**. Tự động ping chống tạm dừng là M18 (cần secret trên GitHub).
+- Gói Free không backup tự động → thỉnh thoảng bấm **Xuất dữ liệu**.
+- Báo lại cho Claude: kết quả bước B (`true`/`true`) và dòng thông báo ở bước G → đánh dấu M5 xong trong PLAN.md.
 
 ## Đã xong trong phiên 2026-09-19
 - **M1**: Vite + Vitest, git, GitHub private, Cloudflare Workers tự deploy mỗi lần push.
