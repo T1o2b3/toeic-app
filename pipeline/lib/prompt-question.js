@@ -4,6 +4,8 @@
  * mà không thấy đáp án. Lệch nhau thì loại câu đó.
  * D17: chỉ mô tả dạng đề bằng lời, không đưa nguyên văn đề thật vào prompt.
  */
+import { mentionsChoiceLetter } from './prompt-listening.js';
+import { moveOptionTo } from './set-check.js';
 
 export const QUESTION_PROMPT_VERSION = 'part5-v3';
 
@@ -154,6 +156,35 @@ export function crossCheck(questions, solved) {
     }
   }
   return { agreed, rejected };
+}
+
+const LETTERS = ['A', 'B', 'C', 'D'];
+
+/**
+ * Cân bằng chữ cái đáp án của câu CHƯA phát hành (D64). AI ra đề dồn đáp án vào A — 200 câu đầu có 134 câu A,
+ * 5 câu D — nên người làm bài học được mẹo "phân vân thì chọn A" và điểm thi thử bị thổi lên.
+ *
+ * Mỗi câu mới nhận chữ cái đang ÍT nhất trong cả ngân hàng, nên các lần chạy sau tự kéo lệch cũ về dần.
+ * Câu đã phát hành giữ nguyên (ràng buộc #6). Câu có lời giải nhắc chữ cái ("Phương án B…") thì không đổi chỗ.
+ * Đổi chỗ an toàn vì phương án Part 5 là từ/cụm rời nhau, không phương án nào nhắc tới phương án khác.
+ *
+ * @param {Array<object>} entries - sắp theo id
+ * @param {Set<string>} published - id đã phát hành
+ * @returns {Array<object>}
+ */
+export function balanceAnswers(entries, published) {
+  const counts = Object.fromEntries(LETTERS.map((l) => [l, 0]));
+  for (const q of entries) if (published.has(q.id)) counts[q.answer] += 1;
+  return entries.map((q) => {
+    if (published.has(q.id)) return q;
+    if (mentionsChoiceLetter(q.explanation) || mentionsChoiceLetter(q.trap)) {
+      counts[q.answer] += 1;
+      return q;
+    }
+    const target = LETTERS.reduce((best, l) => (counts[l] < counts[best] ? l : best));
+    counts[target] += 1;
+    return { ...q, ...moveOptionTo(q, target), verify: { ...q.verify, answer: target } };
+  });
 }
 
 /**

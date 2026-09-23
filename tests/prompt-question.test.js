@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   buildQuestionPrompt, buildVerifyPrompt, crossCheck, questionKey, hasBlank,
-  ERROR_TYPES, ERROR_TYPE_DEFINITIONS, QUESTION_PROMPT_VERSION,
+  ERROR_TYPES, ERROR_TYPE_DEFINITIONS, QUESTION_PROMPT_VERSION, balanceAnswers,
 } from '../pipeline/lib/prompt-question.js';
 import { hasBlank as appHasBlank } from '../src/logic/part5.js';
 
@@ -139,5 +139,31 @@ describe('câu phải có chỗ trống (lỗi thật: p5-0079)', () => {
   it('bản của pipeline và bản của app hiểu chỗ trống GIỐNG NHAU (hai file cố ý tách nhau)', () => {
     const samples = ['a ---- b', 'a -- b', 'a ____ b', 'well-known', 'không có gì', '', '-'];
     for (const sample of samples) expect(hasBlank(sample)).toBe(appHasBlank(sample));
+  });
+});
+
+describe('balanceAnswers — cân bằng chữ cái đáp án Part 5 (D64)', () => {
+  const q = (id, answer, extra = {}) => ({
+    id, answer, options: { A: `${id}-a`, B: `${id}-b`, C: `${id}-c`, D: `${id}-d` },
+    explanation: 'Giải thích.', verify: { model: 'm', answer, agreed: true }, ...extra,
+  });
+
+  it('câu mới nhận chữ cái đang ÍT nhất trong cả ngân hàng; nội dung đáp án đúng đi theo', () => {
+    const published = new Set(['p5-0001', 'p5-0002', 'p5-0003']);
+    const out = balanceAnswers([q('p5-0001', 'A'), q('p5-0002', 'A'), q('p5-0003', 'B'), q('p5-0004', 'A'), q('p5-0005', 'A'), q('p5-0006', 'A')], published);
+    expect(out.slice(3).map((x) => x.answer)).toEqual(['C', 'D', 'B']);      // đang có A2 B1 C0 D0
+    expect(out[3].options.C).toBe('p5-0004-a');                              // phương án đúng cũ giờ nằm ở C
+    expect(out[3].verify.answer).toBe('C');
+    expect(Object.values(out[3].options).sort()).toEqual(['p5-0004-a', 'p5-0004-b', 'p5-0004-c', 'p5-0004-d']);
+  });
+
+  it('câu đã phát hành giữ NGUYÊN từng byte (ràng buộc #6)', () => {
+    const old = q('p5-0001', 'A');
+    expect(balanceAnswers([old], new Set(['p5-0001']))[0]).toBe(old);
+  });
+
+  it('lời giải nhắc chữ cái ("Phương án B…") thì không đổi chỗ — đổi là lời giải nói sai', () => {
+    const out = balanceAnswers([q('p5-0001', 'A', { explanation: 'Phương án B sai vì thiếu giới từ.' })], new Set());
+    expect(out[0].answer).toBe('A');
   });
 });

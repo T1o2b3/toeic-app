@@ -586,6 +586,16 @@ rồi. Ngoài thêm nội dung ra thì còn lại cũng không cần thiết l�
 - **Chỉ làm khi Huy yêu cầu:** M10 phần phụ (bảng/biểu Part 3, đánh dấu câu chứa đáp án), M14, M17, M19, M20.
 - **Làm tiếp:** nội dung (ưu tiên phần luyện nhiều: Part 5, Part 2, rồi các bộ) và phần còn lại của M21.
 
+**D64. Cân bằng chữ cái đáp án Part 5 — chỉ cho câu CHƯA phát hành.** (Claude phát hiện 2026-09-23 khi đọc thử câu mới.)
+- **Lỗi có sẵn:** 200 câu Part 5 đã phát hành có đáp án A = 134, B = 46, C = 15, D = 5 (AI ra đề dồn đáp án vào A;
+  câu mới sinh hôm nay 19/19 là A). Part 2 và các bộ thì đã cân bằng từ trước, riêng Part 5 thì chưa.
+  Hậu quả: học được mẹo "phân vân thì chọn A", điểm thi thử bị thổi lên.
+- **Sửa:** `balanceAnswers` (`pipeline/lib/prompt-question.js`) lúc ghi file: mỗi câu mới nhận chữ cái đang ÍT nhất trong
+  cả ngân hàng (dùng lại `moveOptionTo` của bộ đề) → các lần chạy sau tự kéo lệch cũ về dần. Câu có lời giải nhắc chữ
+  cái thì không đổi chỗ.
+- **Câu cũ giữ nguyên** (ràng buộc #6: nhật ký có ghi chữ cái đã chọn). Nếu muốn hết lệch hẳn thì phải xáo phương án
+  lúc HIỆN trong app (đổi chữ hiển thị, quy về chữ gốc khi chấm) — chưa làm, chờ Huy quyết.
+
 ## Câu hỏi còn mở
 - ~~Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng?~~ → **Đã giải quyết, xem D35** (chung repo, xét lại khi ~100 MB).
 - ~~Q2 (trước M2): xác nhận license của TSL 1.2 và NGSL.~~ → **Đã giải quyết, xem D18.**

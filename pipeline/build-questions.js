@@ -10,7 +10,9 @@
  * Chỉ câu được cả hai đồng ý mới vào file. Cache giữ câu đã đạt để chạy lại không mất.
  */
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
-import { buildQuestionPrompt, buildVerifyPrompt, crossCheck, questionKey, ERROR_TYPES, QUESTION_PROMPT_VERSION } from './lib/prompt-question.js';
+import {
+  buildQuestionPrompt, buildVerifyPrompt, crossCheck, questionKey, balanceAnswers, ERROR_TYPES, QUESTION_PROMPT_VERSION,
+} from './lib/prompt-question.js';
 import { parseVocabResponse } from './lib/prompt-vocab.js';
 import { isVietnameseOrEmpty } from './lib/prompt-listening.js';
 import { sleep } from './lib/ai-provider.js';
@@ -122,9 +124,9 @@ async function main() {
     if (cache.size() < target) await sleep(4000);
   }
 
-  const entries = Object.values(cache.snapshot())
+  const entries = balanceAnswers(Object.values(cache.snapshot())
     .filter((q) => published.has(q.id) || q.explanation.length >= 20)
-    .sort((a, b) => a.id.localeCompare(b.id));
+    .sort((a, b) => a.id.localeCompare(b.id)), published);
 
   if (entries.length === 0) {
     console.error('Chưa có câu nào đạt — không ghi file.');
