@@ -11,13 +11,14 @@
  * Nằm NGOÀI #app để mỗi lần vẽ lại màn không làm nháy menu.
  */
 import { el } from './dom.js';
+import { icon } from './blocks.js';
 
 /** Mỗi mục và các màn thuộc về nó (để tô sáng đúng mục khi đang ở màn con). */
 const TABS = Object.freeze([
-  { key: 'home', label: 'Tổng quan', icon: '◔', href: '#/', screens: ['home'] },
-  { key: 'vocab', label: 'Từ vựng', icon: 'Aa', href: '#/vocab', screens: ['vocab', 'words', 'weak', 'lookup'] },
-  { key: 'exams', label: 'Bài thi', icon: '✎', href: '#/exams', screens: ['exams'] },
-  { key: 'sync', label: 'Sao lưu', icon: '⇅', href: '#/sync', screens: ['sync'] },
+  { key: 'home', label: 'Tổng quan', icon: 'home', href: '#/', screens: ['home'] },
+  { key: 'vocab', label: 'Từ vựng', icon: 'book', href: '#/vocab', screens: ['vocab', 'words', 'weak', 'lookup'] },
+  { key: 'exams', label: 'Bài thi', icon: 'exam', href: '#/exams', screens: ['exams'] },
+  { key: 'sync', label: 'Sao lưu', icon: 'sync', href: '#/sync', screens: ['sync'] },
 ]);
 
 /** Màn phiên học: ẩn thanh dưới đáy. Màn lạ không có trong TABS lẫn danh sách này thì vẫn hiện, không tô mục nào. */
@@ -66,7 +67,7 @@ export function updateTabBar(nav, screen) {
       const link = el('a', {
         class: tab.key === current ? 'tab active' : 'tab',
         href: tab.href,
-      }, [el('span', { class: 'tab-icon', text: tab.icon }), el('span', { text: tab.label })]);
+      }, [icon(tab.icon), el('span', { text: tab.label })]);
       if (tab.key === current) link.setAttribute('aria-current', 'page');
       return link;
     }),

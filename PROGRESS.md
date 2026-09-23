@@ -6,7 +6,7 @@
 ## Trạng thái hiện tại
 - Giai đoạn: 1 — MVP. **M0–M6 XONG** (M5: Huy cấu hình Supabase xong 2026-09-23). M18 xong (ping). Tiếp theo: **M7** (README + sửa lỗi phát sinh).
 - **App đã dùng học thật được**: https://toeic-app.huybndc-451.workers.dev
-- Repo private: https://github.com/huybndc/toeic-app — **806 test pass**.
+- Repo private: https://github.com/huybndc/toeic-app — **802 test pass**.
 
 ## Dùng app thế nào (cho Huy)
 1. Mở link trên (máy Mac hoặc iPhone).
@@ -26,7 +26,7 @@
 6. **Đồng bộ tự động** (D55) khi mở app, khi rời app và 15 giây sau khi học. Mục **Sao lưu** hiện lần chạy
    gần nhất; muốn chắc thì bấm **Đồng bộ ngay**. Mỗi máy chỉ cần đăng nhập một lần.
 
-## Phiên 2026-09-23 (18:40) — Supabase chạy thật · sửa lỗi đồng bộ quá 1000 sự kiện · tự đồng bộ — XONG
+## Phiên 2026-09-23 (18:40) — Supabase chạy thật · tự đồng bộ · M18 · người mới · đánh bóng giao diện (A)
 
 Huy đã cấu hình Supabase xong, đăng nhập và đồng bộ được trên bản deploy (524 sự kiện ở Mac).
 
@@ -78,7 +78,23 @@ Huy đã đặt 2 secret, workflow ping chạy tay lần đầu **thành công**
 - Bỏ các câu chỉ đúng với Huy: "cả 3 máy", "Mac ↔ iPhone", "từ Huy tự đánh dấu".
 - README: mục **"Gửi app cho bạn bè"** — tin nhắn soạn sẵn để copy (repo private, bạn bè không đọc được README).
 
+**9. Bỏ bộ chọn "Part 5 mỗi lượt 10/20/30" (D58)** theo yêu cầu Huy — lượt cố định 30 câu. Kèm sửa ô "Hôm nay"
+báo Part 5 là 20 câu trong khi lượt thật 30 (nay mọi chỗ dùng `PART5_COUNT`).
+
+**10. Đánh bóng giao diện — phần A (D59).** Huy giao: "làm gì tiếp thì tự đánh giá rồi triển khai luôn, không cần hỏi".
+- Icon SVG thay ◔ Aa ✎ ⇅ 🌙 👁 ⬇ (hàm `icon()` ở `blocks.js`, dùng ở thanh điều hướng, nút sáng/tối, phân loại, xuất dữ liệu).
+- Đổi màn: mờ dần 180ms (View Transitions), về đầu trang (trước đây cuộn xuống cuối màn chính rồi bấm tab thì màn
+  mới mở giữa chừng), focus về tiêu đề mới. Trang ẩn thì trình duyệt bỏ hiệu ứng — đã chặn lỗi "Uncaught" thừa.
+- `index.html`: màn chờ "Đang tải bài học…", đặt sáng/tối trước lần vẽ đầu (hết nháy trắng), **`apple-touch-icon`**
+  (trước đây thêm ra MH chính iPhone thì icon là ảnh chụp trang), `theme-color` sáng/tối.
+- Sửa: menu trái ở nền tối có mảng sáng chói (màu viết cứng) · `toggleTheme` văng lỗi ở duyệt riêng tư Safari.
+- Đã kiểm: 802 test pass (test canh sẵn lỗi "mở app không có thanh điều hướng" — đã thử đưa lỗi vào, 2 test đỏ),
+  trình duyệt 375×812 + 1280×800 sáng/tối, không lỗi console, build có đủ thẻ meta.
+
 ### Bước tiếp theo
+- **Đánh bóng phần B (Claude tự làm tiếp):** thang khoảng cách + cỡ chữ thống nhất (`--space-*`, `--text-*`), phản hồi
+  khi chọn đáp án đúng/sai (nháy màu nhẹ), trạng thái rỗng có hướng dẫn. Kiểm bằng mắt đủ 15 màn trước khi commit —
+  lần xoá CSS trước (2026-09-23) đã làm mất 43 class.
 - **Huy kiểm tự đồng bộ trên bản deploy** (nhớ đối chiếu số hiệu bản build): Mac học 1 thẻ → chờ 20 giây →
   mở app trên iPhone (đăng nhập cùng tài khoản nếu chưa) → vào **Sao lưu**: dòng "Lần gần nhất … nhận về 1".
 - **M7 xong khi** Huy học thật 1 phiên trên Mac + 1 phiên trên iPhone. Gặp lỗi gì thì báo (kèm số hiệu bản build).

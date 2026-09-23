@@ -531,6 +531,17 @@ bộ, phân loại = 20 từ). 30 = đúng Part 5 của đề thật, nên lư�
 lệch: ô "Hôm nay" từng báo Part 5 là 20 câu trong khi lượt thật là 30 — nay mọi chỗ dùng `PART5_COUNT`.
 Muốn luyện ít hơn thì thoát giữa lượt: câu đã làm vẫn được ghi.
 
+**D59. Nâng giao diện lên mức "web chuyên nghiệp" bằng ĐÁNH BÓNG, không làm lại.** (Huy hỏi 2026-09-23 có nâng
+được không hay trade-off quá cao; Huy giao Claude tự quyết việc tiếp theo.) Thứ làm app trông "làm tay" không phải bố
+cục (đã ổn từ D51/D54) mà là chi tiết: icon bằng ký tự/emoji, không có chuyển động, nháy trắng khi mở ở nền tối,
+không có icon khi thêm ra màn hình iPhone. Làm các thứ RẺ mà thấy rõ; giữ vanilla JS, không thêm thư viện.
+- **Phần A (đã làm):** icon SVG tự vẽ (`icon()` ở `blocks.js`) · chuyển màn bằng View Transitions 180ms, có nhánh
+  dự phòng, tắt khi bật giảm chuyển động, focus về tiêu đề màn mới · màn chờ lúc tải · đặt sáng/tối trong
+  `index.html` trước lần vẽ đầu · `apple-touch-icon` + `theme-color` · viền focus chỉ khi dùng bàn phím.
+- **Cố ý KHÔNG làm (trade-off cao):** font web riêng (SF trên máy Apple đã rất tốt với tiếng Việt; thêm font là thêm
+  tải + phải cache offline) · viết lại bằng framework · thư viện animation · minh hoạ/hình ảnh trang trí.
+- Hiệu ứng chỉ khi ĐỔI MÀN; vẽ lại trong cùng màn (lật thẻ, chấm câu) không có hiệu ứng — chỉ làm chậm tay.
+
 ## Câu hỏi còn mở
 - ~~Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng?~~ → **Đã giải quyết, xem D35** (chung repo, xét lại khi ~100 MB).
 - ~~Q2 (trước M2): xác nhận license của TSL 1.2 và NGSL.~~ → **Đã giải quyết, xem D18.**

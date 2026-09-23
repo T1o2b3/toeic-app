@@ -279,3 +279,32 @@ export function navGroup(title, items) {
     ]))),
   ]);
 }
+
+/**
+ * Nét vẽ SVG của các icon (khung 24×24, nét 2px, màu theo chữ). Thay cho ký tự Unicode/emoji (◔ ✎ ⇅ 🌙 👁):
+ * emoji mỗi hệ điều hành vẽ một kiểu, cỡ và độ đậm lệch nhau — nhìn là biết "làm tay".
+ */
+const ICON_PATHS = Object.freeze({
+  home: '<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9v11h14V9"/><path d="M10 20v-6h4v6"/>',
+  book: '<path d="M2 5h6a4 4 0 0 1 4 4v11a3 3 0 0 0-3-3H2z"/><path d="M22 5h-6a4 4 0 0 0-4 4v11a3 3 0 0 1 3-3h7z"/>',
+  exam: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 2.5h6v3H9z"/><path d="M9 11h6M9 15h4"/>',
+  sync: '<path d="M20 11a8 8 0 0 0-14.3-4.9L4 8"/><path d="M4 3v5h5"/><path d="M4 13a8 8 0 0 0 14.3 4.9L20 16"/><path d="M20 21v-5h-5"/>',
+  moon: '<path d="M20 14.5A8.5 8.5 0 1 1 9.5 4 6.5 6.5 0 0 0 20 14.5z"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  eye: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  download: '<path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/>',
+});
+
+/**
+ * Icon SVG, cỡ bằng cỡ chữ đang dùng. `aria-hidden` vì nút/tab luôn có chữ hoặc aria-label đi kèm.
+ * @param {keyof typeof ICON_PATHS} name
+ * @returns {HTMLElement}
+ */
+export function icon(name) {
+  return el('span', {
+    class: 'icon',
+    'aria-hidden': 'true',
+    html: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" '
+      + `stroke-linecap="round" stroke-linejoin="round">${ICON_PATHS[name]}</svg>`,
+  });
+}

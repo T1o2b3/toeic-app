@@ -11,7 +11,7 @@
   flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.1rem;
   padding: 0.5rem 0 0.45rem; font-size: 0.72rem; color: var(--muted); text-decoration: none;
 }
-.tabbar .tab-icon { font-size: 1.15rem; line-height: 1.2; font-weight: 600; }
+.tabbar .tab .icon { font-size: 1.35rem; }
 .tabbar .tab.active { color: var(--accent); font-weight: 600; }
 body.has-tabbar #app { padding-bottom: calc(5rem + env(safe-area-inset-bottom)); }
 
@@ -159,9 +159,10 @@ button.pal.current { outline: 2px solid var(--fg); outline-offset: 1px; }
     flex: none; flex-direction: row; justify-content: flex-start; align-items: center;
     gap: 0.7rem; padding: 0.55rem 0.75rem; border-radius: 0.6rem; font-size: 0.95rem;
   }
-  .tabbar .tab:hover { background: #f2f2ed; }
-  .tabbar .tab.active { background: #eef6f1; }
-  .tabbar .tab-icon { font-size: 1rem; }
+  /* Dùng biến màu chứ không viết cứng: bản cũ #f2f2ed/#eef6f1 thành mảng sáng chói ở nền tối. */
+  .tabbar .tab:hover { background: var(--chosen-soft); }
+  .tabbar .tab.active { background: var(--good-soft); }
+  .tabbar .tab .icon { font-size: 1.15rem; }
 
   /* Đẩy toàn bộ nội dung sang phải đúng bề rộng menu, rồi vẫn căn giữa trong phần còn lại.
      Nới bề ngang từ 34rem (khổ điện thoại) lên 44rem: màn rộng mà cột chữ vẫn hẹp thì thừa chỗ vô ích,
@@ -199,3 +200,22 @@ button.pal.current { outline: 2px solid var(--fg); outline-offset: 1px; }
 
 /* Ghi chú căn trái (dưới khối điểm, dưới dãy phương án) */
 .footnote.left { text-align: left; margin-top: 0.75rem; }
+
+/* ===== Đánh bóng chung (D59): icon, focus bàn phím, chuyển màn ===== */
+.icon { display: inline-flex; vertical-align: -0.125em; flex: none; }
+.icon svg { display: block; }
+
+/* Viền focus CHỈ khi dùng bàn phím (:focus-visible) — bấm chuột/chạm thì không hiện. */
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* Tiêu đề nhận focus bằng code lúc đổi màn (cho trình đọc màn hình), không phải chỗ để bấm. */
+h1[tabindex="-1"]:focus { outline: none; }
+
+/* Đã có hiệu ứng nhấn (:active) nên tắt mảng xám mặc định của Safari iOS khi chạm. */
+button, a { -webkit-tap-highlight-color: transparent; }
+
+/* Đổi màn: mờ dần 180ms — đủ để mắt theo kịp, không đủ lâu để thấy chậm. */
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 180ms; }
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+  *, *::before, *::after { transition-duration: 0.01ms !important; }
+}

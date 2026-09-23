@@ -9,6 +9,7 @@
  */
 import { el, goTo } from './dom.js';
 import { toggleTheme } from './app.js';
+import { icon } from './blocks.js';
 import { SKILL_LABEL } from '../logic/exam-time.js';
 import { countUntriaged } from '../logic/vocab-state.js';
 import { suggestSessions, pickTwo } from '../logic/suggest.js';
@@ -57,8 +58,7 @@ export function renderHome(store) {
           class: 'theme-toggle',
           'aria-label': theme === 'light' ? 'Chuyển sang nền tối' : 'Chuyển sang nền sáng',
           onClick: () => { toggleTheme(); store.refresh(); },
-          text: theme === 'light' ? '🌙' : '☀️',
-        }),
+        }, [icon(theme === 'light' ? 'moon' : 'sun')]),
       ]),
       renderWeeksBadge(weeks),
     ]),
@@ -75,7 +75,7 @@ export function renderHome(store) {
       el('small', { text: isSupabaseConfigured() ? 'dùng chung tiến độ trên mọi máy' : 'chưa cấu hình — dữ liệu chỉ ở máy này' }),
     ]),
     el('div', { class: 'actions' }, [
-      el('button', { class: 'link', text: '⬇ Xuất dữ liệu ra file', onClick: () => downloadBackup(store) }),
+      el('button', { class: 'link', onClick: () => downloadBackup(store) }, [icon('download'), ' Xuất dữ liệu ra file']),
     ]),
     el('p', { class: 'footnote', text: `${store.eventCount} sự kiện đã ghi trên máy này · bản ${BUILD_TIME}` }),
   ]);

@@ -1,7 +1,7 @@
 /**
  * Lắp ráp app: router + store + bàn phím. Mỗi khi trạng thái đổi thì vẽ lại màn hiện tại.
  */
-import { el, replace } from './dom.js';
+import { el, replace, scrollToTop } from './dom.js';
 import { startRouter } from './router.js';
 import { renderHome } from './home-screen.js';
 import { renderTriage, handleTriageKey, resetTriage } from './triage-screen.js';
@@ -53,15 +53,8 @@ export function toggleTheme() {
   const current = document.documentElement.getAttribute('data-theme') || 'light';
   const next = current === 'light' ? 'dark' : 'light';
   document.documentElement.setAttribute('data-theme', next);
-  localStorage.setItem('theme', next);
+  try { localStorage.setItem('theme', next); } catch { /* duyệt riêng tư: vẫn đổi, chỉ không nhớ */ }
   return next;
-}
-
-function initTheme() {
-  const saved = localStorage.getItem('theme');
-  const preferDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const theme = saved || (preferDark ? 'dark' : 'light');
-  document.documentElement.setAttribute('data-theme', theme);
 }
 
 /**
@@ -70,8 +63,7 @@ function initTheme() {
  * @param {object} store
  */
 export function mountApp(root, store) {
-  initTheme();
-
+  // Sáng/tối được đặt sẵn ở index.html, trước lần vẽ đầu (không nháy trắng).
   let current = { name: 'home', params: new URLSearchParams() };
   const nav = createTabBar();
   root.after(nav);
@@ -85,13 +77,29 @@ export function mountApp(root, store) {
     }
   };
 
-  startRouter((route) => {
-    if (route.name !== current.name) { 
-      resetTriage(); resetReview(); resetQuiz(); resetSync(); resetWords(); resetPractice(); resetListen(); resetLookup(); resetSets(); resetExam(); resetCollocations(); 
-    }
-    current = route;
+  // Đổi màn: mờ dần sang màn mới (View Transitions — trình duyệt chưa hỗ trợ thì đổi ngay, không sao),
+  // về đầu trang, và đưa focus về tiêu đề màn mới để bàn phím / trình đọc màn hình không bị bỏ lơ ở nút
+  // vừa biến mất. Vẽ lại TRONG cùng màn (lật thẻ, chấm câu) thì không làm gì cả — hiệu ứng chỉ làm chậm tay.
+  const showNewScreen = () => {
     updateTabBar(nav, current.name);
     draw();
+    scrollToTop();
+    const heading = root.querySelector('h1');
+    heading?.setAttribute('tabindex', '-1');
+    heading?.focus({ preventScroll: true });
+  };
+
+  startRouter((route) => {
+    const changed = route.name !== current.name;
+    if (changed) {
+      resetTriage(); resetReview(); resetQuiz(); resetSync(); resetWords(); resetPractice(); resetListen(); resetLookup(); resetSets(); resetExam(); resetCollocations();
+    }
+    current = route;
+    if (!changed) { updateTabBar(nav, current.name); draw(); } // cả lần mở app đầu tiên (màn chính)
+    // Trang đang ẩn hoặc chuyển màn dồn dập thì trình duyệt BỎ hiệu ứng (vẫn đổi màn) và từ chối `ready`
+    // bằng InvalidStateError — không phải lỗi, chỉ cần đừng để nó thành "Uncaught" trong console.
+    else if (document.startViewTransition) document.startViewTransition(showNewScreen).ready.catch(() => {});
+    else showNewScreen();
   });
 
   store.subscribe(draw);

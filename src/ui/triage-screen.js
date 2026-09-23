@@ -11,7 +11,7 @@
  */
 import { el, goTo } from './dom.js';
 import { renderWordHead } from './word-detail.js';
-import { backButton, backLink, sessionDone } from './blocks.js';
+import { backButton, backLink, sessionDone, icon } from './blocks.js';
 import { triageQueue, countUntriaged } from '../logic/vocab-state.js';
 import { roundProgress } from '../logic/round.js';
 import { LEVEL_ORDER, LEVEL_INFO, payloadForLevel } from '../logic/vocab-levels.js';
@@ -133,9 +133,8 @@ export function renderTriage(store, params) {
         : el('button', { class: 'link', text: 'Để sau →', onClick: () => skip(store, entry) }),
       el('button', {
         class: showMeaning ? 'link active' : 'link',
-        text: showMeaning ? '👁 Đang hiện nghĩa' : '👁 Hiện nghĩa',
         onClick: () => { setShowMeaning(!showMeaning); store.refresh(); },
-      }),
+      }, [icon('eye'), showMeaning ? ' Đang hiện nghĩa' : ' Hiện nghĩa']),
     ]),
     el('p', { class: 'footnote', text: 'Phím tắt: 1–4 chọn mức · Backspace từ trước · S để sau · Space bật/tắt nghĩa' }),
   ]);
