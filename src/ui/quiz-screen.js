@@ -18,7 +18,7 @@ import { pace } from '../logic/pace.js';
 import { shuffleChoices, originalLetter } from '../logic/shuffle.js';
 import { roundProgress } from '../logic/round.js';
 import { renderStem, renderTray, renderOptionCapture, resetCapture } from './capture-tray.js';
-import { optionList, splitPane, backLink, backButton, verdictLine, explanationCard, letterFromKey, sessionDone } from './blocks.js';
+import { optionList, splitPane, backLink, backButton, verdictLine, explanationCard, letterFromKey, sessionDone, nextActions } from './blocks.js';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
 
@@ -96,15 +96,8 @@ export function renderQuiz(store) {
       ]),
       explanationCard(question),
       renderOptionCapture(store, question),
-      el('div', { class: 'actions' }, [
-        el('button', { class: 'primary', onClick: () => next(store) }, [
-          el('span', { text: at + 1 >= roundList.length ? 'Xem kết quả lượt' : 'Câu tiếp theo' }),
-          el('small', { text: 'phím Space' }),
-        ]),
-      ]),
-      el('div', { class: 'actions' }, [
-        el('button', { class: 'link', text: '⚑ Báo câu này sai', onClick: () => report(store, question) }),
-      ]),
+      ...nextActions(at + 1 >= roundList.length ? 'Xem kết quả lượt' : 'Câu tiếp theo', () => next(store),
+        { label: '⚑ Báo câu này sai', onClick: () => report(store, question) }),
     );
   } else {
     right.push(el('p', { class: 'footnote left', text: `Phím tắt: 1–4 hoặc A–D để chọn · nhịp đề thật khoảng 20 giây/câu` }));

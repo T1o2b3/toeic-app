@@ -3,7 +3,7 @@
  * Chọn đúng = "Tốt", chọn sai = "Quên" (lịch FSRS tính bằng ngày — D66). Phím 1–4 / A–D chọn, Space sang thẻ kế.
  */
 import { el, goTo } from './dom.js';
-import { backButton, backLink, sessionDone, letterFromKey } from './blocks.js';
+import { backButton, backLink, sessionDone, letterFromKey, nextActions } from './blocks.js';
 import { reviewQueue, reviewCounts } from '../logic/vocab-state.js';
 import { reviewProgress } from '../logic/round.js';
 import { TIER_ORDER, studyEntries } from '../logic/deck-tiers.js';
@@ -97,9 +97,7 @@ export function renderReview(store) {
       picked, verdict, onPick: (letter) => pick(store, item, choice, letter),
       hint: state.lapses > 0 && !picked ? `Đã quên ${state.lapses} lần — nghĩa là gì?` : undefined,
     }),
-    picked ? el('div', { class: 'actions' }, [
-      el('button', { class: 'primary', onClick: () => next(store) }, [el('span', { text: 'Thẻ tiếp' }), el('small', { text: 'phím Space' })]),
-    ]) : '',
+    picked ? nextActions('Thẻ tiếp', () => next(store)) : '',
     renderBookmark(store, entry, state),
   ]);
 }

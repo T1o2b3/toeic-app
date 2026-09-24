@@ -11,7 +11,7 @@ import {
 } from '../logic/dictation.js';
 import { getListenSpeed } from '../data/prefs.js';
 import { createPlayerSlot } from './audio-player.js';
-import { backButton, backLink, sessionDone, speedChooser } from './blocks.js';
+import { backButton, backLink, sessionDone, speedChooser, nextActions } from './blocks.js';
 import { renderStem, renderTray, resetCapture } from './capture-tray.js';
 
 // Trạng thái riêng của màn này.
@@ -119,12 +119,7 @@ export function renderDictation(store) {
       renderStem(store, { stem: unit.text }),
     ]),
     renderTray(store, { id: unit.from }),
-    el('div', { class: 'actions' }, [
-      el('button', { class: 'primary', onClick: () => next(store) }, [
-        el('span', { text: 'Đoạn tiếp' }),
-        el('small', { text: 'phím Space' }),
-      ]),
-    ]),
+    ...nextActions('Đoạn tiếp', () => next(store)),
   );
   return el('div', {}, children);
 }
