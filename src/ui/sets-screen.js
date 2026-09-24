@@ -19,7 +19,7 @@ import { getListenSpeed } from '../data/prefs.js';
 import { createPlayerSlot } from './audio-player.js';
 import { renderStem, renderTray, resetCapture } from './capture-tray.js';
 import { renderQuestion, renderTranscript, renderHold, renderPace } from './set-blocks.js';
-import { splitPane, backLink, backButton, speedChooser, letterFromKey, sessionDone, nextActions } from './blocks.js';
+import { splitPane, backLink, backButton, speedChooser, letterFromKey, sessionDone, nextActions, listenLabel } from './blocks.js';
 import { formatClock } from '../logic/exam-time.js';
 import { createEvent } from '../logic/events.js';
 import { shuffleChoices, originalLetter, onceShuffled } from '../logic/shuffle.js';
@@ -165,7 +165,7 @@ function renderPassages(store, set) {
 function renderListenCard(store, set) {
   return el('div', { class: 'card big' }, [
     el('button', { class: 'primary listen-play', onClick: () => play(store, set) }, [
-      el('span', { text: playing ? '🔊 Đang phát…' : heard ? '▶ Nghe lại' : '▶ Nghe đoạn này' }),
+      el('span', {}, listenLabel({ playing, heard, idle: 'Nghe đoạn này' })),
       el('small', { text: 'phím Space' }),
     ]),
     speedChooser(store),

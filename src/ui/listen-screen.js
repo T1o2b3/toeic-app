@@ -11,7 +11,9 @@ import { roundProgress } from '../logic/round.js';
 import { LISTEN_ROUND_SIZE, clipSequence, canAnswer, audioUrl } from '../logic/listen.js';
 import { getListenSpeed } from '../data/prefs.js';
 import { createPlayerSlot } from './audio-player.js';
-import { backButton, backLink, explanationCard, letterFromKey, nextActions, optionList, speedChooser, verdictLine } from './blocks.js';
+import {
+  backButton, backLink, explanationCard, letterFromKey, listenLabel, nextActions, optionList, speedChooser, verdictLine,
+} from './blocks.js';
 import { renderStem, renderTray, resetCapture } from './capture-tray.js';
 import { shuffleChoices, originalLetter, onceShuffled } from '../logic/shuffle.js';
 
@@ -92,7 +94,7 @@ export function renderListen(store) {
     ]),
     el('div', { class: 'card big' }, [
       el('button', { class: 'primary listen-play', onClick: () => play(store, question) }, [
-        el('span', { text: playing ? '🔊 Đang phát…' : heard ? '▶ Nghe lại' : '▶ Nghe câu này' }),
+        el('span', {}, listenLabel({ playing, heard, idle: 'Nghe câu này' })),
         el('small', { text: 'phím Space' }),
       ]),
       speedChooser(store),
@@ -101,7 +103,7 @@ export function renderListen(store) {
     // Nghe hết mới chọn được; chọn xong mới lộ chữ của ba câu đáp (D35).
     optionList({
       letters: LETTERS,
-      textOf: (letter) => (result ? question.responses[letter] : (nowKey === letter ? '🔊' : '')),
+      textOf: (letter) => (result ? question.responses[letter] : ''),
       picked, answer: result ? question.answer : null, marker: nowKey, extra: 'listen-opt',
       locked: !canAnswer(heard, picked),
       isDisabled: () => !canAnswer(heard, picked) && !picked,
