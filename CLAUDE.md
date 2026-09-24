@@ -43,6 +43,9 @@ Claude Code tự đọc file này ở đầu mọi phiên. Mọi quy tắc ở �
 - **Hàm sinh ra phải dùng được ở NHIỀU nơi** (Huy, 2026-09-20). Đừng đẻ một đống hàm phụ chỉ để rút ngắn một file:
   hàm chỉ gọi đúng một chỗ thì viết thẳng tại chỗ. Thấy hai nơi làm cùng một việc thì gom lại ngay, kể cả đang làm dở
   việc khác — vừa làm vừa refactor. Các khối giao diện dùng chung nằm ở `src/ui/blocks.js`.
+- **CSS (D73):** mỗi class chỉ định nghĩa ở MỘT file (`style.css` hoặc `shell.css`) — trùng tên ở hai file thì
+  file nạp sau đè từng thuộc tính, sửa một nơi không thấy gì đổi. Màu, cỡ chữ (`--fs-*`), bo góc (`--r-*`) lấy từ
+  khối biến đầu `style.css`, không viết số trực tiếp. "Đang chọn" dùng `--accent-soft`, "đúng" dùng `--good-soft`.
 - **Trước khi tạo BẤT KỲ file nào, tự hỏi ba câu** (Huy, 2026-09-20): nội dung này có bị trùng chỗ khác không?
   đã có helper sẵn chưa? có nhét được vào module đang có thay vì đẻ file mới không? (DRY)
 - **Tự đánh giá code trước khi commit** (Huy, 2026-09-20): đọc lại diff như người review — helper mới có thật sự

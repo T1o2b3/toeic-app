@@ -27,7 +27,7 @@
 6. **Đồng bộ tự động** (D55) khi mở app, khi rời app và 15 giây sau khi học. Mục **Sao lưu** hiện lần chạy
    gần nhất; muốn chắc thì bấm **Đồng bộ ngay**. Mỗi máy chỉ cần đăng nhập một lần.
 
-## Phiên 2026-09-24 (cloud, tiếp) — Đổi bộ màu sang "xám lạnh + xanh chàm" (D72)
+## Phiên 2026-09-24 (cloud, tiếp) — Bộ màu mới (D72) · dọn CSS + thang chữ + icon (D73) — XONG
 
 **Đã xong**
 - Thay toàn bộ bảng màu ở `src/ui/style.css`: nhấn từ xanh lá rừng `#2f6f4e` → xanh chàm `#2f5fd0`; nền trắng ngà ấm
@@ -39,10 +39,22 @@
   nguyên, đã đo lại vẫn đạt ngưỡng D59.
 - Đã đo tương phản mọi cặp: chữ/nền ≥ 4,5:1 (AA). 957 test pass, không file nào > 450 dòng.
 
+- Sót 3 chỗ ngoài CSS đã sửa: `theme-color` (thanh trạng thái iPhone), màn chờ trong `index.html`, manifest PWA.
+
+**Đợt 2 (Huy giao toàn quyền) — D73**
+- Sửa CSS hỏng `sticky: top 1.5rem` (panel chi tiết từ vựng) — chỉ bật ở màn > 700px, dưới đó là lớp phủ `fixed`.
+- Gộp 27 class trùng giữa `style.css`/`shell.css` → mỗi class một nơi. So computed style 64 màn: 0 khác biệt.
+- Thang cỡ chữ 29 → 8 bậc (`--fs-*`), bo góc 6 → 4 bậc (`--r-*`). Thêm `--accent-soft` cho trạng thái "đang chọn".
+- "Xem ›" hết bị đè thành chữ to đậm; tiêu đề khối dùng màu chữ chính.
+- 🔊 ▶ → icon SVG; nhãn nút Nghe của 4 màn gom vào `listenLabel` (blocks.js). 958 test pass.
+- **Cách kiểm giao diện đã dùng** (không nằm trong repo, dựng lại được): Playwright chạy `npx vite --port 5199`, mở
+  16 route × 2 khổ × 2 nền, ghi `getComputedStyle` từng phần tử ra JSON rồi so hai lần chụp. Refactor thuần thì phải
+  ra 0 khác biệt.
+
 **Bước tiếp theo**
-- Huy xem bản deploy (nhớ `Cmd+Shift+R` trên Mac, đóng hẳn app trên iPhone) rồi nói thấy sao. Không ưng thì đổi lại
-  chỉ cần sửa hai khối `:root` / `[data-theme="dark"]` ở đầu `src/ui/style.css` — không đụng tới màn nào.
-- Nếu ưng hướng này thì bước sau có thể tinh chỉnh tiếp: bo góc, khoảng cách, cỡ chữ (chưa động tới trong phiên này).
+- Huy xem bản deploy (`Cmd+Shift+R` trên Mac, đóng hẳn app trên iPhone; đối chiếu số hiệu bản ở cuối màn chính).
+- Không có việc giao diện nào đang dở. Việc chưa làm đã vào Backlog (dashboard 2 cột, thang khoảng cách).
+- Đổi bộ màu/cỡ chữ về sau: chỉ sửa khối biến đầu `src/ui/style.css`.
 
 **Vướng mắc:** không có.
 

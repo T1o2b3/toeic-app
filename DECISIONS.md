@@ -728,6 +728,23 @@ giới hạn thì có thể chuyển qua model gemini khác không?" — đã c�
   chỉ cần sửa đúng hai khối `:root` / `[data-theme="dark"]`, không đụng tới các màn.
 
 
+**D73. CSS: mỗi class định nghĩa ở MỘT nơi; cỡ chữ và bo góc lấy từ thang đo.** (Huy 2026-09-24 giao toàn quyền:
+"đánh giá giao diện như kỹ sư front-end và như client", rồi "hoàn thành công việc, tự review, tự debug".)
+- **Vấn đề:** 27 class có mặt ở cả `style.css` lẫn `shell.css` với giá trị KHÁC nhau. CSS trộn theo từng thuộc tính,
+  file nạp sau thắng → kết quả thật là mảnh ghép hai file, sửa một file thì không thấy gì đổi. Hậu quả nhìn thấy được:
+  "Xem ›" bị `.panel-head span` (style.css) đè thành chữ to đậm, ngược ý định mảnh/nhỏ của shell.css.
+- **Gộp:** mỗi class còn một rule duy nhất, giữ đúng kết quả cuối. Kiểm bằng cách so computed style mọi phần tử trên
+  16 màn × 2 khổ (390 / 1440px) × sáng/tối trước và sau → 0 khác biệt. Biến màu biểu đồ `--viz-*` về chung khối biến.
+- **Thang đo:** 29 cỡ chữ (0.62…2.4rem) → 8 bậc `--fs-2xs`…`--fs-3xl` (11/12/14/16/18/22/28/36px); 6 bậc bo góc →
+  `--r-sm/md/lg/xl` + `--r-pill`. Mỗi giá trị cũ về bậc gần nhất, phần lớn lệch ±1px. **Quy ước:** rule mới không viết
+  số cỡ chữ/bo góc trực tiếp; cần bậc mới thì thêm vào thang, đừng chèn 0.82rem.
+- **`--accent-soft` tách khỏi `--good-soft`:** "đang chọn" (đáp án vừa chọn lúc thi, mục menu đang mở, dòng transcript
+  đang phát, khay kéo thả) khác "đúng". Trước dùng chung nền xanh lá → lúc thi đáp án vừa chọn trông như đã được chấm đúng.
+- **Icon:** 🔊 ▶ → SVG (iPhone vẽ thành emoji màu). Mũi tên ← → › và ✓ là ký hiệu chữ, giữ nguyên.
+- **Không làm — đính chính:** đánh giá ban đầu nói "trên Mac app là cột hẹp 34rem" là SAI. Từ 62rem đã có menu cột
+  trái + nội dung 44rem, màn làm bài 66rem (D41), có chủ ý vì dòng chữ > ~90 ký tự khó đọc. Dashboard 2 cột → Backlog.
+- Thang khoảng cách (padding/margin) chưa làm: rải rác quá nhiều, lợi ít so với công → Backlog.
+
 ## Câu hỏi còn mở
 - ~~Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng?~~ → **Đã giải quyết, xem D35** (chung repo, xét lại khi ~100 MB).
 - ~~Q2 (trước M2): xác nhận license của TSL 1.2 và NGSL.~~ → **Đã giải quyết, xem D18.**

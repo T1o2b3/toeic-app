@@ -124,6 +124,9 @@ toeic-app/
 ~44 giờ làm việc, **khoảng 10 tuần** theo nhịp trên. MVP dùng được từ ngày 7.
 
 ## Backlog (ý tưởng chưa lên lịch)
+- **Dashboard 2 cột trên màn rộng** (D73): Tổng quan trên Mac đang 1 cột 44rem cạnh menu trái. Có thể xếp KPI +
+  Từ vựng bên trái, Bài thi + hoạt động bên phải khi ≥ 75rem. Chưa cần: bố cục hiện tại có chủ ý (D41), đọc tốt.
+- **Thang khoảng cách** (D73): padding/margin còn nhiều giá trị lẻ; làm như `--fs-*` nếu thấy nhịp dọc lộn xộn.
 - ~~Ước lượng "mức sẵn sàng thi"~~ → **đã làm 2026-09-20, xem D39** (điểm ước lượng 10–990 kèm khoảng dao động).
 - **M20 — Bản nhận xét điểm mạnh/điểm yếu + cách luyện** (Huy đề xuất 2026-09-20). **Huy đã chốt: đường 2 —
   chạy AI trong pipeline, KHÔNG gọi API lúc app chạy (D44).** Ba đường đã cân nhắc: Huy nói "chạy API đánh giá", nhưng **ràng buộc #2 cấm gọi AI lúc app chạy** (DECISIONS.md D02:
