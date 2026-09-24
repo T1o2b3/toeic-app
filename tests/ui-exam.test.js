@@ -2,7 +2,7 @@
 /**
  * Thi thử (M15) chạy thật qua giao diện, bộ phát âm thanh GIẢ. Các `it` chạy nối tiếp, dùng chung một app.
  */
-import { describe, it, expect, beforeAll, vi } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import { bootApp } from './helpers/ui-app.js';
 import { setExamPlayerFactory } from '../src/ui/exam-screen.js';
 
@@ -11,13 +11,18 @@ let fake;
 
 function makeFake() {
   return {
-    calls: [], preload: vi.fn(async () => {}), stop: vi.fn(), dispose: vi.fn(),
+    calls: [], preload: vi.fn(async () => {}), stop: vi.fn(), dispose: vi.fn(), unlock: vi.fn(),
     play: vi.fn(async function play(steps) { this.calls.push(steps); return 'done'; }),
   };
 }
 const nav = () => document.querySelector('nav.tabbar');
 const start = async (label) => { await go('#/exam'); await click((t) => t.startsWith(label)); await tick(30); };
 const eventsOf = (type) => store.exportEvents().filter((e) => e.type === type);
+/** Cho băng chạy `seconds` giây trên đồng hồ giả — từng giây một, chờ bộ phát giả xong giữa các giây. */
+const tape = async (seconds) => {
+  for (let i = 0; i < seconds; i += 1) { vi.advanceTimersByTime(1000); await tick(5); }
+  await tick(30);
+};
 const pick = async (unitQ, letter) => {
   [...root.querySelectorAll('.set-q')][unitQ].querySelectorAll('.option').forEach((b) => { if (b.querySelector('.letter').textContent === letter) b.click(); });
   await tick(30);
@@ -144,16 +149,35 @@ describe('làm bài Part 6 (bộ 4 câu)', () => {
   });
 });
 
-describe('Part 2 và bộ nghe trong thi thử', () => {
-  it('Part 2: chỉ thấy A/B/C, KHÔNG có chữ; bấm Nghe phát chuỗi câu hỏi + 3 câu đáp', async () => {
+describe('phần Nghe chạy như băng đề thật (D67)', () => {
+  // Đồng hồ giả cho cả khối: băng chờ hướng dẫn 10 giây, khoảng trả lời 5 giây/câu — không ai đợi thật.
+  beforeAll(() => { vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval', 'Date'] }); });
+  afterAll(() => { vi.useRealTimers(); });
+
+  it('bấm chọn đề là mở khoá âm thanh NGAY trong cú bấm (iPhone), đầu Part có hướng dẫn và đếm ngược', async () => {
+    fake.unlock.mockClear();
+    const played = fake.play.mock.calls.length;
     await start('Riêng Part 2');
+    expect(fake.unlock).toHaveBeenCalledTimes(1);
+    expect(root.querySelector('.directions').textContent).toContain('Part 2 · Directions');
+    expect(root.querySelector('.directions').textContent).toContain('three spoken replies');
+    expect(root.querySelector('.countdown-note').textContent).toContain('Băng phát sau 10 giây');
+    expect(fake.play.mock.calls).toHaveLength(played);        // còn đang "đọc hướng dẫn"
+    expect(document.body.classList.contains('exam-focus')).toBe(true);   // ẩn menu như phòng thi
+  });
+
+  it('Part 2: chỉ thấy A/B/C, KHÔNG có chữ; hết hướng dẫn thì băng tự phát câu hỏi + 3 câu đáp, tốc độ 1×', async () => {
     const options = [...root.querySelectorAll('.option')];
     expect(options).toHaveLength(3);
     expect(options.every((b) => b.querySelector('.option-text').textContent === '')).toBe(true);
     expect(text()).not.toContain('signed contract');
-    await click((t) => t.includes('Nghe câu này'));
+    vi.advanceTimersByTime(3000);
+    expect(root.querySelector('.countdown-note').textContent).toContain('Băng phát sau 7 giây');   // chữ đổi tại chỗ
+    await tape(7);
     expect(fake.calls.at(-1).filter((s) => s.type === 'clip').map((s) => s.key)).toEqual(['question', 'A', 'B', 'C']);
+    expect(fake.play.mock.calls.at(-1)[1]?.rate).toBeUndefined();  // không mang tốc độ chậm của màn luyện sang
     expect(text()).toContain('Đã nghe xong');
+    expect(root.querySelector('.countdown-note').textContent).toBe('Tự sang câu tiếp sau 5 giây');
   });
 
   it('nghe xong là KHOÁ, không nghe lại được — kể cả bằng phím Space (đề thật phát một lần, M21)', async () => {
@@ -163,41 +187,67 @@ describe('Part 2 và bộ nghe trong thi thử', () => {
     expect(button.textContent).toContain('đề thật không cho nghe lại');
     button.click();
     await key(' ');
-    await tick(30);
-    expect(fake.play.mock.calls).toHaveLength(played);      // không phát thêm lần nào
-  });
-
-  it('rời đơn vị rồi quay lại vẫn không nghe thêm được (đếm theo từng đơn vị, không reset khi chuyển câu)', async () => {
-    const played = fake.play.mock.calls.length;
-    await key('ArrowRight'); await tick(30);
-    expect(root.querySelector('button.listen-play').disabled).toBe(false);   // câu MỚI thì nghe được
-    await key('ArrowLeft'); await tick(30);
-    expect(root.querySelector('button.listen-play').disabled).toBe(true);    // câu cũ vẫn khoá
     expect(fake.play.mock.calls).toHaveLength(played);
   });
 
-  it('điều hướng bằng ← → và nút Trước/Tiếp; ở đơn vị đầu thì Trước bị khoá', async () => {
-    expect(text()).toContain('câu 7');                        // Part 2 trong đề thật là câu 7–31
-    expect([...root.querySelectorAll('button')].find((b) => b.textContent.includes('Trước')).disabled).toBe(true);
-    await key('ArrowRight'); await tick(30);
-    expect(text()).toContain('câu 8');
-    await key('ArrowLeft'); await tick(30);
+  it('không có nút Trước/Tiếp, phím ← → không tác dụng, danh sách câu chỉ để xem — băng quyết định nhịp', async () => {
+    expect(root.querySelector('.exam-nav')).toBeNull();
+    expect(text()).toContain('Băng tự chạy như đề thật');
+    await key('ArrowRight');
     expect(text()).toContain('câu 7');
+    await click((t) => t.includes('Danh sách câu'));
+    expect([...root.querySelectorAll('.pal')].every((b) => b.disabled)).toBe(true);
+    await click((t) => t.includes('Ẩn danh sách'));
   });
 
-  it('đơn vị cuối có nút Nộp bài thay cho Tiếp', async () => {
-    await key('ArrowRight'); await key('ArrowRight'); await tick(30);
+  it('hết khoảng trả lời thì tự sang câu sau và PHÁT LUÔN — giữa Part không chờ hướng dẫn nữa', async () => {
+    const played = fake.play.mock.calls.length;
+    await tape(5);
+    expect(text()).toContain('câu 8');
+    expect(root.querySelector('.directions')).toBeNull();
+    expect(fake.play.mock.calls).toHaveLength(played + 1);
+  });
+
+  it('câu cuối của phần Nghe: đếm ngược báo "Hết phần Nghe", không phải "sang câu tiếp"', async () => {
+    await tape(5);
     expect(text()).toContain('câu 9');
-    expect([...root.querySelectorAll('.exam-nav button')].map((b) => b.textContent)).toEqual(['← Trước', 'Nộp bài']);
-    await go('#/');                                        // bỏ bài dở
+    expect(root.querySelector('.countdown-note').textContent).toBe('Hết phần Nghe sau 5 giây');
   });
 
-  it('Part 3 (bộ nghe): phát theo lượt nói, câu hỏi hiện sẵn, không có chữ hội thoại', async () => {
+  it('câu cuối: hết khoảng trả lời là hết phần Nghe — chế độ chỉ có phần Nghe thì tự nộp', async () => {
+    const finished = eventsOf('exam.finished').length;
+    await tape(5);
+    await tick(80);
+    expect(text()).toContain('Kết quả');
+    expect(eventsOf('exam.finished')).toHaveLength(finished + 1);
+    expect(eventsOf('exam.finished').at(-1).payload).toMatchObject({ mode: 'part2', timedOut: false });
+    expect(document.body.classList.contains('exam-focus')).toBe(false);  // xong bài thì menu hiện lại
+    await go('#/');
+  });
+
+  it('phát lỗi: hiện lỗi, nút Nghe mở lại để thử, và có nút "Tiếp tục →" để bỏ qua', async () => {
+    fake.play.mockImplementationOnce(async () => { throw new Error('Không phát được âm thanh'); });
+    await start('Riêng Part 2');
+    await click((t) => t.includes('Nghe câu này'));          // bấm ▶ lúc đang đọc hướng dẫn = nghe ngay
+    expect(text()).toContain('Không phát được âm thanh');
+    expect(root.querySelector('button.listen-play').disabled).toBe(false);
+    fake.unlock.mockClear();
+    const played = fake.play.mock.calls.length;
+    await click((t) => t.startsWith('Tiếp tục'));
+    expect(fake.unlock).toHaveBeenCalled();                   // cú bấm này cũng mở khoá âm thanh
+    expect(text()).toContain('câu 8');
+    expect(fake.play.mock.calls).toHaveLength(played + 1);   // và băng chạy tiếp
+    await go('#/');
+  });
+
+  it('Part 3: dòng "Questions 32–34 refer to…", câu hỏi hiện sẵn, không có chữ hội thoại, phát theo lượt nói', async () => {
     await start('Riêng Part 3');
+    expect(root.querySelector('.set-intro').textContent).toBe('Questions 32–34 refer to the following conversation.');
     expect(root.querySelectorAll('.set-q')).toHaveLength(3);
     expect(text()).not.toContain('Hello Tom');
-    await click((t) => t.includes('Nghe đoạn này'));
+    await tape(10);
     expect(fake.calls.at(-1).filter((s) => s.type === 'clip')).toHaveLength(2);
+    expect(root.querySelector('.countdown-note').textContent).toBe('Tự sang câu tiếp sau 15 giây');  // 5 giây × 3 câu
     await go('#/');
   });
 });
@@ -221,7 +271,10 @@ describe('hết giờ tự nộp', () => {
   });
 });
 
-describe('đề đủ chia hai phần tính giờ riêng như đề thật (D39)', () => {
+describe('đề đủ chia hai phần tính giờ riêng như đề thật (D39, D67)', () => {
+  beforeAll(() => { vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval', 'Date'] }); });
+  afterAll(() => { vi.useRealTimers(); });
+
   it('bắt đầu ở phần Nghe, đồng hồ là giờ của RIÊNG phần Nghe', async () => {
     await go('#/');                                         // rời màn để bỏ bài thi trước
     await start('Đề đủ');
@@ -237,30 +290,36 @@ describe('đề đủ chia hai phần tính giờ riêng như đề thật (D39)
     await click((t) => t.includes('Ẩn danh sách'));
   });
 
-  it('cuối phần Nghe: nút chuyển phần, có cảnh báo không quay lại được', async () => {
-    for (let i = 0; i < 4; i += 1) { await key('ArrowRight'); }
-    await tick(30);
-    const next = [...root.querySelectorAll('.exam-nav button')].at(-1);
-    expect(next.textContent).toContain('Xong phần nghe');
-    await click((t) => t.includes('Xong phần nghe'));
-    expect(text()).toContain('KHÔNG quay lại');
-    expect(text()).toContain('sang phần đọc');
+  it('băng chạy liền cả phần Nghe: Part 3 mở đầu bằng hướng dẫn riêng, rồi hết băng thì TỰ sang phần Đọc', async () => {
+    await tape(10 + 5 + 5 + 5);                             // hướng dẫn Part 2 + 3 câu × 5 giây
+    expect(text()).toContain('câu 32–34');
+    expect(root.querySelector('.directions').textContent).toContain('Part 3 · Directions');
+    expect(root.querySelector('.countdown-note').textContent).toContain('Băng phát sau 10 giây');
+    await tape(10 + 15);                                    // hướng dẫn Part 3 + bộ đầu 3 câu × 5 giây
+    expect(text()).toContain('câu 35–37');
+    await tape(15);                                         // bộ cuối
+    expect(text()).toContain('Hết phần Nghe');
+    expect(text()).toContain('Phần Đọc');
   });
 
-  it('hết phần Nghe thì đồng hồ chạy lại theo giờ phần Đọc và không lùi về phần trước được', async () => {
-    await click((t) => t.startsWith('Sang phần đọc'));
-    expect(text()).toContain('Phần Đọc');
+  it('phần Đọc: đồng hồ chạy lại theo giờ phần Đọc, không lùi về phần trước; Part 5 có hướng dẫn, câu mang số 101', async () => {
     expect(root.querySelector('.exam-clock').textContent).toBe('09:00');  // 12 câu / 100 × 75 phút
     const back = [...root.querySelectorAll('.exam-nav button')][0];
     expect(back.disabled).toBe(true);
-    await key('ArrowLeft'); await tick(30);
+    await key('ArrowLeft');
     expect(text()).toContain('Phần Đọc');                   // phím ← cũng không lùi qua ranh giới phần
-  });
-
-  it('câu Part 5 mang số 101 và chỗ trống in dài như đề thật', async () => {
+    expect(root.querySelector('.directions').textContent).toContain('Part 5 · Directions');
+    expect(root.querySelector('.directions .countdown-note')).toBeNull();   // phần Đọc không đếm gì
     expect(text()).toContain('101');
     expect(text()).toContain('-------');
     expect(root.querySelector('.blank')).not.toBe(null);
+  });
+
+  it('bộ Part 6/7 có dòng giới thiệu như đề thật', async () => {
+    await key('ArrowRight');
+    expect(root.querySelector('.set-intro').textContent).toBe('Questions 131–134 refer to the following e-mail.');
+    await key('ArrowRight');
+    expect(root.querySelector('.set-intro').textContent).toBe('Questions 147–148 refer to the following notice.');
   });
 
   it('nộp bài: có điểm ước lượng cho CẢ HAI phần và điểm tổng', async () => {
@@ -277,40 +336,6 @@ describe('đề đủ chia hai phần tính giờ riêng như đề thật (D39)
     expect(payload.estimate.complete).toBe(true);
     expect(payload.estimate.total.point).toBeGreaterThan(0);
     expect(payload.estimate.sections.map((x) => x.skill)).toEqual(['listening', 'reading']);
-  });
-});
-
-describe('tự chuyển câu ở phần Nghe như băng đề thật (M21)', () => {
-  it('nghe xong: đếm ngược khoảng lặng 5 giây, rồi tự sang câu sau và PHÁT LUÔN', async () => {
-    await go('#/');                                         // bỏ màn kết quả của bài trước
-    vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval', 'Date'] });
-    try {
-      await start('Riêng Part 2');
-      await click((t) => t.includes('Nghe câu này'));
-      expect(text()).toContain('Tự sang câu tiếp sau 5 giây');
-      const played = fake.play.mock.calls.length;
-      vi.advanceTimersByTime(3000);
-      expect(root.querySelector('.advance-note').textContent).toBe('Tự sang câu tiếp sau 2 giây');   // chữ đổi tại chỗ
-      vi.advanceTimersByTime(2000);
-      await tick(30);
-      expect(text()).toContain('câu 8');
-      expect(fake.play.mock.calls).toHaveLength(played + 1);
-
-      // Tự bấm chuyển câu thì huỷ đếm ngược đang chạy (câu 8 vừa phát xong cũng đang đếm).
-      await key('ArrowLeft'); await tick(30);
-      vi.advanceTimersByTime(6000);
-      await tick(30);
-      expect(text()).toContain('câu 7');
-      expect(root.querySelector('.advance-note')).toBeNull();
-
-      // Câu cuối của phần: không tự chuyển — sang phần sau/nộp bài phải tự bấm.
-      await key('ArrowRight'); await key('ArrowRight'); await tick(30);
-      await click((t) => t.includes('Nghe câu này'));
-      expect(text()).toContain('câu 9');
-      expect(root.querySelector('.advance-note')).toBeNull();
-    } finally {
-      vi.useRealTimers();
-    }
     await go('#/');
   });
 });

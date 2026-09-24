@@ -631,6 +631,58 @@ sau 1-5-10 phút… thay vì chỉ là cho chọn nhớ hay quên thì bỏ hẳ
   (như mọi thẻ); vì thế Ôn tập trước đây không có cụm nào — Huy chưa từng phân loại cụm.
 - Bảng tiến độ ở Tổng quan vẫn đếm TỪ trên thang "/ N từ" (không tính cụm).
 
+**D67. Thi thử: phần Nghe chạy như BĂNG đề thật; đề in hướng dẫn + dòng giới thiệu bộ; ẩn menu khi thi.** (Huy,
+2026-09-24: "phần làm đề thi đủ vẫn chưa giống đề thi thật, vẫn chưa tự động phát audio".)
+- **Kiểm trước:** chạy thật trên Chromium — bấm "Đề đủ" thì 0 lần phát; câu đầu tiên phải tự bấm "▶ Nghe", tự bấm
+  "Tiếp →" thì câu sau cũng không phát. Bản M21 cũ chỉ tự chạy SAU khi đã bấm nghe câu đầu và không bấm gì khác.
+- **Băng tự chạy:** cú bấm chọn đề là thao tác chạm duy nhất → `unlock()` phát một tiếng lặng 10 ms ngay trong cú
+  bấm để mở khoá phần tử Audio (iPhone), rồi băng tự chạy: đầu mỗi Part chờ 10 giây như lúc băng đọc hướng dẫn (đủ lướt
+  trước câu hỏi Part 3/4, có ▶ để nghe ngay) → phát → khoảng trả lời (mốc cũ ở `pace.js`: 5 giây/câu) → câu sau.
+  Hết câu cuối phần Nghe thì TỰ sang phần Đọc (chế độ chỉ Nghe thì tự nộp) — như đề thật hết băng là chuyển.
+- **Phần Nghe không có Trước/Tiếp:** phím ←/→ không tác dụng, danh sách câu chỉ để xem; vẫn chọn/đổi đáp án câu đang
+  hiện. Bỏ hộp "sang phần Đọc?" (không còn đường tự chuyển phần). Tốc độ trong thi thử luôn 1× (tốc độ chậm của màn
+  luyện nghe trước đây mang sang cả phòng thi).
+- **Không bao giờ kẹt:** băng đứng mà không còn gì để phát (lỗi phát, tải lại trang sau khi đã nghe) thì hiện nút
+  "Tiếp tục →"; chưa nghe thì nút ▶ mở lại. Cú bấm nào cũng mở khoá âm thanh lại.
+- **Chữ in trên đề** (`logic/exam-directions.js`): khối "Part N · Directions" đầu mỗi Part và dòng "Questions 147–148
+  refer to the following e-mail." trên mỗi bộ, bằng tiếng Anh như đề thật. Lời hướng dẫn app TỰ VIẾT LẠI ý, không
+  chép nguyên văn ETS (ràng buộc #7). Loại văn bản suy từ nhãn tự do của nội dung (`genreOf`), không nhận ra thì "text".
+- **Ẩn cột menu trong lúc thi** (lớp `exam-focus` trên body): như phòng thi toàn màn hình, và bấm nhầm menu là
+  rời màn = bỏ luôn bài đang làm.
+- **Sửa kèm — tải lại trang là mất bài:** D63 ghi "làm dở cùng máy thì đã có" nhưng thực tế CHƯA BAO GIỜ chạy: lúc mở
+  app router coi màn đầu là "đổi màn" và gọi `resetExam()` — hàm này xoá bản lưu trước khi màn thi kịp khôi phục. Nay
+  lần vẽ đầu tiên không dọn gì (`app.js`). Test mới tái hiện lỗi (đỏ trên code cũ).
+- **Còn khác đề thật:** (1) băng thật ĐỌC câu hỏi Part 3/4 và cho 8 giây mỗi câu → đã làm ở D69. (2) Part 1 (6 câu tả
+  tranh) vẫn không có — cần ảnh chụp thật, không có nguồn miễn phí hợp lệ; giữ nguyên 194/200 như D38.
+
+**D68. Thêm `wrangler.jsonc` vào repo: khai báo thư mục `dist` cho mọi lần deploy.** (Claude tự quyết 2026-09-24 —
+Huy giao toàn quyền quyết định.) PR đầu tiên của repo lộ ra: Cloudflare deploy nhánh phụ bằng lệnh mặc định
+`wrangler versions upload`, mà repo không có file cấu hình nào → lỗi ngay "Missing entry-point … or to assets
+directory" (đã tái hiện bằng wrangler 4.137). Nhánh chính vẫn chạy được, chắc nhờ lệnh deploy trong dashboard có
+khai báo thư mục. Chọn đưa cấu hình vào repo thay vì sửa dashboard: làm được mà không cần Huy vào dashboard, được kiểm
+bằng chính bản xem trước của nhánh phụ trước khi tới nhánh chính, và cấu hình nằm trong git. Chỉ có tên Worker
+(`toeic-app`, khớp tên trên Cloudflare), ngày tương thích và `assets.directory` — app là trang tĩnh, không có mã Worker,
+điều hướng bằng hash nên không cần trang 404 kiểu SPA.
+
+**D69. Băng thi thử ĐỌC lời dẫn như đề thật: hướng dẫn đầu Part, câu giới thiệu bộ, từng câu hỏi Part 3/4 + 8 giây.**
+(Claude tự quyết 2026-09-24 — Huy giao toàn quyền quyết định.) Lý do: đề thật đọc to từng câu hỏi Part 3/4 rồi cho
+8 giây, tức ~36 giây sau mỗi hội thoại — đó cũng là lúc người thi đọc trước câu hỏi bộ sau, chiến thuật cốt lõi của
+TOEIC. Bản D67 chỉ cho 5 giây × 3 = 15 giây: gắt hơn đề thật và tập sai nhịp.
+- **Giọng đọc sinh sẵn** bằng edge-tts (`npm run build:narration`, KHÔNG cần Gemini) → `public/content/narration.json`
+  = {lời: MP3}, một giọng dẫn `en-US-GuyNeural`. Lời lấy từ `logic/exam-directions.js` — đúng hàm app dùng để tra, nên
+  khoá luôn khớp. Câu giới thiệu bộ phụ thuộc số hiệu (bộ nào rơi vào vị trí nào đổi theo từng đề) nên sinh cho MỌI vị
+  trí bộ 3 câu: Part 3 32–70 (hai biến thể 2/3 người nói), Part 4 71–100. Hiện 111 lời (~2–3 MB).
+- **Băng:** [hướng dẫn nếu đầu Part] → [giới thiệu bộ] → phần nghe → mỗi câu hỏi: 0,9 giây + lời đọc + 8 giây. Đã đọc
+  đủ câu hỏi thì hết băng sang câu sau ngay (khoảng trả lời đã nằm trong băng). Có giọng đọc hướng dẫn thì bỏ đếm ngược
+  10 giây. Part 2 giữ 5 giây sau câu đáp C (băng thật cũng vậy).
+- **Không có hoặc thiếu giọng đọc thì băng chạy như D67** — thiếu dù một câu hỏi của bộ thì bộ đó không đọc câu hỏi nào
+  (đọc nửa chừng còn lạ hơn không đọc). Máy cloud không sinh được (proxy chặn máy chủ giọng đọc) — chạy trên Mac.
+- **Phần Nghe: hết giờ không cắt ngang băng đang chạy.** Băng có lời dẫn của riêng Part 3 dài ~19,5 phút, vượt giờ
+  tính theo tỉ lệ số câu (18,7 phút); đề thật cũng không có đồng hồ riêng cho phần Nghe — hết băng là hết.
+- **`narration` vào danh sách file âm thanh của bộ dọn MP3 mồ côi** — quên là lần chạy pipeline Part 2 kế tiếp xoá sạch.
+- Dọn kèm: bỏ code "highlight đoạn đang phát" trong thi thử — không có CSS nào, `optionList` cũng bỏ qua tham số đó,
+  mà mỗi đoạn vẫn vẽ lại cả màn.
+
 ## Câu hỏi còn mở
 - ~~Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng?~~ → **Đã giải quyết, xem D35** (chung repo, xét lại khi ~100 MB).
 - ~~Q2 (trước M2): xác nhận license của TSL 1.2 và NGSL.~~ → **Đã giải quyết, xem D18.**

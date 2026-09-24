@@ -5,6 +5,11 @@
  * Đúng như đề thật: đề đủ chia làm HAI phần tính giờ riêng — Nghe 45 phút rồi Đọc 75 phút — và sang phần
  * sau thì không quay lại phần trước. Câu mang số hiệu thật (Part 5 = 101–130, Part 7 = 147–200).
  *
+ * Phần Nghe chạy như BĂNG đề thật (D67): bấm chọn đề là băng tự chạy — đầu mỗi Part có hướng dẫn, nghe xong
+ * một câu là khoảng trả lời rồi tự sang câu sau, hết câu cuối thì tự sang phần Đọc. Không có nút Trước/Tiếp,
+ * không quay lại câu đã qua. Chỉ khi băng không chạy được (trình duyệt chặn, tải lại trang, lỗi mạng) mới hiện
+ * nút để tự bấm đi tiếp — không bao giờ kẹt.
+ *
  * Ghi nhật ký một lần khi nộp: `question.answered` cho mỗi câu đã trả lời (thêm mode: 'exam')
  * và một `exam.finished` tóm tắt. M16: Lưu trạng thái làm dở vào localStorage để không bị mất bài.
  */
@@ -12,14 +17,14 @@ import { buildExamForm, formUnits, scoreExam, examSummaryPayload } from '../logi
 import { originalLetter, randomSeed } from '../logic/shuffle.js';
 import { seededRandom } from '../logic/shuffle.js';
 import { examPhases, numberQuestions, formatClock } from '../logic/exam-time.js';
+import { DIRECTIONS_SECONDS, narrationSteps } from '../logic/exam-directions.js';
 import { estimateScore } from '../logic/score.js';
 import { clipSequence, turnSequence, audioUrl } from '../logic/listen.js';
-import { getListenSpeed } from '../data/prefs.js';
 import { targetFor } from '../logic/pace.js';
 import { createEvent } from '../logic/events.js';
 import { createPlayerSlot } from './audio-player.js';
 import { renderRunning, phaseNotice } from './exam-run.js';
-import { advanceText } from './exam-unit.js';
+import { countdownText } from './exam-unit.js';
 import { renderResult } from './exam-result.js';
 import { renderSetup } from './exam-setup.js';
 
@@ -40,16 +45,16 @@ let deadline = 0;
 let startedAt = 0;
 let timer = null;
 let confirming = false;      // đang hỏi "còn câu chưa trả lời, nộp?"
-let switching = false;       // đang hỏi "sang phần sau?"
-let switched = false;        // vừa tự chuyển phần vì hết giờ — hiện lời nhắc một lần
+let switched = null;         // vừa tự chuyển phần: 'timeout' (hết giờ) | 'tape' (băng chạy hết) — hiện lời nhắc một lần
 let showPalette = false;
 let result = null;           // {score, seconds, timedOut, estimate}
 let playing = false;
 let heard = {};              // id đơn vị → số lần đã nghe
 let playError = null;
-let currentClip = null;      // Clip đang phát (để highlight UI)
+let narration = {};          // giọng đọc lời dẫn (D69): lời → MP3, lấy từ store lúc vào bài
 let activePart = null;       // Part đang chọn để xem lại ở màn kết quả
-let advanceAt = 0;           // mốc tự sang câu sau khi hết khoảng lặng sau đoạn nghe (0 = không đếm) — M21
+let countdown = null;        // băng đang chờ (M21, D67): {until, kind} — kind 'play' = hết hướng dẫn đầu Part thì phát,
+                             // 'next' = hết khoảng trả lời thì sang câu sau, 'end' = hết khoảng trả lời câu cuối phần Nghe
 let flags = {};              // id câu → đánh dấu "chưa chắc, quay lại sau" (phần Đọc) — M21
 
 const slot = createPlayerSlot();
@@ -62,6 +67,11 @@ export const setExamPlayerFactory = (factory) => slot.setFactory(factory);
 const banksOf = (store) => ({ part2: store.listening, part5: store.questions, sets: store.sets });
 
 const isAudioUnit = (unit) => unit && (unit.part === 'part2' || unit.part === 'part3' || unit.part === 'part4');
+const inListening = () => phases[phaseIndex]?.skill === 'listening';
+/** Đơn vị mở đầu một Part — chỗ đề thật in (và ở phần Nghe thì đọc) phần hướng dẫn. */
+const startsPart = (at) => at === 0 || units[at - 1].part !== units[at].part;
+/** Lời băng đọc quanh đơn vị thứ `at` (D69): hướng dẫn đầu Part, câu giới thiệu bộ, đọc câu hỏi Part 3/4. */
+const narrationOf = (unit, at = index) => narrationSteps(unit, unit.questions.map((q) => numbers.get(q.id)), narration, { partStart: startsPart(at) });
 
 /**
  * @param {object} store
@@ -69,6 +79,8 @@ const isAudioUnit = (unit) => unit && (unit.part === 'part2' || unit.part === 'p
  */
 export function renderExam(store) {
   if (phase === 'setup') restoreExamState(store);
+  // Như phòng thi: trong lúc làm bài ẩn cột menu — bấm nhầm sang màn khác là bỏ luôn bài đang làm.
+  document.body.classList.toggle('exam-focus', phase === 'running');
   if (phase === 'running') return renderRunningScreen(store);
   if (phase === 'result') return renderResult(result, () => { reset(); store.refresh(); }, {
     activePart,
@@ -94,6 +106,7 @@ function restoreExamState(store) {
   if (units.length === 0) { localStorage.removeItem(STATE_KEY); form = null; return; }
   phases = examPhases(form);
   numbers = numberQuestions(form);
+  narration = store.narration ?? {};
   seed = saved.seed;
   phaseIndex = saved.phaseIndex ?? 0;
   index = saved.index ?? 0;
@@ -114,15 +127,15 @@ function start(store, mode) {
   if (units.length === 0) return;
   phases = examPhases(form);
   numbers = numberQuestions(form);
+  narration = store.narration ?? {};
   answers = {};
   phaseIndex = 0;
   index = 0;
   heard = {};
   flags = {};
-  advanceAt = 0;
+  countdown = null;
   confirming = false;
-  switching = false;
-  switched = false;
+  switched = null;
   showPalette = false;
   result = null;
   phase = 'running';
@@ -130,16 +143,24 @@ function start(store, mode) {
   deadline = startedAt + phases[0].seconds * 1000;
   timer = setInterval(() => tick(store), 1000);
   saveExamState(mode);
+  // Cú bấm chọn đề là thao tác chạm DUY NHẤT trước khi băng chạy: mở khoá âm thanh ngay tại đây (iPhone).
+  if (inListening()) { getPlayer().unlock(); cue(store); }
   store.refresh();
 }
 
-/** Mỗi giây: cập nhật đồng hồ tại chỗ; hết khoảng lặng thì sang câu sau; hết giờ thì sang phần sau hoặc tự nộp. */
+/** Mỗi giây: cập nhật đồng hồ tại chỗ; hết lúc băng chờ thì phát / sang câu sau; hết giờ thì sang phần sau hoặc tự nộp. */
 function tick(store) {
-  if (advanceAt) {
-    const left = Math.ceil((advanceAt - Date.now()) / 1000);
-    const note = document.querySelector('.advance-note');
-    if (note) note.textContent = advanceText(left);
-    if (left <= 0) autoAdvance(store);
+  if (countdown) {
+    const left = Math.ceil((countdown.until - Date.now()) / 1000);
+    const note = document.querySelector('.countdown-note');
+    if (note) note.textContent = countdownText(countdown.kind, left);
+    if (left <= 0) {
+      const { kind } = countdown;
+      countdown = null;
+      if (kind === 'play') play(store, units[index]);
+      else advance(store);
+    }
+    if (phase !== 'running') return;
   }
   const remaining = Math.ceil((deadline - Date.now()) / 1000);
   const clock = document.querySelector('.exam-clock');
@@ -147,23 +168,22 @@ function tick(store) {
     clock.textContent = formatClock(remaining);
     clock.classList.toggle('low', remaining <= 300);
   }
-  if (remaining > 0) return;
-  if (phaseIndex < phases.length - 1) nextPhase(store, true);
+  // Phần Nghe: băng quyết định lúc hết (đề thật không có đồng hồ riêng) — hết giờ không cắt ngang băng đang chạy.
+  if (remaining > 0 || (inListening() && (playing || countdown))) return;
+  if (phaseIndex < phases.length - 1) nextPhase(store, 'timeout');
   else submit(store, true);
 }
 
-/** Sang phần sau (một chiều, như đề thật). */
-function nextPhase(store, timedOut) {
+/** Sang phần sau (một chiều, như đề thật). `reason`: 'timeout' | 'tape' — lời nhắc hiện ở đầu phần mới. */
+function nextPhase(store, reason) {
   getPlayer().stop();
   phaseIndex += 1;
   index = phases[phaseIndex].from;
-  advanceAt = 0;
+  countdown = null;
   deadline = Date.now() + phases[phaseIndex].seconds * 1000;
-  switching = false;
-  switched = timedOut;
+  switched = reason;
   playing = false;
   playError = null;
-  currentClip = null;
   saveExamState();
   store.refresh();
 }
@@ -176,11 +196,18 @@ const isReadingUnit = (unit) => unit.part === 'part5' || unit.part === 'part6' |
 
 function renderRunningScreen(store) {
   const unit = units[index];
-  getPlayer().preload(audioSources(unit)).catch(() => {});
+  // Tải trước cả đơn vị KẾ TIẾP: băng tự sang câu sau thì phát liền, không khựng chờ tải.
+  getPlayer().preload([...audioSources(index), ...audioSources(index + 1)]).catch(() => {});
   const current = phaseUnits();
+  const wait = countdown ? { kind: countdown.kind, seconds: Math.max(0, Math.ceil((countdown.until - Date.now()) / 1000)) } : null;
 
   const view = {
-    units, index, phases, phaseIndex, numbers, answers, flags, showPalette, confirming, switching,
+    units, index, phases, phaseIndex, numbers, answers, flags, showPalette, confirming,
+    listening: inListening(),
+    partStart: startsPart(index),
+    countdown: wait,
+    // Băng đứng mà không còn gì để phát (tải lại trang sau khi đã nghe, hoặc lỗi phát): cho tự bấm đi tiếp.
+    stuck: inListening() && !playing && !countdown && (heard[unit.id] > 0 || Boolean(playError)),
     remaining: Math.max(0, Math.ceil((deadline - Date.now()) / 1000)),
     atLastUnitOfExam: index >= units.length - 1,
     totalCount: countQuestions(units),
@@ -190,8 +217,7 @@ function renderRunningScreen(store) {
     flaggedCount: units.reduce((n, u) => n + u.questions.filter((q) => flags[q.id]).length, 0),
     unitCtx: {
       answers, playing, heard: heard[unit.id] ?? 0, error: playError,
-      highlight: currentClip,
-      advanceIn: advanceAt ? Math.max(0, Math.ceil((advanceAt - Date.now()) / 1000)) : 0,
+      countdown: wait,
       flags: isReadingUnit(unit) ? flags : null,
       toggleFlag: (id) => { flags = { ...flags, [id]: !flags[id] }; saveExamState(); store.refresh(); },
       pick: (id, letter) => { answers = { ...answers, [id]: letter }; confirming = false; saveExamState(); store.refresh(); },
@@ -200,15 +226,14 @@ function renderRunningScreen(store) {
     onTogglePalette: () => { showPalette = !showPalette; store.refresh(); },
     onGo: (step) => go(store, step),
     onJump: (at) => { index = at; saveExamState(); store.refresh(); },
-    onAskSubmit: () => { confirming = true; switching = false; store.refresh(); },
-    onAskSwitch: () => { switching = true; confirming = false; store.refresh(); },
-    onCancel: () => { confirming = false; switching = false; store.refresh(); },
-    onSwitch: () => nextPhase(store, false),
+    onResume: () => { getPlayer().unlock(); advance(store); },
+    onAskSubmit: () => { confirming = true; store.refresh(); },
+    onCancel: () => { confirming = false; store.refresh(); },
     onSubmit: () => submit(store, false),
   };
 
   const screen = renderRunning(view);
-  if (switched) screen.prepend(phaseNotice(phases[phaseIndex]));
+  if (switched) screen.prepend(phaseNotice(phases[phaseIndex], switched));
   return screen;
 }
 
@@ -216,72 +241,81 @@ function go(store, step) {
   getPlayer().stop();
   const { from, to } = phases[phaseIndex];
   index = Math.min(to - 1, Math.max(from, index + step));
-  advanceAt = 0;
-  switched = false;
+  countdown = null;
+  switched = null;
   playing = false;
   playError = null;
-  currentClip = null;
   saveExamState();
   store.refresh();
 }
 
-/** Địa chỉ mọi đoạn âm thanh của một đơn vị. */
-function audioSources(unit) {
+/** Địa chỉ mọi đoạn âm thanh của đơn vị thứ `at`, kể cả lời dẫn băng đọc quanh nó. */
+function audioSources(at) {
+  const unit = units[at];
   if (!isAudioUnit(unit)) return [];
   const item = unit.item;
-  return (unit.part === 'part2' ? [item.audio.question, item.audio.A, item.audio.B, item.audio.C] : item.audio.clips).map(audioUrl);
+  const { before, after } = narrationOf(unit, at);
+  return [
+    ...(unit.part === 'part2' ? [item.audio.question, item.audio.A, item.audio.B, item.audio.C] : item.audio.clips).map(audioUrl),
+    ...[...before, ...after].filter((step) => step.type === 'clip').map((step) => step.src),
+  ];
 }
 
 /** Phát đoạn nghe của đơn vị hiện tại. */
 async function play(store, unit) {
   if (!isAudioUnit(unit)) return;
+  countdown = null;
   playError = null;
   playing = true;
-  switched = false;
+  switched = null;
   store.refresh();
   try {
-    const steps = unit.part === 'part2' ? clipSequence(unit.item) : turnSequence(unit.item);
-    const outcome = await getPlayer().play(steps, { 
-      rate: getListenSpeed(),
-      onStep: (step) => {
-        if (step.type === 'clip') {
-          currentClip = step.key;
-        } else if (step.type === 'done') {
-          currentClip = null;
-        }
-        store.refresh();
-      }
-    });
-    if (outcome === 'done') {
+    const { before, after, narrated } = narrationOf(unit);
+    const steps = [...before, ...(unit.part === 'part2' ? clipSequence(unit.item) : turnSequence(unit.item)), ...after];
+    // Tốc độ LUÔN 1× như băng thật — tốc độ chậm chọn ở màn luyện nghe không mang sang phòng thi.
+    const outcome = await getPlayer().play(steps);
+    if (outcome === 'done' && phase === 'running' && units[index] === unit) {
       heard = { ...heard, [unit.id]: (heard[unit.id] ?? 0) + 1 };
-      // Như băng đề thật: nghe xong là khoảng lặng để chọn, rồi tự sang câu sau. Câu cuối của phần thì không —
-      // sang phần Đọc phải tự xác nhận (không quay lại được).
-      if (index < phases[phaseIndex].to - 1) {
-        advanceAt = Date.now() + targetFor(Number(unit.part.slice(4)), unit.questions.length) * 1000;
-      }
+      // Như băng đề thật: nghe xong là khoảng lặng để chọn, rồi tự sang câu sau — câu cuối thì hết phần Nghe.
+      // Băng đã đọc từng câu hỏi kèm 8 giây trả lời (D69) thì khoảng đó nằm sẵn trong băng: sang luôn ở nhịp đồng hồ kế.
+      const seconds = narrated ? 0 : targetFor(Number(unit.part.slice(4)), unit.questions.length);
+      countdown = { until: Date.now() + seconds * 1000, kind: index < phases[phaseIndex].to - 1 ? 'next' : 'end' };
       saveExamState();
     }
   } catch (error) {
     playError = `${error.message}. Thử bấm Nghe lại.`;
   } finally {
     playing = false;
-    currentClip = null;
     store.refresh();
   }
 }
 
-/** Hết khoảng lặng sau đoạn nghe: sang đơn vị kế và PHÁT LUÔN, như băng đề thật chạy liền (M21). */
-function autoAdvance(store) {
-  advanceAt = 0;
-  go(store, 1);
+/**
+ * Băng tới đơn vị hiện tại (D67): mở đầu một Part thì băng đọc hướng dẫn (hoặc chờ DIRECTIONS_SECONDS nếu chưa có
+ * giọng đọc — đủ lướt trước câu hỏi bộ đầu), còn lại phát ngay. Đơn vị đã nghe rồi thì thôi — đề thật phát một lần.
+ */
+function cue(store) {
   const unit = units[index];
-  if (isAudioUnit(unit) && !(heard[unit.id] > 0)) play(store, unit);
+  if (!isAudioUnit(unit) || heard[unit.id] > 0) return;
+  // Có giọng đọc hướng dẫn (D69) thì băng tự đọc nó — phát luôn; chưa có thì đếm ngược thay cho lúc băng đọc.
+  if (!startsPart(index) || narrationOf(unit).directions) { play(store, unit); return; }
+  countdown = { until: Date.now() + DIRECTIONS_SECONDS * 1000, kind: 'play' };
+  store.refresh();
+}
+
+/** Băng chạy tiếp (M21, D67): sang đơn vị kế và phát; hết đơn vị cuối là hết phần Nghe — sang phần Đọc hoặc nộp. */
+function advance(store) {
+  countdown = null;
+  if (index < phases[phaseIndex].to - 1) { go(store, 1); cue(store); return; }
+  if (phaseIndex < phases.length - 1) nextPhase(store, 'tape');
+  else submit(store, false);
 }
 
 /** Nộp bài. */
 async function submit(store, timedOut) {
   if (phase !== 'running') return;
   phase = 'result';
+  countdown = null;
   clearInterval(timer);
   timer = null;
   getPlayer().stop();
@@ -317,8 +351,10 @@ async function submit(store, timedOut) {
 export function handleExamKey(store, event) {
   if (phase !== 'running') return;
   const unit = units[index];
-  if (event.key === 'ArrowRight') { go(store, 1); return; }
-  if (event.key === 'ArrowLeft') { go(store, -1); return; }
+  if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+    if (!inListening()) go(store, event.key === 'ArrowRight' ? 1 : -1);   // phần Nghe: băng quyết định nhịp
+    return;
+  }
   if (event.key === ' ') {
     event.preventDefault();
     if (!playing && !(heard[unit.id] > 0)) play(store, unit);
@@ -346,15 +382,14 @@ function reset() {
   answers = {};
   result = null;
   confirming = false;
-  switching = false;
-  switched = false;
+  switched = null;
   showPalette = false;
   playing = false;
   playError = null;
   heard = {};
   flags = {};
-  advanceAt = 0;
-  currentClip = null;
+  countdown = null;
+  narration = {};
   activePart = null;
   index = 0;
 }
@@ -362,6 +397,7 @@ function reset() {
 export function resetExam() {
   slot.dispose();
   reset();
+  document.body.classList.remove('exam-focus');
   localStorage.removeItem(STATE_KEY);
 }
 

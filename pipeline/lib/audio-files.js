@@ -5,8 +5,11 @@
  */
 import { existsSync, readdirSync, readFileSync, unlinkSync } from 'node:fs';
 
-/** Các file nội dung có tham chiếu âm thanh. Thêm file mới ở đây khi có phần nghe mới. */
-const AUDIO_CONTENT_FILES = Object.freeze(['listening-part2', 'sets-part3', 'sets-part4']);
+/**
+ * Các file nội dung có tham chiếu âm thanh. Thêm file mới ở đây khi có phần nghe mới — quên là lần chạy pipeline
+ * kế tiếp XOÁ SẠCH âm thanh của file đó (vd lời dẫn băng thi thử `narration`, D69).
+ */
+const AUDIO_CONTENT_FILES = Object.freeze(['listening-part2', 'sets-part3', 'sets-part4', 'narration']);
 
 /**
  * Mọi tên file MP3 đang được tham chiếu.

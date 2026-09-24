@@ -92,7 +92,8 @@ const SETS = {
 };
 
 /**
- * @param {{questions?: object[], realRandom?: boolean}} [override] - thay ngân hàng Part 5 (mặc định chỉ 1 câu, đủ cho hầu hết test;
+ * @param {{questions?: object[], realRandom?: boolean, narration?: Record<string, string>}} [override] - `narration`: giọng đọc
+ *   lời dẫn băng thi thử (lời → MP3); mặc định KHÔNG có, như khi chưa chạy pipeline - thay ngân hàng Part 5 (mặc định chỉ 1 câu, đủ cho hầu hết test;
  *   test nào cần mặt cắt đề thật thì truyền vào một ngân hàng đủ 12 dạng)
  * @returns {Promise<object>} store, root và các hàm thao tác/đọc màn hình
  */
@@ -113,6 +114,7 @@ export async function bootApp(override = {}) {
       : String(url).includes('questions-part5') ? questions
       : String(url).includes('listening-part2') ? LISTENING
       : String(url).includes('collocations') ? { version: 1, entries: override.collocations ?? COLLOCATIONS }
+      : String(url).includes('narration') ? (override.narration ? { version: 1, clips: override.narration } : null)
       : /sets-part(\d)/.test(String(url)) ? { set: 'x', part: 0, version: 1, entries: SETS[Number(String(url).match(/sets-part(\d)/)[1])] ?? [] } : null;
     return data ? { ok: true, status: 200, json: async () => data } : { ok: false, status: 404 };
   };

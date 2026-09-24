@@ -1,13 +1,14 @@
 /**
- * Phần HIỂN THỊ của màn làm bài thi thử: thanh trên (đồng hồ, số hiệu câu), danh sách câu, khối chuyển phần,
- * hộp xác nhận nộp. Tách khỏi exam-screen.js (file đó giữ trạng thái và các thao tác) cho dưới 300 dòng.
+ * Phần HIỂN THỊ của màn làm bài thi thử: thanh trên (đồng hồ, số hiệu câu), danh sách câu, hướng dẫn đầu Part,
+ * nút đi tiếp, hộp xác nhận nộp. Tách khỏi exam-screen.js (file đó giữ trạng thái và các thao tác).
  *
  * Mọi thứ ở đây là hàm thuần theo nghĩa: chỉ đọc `view` và gọi `view.on*` — không tự giữ trạng thái.
  */
 import { el } from './dom.js';
 import { PART_LABEL } from '../logic/sets.js';
 import { formatClock } from '../logic/exam-time.js';
-import { renderUnit } from './exam-unit.js';
+import { PART_DIRECTIONS } from '../logic/exam-directions.js';
+import { renderUnit, countdownText } from './exam-unit.js';
 import { confirmCard, noticeCard } from './blocks.js';
 
 /** "câu 101" hoặc "câu 131–134". */
@@ -37,12 +38,12 @@ export function renderRunning(view) {
       el('button', { class: 'link', text: `${view.showPalette ? 'Ẩn danh sách' : 'Danh sách câu'} (${view.phaseAnswered}/${view.phaseTotal})`, onClick: view.onTogglePalette }),
     ]),
     view.showPalette ? renderPalette(view) : '',
+    view.partStart ? renderDirections(unit.part, view.countdown) : '',
     renderUnit(unit, view.unitCtx, numbers),
-    renderNav(view),
+    view.listening ? renderTapeNav(view) : renderNav(view),
   ];
 
   if (view.confirming) children.push(renderConfirm(view));
-  else if (view.switching) children.push(renderSwitch(view));
   else if (!view.atLastUnitOfExam) {
     children.push(el('div', { class: 'actions' }, [
       el('button', { class: 'link', text: 'Nộp bài sớm', onClick: view.onAskSubmit }),
@@ -51,20 +52,43 @@ export function renderRunning(view) {
   return el('div', { class: 'exam-running' }, children);
 }
 
-/** Nút Trước / Tiếp. Ở câu cuối của một phần: sang phần sau (một chiều) hoặc nộp bài. */
+/**
+ * Phần hướng dẫn ở đầu mỗi Part, như trang đề thật (D67). Đầu Part phần Nghe thì kèm đếm ngược tới lúc băng phát.
+ * @param {string} part
+ * @param {{kind: string, seconds: number}|null} countdown
+ */
+function renderDirections(part, countdown) {
+  return el('div', { class: 'card directions', lang: 'en' }, [
+    el('div', { class: 'gaps-title', text: `Part ${part.slice(4)} · Directions` }),
+    el('p', { text: PART_DIRECTIONS[part] }),
+    countdown?.kind === 'play' ? el('div', { class: 'countdown-note', lang: 'vi', text: countdownText('play', countdown.seconds) }) : '',
+  ]);
+}
+
+/**
+ * Phần Nghe không có nút Trước/Tiếp: băng quyết định nhịp (D67). Chỉ khi băng đứng mà không còn gì để phát
+ * (tải lại trang sau khi đã nghe, hoặc lỗi phát) mới có nút đi tiếp — để không bao giờ kẹt.
+ */
+function renderTapeNav(view) {
+  if (!view.stuck) {
+    return el('p', { class: 'footnote', text: 'Băng tự chạy như đề thật: nghe xong có vài giây để chọn rồi tự sang câu sau, không quay lại câu trước.' });
+  }
+  const last = view.index >= view.phases[view.phaseIndex].to - 1;
+  return el('div', { class: 'actions' }, [
+    el('button', { class: 'primary', onClick: view.onResume }, [
+      el('span', { text: last ? 'Hết phần Nghe →' : 'Tiếp tục →' }),
+      el('small', { text: 'băng đang dừng — bấm để chạy tiếp' }),
+    ]),
+  ]);
+}
+
+/** Nút Trước / Tiếp của phần Đọc. Ở câu cuối: nộp bài. */
 function renderNav(view) {
   const { index, phases, phaseIndex } = view;
   const phase = phases[phaseIndex];
-  const atPhaseEnd = index >= phase.to - 1;
-  const lastPhase = phaseIndex >= phases.length - 1;
-
-  let next;
-  if (!atPhaseEnd) next = el('button', { class: 'primary', onClick: () => view.onGo(1) }, [el('span', { text: 'Tiếp →' })]);
-  else if (!lastPhase) next = el('button', { class: 'primary', onClick: view.onAskSwitch }, [
-    el('span', { text: `Xong ${phase.label.toLowerCase()} →` }),
-    el('small', { text: `sang ${phases[phaseIndex + 1].label.toLowerCase()}` }),
-  ]);
-  else next = el('button', { class: 'primary', onClick: view.onAskSubmit }, [el('span', { text: 'Nộp bài' })]);
+  const next = index >= phase.to - 1
+    ? el('button', { class: 'primary', onClick: view.onAskSubmit }, [el('span', { text: 'Nộp bài' })])
+    : el('button', { class: 'primary', onClick: () => view.onGo(1) }, [el('span', { text: 'Tiếp →' })]);
 
   return el('div', { class: 'exam-nav' }, [
     el('button', {
@@ -78,7 +102,7 @@ function renderNav(view) {
 
 /**
  * Lưới các đơn vị CỦA PHẦN ĐANG LÀM: đã trả lời hết / dở dang / chưa làm, bấm để nhảy tới.
- * Chỉ hiện phần hiện tại vì đề thật không cho quay lại phần trước.
+ * Chỉ hiện phần hiện tại vì đề thật không cho quay lại phần trước. Phần Nghe chỉ để xem — băng quyết định nhịp.
  */
 function renderPalette(view) {
   const { units, phases, phaseIndex, numbers, answers, index } = view;
@@ -94,6 +118,7 @@ function renderPalette(view) {
       class: `pal${state}${flagged ? ' flagged' : ''}${i === index ? ' current' : ''}`,
       title: `${PART_LABEL[Number(unit.part.slice(4))]}: ${done}/${unit.questions.length} câu${flagged ? ' · có câu đánh dấu' : ''}`,
       text: `${flagged ? '⚑ ' : ''}${list.length > 1 ? `${list[0]}–${list[list.length - 1]}` : String(list[0])}`,
+      disabled: view.listening ? 'disabled' : false,
       onClick: () => view.onJump(i),
     }));
   }
@@ -110,23 +135,14 @@ function renderConfirm(view) {
   });
 }
 
-/** Xác nhận chuyển phần: đề thật KHÔNG cho quay lại phần trước, nên phải hỏi. */
-function renderSwitch(view) {
-  const { phases, phaseIndex } = view;
-  const current = phases[phaseIndex];
-  const next = phases[phaseIndex + 1];
-  const left = view.phaseTotal - view.phaseAnswered;
-  return confirmCard({
-    message: `Sang ${next.label.toLowerCase()} (${Math.round(next.seconds / 60)} phút)? Như đề thật, sang rồi thì KHÔNG quay lại ${current.label.toLowerCase()} được nữa.`,
-    warn: left > 0 ? `${current.label} còn ${left} câu chưa trả lời.` : undefined,
-    confirmLabel: `Sang ${next.label.toLowerCase()}`, onConfirm: view.onSwitch, onCancel: view.onCancel,
-  });
-}
-
-/** Báo đã hết giờ một phần và tự chuyển sang phần sau. */
-export function phaseNotice(phase) {
-  return el('div', { class: 'card notice' }, [
-    el('div', { class: 'gaps-title', text: 'Hết giờ phần trước' }),
-    el('p', { text: `Đã sang ${phase.label.toLowerCase()} — ${Math.round(phase.seconds / 60)} phút. Không quay lại phần trước được, đúng như đề thật.` }),
-  ]);
+/**
+ * Báo đã tự sang phần sau: băng chạy hết ('tape') hoặc hết giờ ('timeout').
+ * @param {{label: string, seconds: number}} phase - phần MỚI
+ * @param {'tape'|'timeout'} reason
+ */
+export function phaseNotice(phase, reason) {
+  const next = `Đã sang ${phase.label.toLowerCase()} — ${Math.round(phase.seconds / 60)} phút.`;
+  return reason === 'tape'
+    ? noticeCard(`${next} Như đề thật, băng chạy hết là sang phần Đọc luôn; phần này làm câu nào trước cũng được.`, 'Hết phần Nghe')
+    : noticeCard(`${next} Không quay lại phần trước được, đúng như đề thật.`, 'Hết giờ phần trước');
 }
