@@ -1,17 +1,14 @@
 import { describe, it, expect } from 'vitest';
 import {
   dayKey, partOfQuestion, skillOfQuestion, activityByDay, activeWeeks, examOverview, vocabProgress, weakestTypes,
-  estimateStudyMinutes, matureWords, matureTrend, combinedExam, STUDY_SECONDS, MATURE_DAYS,
 } from '../src/logic/dashboard.js';
 import { reduceVocabState } from '../src/logic/vocab-state.js';
 import { reduceQuizState } from '../src/logic/quiz.js';
+import { at, eventMaker, answeredWith } from './helpers/events.js';
 
-// Giữa trưa để múi giờ máy chạy test không kéo ngày lệch.
-const at = (y, m, d, h = 12) => new Date(y, m - 1, d, h, 0, 0).getTime();
 const NOW = at(2026, 9, 20);
-let seq = 0;
-const ev = (type, payload, ts) => ({ id: `e${seq++}`, deviceId: 'd', ts, type, payload });
-const answered = (id, correct, ts, errorType = 'wh-who') => ev('question.answered', { questionId: id, choice: 'A', correct, errorType }, ts);
+const ev = eventMaker();
+const answered = answeredWith(ev);
 
 describe('dayKey / partOfQuestion', () => {
   it('ngày theo giờ địa phương', () => {

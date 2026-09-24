@@ -110,9 +110,10 @@ không xếp hàng chờ.
    **Huy cho phép tự tắt, không cần hỏi — kể cả server của project KHÁC trên máy** (Huy, 2026-09-20:
    "sau có server nào đang chạy thì cứ tắt đi, khi nào có project quan trọng thì tôi sẽ thông báo sau").
    Tắt xong báo lại một dòng là đã tắt cái gì.
-4. **Soát DRY** (Huy, 2026-09-24: "luôn luôn kiểm tra và refactor"): trong phần vừa sửa VÀ các file cùng loại
-   (các màn `src/ui/`, các loader `src/data/`, các script `pipeline/`, các file test), có đoạn nào lặp ≥ 2 nơi không?
-   Có thì gom ngay (commit `refactor:` riêng) — kể cả code cũ không phải mình viết. Không lặp thì thôi, đừng đẻ hàm phụ.
+4. **Soát DRY ở mức VỪA ĐỦ** (Huy, 2026-09-24: "luôn luôn kiểm tra và refactor" rồi "dry ở mức vừa đủ xong tiếp tục
+   công việc"): trong phần vừa sửa và các file cùng loại, có LOGIC nào lặp mà sửa một chỗ dễ quên chỗ kia không? Có thì
+   gom (commit `refactor:` riêng). Đoạn lặp vặt vài dòng, nhất là trong test, thì để yên — công gom không đáng.
+   Đo nhanh: `npx jscpd src pipeline tests --min-lines 5` (2026-09-24: 0,42% trùng lặp).
 5. Cập nhật `PROGRESS.md`: vừa xong gì, bước tiếp theo cụ thể, vướng mắc.
 6. Commit.
 

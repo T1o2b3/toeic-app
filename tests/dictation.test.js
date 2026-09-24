@@ -4,10 +4,10 @@ import {
 } from '../src/logic/dictation.js';
 import { reduceQuizState } from '../src/logic/quiz.js';
 import { createEvent } from '../src/logic/events.js';
+import { eventMaker, answeredWith } from './helpers/events.js';
 
-let seq = 0;
-const ev = (type, payload, ts = 1000 + seq) => ({ id: `e-${seq++}`, deviceId: 'mac', ts, type, payload });
-const answered = (questionId, correct, ts) => ev('question.answered', { questionId, choice: 'A', correct, errorType: 'x' }, ts);
+const ev = eventMaker({ base: 1000, step: 1 });
+const answered = answeredWith(ev);
 
 describe('scoreDictation — chấm theo từ', () => {
   const kinds = (r) => r.parts.map((p) => `${p.kind}:${p.text}`);

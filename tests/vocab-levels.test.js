@@ -4,9 +4,9 @@ import {
   needsStudy, studyPriority, levelFromPayload, payloadForLevel, countByLevel,
 } from '../src/logic/vocab-levels.js';
 import { reduceVocabState, reviewQueue } from '../src/logic/vocab-state.js';
+import { T0, eventMaker } from './helpers/events.js';
 
-const T0 = Date.UTC(2026, 8, 19, 10, 0, 0);
-const ev = (type, payload, ts = T0) => ({ id: `e-${ts}-${type}-${payload.wordId}`, deviceId: 'mac', ts, type, payload });
+const ev = eventMaker();
 
 describe('định nghĩa 4 mức', () => {
   it('mỗi mức có nhãn và phím tắt riêng', () => {
