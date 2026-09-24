@@ -52,6 +52,13 @@ describe('nghe chép (M11)', () => {
     expect(lastSrc()).toBe('/audio/0000000000000001.mp3');
   });
 
+  it('nghe xong thì nút đổi TẠI CHỖ thành "Nghe lại", icon SVG chứ không phải emoji (D73)', async () => {
+    const label = root.querySelector('.listen-play > span');
+    expect(label.textContent).toContain('Nghe lại');
+    expect(label.querySelector('.icon svg')).not.toBeNull();
+    expect(root.textContent).not.toMatch(/[🔊▶]/u);
+  });
+
   it('chữ đang gõ SỐNG QUA lần vẽ lại màn (vd đổi tốc độ, đồng bộ kéo sự kiện về)', async () => {
     type('where should I sent the contract');
     await click((t) => t === '0.75×');

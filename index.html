@@ -8,8 +8,8 @@
     <!-- iPhone: thiếu dòng này thì "Thêm vào MH chính" lấy ảnh chụp trang làm icon, không phải logo. -->
     <link rel="apple-touch-icon" href="/icons/icon-180.png" />
     <meta name="apple-mobile-web-app-title" content="TOEIC" />
-    <meta name="theme-color" content="#fdfdfb" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f6f7f9" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0b0f16" media="(prefers-color-scheme: dark)" />
     <script>
       // Đặt sáng/tối TRƯỚC lần vẽ đầu: để JS đặt sau khi tải xong thì nền tối nháy trắng một nhịp.
       try {
@@ -22,10 +22,10 @@
     </script>
     <style>
       /* Màn chờ lúc tải nội dung (~3 MB lần đầu). Viết thẳng ở đây vì CSS của app chưa tới. mountApp thay nó đi. */
-      .boot { min-height: 70vh; display: grid; place-content: center; text-align: center; font-family: system-ui, -apple-system, sans-serif; color: #6b6b66; }
-      .boot b { display: block; font-size: 1.5rem; color: #2f6f4e; margin-bottom: 0.25rem; }
-      [data-theme="dark"] body { background: #0a0a0a; }
-      [data-theme="dark"] .boot b { color: #4fb47c; }
+      .boot { min-height: 70vh; display: grid; place-content: center; text-align: center; font-family: system-ui, -apple-system, sans-serif; color: #596579; }
+      .boot b { display: block; font-size: 1.5rem; color: #2f5fd0; margin-bottom: 0.25rem; }
+      [data-theme="dark"] body { background: #0b0f16; }
+      [data-theme="dark"] .boot b { color: #6f9bf5; }
       @media (prefers-reduced-motion: no-preference) { .boot span { animation: boot-pulse 1.2s ease-in-out infinite alternate; } }
       @keyframes boot-pulse { from { opacity: 0.4; } }
     </style>

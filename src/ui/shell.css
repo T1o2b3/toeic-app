@@ -9,45 +9,31 @@
 .tabbar[hidden] { display: none; }
 .tabbar .tab {
   flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.1rem;
-  padding: 0.5rem 0 0.45rem; font-size: 0.72rem; color: var(--muted); text-decoration: none;
+  padding: 0.5rem 0 0.45rem; font-size: var(--fs-xs); color: var(--muted); text-decoration: none;
 }
-.tabbar .tab .icon { font-size: 1.35rem; }
+.tabbar .tab .icon { font-size: var(--fs-xl); }
 .tabbar .tab.active { color: var(--accent); font-weight: 600; }
 body.has-tabbar #app { padding-bottom: calc(5rem + env(safe-area-inset-bottom)); }
 
-/* ===== Dashboard (D36) =====
-   Màu biểu đồ: 3 màu chuỗi đầu của bảng đã chạy validate_palette (xanh, cam, ngọc) và thang xanh có thứ tự
-   cho tiến độ từ vựng. */
-:root {
-  --viz-s1: #2a78d6; --viz-s2: #eb6834; --viz-s3: #1baf7a;
-  --viz-l0: #d9d8d2; --viz-l1: #86b6ef; --viz-l2: #3987e5; --viz-l3: #1c5cab; --viz-l4: #0d366b;
-  --viz-grid: #ecebe6;
-  --nav-width: 13.5rem;
-}
-/* Bản tối (D59): cùng các sắc đó, lấy bậc hợp nền tối — đã chạy validate_palette với nền #161616, qua hết.
-   Bản sáng để nguyên trên nền tối thì mức "Thành thạo" (#0d366b) gần như tàng hình (~1,5:1). Thang mức từ
-   vẫn đậm dần theo mức nhớ, bậc đậm nhất dừng ở #184f95 (2,23:1 — ngưỡng tối thiểu 2:1). */
-[data-theme="dark"] {
-  --viz-s1: #3987e5; --viz-s2: #d95926; --viz-s3: #199e70;
-  --viz-l0: #383835; --viz-l1: #86b6ef; --viz-l2: #5598e7; --viz-l3: #2a78d6; --viz-l4: #184f95;
-  --viz-grid: #2c2c2a;
-}
+/* ===== Dashboard (D36) ===== */
 .dash-title { display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.25rem; }
 .dash-title h1 { margin: 0; }
-.streak { font-size: 0.8rem; color: var(--accent); font-weight: 600; border: 1px solid var(--accent); border-radius: 999px; padding: 0.05rem 0.6rem; }
-.panel { background: var(--surface); border: 1px solid var(--border); border-radius: 0.75rem; padding: 0.85rem 0.9rem; margin-bottom: 0.75rem; }
+.streak { font-size: var(--fs-xs); color: var(--accent); font-weight: 600; border: 1px solid var(--accent); border-radius: var(--r-pill); padding: 0.05rem 0.6rem; }
+.panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 0.85rem 0.9rem; margin-bottom: 0.75rem; }
 .panel.today { border-color: var(--accent); }
-.panel-head { display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 0.8rem; color: var(--muted); font-weight: 600; margin-bottom: 0.6rem; }
-button.panel-head { background: none; border: none; border-radius: 0; padding: 0; text-align: left; font: inherit; font-size: 0.8rem; font-weight: 600; color: var(--muted); }
+.panel-head { display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: var(--fs-xs); color: var(--muted); font-weight: 600; margin-bottom: 0.6rem; }
+.panel-head span { font-weight: 600; font-size: var(--fs-lg); color: var(--fg); }
+button.panel-head { background: none; border: none; border-radius: 0; padding: 0; text-align: left; font: inherit; font-size: var(--fs-xs); font-weight: 600; color: var(--muted); }
 button.panel-head span { display: inline; }
-.panel-more { font-weight: 400; }
+/* Tiêu đề khối đậm màu chữ chính; "Xem ›" nhỏ, mảnh, xám — cần 2 class để thắng .panel-head span (0,1,1). */
+.panel-head .panel-more { font-size: var(--fs-sm); color: var(--muted); font-weight: 400; }
 .panel button.primary, .panel button.secondary { margin-bottom: 0; }
-.empty.small { font-size: 0.85rem; margin: 0.25rem 0 0; }
-.hero { margin-bottom: 0.6rem; }
-.hero-value { font-size: 2.2rem; font-weight: 700; line-height: 1; }
-.hero-label { font-size: 0.85rem; color: var(--muted); }
-.hero-sub { font-size: 0.85rem; color: var(--muted); margin-top: 0.15rem; }
-.viz-caption { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.4rem; }
+.empty.small { font-size: var(--fs-sm); margin: 0.25rem 0 0; }
+.hero { text-align: center; margin-bottom: 0.6rem; }
+.hero-value { display: block; font-size: var(--fs-3xl); font-weight: 700; line-height: 1; color: var(--accent); }
+.hero-label { display: block; font-size: var(--fs-sm); color: var(--muted); margin-bottom: 0.5rem; }
+.hero-sub { font-size: var(--fs-sm); color: var(--muted); margin-top: 0.15rem; opacity: 0.8; }
+.viz-caption { font-size: var(--fs-xs); color: var(--muted); margin-bottom: 0.4rem; }
 
 /* Cột xếp chồng: việc đã làm mỗi ngày */
 .viz-cols { display: flex; align-items: flex-end; gap: 3px; height: 8.5rem; padding-top: 1rem; border-bottom: 1px solid var(--viz-grid); }
@@ -55,13 +41,13 @@ button.panel-head span { display: inline; }
 .viz-stack { display: flex; flex-direction: column-reverse; gap: 2px; min-height: 0; }
 .viz-seg { min-height: 3px; }
 .viz-seg.top { border-radius: 4px 4px 0 0; }
-.viz-val { text-align: center; font-size: 0.7rem; color: var(--fg); height: 1rem; line-height: 1rem; }
-.viz-x { position: absolute; bottom: -1.25rem; left: 0; right: 0; text-align: center; font-size: 0.62rem; color: var(--muted); }
+.viz-val { text-align: center; font-size: var(--fs-2xs); color: var(--fg); height: 1rem; line-height: 1rem; }
+.viz-x { position: absolute; bottom: -1.25rem; left: 0; right: 0; text-align: center; font-size: var(--fs-2xs); color: var(--muted); }
 .viz-col.today .viz-x { color: var(--fg); font-weight: 700; }
-.viz-legend { display: flex; flex-wrap: wrap; gap: 0.9rem; margin-top: 1.6rem; font-size: 0.75rem; color: var(--muted); }
+.viz-legend { display: flex; flex-wrap: wrap; gap: 0.9rem; margin-top: 1.6rem; font-size: var(--fs-xs); color: var(--muted); }
 .viz-key { display: inline-flex; align-items: center; gap: 0.3rem; }
 .viz-swatch { display: inline-block; width: 0.7rem; height: 0.7rem; border-radius: 2px; flex: none; }
-.viz-table { margin-top: 0.6rem; font-size: 0.78rem; color: var(--muted); }
+.viz-table { margin-top: 0.6rem; font-size: var(--fs-xs); color: var(--muted); }
 .viz-table summary { cursor: pointer; }
 .viz-table table { width: 100%; border-collapse: collapse; margin-top: 0.4rem; }
 .viz-table th, .viz-table td { text-align: right; padding: 0.15rem 0.3rem; border-bottom: 1px solid var(--viz-grid); }
@@ -73,88 +59,88 @@ button.panel-head span { display: inline; }
 .viz-bar-seg:first-child { border-radius: 4px 2px 2px 4px; }
 .viz-bar-seg:last-child { border-radius: 2px 4px 4px 2px; }
 .viz-rows { margin-top: 0.6rem; }
-.viz-row { display: flex; align-items: center; gap: 0.5rem; width: 100%; padding: 0.2rem 0; font-size: 0.85rem; }
-button.viz-row { background: none; border: none; border-radius: 0; text-align: left; color: inherit; font: inherit; font-size: 0.85rem; }
+.viz-row { display: flex; align-items: center; gap: 0.5rem; width: 100%; padding: 0.2rem 0; font-size: var(--fs-sm); }
+button.viz-row { background: none; border: none; border-radius: 0; text-align: left; color: inherit; font: inherit; font-size: var(--fs-sm); }
 button.viz-row span { display: inline; }
 .viz-row-label { flex: 1; }
 .viz-row-value { color: var(--muted); font-variant-numeric: tabular-nums; }
 
 /* Ô số lớn: độ chính xác từng phần thi */
 .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.75rem; }
-.tile { border: 1px solid var(--border); border-radius: 0.6rem; padding: 0.6rem 0.7rem; }
-.tile-label { font-size: 0.75rem; color: var(--muted); }
-.tile-value { font-size: 1.9rem; font-weight: 700; line-height: 1.15; }
-.tile-note { font-size: 0.72rem; color: var(--muted); }
+.tile { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md); padding: 0.6rem 0.7rem; }
+.tile-label { font-size: var(--fs-xs); color: var(--muted); margin-bottom: 0.25rem; }
+.tile-value { font-size: var(--fs-2xl); font-weight: 700; line-height: 1.15; }
+.tile-note { font-size: var(--fs-xs); color: var(--muted); line-height: 1.2; }
 
 /* Thanh ngang độ chính xác theo dạng câu */
 .viz-hbars { display: grid; gap: 0.45rem; }
-.viz-hbar { display: grid; grid-template-columns: 10.5rem 1fr 2.6rem; align-items: center; gap: 0.5rem; font-size: 0.8rem; }
+.viz-hbar { display: grid; grid-template-columns: 10.5rem 1fr 2.6rem; align-items: center; gap: 0.5rem; font-size: var(--fs-xs); }
 .viz-hbar-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .viz-track { height: 0.55rem; background: var(--viz-grid); border-radius: 4px; overflow: hidden; }
 .viz-fill { height: 100%; background: var(--viz-s1); border-radius: 4px; }
 .viz-hbar-value { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); }
 
 /* Tra từ */
-.lookup-input { font-size: 1.05rem; }
+.lookup-input { font-size: var(--fs-md); }
 .lookup-results { margin-top: 0.25rem; }
-.notice { color: var(--accent); font-size: 0.9rem; margin: 0.4rem 0; }
-.ipa-inline { color: var(--muted); font-size: 0.8rem; }
+.notice { color: var(--accent); font-size: var(--fs-sm); margin: 0.4rem 0; }
+.ipa-inline { color: var(--muted); font-size: var(--fs-xs); }
 .ext-links { display: flex; gap: 1rem; margin: 0.5rem 0 1rem; }
 .lookup-none .primary { margin-top: 0.5rem; }
 
 /* Ba số đầu trang dashboard */
 .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 0.75rem; }
-.kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 0.75rem; padding: 0.65rem 0.7rem; min-width: 0; }
-.kpi-label { font-size: 0.72rem; color: var(--muted); }
-.kpi-value { font-size: 1.75rem; font-weight: 700; line-height: 1.2; font-variant-numeric: tabular-nums; }
-.kpi-unit { font-size: 0.8rem; font-weight: 400; color: var(--muted); }
-.kpi-note { font-size: 0.68rem; color: var(--muted); line-height: 1.3; margin-top: 0.2rem; }
-.meter { height: 0.4rem; background: var(--viz-grid); border-radius: 4px; overflow: hidden; margin-top: 0.3rem; }
-.meter-fill { height: 100%; background: var(--viz-s1); border-radius: 4px; }
+.kpi { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 0.65rem 0.7rem; min-width: 0; }
+.kpi-label { font-size: var(--fs-xs); color: var(--muted); margin-bottom: 0.25rem; }
+.kpi-value { font-size: var(--fs-2xl); font-weight: 700; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.kpi-unit { font-size: var(--fs-xs); font-weight: 400; color: var(--muted); }
+.kpi-note { font-size: var(--fs-2xs); color: var(--muted); line-height: 1.3; margin-top: 0.2rem; }
+.meter { height: 0.4rem; background: var(--viz-grid); border-radius: 4px; overflow: hidden; margin: 0.3rem 0 0.5rem; }
+.meter-fill { height: 100%; background: var(--viz-s1); border-radius: 4px; transition: width 0.3s; }
 
 /* Bộ tài liệu + nhiều câu hỏi (Part 3, 4, 6, 7) */
-.set-title { font-size: 1.05rem; margin: 0 0 0.6rem; }
+.set-title { font-size: var(--fs-md); margin: 0 0 0.6rem; }
 .passage { margin-bottom: 0.6rem; }
-.passage .stem { white-space: pre-wrap; font-size: 0.98rem; }
+.passage .stem { white-space: pre-wrap; font-size: var(--fs-md); }
 .set-q { margin: 1rem 0 0.4rem; padding-top: 0.6rem; border-top: 1px solid var(--border); }
-.set-q-stem { font-weight: 600; margin-bottom: 0.5rem; }
-.transcript-line.now { background: var(--good-soft); border-radius: 0.4rem; }
+.set-q-stem { font-size: var(--fs-md); line-height: 1.6; font-weight: 600; margin: 0.75rem 0 0.5rem; }
+.transcript-line.now { background: var(--accent-soft); border-radius: var(--r-sm); }
 
 /* Thi thử (M15) */
 .exam-bar { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.75rem; position: sticky; top: 0; background: var(--bg); padding: 0.4rem 0; z-index: 5; }
-.exam-clock { font-size: 1.25rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.exam-clock { font-size: var(--fs-xl); font-weight: 700; font-variant-numeric: tabular-nums; }
 .exam-clock.low { color: var(--again); }
 .exam-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 1rem; }
 .exam-nav button { margin-bottom: 0; text-align: center; }
-.option.picked { border-color: var(--accent); background: var(--good-soft); }
+.option.picked { border-color: var(--accent); background: var(--accent-soft); }
 .option.picked .letter { color: var(--accent); }
 .palette { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 0.75rem; }
-button.pal { min-width: 2.4rem; padding: 0.3rem 0.4rem; font-size: 0.75rem; background: var(--surface); border-radius: 0.5rem; }
+button.pal { min-width: 2.4rem; padding: 0.3rem 0.4rem; font-size: var(--fs-xs); background: var(--surface); border-radius: var(--r-md); }
 button.pal.part { background: var(--hard-soft); }
-button.pal.done { background: var(--accent); color: #fff; border-color: var(--accent); }
+button.pal.done { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
 button.pal.current { outline: 2px solid var(--fg); outline-offset: 1px; }
 button.pal.flagged { border-color: var(--hard); border-width: 2px; }
-.flag-btn { font-size: 0.8rem; margin: 0.2rem 0; }
+.flag-btn { font-size: var(--fs-xs); margin: 0.2rem 0; }
 .flag-btn.on { color: var(--hard); font-weight: 700; }
-.countdown-note { margin-top: 0.6rem; color: var(--muted); font-size: 0.85rem; text-align: center; }
+.countdown-note { margin-top: 0.6rem; color: var(--muted); font-size: var(--fs-sm); text-align: center; }
 /* Phần Nghe: danh sách câu chỉ để xem (băng quyết định nhịp) — không làm mờ như nút bị khoá thường (D67). */
 button.pal:disabled { opacity: 1; }
 /* Chữ in trên đề (D67): hướng dẫn đầu Part và dòng "Questions … refer to the following …" */
-.card.directions { font-size: 0.9rem; border-color: var(--accent); margin-bottom: 0.75rem; }
+.card.directions { font-size: var(--fs-sm); border-color: var(--accent); margin-bottom: 0.75rem; }
 .card.directions p { margin: 0.25rem 0 0; }
 .card.directions .countdown-note { text-align: left; font-weight: 600; color: var(--accent); }
-.set-intro { font-size: 0.85rem; font-style: italic; color: var(--muted); margin: 0 0 0.5rem; }
+.set-intro { font-size: var(--fs-sm); font-style: italic; color: var(--muted); margin: 0 0 0.5rem; }
 /* Như phòng thi: trong lúc làm bài ẩn menu ở mọi khổ màn hình — bấm nhầm là bỏ bài đang làm (D67). */
 body.exam-focus .tabbar { display: none; }
 .confirm { margin-top: 1rem; }
-.wrong-item { padding: 0.7rem 0; border-bottom: 1px solid var(--viz-grid); }
-.rev { font-size: 0.85rem; padding: 0.1rem 0; color: var(--fg); }
-.rev.correct { color: var(--good); font-weight: 600; }
-.rev.wrong { color: var(--again); }
+.wrong-item { background: var(--surface); border: 1px solid var(--border); border-bottom-color: var(--viz-grid); border-radius: var(--r-md); overflow: hidden; padding: 0.7rem 0; }
+.rev { font-size: var(--fs-sm); padding: 0.1rem 0; color: var(--fg); border: 1px solid var(--border); border-radius: var(--r-md); }
+.rev.correct { border-color: var(--good); background: var(--good-soft); color: var(--good); font-weight: 600; }
+.rev.wrong { border-color: var(--again); background: var(--again-soft); color: var(--again); }
 
 /* Kết quả thi thử: số liệu trung tính (màu đỏ của .gap-value dành cho danh sách lỗ hổng, không dùng cho điểm số) */
 .gap-value.plain { color: var(--fg); }
-.wrong-list { margin: 0.75rem 0 1rem; }
+.wrong-list { display: flex; flex-direction: column; gap: 0.5rem; margin: 0.75rem 0 1rem; }
 
 /* ===== Điều hướng: cột bên TRÁI trên máy tính, thanh dưới đáy trên điện thoại (D43) =====
    Cùng một <nav>; chỉ CSS đổi chỗ. Ngưỡng 62rem ≈ 992px: dưới mức đó (iPhone, iPad dọc) thanh đáy
@@ -173,17 +159,17 @@ body.exam-focus .tabbar { display: none; }
   /* Phiên học chỉ ẩn thanh ĐÁY (vì vướng hàng nút chấm dính đáy); cột bên trái không vướng gì nên vẫn hiện. */
   .tabbar.in-session { display: flex; }
   .nav-brand {
-    display: block; font-weight: 700; font-size: 1.05rem;
+    display: block; font-weight: 700; font-size: var(--fs-md);
     color: var(--accent); padding: 0 0.75rem 1.1rem;
   }
   .tabbar .tab {
     flex: none; flex-direction: row; justify-content: flex-start; align-items: center;
-    gap: 0.7rem; padding: 0.55rem 0.75rem; border-radius: 0.6rem; font-size: 0.95rem;
+    gap: 0.7rem; padding: 0.55rem 0.75rem; border-radius: var(--r-md); font-size: var(--fs-md);
   }
   /* Dùng biến màu chứ không viết cứng: bản cũ #f2f2ed/#eef6f1 thành mảng sáng chói ở nền tối. */
   .tabbar .tab:hover { background: var(--chosen-soft); }
-  .tabbar .tab.active { background: var(--good-soft); }
-  .tabbar .tab .icon { font-size: 1.15rem; }
+  .tabbar .tab.active { background: var(--accent-soft); }
+  .tabbar .tab .icon { font-size: var(--fs-lg); }
 
   /* Đẩy toàn bộ nội dung sang phải đúng bề rộng menu, rồi vẫn căn giữa trong phần còn lại.
      Nới bề ngang từ 34rem (khổ điện thoại) lên 44rem: màn rộng mà cột chữ vẫn hẹp thì thừa chỗ vô ích,
@@ -211,12 +197,12 @@ body.exam-focus .tabbar { display: none; }
 .blank { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.02em; white-space: nowrap; }
 .blank.numbered { font-weight: 600; }
 .blank-no { color: var(--accent); font-weight: 700; }
-.q-no { color: var(--muted); font-weight: 700; font-size: 0.85rem; }
+.q-no { color: var(--muted); font-weight: 700; font-size: var(--fs-sm); }
 .q-no.inline { display: inline; margin-right: 0.3rem; }
 .set-q-stem .q-no.inline { color: var(--accent); }
 
 /* Thẻ nhắc việc giữa lúc làm bài (còn mấy câu nữa mới chấm, đã sang phần Đọc) */
-.card.notice { color: var(--fg); font-size: 0.9rem; margin-top: 0.75rem; border-color: var(--accent); }
+.card.notice { color: var(--fg); font-size: var(--fs-sm); margin-top: 0.75rem; border-color: var(--accent); }
 .card.notice p { margin: 0; }
 .card.notice .gaps-title { margin-bottom: 0.25rem; }
 

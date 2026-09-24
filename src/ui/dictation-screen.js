@@ -11,7 +11,7 @@ import {
 } from '../logic/dictation.js';
 import { getListenSpeed } from '../data/prefs.js';
 import { createPlayerSlot } from './audio-player.js';
-import { backButton, backLink, sessionDone, speedChooser, nextActions } from './blocks.js';
+import { backButton, backLink, sessionDone, speedChooser, nextActions, listenLabel } from './blocks.js';
 import { renderStem, renderTray, resetCapture } from './capture-tray.js';
 
 // Trạng thái riêng của màn này.
@@ -41,7 +41,7 @@ function current(store) {
   return { all, states, queue, unit: locked ?? queue[0] ?? null };
 }
 
-const labelText = (unit) => (playing ? '🔊 Đang phát…' : heardId === unit.id ? '▶ Nghe lại' : '▶ Nghe đoạn này');
+const labelParts = (unit) => listenLabel({ playing, heard: heardId === unit.id, idle: 'Nghe đoạn này' });
 
 /**
  * @param {object} store
@@ -60,7 +60,7 @@ export function renderDictation(store) {
   const { remaining } = roundProgress({
     roundSize: DICTATION_ROUND_SIZE, doneCount: doneThisRound.size, availableCount: queue.length, locked: Boolean(locked),
   });
-  playLabel = el('span', { text: labelText(unit) });
+  playLabel = el('span', {}, labelParts(unit));
 
   const children = [
     el('div', { class: 'topbar' }, [
@@ -153,7 +153,7 @@ function renderFinished(store, all, states) {
 async function play(store, unit) {
   playError = null;
   playing = true;
-  if (playLabel) playLabel.textContent = labelText(unit);
+  if (playLabel) playLabel.replaceChildren(...labelParts(unit));
   try {
     const outcome = await slot.get().play([{ type: 'clip', key: unit.id, src: unit.src }], { rate: getListenSpeed() });
     if (outcome === 'done') heardId = unit.id;
@@ -162,7 +162,7 @@ async function play(store, unit) {
     store.refresh();
   } finally {
     playing = false;
-    if (playLabel) playLabel.textContent = labelText(unit);
+    if (playLabel) playLabel.replaceChildren(...labelParts(unit));
   }
 }
 

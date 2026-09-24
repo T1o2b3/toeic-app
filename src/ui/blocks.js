@@ -26,7 +26,7 @@ import { getListenSpeed, setListenSpeed } from '../data/prefs.js';
  * @param {(letter: string) => void} config.onPick
  * @param {boolean} [config.locked] - không cho chọn nữa
  * @param {(letter: string) => boolean} [config.isDisabled] - vô hiệu từng nút (vd chưa nghe hết)
- * @param {string|null} [config.marker] - chữ cái đang được phát (Part 2 hiện 🔊)
+ * @param {string|null} [config.marker] - chữ cái đang được phát (Part 2: phương án chưa có chữ thì hiện icon loa)
  * @param {string} [config.extra] - lớp CSS thêm cho mỗi nút
  * @param {(letter: string) => HTMLElement} [config.renderText] - vẽ phần chữ của phương án theo cách riêng
  *   (màn bộ đề dùng để từng từ trong phương án gạt được). CHỈ dùng khi đã `locked`, xem bên dưới.
@@ -64,7 +64,7 @@ export function optionList({
       onClick: () => { if (!off) onPick(letter); },
     }, [
       el('span', { class: 'letter', text: letter }),
-      el('span', { class: 'option-text', text: textOf?.(letter) ?? '' }),
+      el('span', { class: 'option-text' }, [textOf?.(letter) || (marker === letter ? icon('volume') : '')]),
     ]);
   }));
 }
@@ -310,6 +310,8 @@ const ICON_PATHS = Object.freeze({
   sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
   eye: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
   download: '<path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/>',
+  play: '<path d="M7 4.5v15l12.5-7.5z" fill="currentColor"/>',
+  volume: '<path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/>',
 });
 
 /**
@@ -324,4 +326,20 @@ export function icon(name) {
     html: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" '
       + `stroke-linecap="round" stroke-linejoin="round">${ICON_PATHS[name]}</svg>`,
   });
+}
+
+/**
+ * Chữ trên nút Nghe (4 màn nghe): icon loa khi đang phát, icon phát khi chưa. Trả về mảng con để bên gọi
+ * bọc vào <span> hoặc thay tại chỗ bằng replaceChildren (màn nghe chép đổi nhãn không vẽ lại cả màn).
+ * @param {object} s
+ * @param {boolean} s.playing
+ * @param {boolean} [s.heard] - đã nghe hết một lần
+ * @param {string} s.idle - chữ khi chưa nghe, vd "Nghe câu này"
+ * @param {string} [s.done] - chữ khi đã nghe mà KHÔNG được nghe lại (thi thử); bỏ trống thì hiện "Nghe lại"
+ * @returns {Array<HTMLElement|string>}
+ */
+export function listenLabel({ playing, heard = false, idle, done }) {
+  if (playing) return [icon('volume'), ' Đang phát…'];
+  if (heard && done) return [done];
+  return [icon('play'), heard ? ' Nghe lại' : ` ${idle}`];
 }

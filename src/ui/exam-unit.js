@@ -8,13 +8,13 @@
 import { el } from './dom.js';
 import { splitBlanks } from '../logic/part5.js';
 import { setIntro } from '../logic/exam-directions.js';
-import { optionList, splitPane, questionLabel } from './blocks.js';
+import { optionList, splitPane, questionLabel, listenLabel } from './blocks.js';
 
 const LETTERS4 = ['A', 'B', 'C', 'D'];
 const LETTERS3 = ['A', 'B', 'C'];
 
 const COUNTDOWN_TEXT = Object.freeze({
-  play: (s) => `Băng phát sau ${s} giây — bấm ▶ để nghe ngay`,
+  play: (s) => `Băng phát sau ${s} giây — bấm nút phát để nghe ngay`,
   next: (s) => `Tự sang câu tiếp sau ${s} giây`,
   end: (s) => `Hết phần Nghe sau ${s} giây`,
 });
@@ -50,7 +50,7 @@ function renderPlay(ctx, label) {
       disabled: off ? 'disabled' : false,
       onClick: () => { if (!off) ctx.play(); },
     }, [
-      el('span', { text: ctx.playing ? '🔊 Đang phát…' : done ? '✓ Đã nghe xong' : `▶ ${label}` }),
+      el('span', {}, listenLabel({ playing: ctx.playing, heard: done, idle: label, done: '✓ Đã nghe xong' })),
       el('small', { text: done ? 'đề thật không cho nghe lại' : 'phát MỘT lần duy nhất, không tua lại' }),
     ]),
     ctx.error ? el('div', { class: 'warn', text: ctx.error }) : '',
