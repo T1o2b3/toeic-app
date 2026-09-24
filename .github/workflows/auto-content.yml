@@ -1,0 +1,89 @@
+# D70 — tự sinh nội dung mỗi ngày trên máy của GitHub, không cần bật Mac hay mở Claude Code.
+#
+# Mỗi ngày sau giờ Gemini đặt lại hạn mức: chạy scripts/auto-content.sh (Part 5 → Part 2 → các bộ → giọng đọc) tới khi
+# hết hạn mức hoặc hết 40 phút → kiểm nội dung + chạy test → đạt thì commit thẳng vào main (Cloudflare tự deploy).
+# Không đạt thì KHÔNG commit, job đỏ và GitHub gửi email báo.
+#
+# Cần 1 secret (Settings → Secrets and variables → Actions → New repository secret), cùng giá trị với .env:
+#   GEMINI_API_KEY
+# Key phải thuộc project KHÔNG bật thanh toán (gói miễn phí của AI Studio): bật thanh toán thì không còn "hết hạn mức"
+# để pipeline tự dừng — chạy tự động mỗi ngày sẽ thành tiền (ràng buộc #1).
+#
+# Chi phí: 0 đồng. Repo private có 2.000 phút Actions/tháng; job này tối đa ~50 phút/ngày, thường ít hơn nhiều
+# (hết hạn mức sớm thì dừng sớm). Hết phút miễn phí thì GitHub chặn job chứ không tính tiền (chưa gắn thẻ).
+name: Tự sinh nội dung
+
+on:
+  schedule:
+    # 08:37 UTC = 15:37 giờ VN. Hạn mức Gemini đặt lại lúc 0 giờ giờ Thái Bình Dương (07:00 UTC mùa hè, 08:00 UTC mùa
+    # đông) — chạy sau cả hai mốc. Tránh phút 0: giờ đó GitHub hay dồn lịch và trễ.
+    - cron: '37 8 * * *'
+  workflow_dispatch: # bấm chạy tay ở tab Actions
+
+# Hai lần chạy pipeline cùng lúc sẽ ghi đè cache của nhau (CLAUDE.md, "Làm song song khi an toàn") — xếp hàng.
+concurrency:
+  group: auto-content
+  cancel-in-progress: false
+
+permissions:
+  contents: write # để commit nội dung mới
+
+jobs:
+  content:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Cài edge-tts (giọng đọc, miễn phí)
+        run: python -m venv pipeline/.venv && pipeline/.venv/bin/pip install --quiet edge-tts
+
+      # Tiến độ dở (bản nháp đã qua kiểm định nhưng chưa ghi file) nằm ở pipeline/.cache — không nằm trong git.
+      - name: Lấy tiến độ của lần chạy trước
+        uses: actions/cache/restore@v4
+        with:
+          path: pipeline/.cache
+          key: pipeline-cache-${{ github.run_id }}
+          restore-keys: pipeline-cache-
+
+      - name: Sinh nội dung
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          test -n "$GEMINI_API_KEY" || { echo "Thiếu secret GEMINI_API_KEY — xem đầu file này."; exit 1; }
+          bash scripts/auto-content.sh
+
+      - name: Lưu tiến độ cho lần sau
+        if: always() && hashFiles('pipeline/.cache/**') != ''
+        uses: actions/cache/save@v4
+        with:
+          path: pipeline/.cache
+          key: pipeline-cache-${{ github.run_id }}
+
+      - name: Kiểm nội dung + chạy test
+        run: npm run validate:content && npm test
+
+      - name: Commit nội dung mới vào main
+        run: |
+          git add public/content public/audio
+          if git diff --cached --quiet; then echo "Hôm nay không có nội dung mới."; exit 0; fi
+          count() { node -e "const f='public/content/$1.json';try{const e=require('./'+f).entries;console.log(e.reduce((n,x)=>n+(x.questions?x.questions.length:1),0))}catch{console.log(0)}"; }
+          summary="Part 5: $(count questions-part5) · Part 2: $(count listening-part2) · Part 3: $(count sets-part3) · Part 4: $(count sets-part4) · Part 6: $(count sets-part6) · Part 7: $(count sets-part7) câu"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -q -m "content: tự sinh nội dung $(date -u +%F) (GitHub Actions, D70)" -m "$summary"
+          # Trong lúc job chạy mà main có commit mới (Huy đẩy code) thì xếp commit này lên trên rồi mới đẩy.
+          git pull -q --rebase origin main
+          git push -q origin HEAD:main
+          echo "$summary"

@@ -80,7 +80,7 @@ Codex tự đọc file này ở đầu mọi phiên. Mọi quy tắc ở đây l
 
 ## Ràng buộc không được vi phạm (xem DECISIONS.md)
 1. **100% miễn phí.** 
-2. **Không gọi AI lúc app chạy.** AI chỉ dùng trong `pipeline/`.
+2. **Không gọi AI lúc app chạy.** AI chỉ dùng trong `pipeline/` (máy Huy hoặc GitHub Actions — D70).
 3. **Bí mật:** API key chỉ ở `.env`. Không đưa `service_role` vào frontend.
 4. **Supabase bắt buộc bật RLS** cho mọi bảng ngay khi tạo.
 5. **Dữ liệu người dùng là nhật ký sự kiện append-only.**
