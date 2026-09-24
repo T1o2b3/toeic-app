@@ -27,6 +27,25 @@
 6. **Đồng bộ tự động** (D55) khi mở app, khi rời app và 15 giây sau khi học. Mục **Sao lưu** hiện lần chạy
    gần nhất; muốn chắc thì bấm **Đồng bộ ngay**. Mỗi máy chỉ cần đăng nhập một lần.
 
+## Phiên 2026-09-24 (cloud, tiếp) — Đổi bộ màu sang "xám lạnh + xanh chàm" (D72)
+
+**Đã xong**
+- Thay toàn bộ bảng màu ở `src/ui/style.css`: nhấn từ xanh lá rừng `#2f6f4e` → xanh chàm `#2f5fd0`; nền trắng ngà ấm
+  → xám lạnh `#f6f7f9`. Bản tối đổi từ đen thuần `#0a0a0a` sang xanh mực `#0b0f16` / mặt `#151b24`.
+- Thêm biến `--on-accent` (chữ trên nền nhấn), thay 11 chỗ viết cứng `color: #fff`. Sửa luôn lỗi có sẵn: ở bản tối
+  nút nhấn sáng màu + chữ trắng chỉ 2,7:1.
+- Bản tối nay định nghĩa lại cả `--again/--hard/--good/--easy` (trước chỉ bản sáng có → chữ đỏ chìm trên nền tối).
+- Chỉnh 2 màu trung tính của biểu đồ (`--viz-l0`, `--viz-grid`) cho lạnh theo nền mới; 3 màu chuỗi + thang xanh giữ
+  nguyên, đã đo lại vẫn đạt ngưỡng D59.
+- Đã đo tương phản mọi cặp: chữ/nền ≥ 4,5:1 (AA). 957 test pass, không file nào > 450 dòng.
+
+**Bước tiếp theo**
+- Huy xem bản deploy (nhớ `Cmd+Shift+R` trên Mac, đóng hẳn app trên iPhone) rồi nói thấy sao. Không ưng thì đổi lại
+  chỉ cần sửa hai khối `:root` / `[data-theme="dark"]` ở đầu `src/ui/style.css` — không đụng tới màn nào.
+- Nếu ưng hướng này thì bước sau có thể tinh chỉnh tiếp: bo góc, khoảng cách, cỡ chữ (chưa động tới trong phiên này).
+
+**Vướng mắc:** không có.
+
 ## Phiên 2026-09-24 (cloud) — thi thử như băng thật (D67–D69) · pipeline tự chạy trên GitHub Actions (D70) · soát DRY
 
 Huy báo: "phần làm đề thi đủ vẫn chưa giống đề thi thật, vẫn chưa tự động phát audio".

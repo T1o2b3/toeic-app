@@ -20,17 +20,17 @@ body.has-tabbar #app { padding-bottom: calc(5rem + env(safe-area-inset-bottom));
    cho tiến độ từ vựng. */
 :root {
   --viz-s1: #2a78d6; --viz-s2: #eb6834; --viz-s3: #1baf7a;
-  --viz-l0: #d9d8d2; --viz-l1: #86b6ef; --viz-l2: #3987e5; --viz-l3: #1c5cab; --viz-l4: #0d366b;
-  --viz-grid: #ecebe6;
+  --viz-l0: #dfe3e9; --viz-l1: #86b6ef; --viz-l2: #3987e5; --viz-l3: #1c5cab; --viz-l4: #0d366b;
+  --viz-grid: #e6e9ee;
   --nav-width: 13.5rem;
 }
-/* Bản tối (D59): cùng các sắc đó, lấy bậc hợp nền tối — đã chạy validate_palette với nền #161616, qua hết.
+/* Bản tối (D59): cùng các sắc đó, lấy bậc hợp nền tối — đã kiểm lại với nền mới #151b24 (D72), qua hết.
    Bản sáng để nguyên trên nền tối thì mức "Thành thạo" (#0d366b) gần như tàng hình (~1,5:1). Thang mức từ
-   vẫn đậm dần theo mức nhớ, bậc đậm nhất dừng ở #184f95 (2,23:1 — ngưỡng tối thiểu 2:1). */
+   vẫn đậm dần theo mức nhớ, bậc đậm nhất dừng ở #184f95 (2,13:1 trên nền mới — ngưỡng tối thiểu 2:1). */
 [data-theme="dark"] {
   --viz-s1: #3987e5; --viz-s2: #d95926; --viz-s3: #199e70;
-  --viz-l0: #383835; --viz-l1: #86b6ef; --viz-l2: #5598e7; --viz-l3: #2a78d6; --viz-l4: #184f95;
-  --viz-grid: #2c2c2a;
+  --viz-l0: #333c4a; --viz-l1: #86b6ef; --viz-l2: #5598e7; --viz-l3: #2a78d6; --viz-l4: #184f95;
+  --viz-grid: #232b38;
 }
 .dash-title { display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.25rem; }
 .dash-title h1 { margin: 0; }
@@ -131,7 +131,7 @@ button.viz-row span { display: inline; }
 .palette { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 0.75rem; }
 button.pal { min-width: 2.4rem; padding: 0.3rem 0.4rem; font-size: 0.75rem; background: var(--surface); border-radius: 0.5rem; }
 button.pal.part { background: var(--hard-soft); }
-button.pal.done { background: var(--accent); color: #fff; border-color: var(--accent); }
+button.pal.done { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
 button.pal.current { outline: 2px solid var(--fg); outline-offset: 1px; }
 button.pal.flagged { border-color: var(--hard); border-width: 2px; }
 .flag-btn { font-size: 0.8rem; margin: 0.2rem 0; }

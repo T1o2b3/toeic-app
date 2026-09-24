@@ -1,33 +1,39 @@
 :root {
-  --bg: #fdfdfb;
+  --bg: #f6f7f9;
   --surface: #ffffff;
-  --fg: #1b1b1a;
-  --muted: #6b6b66;
-  --accent: #2f6f4e;
-  --border: #e2e2dc;
-  --again: #b4472f;
-  --hard: #a4762a;
-  --good: #2f6f4e;
-  --easy: #2f5f8f;
-  --good-soft: #eef6f1;
-  --again-soft: #fbeae6;
-  --hard-soft: #fdf6e7;
-  --chosen-soft: #f2f2ed;
+  --fg: #0f172a;
+  --muted: #596579;
+  --accent: #2f5fd0;
+  --on-accent: #ffffff;
+  --border: #dfe3e9;
+  --again: #c2372a;
+  --hard: #9a6612;
+  --good: #17795b;
+  --easy: #2f5fd0;
+  --good-soft: #e8f5ef;
+  --again-soft: #fdece9;
+  --hard-soft: #fbf2e0;
+  --chosen-soft: #eef1f6;
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
   line-height: 1.6;
 }
 
 [data-theme="dark"] {
-  --bg: #0a0a0a;
-  --surface: #161616;
-  --fg: #efefef;
-  --muted: #a0a0a0;
-  --border: #2a2a2a;
-  --accent: #4fb47c;
-  --good-soft: #14301f;
-  --again-soft: #3a1a13;
+  --bg: #0b0f16;
+  --surface: #151b24;
+  --fg: #e6eaf0;
+  --muted: #96a1b3;
+  --border: #263040;
+  --accent: #6f9bf5;
+  --on-accent: #0b0f16;
+  --again: #f08a72;
+  --hard: #e0ab52;
+  --good: #4fc79a;
+  --easy: #6f9bf5;
+  --good-soft: #102e25;
+  --again-soft: #3a1c16;
   --hard-soft: #33280f;
-  --chosen-soft: #222222;
+  --chosen-soft: #1e2632;
 }
 
 * { box-sizing: border-box; }
@@ -65,7 +71,7 @@ button small { display: block; font-size: 0.75rem; opacity: 0.75; font-weight: 4
 button.primary, button.secondary {
   width: 100%; padding: 0.85rem 1rem; margin-bottom: 0.75rem; text-align: left; font-weight: 600;
 }
-button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+button.primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
 button.secondary { background: var(--surface); color: var(--fg); }
 button.primary:active, button.secondary:active { transform: translateY(1px); }
 
@@ -208,11 +214,11 @@ button.grade kbd {
 .lvl-btn { padding: 0.5rem; text-align: center; font-size: 0.8rem; }
 .lvl-btn .lvl-label { font-weight: 600; display: block; }
 .lvl-btn .lvl-hint { font-size: 0.7rem; opacity: 0.7; }
-.lvl-btn.active { border-color: var(--accent); background: var(--accent); color: #fff; }
+.lvl-btn.active { border-color: var(--accent); background: var(--accent); color: var(--on-accent); }
 
 .filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
 .chip-btn { background: var(--surface); color: var(--fg); padding: 0.3rem 0.7rem; font-size: 0.8rem; border: 1px solid var(--border); }
-.chip-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.chip-btn.active { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
 
 .chooser { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-bottom: 1rem; }
 .chooser-label { font-size: 0.85rem; font-weight: 600; margin-right: 0.5rem; }
@@ -227,7 +233,7 @@ button.grade kbd {
 /* Collocations Redesign */
 .colloc-categories { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.75rem; margin-bottom: 1.5rem; }
 .cat-btn { background: var(--surface); color: var(--fg); padding: 1rem; text-align: center; font-weight: 600; border: 1px solid var(--border); }
-.cat-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.cat-btn.active { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
 .cat-count { display: block; font-size: 0.75rem; opacity: 0.8; font-weight: 400; }
 
 .colloc-list { display: flex; flex-direction: column; gap: 0.5rem; }
@@ -313,7 +319,7 @@ button.gap-link .gap-value { color: var(--muted); }
   -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
 }
 .stem .tok:hover { background: var(--border); }
-.stem .tok.selected { background: var(--accent); color: #fff; }
+.stem .tok.selected { background: var(--accent); color: var(--on-accent); }
 .stem .tok.captured { text-decoration: underline dotted var(--accent); }
 .tray {
   display: flex; align-items: center; flex-wrap: wrap; gap: 0.6rem; min-height: 2.75rem;
@@ -323,7 +329,7 @@ button.gap-link .gap-value { color: var(--muted); }
 .tray.over { border-color: var(--accent); background: var(--good-soft); }
 .tray-word { color: var(--fg); font-weight: 700; font-size: 1rem; }
 .tray-note { color: var(--muted); font-size: 0.8rem; }
-button.tray-add { background: var(--accent); color: #fff; border-color: var(--accent); padding: 0.35rem 0.9rem; font-weight: 600; }
+button.tray-add { background: var(--accent); color: var(--on-accent); border-color: var(--accent); padding: 0.35rem 0.9rem; font-weight: 600; }
 .option-capture { margin-top: 0.75rem; }
 .option-capture .chips { margin-top: 0.25rem; }
 @media (min-width: 62rem) { .tray.narrow-only { display: none; } }
@@ -350,7 +356,7 @@ a.ext-link { color: var(--accent); font-size: 0.8rem; }
 .wrong-review h2 { font-size: 1.1rem; margin: 0 0 0.75rem; }
 .tab-group { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.75rem; }
 .tab-btn { background: var(--surface); color: var(--fg); padding: 0.35rem 0.75rem; font-size: 0.8rem; font-weight: 600; }
-.tab-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.tab-btn.active { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
 
 .wrong-list { display: flex; flex-direction: column; gap: 0.5rem; }
 .wrong-item { background: var(--surface); border: 1px solid var(--border); border-radius: 0.6rem; overflow: hidden; }
@@ -422,8 +428,8 @@ a.ext-link { color: var(--accent); font-size: 0.8rem; }
   text-align: left; padding: 0.7rem 0.85rem; width: 100%;
 }
 .nav-tile small { color: var(--muted); margin-top: 0.15rem; }
-.nav-tile.primary { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
-.nav-tile.primary small { color: #fff; opacity: 0.85; }
+.nav-tile.primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); font-weight: 600; }
+.nav-tile.primary small { color: var(--on-accent); opacity: 0.85; }
 .nav-tile:active { transform: translateY(1px); }
 /* Mục "làm ngay" đứng một mình chiếm cả hàng — nó là việc chính, không phải một lựa chọn ngang hàng. */
 @media (min-width: 30rem) { .nav-tile.primary { grid-column: 1 / -1; } }
@@ -433,4 +439,4 @@ a.ext-link { color: var(--accent); font-size: 0.8rem; }
 button.pick { text-align: left; }
 /* Lý do chọn — phần trả lời "sao lại là cái này", để Huy tin vào gợi ý thay vì bấm bừa. */
 .pick-why { font-style: italic; opacity: 0.85; margin-top: 0.15rem; }
-button.primary .pick-why { color: #fff; }
+button.primary .pick-why { color: var(--on-accent); }

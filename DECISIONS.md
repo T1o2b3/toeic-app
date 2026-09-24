@@ -713,6 +713,21 @@ giới hạn thì có thể chuyển qua model gemini khác không?" — đã c�
   "không còn trên API (404) → đổi model" và chạy tiếp.
 - Vẫn một project Google, không nhân project để lách hạn mức (D19).
 
+**D72. Đổi bộ màu sang "xám lạnh + xanh chàm" (Slate & Indigo), thêm biến `--on-accent`.** (Huy 2026-09-24:
+"muốn thay đổi bộ màu sắc khác, trông cho nó chuyên nghiệp hơn".)
+- Trước: nền trắng ngà ấm `#fdfdfb` + nhấn xanh lá rừng `#2f6f4e`. Xanh lá + nền ấm đọc ra "ứng dụng học nhẹ nhàng";
+  muốn "chuyên nghiệp" thì hướng xám lạnh + xanh chàm (kiểu công cụ làm việc) hợp hơn, và **trùng sắc với bảng màu
+  biểu đồ vốn đã là xanh dương** (`--viz-s1 #2a78d6`) — trước đây nhấn xanh lá đá nhau với biểu đồ xanh dương.
+- Sáng: nền `#f6f7f9`, chữ `#0f172a`, nhấn `#2f5fd0`. Tối: nền `#0b0f16`, mặt `#151b24`, nhấn `#6f9bf5`.
+- **Thêm `--on-accent`** (chữ trên nền nhấn): sáng = trắng, tối = `#0b0f16`. Trước đây `color: #fff` viết cứng ở 11 chỗ;
+  ở bản tối nút nhấn sáng màu + chữ trắng chỉ đạt 2,7:1 (khó đọc) — lỗi có sẵn từ bản xanh lá, nay hết.
+- **Bản tối nay định nghĩa lại cả `--again/--hard/--good/--easy`.** Trước chỉ bản sáng có, nên chữ đỏ `#b4472f`
+  nằm trên nền tối `#161616` đọc rất chìm.
+- Đã đo tương phản toàn bộ cặp màu: mọi cặp chữ/nền ≥ 4,5:1 (AA), thang màu biểu đồ ≥ 2:1 như D59 quy định.
+- Chỉ sửa khối biến ở đầu `src/ui/style.css` + 2 màu trung tính của biểu đồ trong `shell.css` — muốn đổi lại bộ khác
+  chỉ cần sửa đúng hai khối `:root` / `[data-theme="dark"]`, không đụng tới các màn.
+
+
 ## Câu hỏi còn mở
 - ~~Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng?~~ → **Đã giải quyết, xem D35** (chung repo, xét lại khi ~100 MB).
 - ~~Q2 (trước M2): xác nhận license của TSL 1.2 và NGSL.~~ → **Đã giải quyết, xem D18.**
