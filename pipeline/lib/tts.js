@@ -12,6 +12,10 @@ import { createHash } from 'node:crypto';
 import { execFile } from 'node:child_process';
 import { existsSync, mkdirSync, statSync, unlinkSync } from 'node:fs';
 import { dirname } from 'node:path';
+import { projectPath, PUBLIC_DIR } from './cli.js';
+
+/** edge-tts cài trong venv riêng của pipeline (xem EDGE_TTS_MISSING). */
+export const EDGE_TTS = projectPath('pipeline/.venv/bin/edge-tts');
 
 /**
  * Bộ giọng đọc: pha giọng Mỹ / Anh / Úc như bài thi thật. Đã kiểm tra tồn tại bằng `edge-tts --list-voices`.
@@ -147,8 +151,8 @@ export const AUDIO_FAILED_MESSAGE = 'Có đoạn âm thanh lỗi — không ghi 
  *
  * @param {Array<{text: string, voice: string, path: string}>} clips
  * @param {object} options
- * @param {string} options.publicDir - thư mục public/ (đường dẫn của clip tính từ đây)
- * @param {string} options.command - đường dẫn edge-tts
+ * @param {string} [options.publicDir] - thư mục public/ (đường dẫn của clip tính từ đây); mặc định PUBLIC_DIR
+ * @param {string} [options.command] - đường dẫn edge-tts; mặc định EDGE_TTS
  * @param {string} options.label - hiện trong dòng log, vd "58 câu" hoặc "13 bộ"
  * @param {number} [options.concurrency] - số luồng, giới hạn để không ép dịch vụ miễn phí (quy tắc số 2)
  * @param {object} [options.log] - console giả khi test
@@ -157,7 +161,7 @@ export const AUDIO_FAILED_MESSAGE = 'Có đoạn âm thanh lỗi — không ghi 
  * @returns {Promise<{created: number, existed: number, failed: number}>}
  */
 export async function renderClips(clips, {
-  publicDir, command, label, concurrency = 4, log = console, make = synthesize, exists = existsSync,
+  publicDir = PUBLIC_DIR, command = EDGE_TTS, label, concurrency = 4, log = console, make = synthesize, exists = existsSync,
 }) {
   const counts = { created: 0, existed: 0, failed: 0 };
   if (clips.length === 0) return counts;

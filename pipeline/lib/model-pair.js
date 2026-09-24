@@ -82,3 +82,15 @@ export async function aiStep({ pair, role, provider, run, parse = (text) => text
     return { status: 'error', error };
   }
 }
+
+/**
+ * "2 quá dễ, 1 lệch đáp án" — lý do loại của một lô, cho dòng log của cả ba pipeline.
+ * @param {Array<{reason: string}>} rejected
+ * @param {string} [none] - chữ khi không loại gì
+ * @returns {string}
+ */
+export function rejectionSummary(rejected, none = 'không loại câu nào') {
+  const why = {};
+  for (const item of rejected) why[item.reason] = (why[item.reason] ?? 0) + 1;
+  return Object.entries(why).map(([reason, count]) => `${count} ${reason}`).join(', ') || none;
+}

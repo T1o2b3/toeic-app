@@ -9,16 +9,16 @@
  * Bước 2: model B (KHÁC model A) tự giải, không thấy đáp án. Lệch -> loại câu đó.
  * Chỉ câu được cả hai đồng ý mới vào file. Cache giữ câu đã đạt để chạy lại không mất.
  */
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import {
   buildQuestionPrompt, buildVerifyPrompt, crossCheck, questionKey, balanceAnswers, ERROR_TYPES, QUESTION_PROMPT_VERSION,
 } from './lib/prompt-question.js';
 import { parseVocabResponse } from './lib/prompt-vocab.js';
 import { isVietnameseOrEmpty } from './lib/prompt-listening.js';
 import { sleep } from './lib/ai-provider.js';
-import { createModelPair, aiStep, QUOTA_MESSAGE } from './lib/model-pair.js';
+import { createModelPair, aiStep, rejectionSummary, QUOTA_MESSAGE } from './lib/model-pair.js';
 import { openWorkCache, nextId } from './lib/cache.js';
-import { createValidator } from './lib/validate-deck.js';
+import { writeBank } from './lib/validate-deck.js';
 import { projectPath, today, flagNumber } from './lib/cli.js';
 
 const OUTPUT = projectPath('public/content/questions-part5.json');
@@ -116,10 +116,7 @@ async function main() {
       });
     }
     cache.save();
-    const why = {};
-    for (const item of rejected) why[item.reason] = (why[item.reason] ?? 0) + 1;
-    const whyText = Object.entries(why).map(([reason, count]) => `${count} ${reason}`).join(', ') || 'không loại câu nào';
-    console.log(`+${agreed.length} câu đạt · loại: ${whyText} · trùng ${drafted.length - fresh.length} · tổng ${cache.size()}/${target}`);
+    console.log(`+${agreed.length} câu đạt · loại: ${rejectionSummary(rejected)} · trùng ${drafted.length - fresh.length} · tổng ${cache.size()}/${target}`);
 
     if (cache.size() < target) await sleep(4000);
   }
@@ -135,17 +132,7 @@ async function main() {
   }
 
   const bank = { set: 'part5-core', part: 5, version: 1, entries };
-  const validate = createValidator(projectPath('schemas/question.schema.json'));
-  const { valid, errors } = validate(bank);
-  if (!valid) {
-    console.error('Bộ câu hỏi KHÔNG hợp lệ, không ghi file:');
-    for (const error of errors.slice(0, 20)) console.error('  -', error);
-    process.exitCode = 1;
-    return;
-  }
-
-  mkdirSync(projectPath('public/content'), { recursive: true });
-  writeFileSync(OUTPUT, `${JSON.stringify(bank, null, 2)}\n`);
+  if (!writeBank(OUTPUT, bank, projectPath('schemas/question.schema.json'))) return;
   console.log(`\nĐã ghi ${entries.length} câu vào public/content/questions-part5.json`);
 }
 
