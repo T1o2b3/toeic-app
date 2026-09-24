@@ -1720,6 +1720,106 @@
         "model": "gemini-flash-lite-latest",
         "agreed": true
       }
+    },
+    {
+      "id": "p7-0026",
+      "set": "part7-core",
+      "part": 7,
+      "status": "active",
+      "kind": "double",
+      "title": "Product Launch and Review",
+      "passages": [
+        {
+          "label": "Press Release",
+          "text": "TechNova is proud to announce the launch of the 'NovaTab Pro' on November 15. Priced at $599, this tablet features a revolutionary battery life of 20 hours and a high-definition screen. Customers who pre-order before November 10 will receive a complimentary protective leather case and a stylus pen. The device will be available exclusively through our website and select authorized retailers. We expect high demand and recommend early purchases to ensure availability."
+        },
+        {
+          "label": "Customer Review",
+          "text": "I was excited to get the NovaTab Pro, especially since I pre-ordered it on November 5 to get the free accessories. While the battery life is truly impressive, lasting nearly 20 hours as promised, I was disappointed to find that the screen resolution is not as sharp as the marketing materials claimed. Furthermore, I had to pay an additional $30 for shipping because I live outside the major metropolitan areas where authorized retailers are located. Overall, it's a decent device, but perhaps slightly overpriced."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p7-0026-1",
+          "stem": "What is the main reason the customer pre-ordered the tablet?",
+          "options": {
+            "A": "To ensure they received the device on the launch day.",
+            "B": "To avoid the high demand expected at authorized retailers.",
+            "C": "To take advantage of the promotional gift bundle.",
+            "D": "To get a discount on the initial retail price."
+          },
+          "answer": "C",
+          "errorType": "detail",
+          "explanation": "Khách hàng đề cập rằng họ đặt hàng trước để nhận được các phụ kiện miễn phí (bao da và bút cảm ứng).",
+          "trap": "Việc nhắc đến 'nhu cầu cao' trong thông cáo báo chí khiến người đọc lầm tưởng khách hàng đặt trước để tránh tình trạng cháy hàng."
+        },
+        {
+          "id": "p7-0026-2",
+          "stem": "What is the total cost the customer paid for the tablet?",
+          "options": {
+            "A": "$569",
+            "B": "$599",
+            "C": "$659",
+            "D": "$629"
+          },
+          "answer": "D",
+          "errorType": "cross-reference",
+          "explanation": "Giá niêm yết là 599 đô la cộng thêm 30 đô la phí vận chuyển mà khách hàng phải trả thêm.",
+          "trap": "Nhiều người sẽ chọn 599 đô la vì đó là giá niêm yết được nhắc đến trong thông cáo báo chí."
+        },
+        {
+          "id": "p7-0026-3",
+          "stem": "What is implied about the tablet's availability?",
+          "options": {
+            "A": "It is not sold in all geographical regions.",
+            "B": "It can be purchased at any electronics store.",
+            "C": "It is only available for purchase online.",
+            "D": "It will be sold out shortly after the launch."
+          },
+          "answer": "A",
+          "errorType": "inference",
+          "explanation": "Khách hàng phải trả thêm phí vận chuyển vì sống ngoài các khu vực đô thị lớn, nơi có các nhà bán lẻ được ủy quyền, cho thấy thiết bị không có sẵn ở mọi nơi.",
+          "trap": "Thông cáo báo chí nói thiết bị có sẵn qua trang web và các nhà bán lẻ, khiến người đọc nghĩ nó có thể mua ở bất cứ đâu."
+        },
+        {
+          "id": "p7-0026-4",
+          "stem": "Which aspect of the NovaTab Pro does the customer agree with the company's claim?",
+          "options": {
+            "A": "The screen resolution quality.",
+            "B": "The duration of the battery.",
+            "C": "The value for the money.",
+            "D": "The convenience of the delivery process."
+          },
+          "answer": "B",
+          "errorType": "cross-reference",
+          "explanation": "Thông cáo báo chí hứa hẹn thời lượng pin 20 giờ và khách hàng xác nhận rằng pin thực sự kéo dài gần 20 giờ.",
+          "trap": "Người đọc có thể nhầm lẫn vì khách hàng có khen thiết bị nhưng lại chê về độ phân giải màn hình."
+        },
+        {
+          "id": "p7-0026-5",
+          "stem": "Which of the following is NOT mentioned in the provided documents?",
+          "options": {
+            "A": "The specific date of the product launch.",
+            "B": "The inclusion of a stylus pen in the pre-order offer.",
+            "C": "The technical specifications of the tablet's processor.",
+            "D": "The price of the tablet at launch."
+          },
+          "answer": "C",
+          "errorType": "not-stated",
+          "explanation": "Thông tin về bộ vi xử lý (processor) hoàn toàn không xuất hiện trong cả hai tài liệu.",
+          "trap": "Các thông tin khác như ngày ra mắt, bút cảm ứng và giá cả đều được nhắc đến, khiến người đọc dễ bị phân tâm."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-24",
+        "date": "2026-09-24"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
     }
   ]
 }

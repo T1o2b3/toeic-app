@@ -7171,6 +7171,538 @@
         "answer": "D",
         "agreed": true
       }
+    },
+    {
+      "id": "p5-0257",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "By the time the technical support team finally ---- the enterprise software license, the frustrated client had already cancelled the subscription.",
+      "options": {
+        "A": "had activated",
+        "B": "activates",
+        "C": "activated",
+        "D": "has activated"
+      },
+      "answer": "C",
+      "errorType": "verb-tense",
+      "explanation": "Trong mệnh đề thời gian bắt đầu bằng 'By the time', khi mệnh đề chính chia ở thì quá khứ hoàn thành ('had already cancelled'), mệnh đề 'By the time' phải chia ở thì quá khứ đơn ('activated') để chỉ mốc thời gian hành động thứ hai xảy ra.",
+      "trap": "Người học thấy 'had already cancelled' ở quá khứ hoàn thành có thể bị cám dỗ chọn 'had activated' để đồng nhất thì, hoặc chọn 'has activated' do thói quen dịch nghĩa hiện tại.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-24",
+        "date": "2026-09-24"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0258",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The CEO managed the crisis ---- than any of the consultants had predicted, saving the firm millions in potential damages.",
+      "options": {
+        "A": "as wisely",
+        "B": "the most wisely",
+        "C": "so wisely",
+        "D": "no less wisely"
+      },
+      "answer": "D",
+      "errorType": "comparison",
+      "explanation": "Cấu trúc 'no less + trạng từ + than' mang nghĩa 'không kém phần... so với'. Ở đây, trạng từ 'wisely' bổ nghĩa cho động từ 'managed', và 'than' chỉ ra cấu trúc so sánh.",
+      "trap": "Người học thường chỉ quen với 'more... than' nên có thể lúng túng trước 'no less... than', hoặc chọn 'the most wisely' do thấy có so sánh với nhiều đối tượng khác mà bỏ qua từ 'than' ở phía sau.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-24",
+        "date": "2026-09-24"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0259",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The HR director insisted that the new employee ---- the online enrollment process before the mandatory orientation session begins.",
+      "options": {
+        "A": "completes",
+        "B": "completed",
+        "C": "complete",
+        "D": "will complete"
+      },
+      "answer": "C",
+      "errorType": "verb-tense",
+      "explanation": "Động từ 'insist' trong cấu trúc giả định 'insist that + S + (should) + V-bare' yêu cầu động từ ở mệnh đề 'that' phải ở dạng nguyên thể không 'to', bất kể chủ ngữ là số ít hay số nhiều.",
+      "trap": "Chủ ngữ 'the new employee' là số ít nên người học dễ chọn 'completes' theo sự hòa hợp chủ vị thông thường, hoặc chọn 'completed' vì thấy động từ 'insisted' ở quá khứ.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-24",
+        "date": "2026-09-24"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0260",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The board of directors ---- several charitable donations before they finalized the company's annual tax write-off report.",
+      "options": {
+        "A": "has authorized",
+        "B": "authorizes",
+        "C": "was authorizing",
+        "D": "had authorized"
+      },
+      "answer": "D",
+      "errorType": "verb-tense",
+      "explanation": "Thì quá khứ hoàn thành 'had authorized' được dùng để diễn tả một hành động đã hoàn thành trước một hành động khác trong quá khứ ('before they finalized').",
+      "trap": "Người học có thể chọn 'has authorized' (hiện tại hoàn thành) do nhầm lẫn về mốc thời gian, hoặc chọn 'was authorizing' (quá khứ tiếp diễn) vì nghĩ hành động quyên góp đang diễn ra.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-24",
+        "date": "2026-09-24"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0261",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "By the time the maintenance crew finishes the office renovation, they ---- every energy-efficient LED bulb in the entire building.",
+      "options": {
+        "A": "will replace",
+        "B": "have replaced",
+        "C": "will have replaced",
+        "D": "are replacing"
+      },
+      "answer": "C",
+      "errorType": "verb-tense",
+      "explanation": "Trong cấu trúc 'By the time + mệnh đề hiện tại đơn', mệnh đề chính diễn tả một hành động sẽ hoàn thành trước thời điểm đó trong tương lai, do đó phải chia thì tương lai hoàn thành 'will have replaced'.",
+      "trap": "Người học dễ chọn 'will replace' (tương lai đơn) do thói quen dịch nghĩa tương lai thông thường mà bỏ qua sự hoàn thành của hành động trước một mốc thời gian khác.",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-24",
+        "date": "2026-09-24"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0262",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The outdoor gear company realized that the experienced hiker ---- their prototype jacket for three months before submitting his final feedback.",
+      "options": {
+        "A": "has been testing",
+        "B": "tests",
+        "C": "is testing",
+        "D": "had been testing"
+      },
+      "answer": "D",
+      "errorType": "verb-tense",
+      "explanation": "Thì quá khứ hoàn thành tiếp diễn 'had been testing' diễn tả một hành động xảy ra liên tục trong một khoảng thời gian ('for three months') trước một mốc thời gian trong quá khứ ('before submitting/realized').",
+      "trap": "Người học dễ chọn 'has been testing' (hiện tại hoàn thành tiếp diễn) vì thấy có 'for three months', nhưng quên mất toàn bộ bối cảnh câu đang ở quá khứ ('realized').",
+      "gen": {
+        "model": "gemini-3.5-flash",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-24",
+        "date": "2026-09-24"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0263",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "Management decided to terminate the contract early, despite the fact that the ---- of the agreement was still six months away.",
+      "options": {
+        "A": "termination",
+        "B": "reunion",
+        "C": "expiration",
+        "D": "outlook"
+      },
+      "answer": "C",
+      "errorType": "preposition",
+      "explanation": "Từ 'expiration' (sự hết hạn) là danh từ chính xác nhất để chỉ thời điểm kết thúc một hợp đồng trong ngữ cảnh thương mại.",
+      "trap": "Từ 'termination' nghe có vẻ hợp lý nhưng nó trùng lặp với động từ đã xuất hiện ở vế đầu của câu.",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-24",
+        "date": "2026-09-24"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0264",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The prospective candidates were asked to submit their portfolios, ---- they await the final decision from the human resources department next month.",
+      "options": {
+        "A": "during",
+        "B": "despite",
+        "C": "although",
+        "D": "while"
+      },
+      "answer": "D",
+      "errorType": "preposition",
+      "explanation": "'While' là liên từ chỉ thời gian, dùng để nối hai mệnh đề diễn ra song song trong ngữ cảnh chờ đợi kết quả.",
+      "trap": "Người học dễ nhầm với 'during' vì nó cũng chỉ thời gian, nhưng 'during' là giới từ phải đi với danh từ/cụm danh từ.",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-24",
+        "date": "2026-09-24"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0265",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The chemistry between the two departments has improved significantly, ---- the recent challenges they faced during the merger process last year.",
+      "options": {
+        "A": "although",
+        "B": "whereas",
+        "C": "despite",
+        "D": "even"
+      },
+      "answer": "C",
+      "errorType": "preposition",
+      "explanation": "'Despite' là giới từ theo sau bởi một cụm danh từ, dùng để chỉ sự tương phản giữa việc cải thiện và những khó khăn đã qua.",
+      "trap": "Người học thường chọn 'although' vì nhầm lẫn giữa liên từ và giới từ khi theo sau là một cụm danh từ.",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-24",
+        "date": "2026-09-24"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0266",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The staff members were instructed to keep the office area clean, as the ---- of the workspace reflects the company's professional image.",
+      "options": {
+        "A": "dull",
+        "B": "sock",
+        "C": "slot",
+        "D": "cleanliness"
+      },
+      "answer": "D",
+      "errorType": "infinitive-gerund",
+      "explanation": "Danh từ 'cleanliness' (sự sạch sẽ) là chủ ngữ phù hợp nhất về mặt ngữ nghĩa để nói về việc giữ gìn không gian làm việc.",
+      "trap": "Các từ còn lại đều sai về nghĩa hoặc từ loại, nhưng người học có thể bị phân tâm bởi các từ vựng lạ.",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-24",
+        "date": "2026-09-24"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0267",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The CEO decided to omit the controversial paragraph from the report, ---- the board of directors had previously approved the entire draft.",
+      "options": {
+        "A": "despite",
+        "B": "in spite of",
+        "C": "even though",
+        "D": "regardless"
+      },
+      "answer": "C",
+      "errorType": "preposition",
+      "explanation": "'Even though' là liên từ nối hai mệnh đề có quan hệ nhượng bộ, phù hợp với cấu trúc có chủ ngữ và động từ phía sau.",
+      "trap": "Người học dễ chọn 'despite' hoặc 'in spite of' vì quen với cấu trúc nhượng bộ nhưng quên mất chúng cần cụm danh từ.",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-24",
+        "date": "2026-09-24"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0268",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The institute has decided to refresh its curriculum, ---- it has been using the same training materials for over a decade.",
+      "options": {
+        "A": "during",
+        "B": "despite",
+        "C": "although",
+        "D": "since"
+      },
+      "answer": "D",
+      "errorType": "preposition",
+      "explanation": "'Since' ở đây đóng vai trò là liên từ chỉ nguyên nhân (vì), giải thích lý do tại sao cần làm mới chương trình học.",
+      "trap": "Người học thường chỉ nhớ 'since' dùng cho thì hoàn thành để chỉ thời gian, nên dễ bỏ qua nghĩa chỉ nguyên nhân.",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-24",
+        "date": "2026-09-24"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0269",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The manager spoke so loudly during the meeting that everyone felt ----, leading to a very uncomfortable atmosphere for the participants.",
+      "options": {
+        "A": "dull",
+        "B": "resemble",
+        "C": "uncomfortable",
+        "D": "omit"
+      },
+      "answer": "C",
+      "errorType": "infinitive-gerund",
+      "explanation": "Tính từ 'uncomfortable' mô tả trạng thái cảm xúc của người tham gia cuộc họp khi bị quát tháo.",
+      "trap": "Người học có thể nhầm lẫn với các từ khác có vẻ liên quan đến tính cách hoặc hành động.",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-24",
+        "date": "2026-09-24"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0270",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The new employee does not resemble his predecessor at all, ---- he has a completely different approach to solving complex problems.",
+      "options": {
+        "A": "despite",
+        "B": "although",
+        "C": "during",
+        "D": "as"
+      },
+      "answer": "D",
+      "errorType": "preposition",
+      "explanation": "'As' ở đây đóng vai trò là liên từ chỉ nguyên nhân (vì), giải thích lý do tại sao họ không giống nhau.",
+      "trap": "Người học có thể nhầm lẫn với các từ chỉ sự nhượng bộ vì cấu trúc câu có vẻ đối lập.",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-24",
+        "date": "2026-09-24"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0271",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The team members were told to avoid being dull during the presentation, ---- they want to keep the audience engaged and interested.",
+      "options": {
+        "A": "despite",
+        "B": "during",
+        "C": "if",
+        "D": "although"
+      },
+      "answer": "C",
+      "errorType": "infinitive-gerund",
+      "explanation": "Liên từ 'if' thiết lập điều kiện cần thiết để giữ sự chú ý của khán giả trong bài thuyết trình.",
+      "trap": "Người học có thể chọn 'although' vì nhầm lẫn về logic câu.",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-24",
+        "date": "2026-09-24"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0272",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The manager is ---- about the new dress code policy, as it might affect the professional image of the company.",
+      "options": {
+        "A": "apprehensively",
+        "B": "apprehension",
+        "C": "apprehend",
+        "D": "apprehensive"
+      },
+      "answer": "D",
+      "errorType": "word-form",
+      "explanation": "Sau động từ 'to be' cần một tính từ để mô tả trạng thái của chủ ngữ.",
+      "trap": "Người học dễ chọn trạng từ 'apprehensively' vì nghĩ nó bổ nghĩa cho động từ 'is'.",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-24",
+        "date": "2026-09-24"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0273",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The warranty policy covers ---- of the repair costs if the damage is caused by manufacturing defects rather than user negligence.",
+      "options": {
+        "A": "many",
+        "B": "several",
+        "C": "most",
+        "D": "few"
+      },
+      "answer": "C",
+      "errorType": "quantifier",
+      "explanation": "'Costs' là danh từ đếm được nhưng 'most' có thể dùng cho cả danh từ đếm được và không đếm được để chỉ phần lớn.",
+      "trap": "Người học dễ chọn 'many' hoặc 'several' mà quên mất ngữ cảnh logic về 'phần lớn chi phí'.",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-24",
+        "date": "2026-09-24"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0274",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The board of directors agreed that the merger should proceed, ---- the concerns raised by the minority shareholders regarding long-term profitability.",
+      "options": {
+        "A": "while",
+        "B": "even though",
+        "C": "provided that",
+        "D": "notwithstanding"
+      },
+      "answer": "D",
+      "errorType": "conjunction",
+      "explanation": "Notwithstanding là giới từ mang nghĩa 'mặc dù', đi kèm với cụm danh từ 'the concerns'.",
+      "trap": "Người học thường quen với 'although' hoặc 'even though' nên sẽ chọn nhầm vì không nhận ra phía sau là cụm danh từ.",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-24",
+        "date": "2026-09-24"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "D",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p5-0275",
+      "set": "part5-core",
+      "part": 5,
+      "status": "active",
+      "stem": "The waiter insisted that the customer ---- the bill immediately, although the manager had already offered to cover the cost of the meal.",
+      "options": {
+        "A": "paid",
+        "B": "pays",
+        "C": "pay",
+        "D": "to pay"
+      },
+      "answer": "C",
+      "errorType": "infinitive-gerund",
+      "explanation": "Sau các động từ chỉ yêu cầu, đề nghị (insist, suggest, recommend) dùng cấu trúc giả định (subjunctive) với động từ nguyên thể không 'to'.",
+      "trap": "Người học dễ chọn 'paid' vì thấy các vế trước chia quá khứ (had offered).",
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "part5-v3",
+        "batch": "2026-09-24",
+        "date": "2026-09-24"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "answer": "C",
+        "agreed": true
+      }
     }
   ]
 }

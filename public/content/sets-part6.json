@@ -658,6 +658,334 @@
         "model": "gemini-flash-lite-latest",
         "agreed": true
       }
+    },
+    {
+      "id": "p6-0009",
+      "set": "part6-core",
+      "part": 6,
+      "status": "active",
+      "kind": "text-completion",
+      "title": "Memorandum",
+      "passages": [
+        {
+          "label": "Memorandum",
+          "text": "To: All Employees. From: Management. Subject: Restaurant Catering Order. We are currently finalizing the menu for the upcoming anniversary luncheon. [1]. Please review the attached list of dietary options and indicate any specific requirements you may have. It is vital that we accommodate everyone's needs to ensure a pleasant dining experience. [2]. We have narrowed down the selection to three local vendors known for their high-quality ingredients. [3]. Your feedback will assist us in making the final decision by the end of the week. [4]. Thank you for your prompt attention to this matter."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p6-0009-1",
+          "stem": "Blank [1]",
+          "options": {
+            "A": "Our goal is to provide a diverse selection of dishes.",
+            "B": "The event will take place on the rooftop terrace.",
+            "C": "The budget for the event has been significantly increased.",
+            "D": "We have invited several guest speakers to the luncheon."
+          },
+          "answer": "A",
+          "errorType": "sentence-insertion",
+          "explanation": "Câu này tạo tiền đề cho việc yêu cầu nhân viên chọn món ăn dựa trên sự đa dạng của thực đơn.",
+          "trap": "Các phương án về địa điểm hoặc ngân sách không liên quan trực tiếp đến việc chọn món ăn."
+        },
+        {
+          "id": "p6-0009-2",
+          "stem": "Blank [2]",
+          "options": {
+            "A": "However",
+            "B": "Therefore",
+            "C": "Moreover",
+            "D": "Instead"
+          },
+          "answer": "B",
+          "errorType": "connector-in-context",
+          "explanation": "Từ nối chỉ kết quả hợp lý cho việc tại sao cần thu thập yêu cầu ăn uống của nhân viên.",
+          "trap": "Các từ nối chỉ sự đối lập hoặc bổ sung không phù hợp với logic nhân quả ở đây."
+        },
+        {
+          "id": "p6-0009-3",
+          "stem": "Blank [3]",
+          "options": {
+            "A": "competitive",
+            "B": "competent",
+            "C": "competing",
+            "D": "competition"
+          },
+          "answer": "C",
+          "errorType": "vocab-in-context",
+          "explanation": "Tính từ chỉ các nhà cung cấp đang cạnh tranh để được chọn cho đơn hàng này.",
+          "trap": "Các từ cùng gốc từ nhưng mang nghĩa về năng lực hoặc danh từ dễ gây nhầm lẫn."
+        },
+        {
+          "id": "p6-0009-4",
+          "stem": "Blank [4]",
+          "options": {
+            "A": "The catering company will provide a full refund if needed.",
+            "B": "We are looking forward to the keynote address.",
+            "C": "The office will be closed during the luncheon.",
+            "D": "Please submit your preferences via the online form."
+          },
+          "answer": "D",
+          "errorType": "sentence-insertion",
+          "explanation": "Câu này hướng dẫn nhân viên cách thực hiện yêu cầu đã nêu ở các câu trước.",
+          "trap": "Các câu khác không đưa ra chỉ dẫn hành động cụ thể cho nhân viên."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-24",
+        "date": "2026-09-24"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p6-0010",
+      "set": "part6-core",
+      "part": 6,
+      "status": "active",
+      "kind": "text-completion",
+      "title": "Conference Registration",
+      "passages": [
+        {
+          "label": "Conference Registration",
+          "text": "Registration for the Global Business Summit is now officially open. This year's event will focus on sustainable growth strategies in emerging markets. [1]. Early-bird discounts are available for those who complete their registration by the end of this month. We expect a record number of attendees due to the impressive lineup of keynote speakers. [2]. Please ensure your contact details are accurate, as all confirmation materials will be sent via email. [3]. If you require special accommodations, please notify the organizers at least two weeks prior to the event. [4]. We look forward to welcoming you to this premier industry gathering."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p6-0010-1",
+          "stem": "Blank [1]",
+          "options": {
+            "A": "Participants will have the opportunity to network with industry leaders.",
+            "B": "The summit will be held in a different city next year.",
+            "C": "Registration fees must be paid in full upon sign-up.",
+            "D": "The agenda includes several interactive breakout sessions."
+          },
+          "answer": "A",
+          "errorType": "sentence-insertion",
+          "explanation": "Câu này bổ sung thông tin về lợi ích của việc tham gia hội nghị, phù hợp với ngữ cảnh quảng bá sự kiện.",
+          "trap": "Các phương án về địa điểm hoặc phí đăng ký không làm tăng sự hấp dẫn của sự kiện như mục đích của đoạn văn."
+        },
+        {
+          "id": "p6-0010-2",
+          "stem": "Blank [2]",
+          "options": {
+            "A": "However",
+            "B": "Furthermore",
+            "C": "Instead",
+            "D": "Otherwise"
+          },
+          "answer": "B",
+          "errorType": "connector-in-context",
+          "explanation": "Từ nối bổ sung thông tin về việc kỳ vọng số lượng người tham dự cao.",
+          "trap": "Các từ nối chỉ sự đối lập hoặc thay thế không phù hợp với mạch văn đang ca ngợi sự kiện."
+        },
+        {
+          "id": "p6-0010-3",
+          "stem": "Blank [3]",
+          "options": {
+            "A": "accuracy",
+            "B": "accurate",
+            "C": "accurately",
+            "D": "accure"
+          },
+          "answer": "C",
+          "errorType": "grammar-in-context",
+          "explanation": "Cần một trạng từ để bổ nghĩa cho động từ 'are' (trong cấu trúc diễn tả tính chất của thông tin).",
+          "trap": "Các dạng tính từ hoặc danh từ thường bị nhầm lẫn khi người học không chú ý đến chức năng của từ trong câu."
+        },
+        {
+          "id": "p6-0010-4",
+          "stem": "Blank [4]",
+          "options": {
+            "A": "We are currently finalizing the list of sponsors.",
+            "B": "The conference will conclude with a gala dinner.",
+            "C": "Detailed maps of the facility are available online.",
+            "D": "The venue is fully accessible to all guests."
+          },
+          "answer": "D",
+          "errorType": "sentence-insertion",
+          "explanation": "Câu này giải thích rõ hơn về việc hỗ trợ đặc biệt cho khách tham dự.",
+          "trap": "Các câu khác nói về nhà tài trợ hoặc bữa tiệc, không liên quan đến yêu cầu về hỗ trợ đặc biệt."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-24",
+        "date": "2026-09-24"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p6-0011",
+      "set": "part6-core",
+      "part": 6,
+      "status": "active",
+      "kind": "text-completion",
+      "title": "Software Update Notification",
+      "passages": [
+        {
+          "label": "Email",
+          "text": "Dear Staff, please be advised that our internal project management software will undergo a mandatory update this Saturday at 10:00 PM. [1]. This maintenance is necessary to enhance system stability and patch security vulnerabilities discovered in the latest version. We anticipate that the service will be unavailable for approximately two hours. [2], users are encouraged to save all ongoing tasks and log out of the platform before the scheduled downtime. [3], the IT department has been working diligently to ensure that the transition is seamless. [4]. We appreciate your patience and cooperation as we strive to improve our digital infrastructure."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p6-0011-1",
+          "stem": "Blank [1]",
+          "options": {
+            "A": "Access to the server will be temporarily restricted.",
+            "B": "The system will be fully operational during this period.",
+            "C": "Employees should report any bugs to the help desk.",
+            "D": "Upgrades are performed on a monthly basis."
+          },
+          "answer": "A",
+          "errorType": "sentence-insertion",
+          "explanation": "Câu này cần cung cấp thông tin bổ sung về việc hệ thống sẽ không thể truy cập được, nối tiếp với thông báo bảo trì ở câu trước.",
+          "trap": "Các phương án khác đưa ra thông tin trái ngược hoặc không liên quan đến việc bảo trì hệ thống sắp diễn ra."
+        },
+        {
+          "id": "p6-0011-2",
+          "stem": "Blank [2]",
+          "options": {
+            "A": "However",
+            "B": "Consequently",
+            "C": "Nevertheless",
+            "D": "Otherwise"
+          },
+          "answer": "B",
+          "errorType": "connector-in-context",
+          "explanation": "Vì hệ thống sẽ ngừng hoạt động, người dùng cần lưu công việc; đây là quan hệ nhân quả.",
+          "trap": "Các từ nối chỉ sự tương phản hoặc điều kiện không phù hợp với logic của đoạn văn."
+        },
+        {
+          "id": "p6-0011-3",
+          "stem": "Blank [3]",
+          "options": {
+            "A": "Furthermore",
+            "B": "In contrast",
+            "C": "Meanwhile",
+            "D": "In addition"
+          },
+          "answer": "C",
+          "errorType": "connector-in-context",
+          "explanation": "Từ này chỉ thời điểm song song, diễn tả việc bộ phận IT đang làm việc trong khi người dùng chờ đợi.",
+          "trap": "Các từ nối bổ sung thông tin không làm nổi bật được sự đồng thời của các sự kiện."
+        },
+        {
+          "id": "p6-0011-4",
+          "stem": "Blank [4]",
+          "options": {
+            "A": "The update has been postponed indefinitely.",
+            "B": "All data will be permanently deleted after the update.",
+            "C": "The IT team is currently unavailable for assistance.",
+            "D": "Normal operations should resume by midnight."
+          },
+          "answer": "D",
+          "errorType": "sentence-insertion",
+          "explanation": "Câu này cung cấp thông tin về thời gian dự kiến hoàn thành, phù hợp với ngữ cảnh thông báo bảo trì.",
+          "trap": "Các phương án khác chứa thông tin tiêu cực hoặc không logic với mục tiêu của email thông báo."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-24",
+        "date": "2026-09-24"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
+    },
+    {
+      "id": "p6-0012",
+      "set": "part6-core",
+      "part": 6,
+      "status": "active",
+      "kind": "text-completion",
+      "title": "Conference Registration",
+      "passages": [
+        {
+          "label": "Announcement",
+          "text": "Registration for the Annual Global Tech Summit is now officially open. We invite industry professionals to secure their spots early, as seating is limited. [1]. Attendees will have the opportunity to engage with leading experts and participate in exclusive workshops. Please note that the early-bird discount [2] by the end of this month. [3], we recommend that you complete your registration form online to take advantage of the reduced rates. [4]. Should you have any inquiries regarding the agenda, please visit our official website for detailed information."
+        }
+      ],
+      "questions": [
+        {
+          "id": "p6-0012-1",
+          "stem": "Blank [1]",
+          "options": {
+            "A": "The event will be held at the Grand Convention Center.",
+            "B": "Tickets are sold at a premium price for late registrants.",
+            "C": "Previous summits have attracted thousands of participants.",
+            "D": "Registration fees are non-refundable under any circumstances."
+          },
+          "answer": "A",
+          "errorType": "sentence-insertion",
+          "explanation": "Câu này cung cấp thông tin về địa điểm tổ chức, là thông tin cần thiết sau khi thông báo mở cổng đăng ký.",
+          "trap": "Các phương án khác tập trung vào giá vé hoặc lịch sử sự kiện, không logic với việc giới hạn chỗ ngồi."
+        },
+        {
+          "id": "p6-0012-2",
+          "stem": "Blank [2]",
+          "options": {
+            "A": "has expired",
+            "B": "will expire",
+            "C": "is expiring",
+            "D": "would expire"
+          },
+          "answer": "B",
+          "errorType": "grammar-in-context",
+          "explanation": "Cấu trúc diễn tả một sự việc sẽ xảy ra trong tương lai tại một thời điểm xác định.",
+          "trap": "Các thì khác gây nhầm lẫn về thời gian nhưng không phù hợp với ngữ cảnh thông báo về tương lai."
+        },
+        {
+          "id": "p6-0012-3",
+          "stem": "Blank [3]",
+          "options": {
+            "A": "Moreover",
+            "B": "Instead",
+            "C": "Therefore",
+            "D": "However"
+          },
+          "answer": "C",
+          "errorType": "connector-in-context",
+          "explanation": "Vì ưu đãi sắp hết hạn, người đọc cần đăng ký sớm; đây là quan hệ kết quả.",
+          "trap": "Các từ nối bổ sung hoặc tương phản không làm rõ được tính cấp thiết của việc đăng ký."
+        },
+        {
+          "id": "p6-0012-4",
+          "stem": "Blank [4]",
+          "options": {
+            "A": "The registration process is quite complex for new users.",
+            "B": "The summit will feature keynote speakers from various sectors.",
+            "C": "Participants are required to bring their own devices.",
+            "D": "Group discounts are also available for teams of five or more."
+          },
+          "answer": "D",
+          "errorType": "sentence-insertion",
+          "explanation": "Câu này bổ sung thông tin về các ưu đãi khác, phù hợp với đoạn văn đang nói về chi phí và đăng ký.",
+          "trap": "Các phương án khác đưa ra các yêu cầu hoặc mô tả không liên quan trực tiếp đến quy trình đăng ký."
+        }
+      ],
+      "gen": {
+        "model": "gemini-3.1-flash-lite",
+        "promptVersion": "sets-v1",
+        "batch": "2026-09-24",
+        "date": "2026-09-24"
+      },
+      "verify": {
+        "model": "gemini-flash-lite-latest",
+        "agreed": true
+      }
     }
   ]
 }
