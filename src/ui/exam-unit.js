@@ -76,7 +76,7 @@ export function renderBlanks(text, numbers = []) {
 
 /**
  * @param {object} unit - {kind: 'single'|'set', part, item, questions}
- * @param {{answers: Record<string, string>, pick: Function, play: Function, playing: boolean, heard: number, error: string|null, highlight: string|number|null}} ctx
+ * @param {{answers: Record<string, string>, pick: Function, play: Function, playing: boolean, heard: number, error: string|null, countdown: {kind: string, seconds: number}|null, flags: object|null, toggleFlag: Function}} ctx
  * @param {Map<string, number>} [numbers] - id câu → số hiệu trong đề thật
  * @returns {HTMLElement}
  */
@@ -90,12 +90,7 @@ export function renderUnit(unit, ctx, numbers = new Map()) {
       [renderPlay(ctx, 'Nghe câu này'), el('p', { class: 'footnote', text: 'Part 2: chỉ nghe, không có chữ. Chọn A, B hoặc C.' })],
       [
         number ? el('div', { class: 'q-no', text: `Câu ${number}` }) : '',
-        optionList({ 
-          letters: LETTERS3, 
-          picked: ctx.answers[item.id], 
-          onPick: (l) => ctx.pick(item.id, l),
-          highlight: ctx.highlight // 'A', 'B', hoặc 'C'
-        }),
+        optionList({ letters: LETTERS3, picked: ctx.answers[item.id], onPick: (l) => ctx.pick(item.id, l) }),
       ],
     );
   }
@@ -124,24 +119,11 @@ export function renderUnit(unit, ctx, numbers = new Map()) {
         ]))),
   ];
 
-  return splitPane(material, unit.questions.map((question, i) => {
-    // Highlight cho Part 3, 4: Mapping từ clip key sang option.
-    // Nếu clip key là 'A', 'B', 'C', 'D' cho câu i, thì highlight option đó.
-    // Vì currentClip ở exam-screen là key của clip đang phát.
-    const isHighlighted = ctx.highlight === i; // Đơn giản hóa: highlight cả khối câu hỏi
-    
-    return el('section', { class: `set-q ${isHighlighted ? 'highlight' : ''}` }, [
-      questionLabel(question, numberList[i] ?? i + 1),
-      flagButton(ctx, question.id),
-      optionList({ 
-        letters: LETTERS4, 
-        textOf: (l) => question.options[l], 
-        picked: ctx.answers[question.id], 
-        onPick: (l) => ctx.pick(question.id, l),
-        highlight: (ctx.highlight && typeof ctx.highlight === 'string') ? ctx.highlight : null
-      }),
-    ]);
-  }));
+  return splitPane(material, unit.questions.map((question, i) => el('section', { class: 'set-q' }, [
+    questionLabel(question, numberList[i] ?? i + 1),
+    flagButton(ctx, question.id),
+    optionList({ letters: LETTERS4, textOf: (l) => question.options[l], picked: ctx.answers[question.id], onPick: (l) => ctx.pick(question.id, l) }),
+  ])));
 }
 
 /** Mô tả một câu để xem lại sau bài thi. */

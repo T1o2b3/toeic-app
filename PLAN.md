@@ -109,6 +109,8 @@ toeic-app/
   - [x] Phần Nghe chạy như BĂNG thật (D67) ✅ 2026-09-24: bấm chọn đề là băng tự phát, đầu Part có hướng dẫn 10 giây,
     không có Trước/Tiếp, hết băng tự sang phần Đọc. Kèm: khối Directions + dòng "Questions … refer to …", ẩn menu khi thi,
     sửa lỗi tải lại trang là mất bài.
+  - [x] Băng ĐỌC hướng dẫn, câu giới thiệu bộ, từng câu hỏi Part 3/4 + 8 giây (D69) ✅ 2026-09-24 — code xong; giọng đọc
+    sinh trên Mac: `npm run build:narration` (chạy lại sau mỗi lần thêm bộ Part 3/4).
 
 ## Giai đoạn 5 — Hoàn thiện & mở rộng (tuần 9–10 trở đi, ~6 giờ + liên tục)
 - [ ] M17. Trang ngữ pháp & từ nối (tra cứu + liên kết câu từng sai).

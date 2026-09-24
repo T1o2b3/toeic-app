@@ -6,7 +6,7 @@
 ## Trạng thái hiện tại
 - **Phạm vi đã chốt (D63): app đủ dùng — chỉ còn THÊM NỘI DUNG.** M0–M6, M8–M13, M15, M18, M21 xong; M16 bỏ; M10 phụ/M14/M17/M19/M20 chỉ làm khi Huy yêu cầu. M7 chờ Huy học thật.
 - **App đã dùng học thật được**: https://toeic-app.huybndc-451.workers.dev
-- Repo private: https://github.com/huybndc/toeic-app — **930 test pass**.
+- Repo private: https://github.com/huybndc/toeic-app — **944 test pass**.
 
 ## Dùng app thế nào (cho Huy)
 1. Mở link trên (máy Mac hoặc iPhone).
@@ -27,7 +27,7 @@
 6. **Đồng bộ tự động** (D55) khi mở app, khi rời app và 15 giây sau khi học. Mục **Sao lưu** hiện lần chạy
    gần nhất; muốn chắc thì bấm **Đồng bộ ngay**. Mỗi máy chỉ cần đăng nhập một lần.
 
-## Phiên 2026-09-24 (cloud) — thi thử: phần Nghe chạy như băng thật (D67) · sửa lỗi tải lại trang là mất bài
+## Phiên 2026-09-24 (cloud) — thi thử: phần Nghe chạy như băng thật (D67) · băng đọc lời dẫn (D69) · wrangler.jsonc (D68)
 
 Huy báo: "phần làm đề thi đủ vẫn chưa giống đề thi thật, vẫn chưa tự động phát audio".
 
@@ -52,14 +52,30 @@ chạy SAU khi đã bấm nghe câu đầu — Huy thấy "không tự phát" l�
 **Đã xem thật trên Chromium (có âm thanh thật):** bấm "Đề đủ" → tiếng lặng mở khoá lúc bấm → 10 giây hướng dẫn → câu 7
 tự phát 4 đoạn → 5 giây → câu 8 tự phát; mọi lần `play()` đều thành công, không lỗi console. Tải lại giữa câu 7 → vẫn câu 7,
 đáp án B còn nguyên → "Tiếp tục →" → câu 8 phát. Phần Đọc (1280px và 375px): Directions Part 5/6, dòng giới thiệu bộ đúng.
-Test giao diện thi (`ui-exam`) viết lại phần Nghe theo hành vi mới + test `exam-directions`, `unlock`. **930 test pass.**
+Test giao diện thi (`ui-exam`) viết lại phần Nghe theo hành vi mới + test `exam-directions`, `unlock`.
+
+**6. PR đầu tiên của repo lộ lỗi build nhánh phụ trên Cloudflare → thêm `wrangler.jsonc` (D68).** Nhánh phụ deploy bằng
+`wrangler versions upload`, repo không có file cấu hình → lỗi "Missing entry-point" (đã tái hiện bằng wrangler 4.137).
+Huy nhắc đã giao toàn quyền quyết định → Claude chọn đưa cấu hình vào repo. Build xem trước trên Cloudflare **xanh**.
+
+**7. Băng đọc lời dẫn như đề thật (D69).** Hướng dẫn đầu Part + "Questions 32 through 34 refer to…" + đọc từng câu hỏi
+Part 3/4 kèm 8 giây (đề thật ~36 giây sau mỗi hội thoại; bản D67 chỉ 15). Giọng đọc sinh bằng edge-tts:
+`pipeline/build-narration.js` → `public/content/narration.json`. **Máy cloud không sinh được** (proxy chặn máy chủ giọng
+đọc) nên file này CHƯA có — app chạy như mục 1 cho tới khi Huy chạy lệnh ở dưới. Đã chạy thật trên Chromium bằng một
+narration.json giả trỏ vào MP3 có sẵn (không commit): hướng dẫn → giới thiệu → 6 lượt hội thoại → câu 1/2/3 cách nhau
+11,5 giây (lời + 8 giây) → bộ sau phát ngay khi hết 8 giây câu cuối. Phần Nghe: hết giờ không cắt ngang băng đang chạy.
+Kèm: `narration` vào danh sách của bộ dọn MP3 mồ côi (test đỏ nếu thiếu). **944 test pass.**
 
 ### Bước tiếp theo
-- **Huy:** sau deploy (nhớ đối chiếu số hiệu bản build), thử "Đề đủ" trên **iPhone** — bấm chọn đề xong KHÔNG chạm gì nữa,
-  xem băng có tự phát câu 7 sau 10 giây và tự sang câu 8 không. Đây là chỗ duy nhất máy cloud không kiểm được.
-- **Chờ Huy chốt (còn khác đề thật):** (1) Part 3/4 đề thật ĐỌC to câu hỏi và cho 8 giây/câu; app không có tiếng đọc câu
-  hỏi, chỉ 5 giây × số câu sau hội thoại. Làm được: pipeline sinh MP3 câu hỏi bằng edge-tts (miễn phí, chạy trên Mac) rồi
-  băng đọc "Questions 32 through 34…" + từng câu hỏi như thật. (2) Part 1 (ảnh) vẫn thiếu.
+- **Huy (trên Mac, ~2 phút, không cần Gemini):**
+  ```bash
+  git pull && npm run build:narration && npm run validate:content && npm test
+  git add public/content/narration.json public/audio && git commit -m "content: giọng đọc lời dẫn băng thi thử (D69)" && git push
+  ```
+  Lệnh sinh 111 MP3 (~2–3 MB). Chạy lại mỗi khi thêm bộ Part 3/4 mới (câu hỏi mới cần giọng đọc; file đã có thì bỏ qua).
+- **Huy:** sau deploy (đối chiếu số hiệu bản build), thử "Đề đủ" trên **iPhone** — bấm chọn đề xong KHÔNG chạm gì nữa,
+  xem băng có tự đọc hướng dẫn / tự phát câu 7 và tự sang câu 8 không. Đây là chỗ duy nhất máy cloud không kiểm được.
+- **Part 1 (ảnh):** Claude quyết KHÔNG làm — cần ảnh chụp thật, không có nguồn miễn phí hợp lệ (D67).
 - **Claude:** nội dung (mục 3 phiên trước) — chạy trên máy Huy vì cần `.env` + `pipeline/.cache/`.
 
 ## Phiên 2026-09-23 (tối, tiếp) — chốt phạm vi (D63) · sửa pipeline (D62) · M21 xong · nội dung CHỜ Gemini key

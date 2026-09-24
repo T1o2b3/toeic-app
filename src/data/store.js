@@ -11,7 +11,7 @@ import { reduceCaptured, buildWordIndex } from '../logic/capture.js';
 import { buildSearchIndex } from '../logic/lookup.js';
 import { openDb, appendEvents, readAllEvents } from './db.js';
 import { getDeviceId } from './device.js';
-import { loadAllVocabDecks, loadQuestionBank, loadListeningBank, loadSetBank, loadCollocationBank } from './content.js';
+import { loadAllVocabDecks, loadQuestionBank, loadListeningBank, loadSetBank, loadCollocationBank, loadNarration } from './content.js';
 import { collocationEntries } from '../logic/collocations.js';
 import { SET_PARTS } from '../logic/sets.js';
 
@@ -24,11 +24,12 @@ import { SET_PARTS } from '../logic/sets.js';
  */
 export async function createStore({ factory, fetchImpl } = {}) {
   const db = await openDb(factory);
-  const [vocab, questionBank, listeningBank, collocations, ...setBanks] = await Promise.all([
+  const [vocab, questionBank, listeningBank, collocations, narration, ...setBanks] = await Promise.all([
     loadAllVocabDecks(fetchImpl),
     loadQuestionBank(undefined, fetchImpl),
     loadListeningBank(undefined, fetchImpl),
     loadCollocationBank(fetchImpl),
+    loadNarration(fetchImpl),
     ...SET_PARTS.map((part) => loadSetBank(part, fetchImpl)),
   ]);
   const sets = Object.fromEntries(SET_PARTS.map((part, i) => [part, setBanks[i]]));
@@ -59,6 +60,8 @@ export async function createStore({ factory, fetchImpl } = {}) {
     collocationCards: collocationEntries(collocations),
     /** Bộ tài liệu + câu hỏi theo Part (3, 4, 6, 7): {3: [...], 4: [...], 6: [...], 7: [...]}. Xem logic/sets.js. */
     sets,
+    /** Giọng đọc lời dẫn băng thi thử (D69): lời → MP3. `{}` nếu chưa sinh. */
+    narration,
     deviceId,
     get states() { return states; },
     get quizStates() { return quizStates; },

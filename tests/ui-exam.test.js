@@ -175,7 +175,7 @@ describe('phần Nghe chạy như băng đề thật (D67)', () => {
     expect(root.querySelector('.countdown-note').textContent).toContain('Băng phát sau 7 giây');   // chữ đổi tại chỗ
     await tape(7);
     expect(fake.calls.at(-1).filter((s) => s.type === 'clip').map((s) => s.key)).toEqual(['question', 'A', 'B', 'C']);
-    expect(fake.play.mock.calls.at(-1)[1].rate).toBeUndefined();   // không mang tốc độ chậm của màn luyện sang
+    expect(fake.play.mock.calls.at(-1)[1]?.rate).toBeUndefined();  // không mang tốc độ chậm của màn luyện sang
     expect(text()).toContain('Đã nghe xong');
     expect(root.querySelector('.countdown-note').textContent).toBe('Tự sang câu tiếp sau 5 giây');
   });

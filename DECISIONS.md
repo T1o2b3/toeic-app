@@ -652,9 +652,8 @@ sau 1-5-10 phút… thay vì chỉ là cho chọn nhớ hay quên thì bỏ hẳ
 - **Sửa kèm — tải lại trang là mất bài:** D63 ghi "làm dở cùng máy thì đã có" nhưng thực tế CHƯA BAO GIỜ chạy: lúc mở
   app router coi màn đầu là "đổi màn" và gọi `resetExam()` — hàm này xoá bản lưu trước khi màn thi kịp khôi phục. Nay
   lần vẽ đầu tiên không dọn gì (`app.js`). Test mới tái hiện lỗi (đỏ trên code cũ).
-- **Còn khác đề thật (chưa làm, cần Huy chốt):** (1) băng thật ĐỌC câu hỏi Part 3/4 và cho 8 giây mỗi câu — app không có
-  tiếng đọc câu hỏi, khoảng trả lời là 5 giây × số câu sau hội thoại; muốn có thì pipeline sinh thêm MP3 câu hỏi bằng
-  edge-tts (miễn phí, chạy trên máy Huy). (2) Part 1 (6 câu tả tranh) vẫn không có.
+- **Còn khác đề thật:** (1) băng thật ĐỌC câu hỏi Part 3/4 và cho 8 giây mỗi câu → đã làm ở D69. (2) Part 1 (6 câu tả
+  tranh) vẫn không có — cần ảnh chụp thật, không có nguồn miễn phí hợp lệ; giữ nguyên 194/200 như D38.
 
 **D68. Thêm `wrangler.jsonc` vào repo: khai báo thư mục `dist` cho mọi lần deploy.** (Claude tự quyết 2026-09-24 —
 Huy giao toàn quyền quyết định.) PR đầu tiên của repo lộ ra: Cloudflare deploy nhánh phụ bằng lệnh mặc định
@@ -664,6 +663,25 @@ khai báo thư mục. Chọn đưa cấu hình vào repo thay vì sửa dashboar
 bằng chính bản xem trước của nhánh phụ trước khi tới nhánh chính, và cấu hình nằm trong git. Chỉ có tên Worker
 (`toeic-app`, khớp tên trên Cloudflare), ngày tương thích và `assets.directory` — app là trang tĩnh, không có mã Worker,
 điều hướng bằng hash nên không cần trang 404 kiểu SPA.
+
+**D69. Băng thi thử ĐỌC lời dẫn như đề thật: hướng dẫn đầu Part, câu giới thiệu bộ, từng câu hỏi Part 3/4 + 8 giây.**
+(Claude tự quyết 2026-09-24 — Huy giao toàn quyền quyết định.) Lý do: đề thật đọc to từng câu hỏi Part 3/4 rồi cho
+8 giây, tức ~36 giây sau mỗi hội thoại — đó cũng là lúc người thi đọc trước câu hỏi bộ sau, chiến thuật cốt lõi của
+TOEIC. Bản D67 chỉ cho 5 giây × 3 = 15 giây: gắt hơn đề thật và tập sai nhịp.
+- **Giọng đọc sinh sẵn** bằng edge-tts (`npm run build:narration`, KHÔNG cần Gemini) → `public/content/narration.json`
+  = {lời: MP3}, một giọng dẫn `en-US-GuyNeural`. Lời lấy từ `logic/exam-directions.js` — đúng hàm app dùng để tra, nên
+  khoá luôn khớp. Câu giới thiệu bộ phụ thuộc số hiệu (bộ nào rơi vào vị trí nào đổi theo từng đề) nên sinh cho MỌI vị
+  trí bộ 3 câu: Part 3 32–70 (hai biến thể 2/3 người nói), Part 4 71–100. Hiện 111 lời (~2–3 MB).
+- **Băng:** [hướng dẫn nếu đầu Part] → [giới thiệu bộ] → phần nghe → mỗi câu hỏi: 0,9 giây + lời đọc + 8 giây. Đã đọc
+  đủ câu hỏi thì hết băng sang câu sau ngay (khoảng trả lời đã nằm trong băng). Có giọng đọc hướng dẫn thì bỏ đếm ngược
+  10 giây. Part 2 giữ 5 giây sau câu đáp C (băng thật cũng vậy).
+- **Không có hoặc thiếu giọng đọc thì băng chạy như D67** — thiếu dù một câu hỏi của bộ thì bộ đó không đọc câu hỏi nào
+  (đọc nửa chừng còn lạ hơn không đọc). Máy cloud không sinh được (proxy chặn máy chủ giọng đọc) — chạy trên Mac.
+- **Phần Nghe: hết giờ không cắt ngang băng đang chạy.** Băng có lời dẫn của riêng Part 3 dài ~19,5 phút, vượt giờ
+  tính theo tỉ lệ số câu (18,7 phút); đề thật cũng không có đồng hồ riêng cho phần Nghe — hết băng là hết.
+- **`narration` vào danh sách file âm thanh của bộ dọn MP3 mồ côi** — quên là lần chạy pipeline Part 2 kế tiếp xoá sạch.
+- Dọn kèm: bỏ code "highlight đoạn đang phát" trong thi thử — không có CSS nào, `optionList` cũng bỏ qua tham số đó,
+  mà mỗi đoạn vẫn vẽ lại cả màn.
 
 ## Câu hỏi còn mở
 - ~~Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng?~~ → **Đã giải quyết, xem D35** (chung repo, xét lại khi ~100 MB).

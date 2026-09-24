@@ -236,6 +236,13 @@ describe('dọn âm thanh mồ côi dùng chung mọi phần nghe', () => {
     expect(existsSync(join(dir, 'audio', 'bbbbbbbbbbbbbbbb.mp3'))).toBe(true);
   });
 
+  it('giữ giọng đọc lời dẫn băng thi thử (narration.json, D69) — quên khai báo là chạy pipeline Part 2 xoá sạch', () => {
+    writeFileSync(join(dir, 'content', 'narration.json'), '{"clips":{"Directions":"audio/eeeeeeeeeeeeeeee.mp3"}}');
+    touch('eeeeeeeeeeeeeeee.mp3');
+    expect(removeOrphanAudio(`${dir}/`)).toEqual([]);
+    expect(existsSync(join(dir, 'audio', 'eeeeeeeeeeeeeeee.mp3'))).toBe(true);
+  });
+
   it('không có file nội dung nào thì xoá hết, thư mục audio không có thì không lỗi', () => {
     touch('dddddddddddddddd.mp3');
     expect(usedAudio(`${dir}/`).size).toBe(0);

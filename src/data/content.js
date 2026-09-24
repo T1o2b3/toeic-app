@@ -135,3 +135,20 @@ export async function loadCollocationBank(fetchImpl = fetch) {
     return [];
   }
 }
+
+/**
+ * Tải giọng đọc lời dẫn của băng thi thử (D69): lời → đường dẫn MP3. Thiếu file thì trả `{}` — băng vẫn chạy,
+ * chỉ không đọc hướng dẫn / câu hỏi (chờ bằng đếm ngược như trước).
+ * @param {typeof fetch} [fetchImpl]
+ * @returns {Promise<Record<string, string>>}
+ */
+export async function loadNarration(fetchImpl = fetch) {
+  try {
+    const response = await fetchImpl('/content/narration.json');
+    if (!response.ok) return {};
+    const data = await response.json();
+    return data?.clips && typeof data.clips === 'object' ? data.clips : {};
+  } catch {
+    return {};
+  }
+}

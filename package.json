@@ -16,7 +16,8 @@
     "build:questions": "node --env-file=.env pipeline/build-questions.js",
     "audit:coverage": "node pipeline/coverage-part5.js",
     "build:listening": "node --env-file=.env pipeline/build-listening.js",
-    "build:sets": "node --env-file=.env pipeline/build-sets.js"
+    "build:sets": "node --env-file=.env pipeline/build-sets.js",
+    "build:narration": "node pipeline/build-narration.js"
   },
   "devDependencies": {
     "ajv": "^8.20.0",

@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { PART_DIRECTIONS, DIRECTIONS_SECONDS, genreOf, setIntro } from '../src/logic/exam-directions.js';
+import {
+  PART_DIRECTIONS, DIRECTIONS_SECONDS, QUESTION_PAUSE_MS, genreOf, setIntro, narrationTexts, narrationSteps,
+} from '../src/logic/exam-directions.js';
 import { PART_ORDER } from '../src/logic/exam.js';
 
 describe('hướng dẫn đầu Part (D67)', () => {
@@ -78,3 +80,82 @@ describe('setIntro: dòng giới thiệu mỗi bộ', () => {
     expect(setIntro({ part: 'part7', item: passages('Notice') }, [null, undefined])).toBe('');
   });
 });
+
+describe('lời băng đọc (D69)', () => {
+  const set = (id, part, stems, speakers = ['Woman', 'Man']) => ({
+    id, part, status: 'active', script: speakers.map((speaker) => ({ speaker, text: '…' })),
+    questions: stems.map((stem, i) => ({ id: `${id}-${i + 1}`, stem })),
+  });
+  const unitOf = (s) => ({ kind: 'set', part: `part${s.part}`, id: s.id, item: s, questions: s.questions });
+
+  it('bản ĐỌC của câu giới thiệu nói "32 through 34" như băng thật, bản in giữ "32–34"', () => {
+    const unit = unitOf(set('p3-1', 3, ['A?', 'B?', 'C?']));
+    expect(setIntro(unit, [32, 33, 34], { spoken: true })).toBe('Questions 32 through 34 refer to the following conversation.');
+    expect(setIntro(unit, [32, 33, 34])).toBe('Questions 32–34 refer to the following conversation.');
+  });
+
+  it('narrationTexts: hướng dẫn Part 2–4, câu giới thiệu cho MỌI vị trí bộ, và mọi câu hỏi Part 3/4 — không trùng', () => {
+    const texts = narrationTexts({
+      3: [set('p3-1', 3, ['What is the problem?', 'Who is the man?', 'What will the man do next?'])],
+      4: [set('p4-1', 4, ['Who is the speaker?', 'Why is the call?', 'What will the man do next?'], ['Speaker'])],
+    });
+    expect(texts).toEqual([...new Set(texts)]);
+    for (const part of ['part2', 'part3', 'part4']) expect(texts).toContain(PART_DIRECTIONS[part]);
+    expect(texts).toContain('Questions 32 through 34 refer to the following conversation.');
+    expect(texts).toContain('Questions 68 through 70 refer to the following conversation with three speakers.');
+    expect(texts).toContain('Questions 71 through 73 refer to the following talk.');
+    expect(texts).toContain('Questions 98 through 100 refer to the following talk.');
+    expect(texts).not.toContain('Questions 101 through 103 refer to the following talk.');
+    expect(texts.filter((t) => t === 'What will the man do next?')).toHaveLength(1);
+    expect(texts.length).toBe(3 + 13 * 2 + 10 + 5);
+  });
+
+  it('câu hỏi của bộ đã rút (retired) không cần giọng đọc', () => {
+    const retired = { ...set('p3-9', 3, ['Retired question?']), status: 'retired' };
+    expect(narrationTexts({ 3: [retired], 4: [] })).not.toContain('Retired question?');
+  });
+
+  describe('narrationSteps', () => {
+    const unit = unitOf(set('p3-1', 3, ['Q one?', 'Q two?', 'Q three?']));
+    const full = {
+      [PART_DIRECTIONS.part3]: 'audio/d.mp3',
+      'Questions 32 through 34 refer to the following conversation.': 'audio/i.mp3',
+      'Q one?': 'audio/1.mp3', 'Q two?': 'audio/2.mp3', 'Q three?': 'audio/3.mp3',
+    };
+    const srcs = (steps) => steps.filter((s) => s.type === 'clip').map((s) => s.src);
+
+    it('đầu Part: đọc hướng dẫn → giới thiệu bộ; sau hội thoại: đọc từng câu hỏi, mỗi câu 8 giây trả lời', () => {
+      const tape = narrationSteps(unit, [32, 33, 34], full, { partStart: true });
+      expect(srcs(tape.before)).toEqual(['/audio/d.mp3', '/audio/i.mp3']);
+      expect(srcs(tape.after)).toEqual(['/audio/1.mp3', '/audio/2.mp3', '/audio/3.mp3']);
+      expect(tape.after.filter((s) => s.type === 'gap' && s.ms === QUESTION_PAUSE_MS)).toHaveLength(3);
+      expect(QUESTION_PAUSE_MS).toBe(8000);
+      expect(tape).toMatchObject({ directions: true, narrated: true });
+    });
+
+    it('giữa Part thì không đọc lại hướng dẫn', () => {
+      const tape = narrationSteps(unit, [32, 33, 34], full);
+      expect(srcs(tape.before)).toEqual(['/audio/i.mp3']);
+      expect(tape.directions).toBe(false);
+    });
+
+    it('thiếu giọng đọc dù MỘT câu hỏi thì không đọc câu nào — băng quay về đếm khoảng trả lời như cũ', () => {
+      const { 'Q two?': _, ...partial } = full;
+      const tape = narrationSteps(unit, [32, 33, 34], partial);
+      expect(tape.after).toEqual([]);
+      expect(tape.narrated).toBe(false);
+    });
+
+    it('chưa sinh giọng đọc (narration rỗng): không thêm gì', () => {
+      expect(narrationSteps(unit, [32, 33, 34], {}, { partStart: true })).toEqual({ before: [], after: [], directions: false, narrated: false });
+    });
+
+    it('Part 2: chỉ có hướng dẫn đầu Part, không có giới thiệu bộ hay đọc câu hỏi', () => {
+      const part2 = { kind: 'single', part: 'part2', item: {}, questions: [{ id: 'l2-1', question: '…' }] };
+      const tape = narrationSteps(part2, [7], { [PART_DIRECTIONS.part2]: 'audio/p2.mp3' }, { partStart: true });
+      expect(srcs(tape.before)).toEqual(['/audio/p2.mp3']);
+      expect(tape).toMatchObject({ after: [], narrated: false, directions: true });
+    });
+  });
+});
+
