@@ -110,15 +110,19 @@ không xếp hàng chờ.
    **Huy cho phép tự tắt, không cần hỏi — kể cả server của project KHÁC trên máy** (Huy, 2026-09-20:
    "sau có server nào đang chạy thì cứ tắt đi, khi nào có project quan trọng thì tôi sẽ thông báo sau").
    Tắt xong báo lại một dòng là đã tắt cái gì.
-4. Cập nhật `PROGRESS.md`: vừa xong gì, bước tiếp theo cụ thể, vướng mắc.
-5. Commit.
+4. **Soát DRY ở mức VỪA ĐỦ** (Huy, 2026-09-24: "luôn luôn kiểm tra và refactor" rồi "dry ở mức vừa đủ xong tiếp tục
+   công việc"): trong phần vừa sửa và các file cùng loại, có LOGIC nào lặp mà sửa một chỗ dễ quên chỗ kia không? Có thì
+   gom (commit `refactor:` riêng). Đoạn lặp vặt vài dòng, nhất là trong test, thì để yên — công gom không đáng.
+   Đo nhanh: `npx jscpd src pipeline tests --min-lines 5` (2026-09-24: 0,42% trùng lặp).
+5. Cập nhật `PROGRESS.md`: vừa xong gì, bước tiếp theo cụ thể, vướng mắc.
+6. Commit.
 
 Riêng việc chạy dài (pipeline nhiều phút trở lên) thì được phép còn sống qua bước con — nhưng phải nói rõ
 với Huy là nó đang chạy và đang ở đâu, không để Huy tự phát hiện.
 
 ## Ràng buộc không được vi phạm (xem DECISIONS.md)
 1. **100% miễn phí.** Không thêm dịch vụ trả phí. Nếu một thứ có free tier, ghi rõ giới hạn vào DECISIONS.md.
-2. **Không gọi AI lúc app chạy.** AI chỉ dùng trong `pipeline/` chạy trên máy Huy.
+2. **Không gọi AI lúc app chạy.** AI chỉ dùng trong `pipeline/` — chạy trên máy Huy hoặc GitHub Actions mỗi ngày (D70).
 3. **Bí mật:** API key chỉ ở `.env` (đã có trong .gitignore). Không bao giờ đưa `service_role` key của Supabase vào frontend.
 4. **Supabase bắt buộc bật RLS** cho mọi bảng ngay khi tạo.
 5. **Dữ liệu người dùng là nhật ký sự kiện append-only.** Không update/delete sự kiện.

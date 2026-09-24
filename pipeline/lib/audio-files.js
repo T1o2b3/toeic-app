@@ -4,6 +4,7 @@
  * xoá âm thanh Part 3/4 mỗi khi chạy lại pipeline Part 2).
  */
 import { existsSync, readdirSync, readFileSync, unlinkSync } from 'node:fs';
+import { PUBLIC_DIR } from './cli.js';
 
 /**
  * Các file nội dung có tham chiếu âm thanh. Thêm file mới ở đây khi có phần nghe mới — quên là lần chạy pipeline
@@ -29,11 +30,11 @@ export function usedAudio(publicDir, files = AUDIO_CONTENT_FILES) {
 
 /**
  * Xoá MP3 không được tham chiếu bởi bất kỳ file nghe nào.
- * @param {string} publicDir
+ * @param {string} [publicDir] - mặc định PUBLIC_DIR
  * @param {string[]} [files]
  * @returns {string[]} tên các file đã xoá
  */
-export function removeOrphanAudio(publicDir, files = AUDIO_CONTENT_FILES) {
+export function removeOrphanAudio(publicDir = PUBLIC_DIR, files = AUDIO_CONTENT_FILES) {
   const dir = `${publicDir}audio`;
   if (!existsSync(dir)) return [];
   const used = usedAudio(publicDir, files);

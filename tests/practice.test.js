@@ -4,10 +4,9 @@ import {
 } from '../src/logic/practice.js';
 import { LEVELS, levelFromPayload } from '../src/logic/vocab-levels.js';
 import { reduceVocabState, reviewQueue } from '../src/logic/vocab-state.js';
+import { T0, eventMaker } from './helpers/events.js';
 
-const T0 = Date.UTC(2026, 8, 19, 10, 0, 0);
-let seq = 0;
-const ev = (type, payload, ts = T0 + seq) => ({ id: `e-${seq++}`, deviceId: 'mac', ts, type, payload });
+const ev = eventMaker({ step: 1 });
 
 const entries = ['a', 'b', 'c', 'd', 'e', 'f'].map((id) => ({ id, word: id, vi: id }));
 

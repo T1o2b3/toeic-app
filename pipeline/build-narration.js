@@ -9,15 +9,14 @@
  * Chữ lấy từ `src/logic/exam-directions.js` — ĐÚNG hàm app dùng để tra, nên khoá trong narration.json luôn khớp.
  * Ghi `public/content/narration.json` = { lời: đường dẫn MP3 }. Thiếu file này app vẫn chạy (đếm ngược thay lời đọc).
  */
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { narrationTexts } from '../src/logic/exam-directions.js';
 import { renderClips, audioPath, VOICES, AUDIO_FAILED_MESSAGE } from './lib/tts.js';
+import { writeBank } from './lib/validate-deck.js';
 import { removeOrphanAudio } from './lib/audio-files.js';
 import { projectPath } from './lib/cli.js';
 
 const OUTPUT = projectPath('public/content/narration.json');
-const PUBLIC = projectPath('public/');
-const EDGE_TTS = projectPath('pipeline/.venv/bin/edge-tts');
 /** Người dẫn băng: MỘT giọng Mỹ trung tính cho cả đề, như băng thật. Lấy từ bộ giọng đã kiểm tra tồn tại. */
 const NARRATOR = VOICES[0];
 
@@ -31,14 +30,14 @@ async function main() {
   const texts = narrationTexts({ 3: readSets(3), 4: readSets(4) });
   const clips = texts.map((text) => ({ text, voice: NARRATOR, path: audioPath(text, NARRATOR) }));
 
-  const audio = await renderClips(clips, { publicDir: PUBLIC, command: EDGE_TTS, label: 'lời dẫn băng thi thử' });
+  const audio = await renderClips(clips, { label: 'lời dẫn băng thi thử' });
   if (audio.failed > 0) { console.error(AUDIO_FAILED_MESSAGE); process.exitCode = 1; return; }
 
   const bank = { version: 1, voice: NARRATOR, clips: Object.fromEntries(clips.map((c) => [c.text, c.path])) };
-  writeFileSync(OUTPUT, `${JSON.stringify(bank, null, 2)}\n`);
+  if (!writeBank(OUTPUT, bank, null)) return;
   console.log(`Đã ghi ${clips.length} lời dẫn vào public/content/narration.json`);
 
-  const removed = removeOrphanAudio(PUBLIC);
+  const removed = removeOrphanAudio();
   if (removed.length > 0) console.log(`Đã xoá ${removed.length} file âm thanh không còn được dùng.`);
 }
 

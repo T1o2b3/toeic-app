@@ -3,9 +3,9 @@ import {
   reduceVocabState, getWordState, triageQueue, reviewQueue, weakWords,
   countUntriaged, reviewCounts,
 } from '../src/logic/vocab-state.js';
+import { T0, eventMaker } from './helpers/events.js';
 
-const T0 = Date.UTC(2026, 8, 19, 10, 0, 0);
-const ev = (type, payload, ts = T0) => ({ id: `e-${ts}-${type}`, deviceId: 'mac', ts, type, payload });
+const ev = eventMaker();
 const NOW = new Date(T0 + 60_000);
 const DECK = [{ id: 'tsl-0001' }, { id: 'tsl-0002' }, { id: 'tsl-0003' }];
 const DECK_WITH_RETIRED = [...DECK, { id: 'tsl-0004', status: 'retired' }];

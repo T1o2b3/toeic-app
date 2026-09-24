@@ -2,9 +2,9 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { isVietnameseOrEmpty } from '../pipeline/lib/prompt-listening.js';
 import { reduceQuizState, gradeAnswer, quizQueue, accuracyByErrorType, ERROR_TYPE_LABEL, errorTypeLabel } from '../src/logic/quiz.js';
+import { T0, eventMaker } from './helpers/events.js';
 
-const T0 = Date.UTC(2026, 8, 19, 10, 0, 0);
-const ev = (type, payload, ts = T0) => ({ id: `e-${ts}-${Math.random()}`, deviceId: 'mac', ts, type, payload });
+const ev = eventMaker();
 
 const QUESTIONS = [
   { id: 'p5-0001', status: 'active', answer: 'B', errorType: 'verb-tense' },

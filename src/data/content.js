@@ -32,21 +32,38 @@ export async function loadVocabDeck(deck = DEFAULT_DECK, fetchImpl = fetch) {
 }
 
 /**
- * Tải ngân hàng câu hỏi. Thiếu file thì trả về bộ rỗng thay vì ném lỗi —
- * app vẫn học từ vựng được khi chưa sinh xong câu hỏi.
+ * Tải một file nội dung KHÔNG bắt buộc: thiếu file, lỗi mạng hay sai định dạng thì trả `empty` thay vì ném lỗi —
+ * app vẫn chạy được khi phần đó chưa sinh xong. Năm loại nội dung dưới đây dùng chung khuôn này.
+ * @template T
+ * @param {string} path
+ * @param {(data: any) => T|undefined} pick - lấy phần cần dùng; trả undefined nếu sai định dạng
+ * @param {T} empty
+ * @param {typeof fetch} fetchImpl
+ * @returns {Promise<T>}
+ */
+async function loadOptional(path, pick, empty, fetchImpl) {
+  try {
+    const response = await fetchImpl(path);
+    if (!response.ok) return empty;
+    return pick(await response.json()) ?? empty;
+  } catch {
+    return empty;
+  }
+}
+
+/** Cả file nếu có mảng `entries`. */
+const withEntries = (data) => (Array.isArray(data?.entries) ? data : undefined);
+/** Chỉ mảng `entries`. */
+const entriesOf = (data) => (Array.isArray(data?.entries) ? data.entries : undefined);
+
+/**
+ * Tải ngân hàng câu hỏi. Thiếu file thì trả về bộ rỗng — app vẫn học từ vựng được khi chưa sinh xong câu hỏi.
  * @param {string} [set]
  * @param {typeof fetch} [fetchImpl]
  * @returns {Promise<{set: string, part: number, entries: object[]}>}
  */
-export async function loadQuestionBank(set = 'part5', fetchImpl = fetch) {
-  try {
-    const response = await fetchImpl(`/content/questions-${set}.json`);
-    if (!response.ok) return { set, part: 5, entries: [] };
-    const data = await response.json();
-    return Array.isArray(data?.entries) ? data : { set, part: 5, entries: [] };
-  } catch {
-    return { set, part: 5, entries: [] };
-  }
+export function loadQuestionBank(set = 'part5', fetchImpl = fetch) {
+  return loadOptional(`/content/questions-${set}.json`, withEntries, { set, part: 5, entries: [] }, fetchImpl);
 }
 
 /**
@@ -89,16 +106,8 @@ async function loadOptionalDeck(deck, fetchImpl = fetch) {
  * @param {typeof fetch} [fetchImpl]
  * @returns {Promise<{set: string, part: number, entries: object[]}>}
  */
-export async function loadListeningBank(set = 'part2', fetchImpl = fetch) {
-  const empty = { set, part: 2, entries: [] };
-  try {
-    const response = await fetchImpl(`/content/listening-${set}.json`);
-    if (!response.ok) return empty;
-    const data = await response.json();
-    return Array.isArray(data?.entries) ? data : empty;
-  } catch {
-    return empty;
-  }
+export function loadListeningBank(set = 'part2', fetchImpl = fetch) {
+  return loadOptional(`/content/listening-${set}.json`, withEntries, { set, part: 2, entries: [] }, fetchImpl);
 }
 
 /**
@@ -108,15 +117,8 @@ export async function loadListeningBank(set = 'part2', fetchImpl = fetch) {
  * @param {typeof fetch} [fetchImpl]
  * @returns {Promise<object[]>}
  */
-export async function loadSetBank(part, fetchImpl = fetch) {
-  try {
-    const response = await fetchImpl(`/content/sets-part${part}.json`);
-    if (!response.ok) return [];
-    const data = await response.json();
-    return Array.isArray(data?.entries) ? data.entries : [];
-  } catch {
-    return [];
-  }
+export function loadSetBank(part, fetchImpl = fetch) {
+  return loadOptional(`/content/sets-part${part}.json`, entriesOf, [], fetchImpl);
 }
 
 /**
@@ -125,15 +127,8 @@ export async function loadSetBank(part, fetchImpl = fetch) {
  * @param {typeof fetch} [fetchImpl]
  * @returns {Promise<object[]>}
  */
-export async function loadCollocationBank(fetchImpl = fetch) {
-  try {
-    const response = await fetchImpl('/content/collocations.json');
-    if (!response.ok) return [];
-    const data = await response.json();
-    return Array.isArray(data?.entries) ? data.entries : [];
-  } catch {
-    return [];
-  }
+export function loadCollocationBank(fetchImpl = fetch) {
+  return loadOptional('/content/collocations.json', entriesOf, [], fetchImpl);
 }
 
 /**
@@ -142,13 +137,6 @@ export async function loadCollocationBank(fetchImpl = fetch) {
  * @param {typeof fetch} [fetchImpl]
  * @returns {Promise<Record<string, string>>}
  */
-export async function loadNarration(fetchImpl = fetch) {
-  try {
-    const response = await fetchImpl('/content/narration.json');
-    if (!response.ok) return {};
-    const data = await response.json();
-    return data?.clips && typeof data.clips === 'object' ? data.clips : {};
-  } catch {
-    return {};
-  }
+export function loadNarration(fetchImpl = fetch) {
+  return loadOptional('/content/narration.json', (data) => (data?.clips && typeof data.clips === 'object' ? data.clips : undefined), {}, fetchImpl);
 }

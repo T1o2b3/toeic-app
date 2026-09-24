@@ -6,7 +6,7 @@
 ## Trạng thái hiện tại
 - **Phạm vi đã chốt (D63): app đủ dùng — chỉ còn THÊM NỘI DUNG.** M0–M6, M8–M13, M15, M18, M21 xong; M16 bỏ; M10 phụ/M14/M17/M19/M20 chỉ làm khi Huy yêu cầu. M7 chờ Huy học thật.
 - **App đã dùng học thật được**: https://toeic-app.huybndc-451.workers.dev
-- Repo private: https://github.com/huybndc/toeic-app — **944 test pass**.
+- Repo private: https://github.com/huybndc/toeic-app — **955 test pass**.
 
 ## Dùng app thế nào (cho Huy)
 1. Mở link trên (máy Mac hoặc iPhone).
@@ -27,7 +27,7 @@
 6. **Đồng bộ tự động** (D55) khi mở app, khi rời app và 15 giây sau khi học. Mục **Sao lưu** hiện lần chạy
    gần nhất; muốn chắc thì bấm **Đồng bộ ngay**. Mỗi máy chỉ cần đăng nhập một lần.
 
-## Phiên 2026-09-24 (cloud) — thi thử: phần Nghe chạy như băng thật (D67) · băng đọc lời dẫn (D69) · wrangler.jsonc (D68)
+## Phiên 2026-09-24 (cloud) — thi thử như băng thật (D67–D69) · pipeline tự chạy trên GitHub Actions (D70) · soát DRY
 
 Huy báo: "phần làm đề thi đủ vẫn chưa giống đề thi thật, vẫn chưa tự động phát audio".
 
@@ -66,17 +66,32 @@ narration.json giả trỏ vào MP3 có sẵn (không commit): hướng dẫn �
 11,5 giây (lời + 8 giây) → bộ sau phát ngay khi hết 8 giây câu cuối. Phần Nghe: hết giờ không cắt ngang băng đang chạy.
 Kèm: `narration` vào danh sách của bộ dọn MP3 mồ côi (test đỏ nếu thiếu). **944 test pass.**
 
+**8. Huy đã chạy `build:narration` trên Mac** (111 lời, commit `3298a05`) — băng thi thử đọc đủ lời dẫn.
+
+**9. Pipeline tự chạy mỗi ngày trên GitHub Actions (D70)** — Huy hỏi làm được không mà không cần Claude Code: được.
+`.github/workflows/auto-content.yml` chạy 08:37 UTC (15:37 giờ VN) + nút chạy tay → `scripts/auto-content.sh`: Part 5 →
+Part 2 → các bộ → giọng đọc, dừng khi hết hạn mức Gemini hoặc hết 40 phút → `validate:content` + `npm test` đạt mới commit
+vào main. Mọi bước lỗi (sai key) → job đỏ, GitHub gửi email. 0 đồng (2.000 phút Actions/tháng). Đã thử ở máy cloud:
+chạy thử đúng thứ tự; thiếu key thì cả 8 bước lỗi → báo đỏ, không file nào bị đụng. **Chưa chạy thật** — cần secret.
+Ràng buộc #2 ở CLAUDE.md đổi thành "pipeline trên máy Huy hoặc GitHub Actions".
+
+**10. Soát DRY (Huy yêu cầu, rồi chốt "mức vừa đủ").** jscpd đo 0,42% trùng lặp. Đã gom: 5 hàm nạp nội dung →
+`loadOptional`; nút "… tiếp · phím Space" + "Báo sai" ở 6 màn → `nextActions` (blocks.js); pipeline: `writeBank` (kiểm +
+ghi, 5 script), `rejectionSummary` (3 script), đường dẫn public/ + edge-tts thành mặc định; hàm tạo sự kiện của 9 file test
+→ `tests/helpers/events.js`. Chạy lại 6 file nội dung bằng `--no-generate`: ghi ra giống từng byte. Để yên (không đáng
+công): bộ phát giả trong 7 file test UI. CLAUDE.md thêm bước "soát DRY ở mức vừa đủ" vào checklist. **955 test pass.**
+
 ### Bước tiếp theo
-- **Huy (trên Mac, ~2 phút, không cần Gemini):**
-  ```bash
-  git pull && npm run build:narration && npm run validate:content && npm test
-  git add public/content/narration.json public/audio && git commit -m "content: giọng đọc lời dẫn băng thi thử (D69)" && git push
-  ```
-  Lệnh sinh 111 MP3 (~2–3 MB). Chạy lại mỗi khi thêm bộ Part 3/4 mới (câu hỏi mới cần giọng đọc; file đã có thì bỏ qua).
+- **Huy — bật pipeline tự chạy (~3 phút):**
+  1. Merge PR của nhánh `claude/clever-cori-ksx8jg` (workflow chỉ chạy được khi đã nằm trên `main`).
+  2. GitHub → repo → Settings → Secrets and variables → Actions → **New repository secret**: tên `GEMINI_API_KEY`,
+     giá trị như trong `.env`. Key phải thuộc project Google KHÔNG bật thanh toán (gói miễn phí AI Studio).
+  3. Tab **Actions** → "Tự sinh nội dung" → **Run workflow** để chạy thử lần đầu; xem log từng bước.
+  Từ đó **không chạy pipeline Gemini trên Mac nữa** (hai nơi cùng cấp id mới cho hai câu khác nhau — D70).
 - **Huy:** sau deploy (đối chiếu số hiệu bản build), thử "Đề đủ" trên **iPhone** — bấm chọn đề xong KHÔNG chạm gì nữa,
   xem băng có tự đọc hướng dẫn / tự phát câu 7 và tự sang câu 8 không. Đây là chỗ duy nhất máy cloud không kiểm được.
 - **Part 1 (ảnh):** Claude quyết KHÔNG làm — cần ảnh chụp thật, không có nguồn miễn phí hợp lệ (D67).
-- **Claude:** nội dung (mục 3 phiên trước) — chạy trên máy Huy vì cần `.env` + `pipeline/.cache/`.
+- **Claude (phiên sau):** xem log lần chạy đầu của workflow; nội dung giờ tự sinh — không còn việc chạy pipeline tay.
 
 ## Phiên 2026-09-23 (tối, tiếp) — chốt phạm vi (D63) · sửa pipeline (D62) · M21 xong · nội dung CHỜ Gemini key
 

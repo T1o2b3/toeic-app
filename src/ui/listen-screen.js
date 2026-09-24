@@ -11,7 +11,7 @@ import { roundProgress } from '../logic/round.js';
 import { LISTEN_ROUND_SIZE, clipSequence, canAnswer, audioUrl } from '../logic/listen.js';
 import { getListenSpeed } from '../data/prefs.js';
 import { createPlayerSlot } from './audio-player.js';
-import { backButton, backLink, explanationCard, letterFromKey, optionList, speedChooser, verdictLine } from './blocks.js';
+import { backButton, backLink, explanationCard, letterFromKey, nextActions, optionList, speedChooser, verdictLine } from './blocks.js';
 import { renderStem, renderTray, resetCapture } from './capture-tray.js';
 import { shuffleChoices, originalLetter, onceShuffled } from '../logic/shuffle.js';
 
@@ -121,15 +121,7 @@ export function renderListen(store) {
     renderTranscript(store, question),
     renderTray(store, question),
     explanationCard(question),
-    el('div', { class: 'actions' }, [
-      el('button', { class: 'primary', onClick: () => next(store) }, [
-        el('span', { text: 'Câu tiếp theo' }),
-        el('small', { text: 'phím Space' }),
-      ]),
-    ]),
-    el('div', { class: 'actions' }, [
-      el('button', { class: 'link', text: '⚑ Báo câu này sai', onClick: () => report(store, question) }),
-    ]),
+    ...nextActions('Câu tiếp theo', () => next(store), { label: '⚑ Báo câu này sai', onClick: () => report(store, question) }),
   );
   return el('div', {}, children);
 }

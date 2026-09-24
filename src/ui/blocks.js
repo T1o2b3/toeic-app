@@ -255,6 +255,23 @@ export function sessionDone({ title, headline, note, changed, extra = [], action
 }
 
 /**
+ * Hàng nút sau khi chấm: "Câu tiếp theo · phím Space", kèm link "⚑ Báo … sai" nếu màn đó cho báo lỗi.
+ * Sáu màn học (Part 5, nghe Part 2, bộ đề, ôn thẻ, ôn chủ động, nghe chép) từng chép tay khối này.
+ * @param {string} label - chữ trên nút, vd "Câu tiếp theo", "Thẻ tiếp"
+ * @param {() => void} onNext
+ * @param {{label: string, onClick: () => void}} [report]
+ * @returns {HTMLElement[]}
+ */
+export function nextActions(label, onNext, report) {
+  return [
+    el('div', { class: 'actions' }, [
+      el('button', { class: 'primary', onClick: onNext }, [el('span', { text: label }), el('small', { text: 'phím Space' })]),
+    ]),
+    report ? el('div', { class: 'actions' }, [el('button', { class: 'link', text: report.label, onClick: report.onClick })]) : '',
+  ];
+}
+
+/**
  * Một NHÓM mục điều hướng gọn: tiêu đề nhóm + các dòng xếp lưới.
  *
  * Trước đây mục Từ vựng và Bài thi bày 7–8 nút to full-width, mỗi nút hai dòng chữ, nên trên điện thoại

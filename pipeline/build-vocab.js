@@ -11,14 +11,13 @@
  *
  * Chạy lại nhiều lần được: từ nào đã có trong pipeline/.cache/ thì không gọi AI lại.
  */
-import { writeFileSync, mkdirSync } from 'node:fs';
 import { parseTslCsv, readWordlistCsv, WORDLISTS } from './lib/wordlists.js';
 import { buildEntry } from './lib/vocab-entry.js';
 import { buildVocabPrompt, parseVocabResponse, matchVocabResponse, VOCAB_PROMPT_VERSION } from './lib/prompt-vocab.js';
 import { createGeminiProvider, withRetry, sleep, isDailyQuotaError, DEFAULT_GEMINI_MODELS } from './lib/ai-provider.js';
 import { fetchIpaManyWiktionary } from './lib/ipa-wiktionary.js';
 import { openCache, chunk, readCachedAi } from './lib/cache.js';
-import { createDeckValidator, findDuplicateIds } from './lib/validate-deck.js';
+import { writeBank } from './lib/validate-deck.js';
 import { projectPath, today, flagValue, flagNumber, hasFlag } from './lib/cli.js';
 
 /**
@@ -170,19 +169,7 @@ async function main() {
 
   const deck = { deck: list.deck, version: 1, attribution: { ...list.attribution }, entries };
 
-  const validate = createDeckValidator();
-  const { valid, errors } = validate(deck);
-  const duplicates = findDuplicateIds(deck);
-  if (!valid || duplicates.length > 0) {
-    console.error('Deck KHÔNG hợp lệ, không ghi file:');
-    for (const error of errors.slice(0, 20)) console.error('  -', error);
-    if (duplicates.length) console.error('  - id trùng:', duplicates.join(', '));
-    process.exitCode = 1;
-    return;
-  }
-
-  mkdirSync(projectPath('public/content'), { recursive: true });
-  writeFileSync(projectPath(list.output), `${JSON.stringify(deck, null, 2)}\n`);
+  if (!writeBank(projectPath(list.output), deck, projectPath('schemas/vocab.schema.json'))) return;
   console.log(`\nĐã ghi ${entries.length} từ vào ${list.output}`);
   if (skipped.length) {
     console.log(`Bỏ qua ${skipped.length} từ do dữ liệu AI thiếu:`);

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { createModelPair, aiStep, QUOTA_MESSAGE } from '../pipeline/lib/model-pair.js';
+import { createModelPair, aiStep, rejectionSummary, QUOTA_MESSAGE } from '../pipeline/lib/model-pair.js';
 import { DEFAULT_GEMINI_MODELS } from '../pipeline/lib/ai-provider.js';
 
 const env = (models) => ({ GEMINI_API_KEY: 'k', ...(models ? { GEMINI_MODELS: models } : {}) });
@@ -85,3 +85,16 @@ describe('aiStep', () => {
     expect(log2.error.mock.calls[0][0]).toContain('Sinh đề lỗi: mạng hỏng');
   });
 });
+
+describe('rejectionSummary', () => {
+  it('đếm theo lý do loại, giữ thứ tự gặp', () => {
+    const rejected = [{ reason: 'quá dễ' }, { reason: 'lệch đáp án' }, { reason: 'quá dễ' }];
+    expect(rejectionSummary(rejected)).toBe('2 quá dễ, 1 lệch đáp án');
+  });
+
+  it('không loại gì thì dùng chữ mặc định, hoặc chữ bên gọi truyền vào', () => {
+    expect(rejectionSummary([])).toBe('không loại câu nào');
+    expect(rejectionSummary([], 'không loại bộ nào')).toBe('không loại bộ nào');
+  });
+});
+

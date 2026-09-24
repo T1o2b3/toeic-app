@@ -683,6 +683,25 @@ TOEIC. Bản D67 chỉ cho 5 giây × 3 = 15 giây: gắt hơn đề thật và 
 - Dọn kèm: bỏ code "highlight đoạn đang phát" trong thi thử — không có CSS nào, `optionList` cũng bỏ qua tham số đó,
   mà mỗi đoạn vẫn vẽ lại cả màn.
 
+**D70. Pipeline nội dung TỰ CHẠY mỗi ngày trên GitHub Actions — không cần bật Mac hay mở Claude Code.** (Huy hỏi
+2026-09-24: "có thể cấu hình cho pipeline tự chạy mỗi lần gemini api có sẵn mà không cần dùng claude code không?")
+- **Cách chạy:** `.github/workflows/auto-content.yml`, 08:37 UTC mỗi ngày (sau giờ Gemini đặt lại hạn mức: 0 giờ giờ Thái
+  Bình Dương = 07:00/08:00 UTC) + nút chạy tay. Gọi `scripts/auto-content.sh`: Part 5 → Part 2 → Part 3 → Part 4 → Part 7
+  đôi/ba → Part 6 → Part 7 đơn → giọng đọc lời dẫn. Mục tiêu là TỔNG số mục (đủ thì bước đó không tốn request); hạn mức
+  dùng chung nên thứ tự chính là ưu tiên (D63). Tối đa 40 phút sinh / ngày.
+- **Cổng chất lượng trước khi vào main:** `validate:content` + `npm test` phải qua mới commit; không qua thì không commit,
+  job đỏ, GitHub gửi email. Tiến độ dở (`pipeline/.cache`) giữ giữa các lần bằng actions/cache — D62 đã làm pipeline
+  nạp bản phát hành trước nên máy mới tinh cũng không đánh lại id.
+- **Báo lỗi:** hết hạn mức KHÔNG phải lỗi (pipeline tự dừng, ghi file). Một bước lỗi lẻ → cảnh báo. MỌI bước đều lỗi (sai
+  key, key hết hạn) → job đỏ. Giọng đọc lỗi → chỉ cảnh báo, không chặn commit nội dung khác.
+- **Chi phí 0 đồng:** repo private có 2.000 phút Actions/tháng; job ≤ ~50 phút/ngày (hết hạn mức sớm thì dừng sớm). Hết phút
+  thì GitHub chặn chứ không tính tiền khi chưa gắn thẻ. **Key Gemini phải thuộc project KHÔNG bật thanh toán** — bật thì không
+  còn "hết hạn mức" để tự dừng.
+- **Đổi ràng buộc #2** (CLAUDE.md): trước "AI chỉ dùng trong pipeline chạy trên máy Huy" → nay "trên máy Huy hoặc GitHub
+  Actions". Tinh thần giữ nguyên: không gọi AI lúc app chạy; key chỉ nằm trong secret của repo, không vào frontend.
+- **Hệ quả:** KHÔNG chạy pipeline Gemini trên Mac song song nữa — hai nơi cùng cấp id mới (p5-0257…) cho hai câu khác nhau.
+  Muốn chạy tay thì `git pull` trước và đừng chạy vào giờ job đang chạy.
+
 ## Câu hỏi còn mở
 - ~~Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng?~~ → **Đã giải quyết, xem D35** (chung repo, xét lại khi ~100 MB).
 - ~~Q2 (trước M2): xác nhận license của TSL 1.2 và NGSL.~~ → **Đã giải quyết, xem D18.**

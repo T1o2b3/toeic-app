@@ -10,20 +10,17 @@
  * Part 7 có 3 dạng (single/double/triple) chạy riêng nhưng GHI CHUNG một file public/content/sets-part7.json.
  * Tiến độ lưu sau MỖI lô (quy tắc số 6): dừng giữa chừng chạy lại là tiếp tục đúng chỗ dở.
  */
-import { writeFileSync, mkdirSync } from 'node:fs';
 import { buildSetPrompt, buildSetVerifyPrompt, SET_PROMPT_VERSION } from './lib/prompt-sets.js';
 import { isWellFormedSet, setKey, crossCheckSets, assembleSet } from './lib/set-check.js';
 import { parseVocabResponse } from './lib/prompt-vocab.js';
 import { sleep } from './lib/ai-provider.js';
-import { createModelPair, aiStep, QUOTA_MESSAGE } from './lib/model-pair.js';
+import { createModelPair, aiStep, rejectionSummary, QUOTA_MESSAGE } from './lib/model-pair.js';
 import { openWorkCache, nextId } from './lib/cache.js';
-import { createValidator } from './lib/validate-deck.js';
+import { writeBank } from './lib/validate-deck.js';
 import { renderClips, AUDIO_FAILED_MESSAGE } from './lib/tts.js';
 import { removeOrphanAudio } from './lib/audio-files.js';
 import { projectPath, today, flagValue, flagNumber, hasFlag } from './lib/cli.js';
 
-const PUBLIC = projectPath('public/');
-const EDGE_TTS = projectPath('pipeline/.venv/bin/edge-tts');
 
 /** Chủ đề gợi ý để các bộ trong cùng lô không trùng ý. Xoay theo số bộ đã có. */
 const TOPICS = [
@@ -107,10 +104,7 @@ async function generate({ part, variant, target, batchSize, cache }) {
     cache.save();
     stalls = agreed.length > 0 ? 0 : stalls + 1;
 
-    const why = {};
-    for (const r of rejected) why[r.reason] = (why[r.reason] ?? 0) + 1;
-    const whyText = Object.entries(why).map(([r, c]) => `${c} ${r}`).join(', ') || 'không loại bộ nào';
-    console.log(`+${agreed.length} bộ đạt · loại: ${whyText} · tổng ${ofVariant().length}/${target}`);
+    console.log(`+${agreed.length} bộ đạt · loại: ${rejectionSummary(rejected, 'không loại bộ nào')} · tổng ${ofVariant().length}/${target}`);
     if (ofVariant().length < target) await sleep(4000);
   }
 }
@@ -137,25 +131,17 @@ async function main() {
 
   // Part 6/7 không có âm thanh: renderClips thấy danh sách rỗng thì trả về ngay, không đòi edge-tts.
   const clips = assembled.flatMap((a) => a.clips);
-  const audio = await renderClips(clips, { publicDir: PUBLIC, command: EDGE_TTS, label: `${drafts.length} bộ` });
+  const audio = await renderClips(clips, { label: `${drafts.length} bộ` });
   if (audio.failed > 0) { console.error(AUDIO_FAILED_MESSAGE); process.exitCode = 1; return; }
 
   const bank = { set: `part${part}-core`, part, version: 1, entries: assembled.map((a) => a.entry) };
-  const { valid, errors } = createValidator(projectPath('schemas/set.schema.json'))(bank);
-  if (!valid) {
-    console.error('Bộ KHÔNG hợp lệ, không ghi file:');
-    for (const error of errors.slice(0, 20)) console.error('  -', error);
-    process.exitCode = 1;
-    return;
-  }
-  mkdirSync(projectPath('public/content'), { recursive: true });
-  writeFileSync(output, `${JSON.stringify(bank, null, 2)}\n`);
+  if (!writeBank(output, bank, projectPath('schemas/set.schema.json'))) return;
   const questionCount = bank.entries.reduce((s, e) => s + e.questions.length, 0);
   console.log(`Đã ghi ${bank.entries.length} bộ (${questionCount} câu) vào public/content/sets-part${part}.json`);
 
   // Xoá MP3 không còn được dùng bởi BẤT KỲ bộ nghe nào (Part 2, 3, 4) — không xoá file của phần khác.
   if (clips.length > 0) {
-    const removed = removeOrphanAudio(PUBLIC);
+    const removed = removeOrphanAudio();
     if (removed.length > 0) console.log(`Đã xoá ${removed.length} file âm thanh không còn được dùng.`);
   }
 }

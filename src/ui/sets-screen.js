@@ -19,7 +19,7 @@ import { getListenSpeed } from '../data/prefs.js';
 import { createPlayerSlot } from './audio-player.js';
 import { renderStem, renderTray, resetCapture } from './capture-tray.js';
 import { renderQuestion, renderTranscript, renderHold, renderPace } from './set-blocks.js';
-import { splitPane, backLink, backButton, speedChooser, letterFromKey, sessionDone } from './blocks.js';
+import { splitPane, backLink, backButton, speedChooser, letterFromKey, sessionDone, nextActions } from './blocks.js';
 import { formatClock } from '../logic/exam-time.js';
 import { createEvent } from '../logic/events.js';
 import { shuffleChoices, originalLetter, onceShuffled } from '../logic/shuffle.js';
@@ -129,14 +129,7 @@ export function renderSets(store, params) {
       // Khay thứ hai, chỉ hiện trên màn hẹp: ở đó tài liệu nằm tuốt phía trên nên khay của cột trái
       // cách quá xa chỗ vừa chạm vào từ trong phương án. Màn rộng có hai cột thì khay trái luôn thấy.
       renderTray(store, { id: set.id }, { extra: 'narrow-only' }),
-      el('div', { class: 'actions' }, [
-        el('button', { class: 'primary', onClick: () => next(store) }, [
-          el('span', { text: 'Bộ tiếp theo' }), el('small', { text: 'phím Space' }),
-        ]),
-      ]),
-      el('div', { class: 'actions' }, [
-        el('button', { class: 'link', text: '⚑ Báo bộ này có vấn đề', onClick: () => report(store, set) }),
-      ]),
+      ...nextActions('Bộ tiếp theo', () => next(store), { label: '⚑ Báo bộ này có vấn đề', onClick: () => report(store, set) }),
     );
   }
 

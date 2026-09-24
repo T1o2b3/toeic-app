@@ -6,10 +6,9 @@ import {
 import { reduceVocabState } from '../src/logic/vocab-state.js';
 import { EVENT_TYPES, createEvent } from '../src/logic/events.js';
 import { LEVELS } from '../src/logic/vocab-levels.js';
+import { T0, eventMaker } from './helpers/events.js';
 
-const T0 = Date.UTC(2026, 8, 19, 10, 0, 0);
-let seq = 0;
-const ev = (type, payload, ts = T0 + seq) => ({ id: `e-${seq++}`, deviceId: 'mac', ts, type, payload });
+const ev = eventMaker({ step: 1 });
 
 const entries = ['amend', 'raise', 'stop', 'study', 'run', 'rise', 'quick', 'address'].map((word, i) => ({
   id: `d-${i}`, word, rank: i + 1,

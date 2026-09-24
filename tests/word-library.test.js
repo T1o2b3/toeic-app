@@ -4,9 +4,9 @@ import {
 } from '../src/logic/word-library.js';
 import { LEVELS } from '../src/logic/vocab-levels.js';
 import { reduceVocabState } from '../src/logic/vocab-state.js';
+import { eventMaker } from './helpers/events.js';
 
-const T0 = Date.UTC(2026, 8, 19, 10, 0, 0);
-const ev = (type, payload, ts = T0) => ({ id: `e-${ts}-${type}-${payload.wordId}`, deviceId: 'mac', ts, type, payload });
+const ev = eventMaker();
 
 const entries = [
   { id: 'a', word: 'amend', vi: 'sửa đổi' },

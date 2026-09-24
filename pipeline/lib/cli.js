@@ -19,6 +19,9 @@ const ROOT = new URL('../../', import.meta.url);
  */
 export const projectPath = (relative) => new URL(relative, ROOT).pathname;
 
+/** Thư mục public/ (có dấu / cuối) — nơi ghi nội dung và âm thanh mà app phục vụ. */
+export const PUBLIC_DIR = projectPath('public/');
+
 /**
  * Ngày hôm nay dạng `YYYY-MM-DD` (giờ UTC) — dùng cho `gen.date` / `gen.batch` của nội dung sinh ra.
  * Là HÀM chứ không phải hằng số: script chạy nhiều giờ (pipeline sinh cả nghìn mục) có thể vắt qua

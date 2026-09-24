@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { mkdtempSync, rmSync, writeFileSync, existsSync } from 'node:fs';
+import { mkdtempSync, rmSync, writeFileSync, existsSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { openCache, chunk, readCachedAi, openWorkCache, nextId } from '../pipeline/lib/cache.js';
-import { createDeckValidator, findDuplicateIds } from '../pipeline/lib/validate-deck.js';
+import { createDeckValidator, findDuplicateIds, writeBank } from '../pipeline/lib/validate-deck.js';
 
 describe('chunk', () => {
   it('chia đều và giữ phần dư ở lô cuối', () => {
@@ -159,3 +159,33 @@ describe('nextId', () => {
     expect(nextId('p5-', [])).toBe('p5-0001');
   });
 });
+
+describe('writeBank: kiểm rồi mới ghi file nội dung', () => {
+  let dir;
+  const schema = new URL('../schemas/set.schema.json', import.meta.url).pathname;
+  const silent = { error: () => {} };
+  beforeEach(() => { dir = mkdtempSync(join(tmpdir(), 'bank-')); });
+  afterEach(() => { rmSync(dir, { recursive: true, force: true }); process.exitCode = undefined; });
+
+  it('đạt thì ghi JSON (thụt 2, xuống dòng cuối), tự tạo thư mục', () => {
+    const file = join(dir, 'content', 'narration.json');
+    expect(writeBank(file, { version: 1, clips: { Hi: 'audio/a.mp3' } }, null, silent)).toBe(true);
+    expect(readFileSync(file, 'utf8')).toBe('{\n  "version": 1,\n  "clips": {\n    "Hi": "audio/a.mp3"\n  }\n}\n');
+  });
+
+  it('sai schema thì KHÔNG ghi, in lỗi và đặt mã thoát 1', () => {
+    const file = join(dir, 'sets.json');
+    const errors = [];
+    expect(writeBank(file, { entries: 'sai' }, schema, { error: (...a) => errors.push(a.join(' ')) })).toBe(false);
+    expect(existsSync(file)).toBe(false);
+    expect(errors[0]).toContain('sets.json KHÔNG hợp lệ');
+    expect(process.exitCode).toBe(1);
+  });
+
+  it('trùng id cũng không ghi — schema không bắt được lỗi này', () => {
+    const file = join(dir, 'x.json');
+    expect(writeBank(file, { entries: [{ id: 'a' }, { id: 'a' }] }, null, silent)).toBe(false);
+    expect(existsSync(file)).toBe(false);
+  });
+});
+

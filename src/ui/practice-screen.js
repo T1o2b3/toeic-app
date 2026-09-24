@@ -5,7 +5,7 @@
  * (xem src/logic/practice.js để biết vì sao).
  */
 import { el } from './dom.js';
-import { backButton, backLink, sessionDone, letterFromKey } from './blocks.js';
+import { backButton, backLink, sessionDone, letterFromKey, nextActions } from './blocks.js';
 import {
   POOLS, POOL_ORDER, POOL_INFO, PRACTICE_SIZE, countPools, pickRound, eventForResult,
 } from '../logic/practice.js';
@@ -90,9 +90,7 @@ function renderCard(store, entry) {
       picked, verdict, onPick: (letter) => answer(store, entry, choice, letter),
       hint: fluentPool ? 'Bạn chấm từ này là thành thạo — nghĩa là gì?' : undefined,
     }),
-    picked ? el('div', { class: 'actions' }, [
-      el('button', { class: 'primary', onClick: () => next(store) }, [el('span', { text: 'Từ tiếp' }), el('small', { text: 'phím Space' })]),
-    ]) : '',
+    picked ? nextActions('Từ tiếp', () => next(store)) : '',
   ];
   return el('div', {}, children);
 }
