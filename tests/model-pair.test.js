@@ -66,6 +66,22 @@ describe('aiStep', () => {
     expect(pair.provider('writer').model).toBe('c');
   });
 
+  it('model bị gỡ khỏi API (404) cũng đổi model — tên cũ trong danh sách không làm đứng pipeline (D71)', async () => {
+    const pair = pairOf('a,b,c');
+    const log = { log: vi.fn(), error: vi.fn() };
+    const gone = Object.assign(new Error('models/a is not found'), { status: 404 });
+    const result = await aiStep({ pair, role: 'writer', provider: pair.provider('writer'), run: async () => { throw gone; }, log, retry: noWait });
+    expect(result.status).toBe('quota');
+    expect(pair.provider('writer').model).toBe('c');
+    expect(log.log.mock.calls[0][0]).toBe('a không còn trên API (404) → đổi model sinh đề');
+  });
+
+  it('danh sách mặc định: model mạnh đứng trước model lite (D71)', () => {
+    const lite = DEFAULT_GEMINI_MODELS.findIndex((m) => m.includes('lite'));
+    expect(DEFAULT_GEMINI_MODELS.slice(0, lite).every((m) => !m.includes('lite'))).toBe(true);
+    expect(DEFAULT_GEMINI_MODELS.slice(lite).every((m) => m.includes('lite'))).toBe(true);
+  });
+
   it('lỗi khác (JSON hỏng) KHÔNG làm đổi model — đổi là phí một model còn hạn mức', async () => {
     const pair = pairOf('a,b,c');
     const result = await step(pair, 'writer', async () => 'không phải JSON', { parse: JSON.parse });

@@ -81,13 +81,22 @@ ghi, 5 script), `rejectionSummary` (3 script), đường dẫn public/ + edge-tt
 → `tests/helpers/events.js`. Chạy lại 6 file nội dung bằng `--no-generate`: ghi ra giống từng byte. Để yên (không đáng
 công): bộ phát giả trong 7 file test UI. CLAUDE.md thêm bước "soát DRY ở mức vừa đủ" vào checklist. **955 test pass.**
 
+**11. Pipeline tự chạy — lần đầu THÀNH CÔNG (run #1, 03:06–03:29 UTC, bấm tay).** Huy đã merge PR #2 và thêm secret.
+Mọi bước xanh, commit `626486b` vào main: **+79 câu** — Part 5 256 → 275 · Part 3 13 → 26 bộ (+82 MP3) · Part 6 8 → 12 bộ ·
+Part 7 đôi 2 → 3 bộ · +23 lời dẫn giọng đọc (134). Part 2, Part 4, Part 7 đơn/ba: +0 — lần chạy tay này TRƯỚC giờ đặt lại hạn
+mức (07:00 UTC) nên `gemini-3.5-flash` đã cạn từ lượt chạy trên Mac, còn model lite ra bản nháp không đạt ("Lô này không
+có … mới hợp lệ"). Lịch 15:37 VN có hạn mức mới. Đọc thử: ổn; p5-0273 hơi mơ hồ (many/several/few cũng đúng ngữ pháp),
+p5-0275 gắn nhầm dạng — Huy gặp thì bấm "⚑ Báo câu này sai". Log có cảnh báo "Node.js 20 deprecated" của các action @v4 —
+GitHub tự chạy bằng Node 24, không ảnh hưởng.
+
 ### Bước tiếp theo
-- **Huy — bật pipeline tự chạy (~3 phút):**
-  1. Merge PR của nhánh `claude/clever-cori-ksx8jg` (workflow chỉ chạy được khi đã nằm trên `main`).
-  2. GitHub → repo → Settings → Secrets and variables → Actions → **New repository secret**: tên `GEMINI_API_KEY`,
-     giá trị như trong `.env`. Key phải thuộc project Google KHÔNG bật thanh toán (gói miễn phí AI Studio).
-  3. Tab **Actions** → "Tự sinh nội dung" → **Run workflow** để chạy thử lần đầu; xem log từng bước.
-  Từ đó **không chạy pipeline Gemini trên Mac nữa** (hai nơi cùng cấp id mới cho hai câu khác nhau — D70).
+- **Pipeline tự chạy mỗi ngày 15:37 VN** — không cần làm gì. Xem kết quả ở tab Actions hoặc
+  https://github.com/huybndc/toeic-app/actions/workflows/auto-content.yml (email khi đỏ).
+  **Không chạy pipeline Gemini trên Mac nữa** (hai nơi cùng cấp id mới cho hai câu khác nhau — D70); nhớ `git pull` đầu phiên.
+- **D71 (Huy hỏi đổi model khi hết hạn mức — đã có sẵn):** thêm `gemini-3.8-flash`, `gemini-flash-latest` vào vòng xoay (model
+  mạnh trước lite) và 404 thì đổi model thay vì dừng. Lần chạy tới xem log dòng "đổi model" để biết hai tên này còn dùng được.
+- Nếu Part 2 / Part 4 vài ngày liền vẫn +0 khi đã có hạn mức mới: xem log — có thể prompt hợp với model mạnh, model lite
+  không đạt kiểm định.
 - **Huy:** sau deploy (đối chiếu số hiệu bản build), thử "Đề đủ" trên **iPhone** — bấm chọn đề xong KHÔNG chạm gì nữa,
   xem băng có tự đọc hướng dẫn / tự phát câu 7 và tự sang câu 8 không. Đây là chỗ duy nhất máy cloud không kiểm được.
 - **Part 1 (ảnh):** Claude quyết KHÔNG làm — cần ảnh chụp thật, không có nguồn miễn phí hợp lệ (D67).

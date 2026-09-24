@@ -702,6 +702,17 @@ TOEIC. Bản D67 chỉ cho 5 giây × 3 = 15 giây: gắt hơn đề thật và 
 - **Hệ quả:** KHÔNG chạy pipeline Gemini trên Mac song song nữa — hai nơi cùng cấp id mới (p5-0257…) cho hai câu khác nhau.
   Muốn chạy tay thì `git pull` trước và đừng chạy vào giờ job đang chạy.
 
+**D71. Xoay nhiều model Gemini hơn, model MẠNH trước; model bị gỡ (404) thì bỏ qua.** (Huy hỏi 2026-09-24: "nếu một model đạt
+giới hạn thì có thể chuyển qua model gemini khác không?" — đã có từ D19; Claude tự quyết mở rộng.)
+- Lần chạy tự động đầu tiên: `gemini-3.5-flash` cạn sớm, phần còn lại do model lite viết → Part 2, Part 4, Part 7 đơn/ba
+  +0 ("lô này không có … mới hợp lệ"). Tức là đổi được model, nhưng model lite phần lớn trượt kiểm định.
+- Danh sách mặc định thêm hai model mạnh D19 đã đo (`gemini-3.8-flash`, `gemini-flash-latest`, 20 request/ngày mỗi cái):
+  3.5-flash → 3.8-flash → flash-latest → flash-lite-latest → 3.1-flash-lite. Hạn mức tính riêng từng model nên cộng dồn.
+- **404 (model bị gỡ, như gemini-2.5-flash) nay đổi model như hết hạn mức** thay vì dừng — tên cũ trong danh sách không làm
+  đứng lần chạy tự động. Chưa kiểm được hai tên mới trên API thật (máy cloud không có key): nếu tên không còn thì log ghi
+  "không còn trên API (404) → đổi model" và chạy tiếp.
+- Vẫn một project Google, không nhân project để lách hạn mức (D19).
+
 ## Câu hỏi còn mở
 - ~~Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng?~~ → **Đã giải quyết, xem D35** (chung repo, xét lại khi ~100 MB).
 - ~~Q2 (trước M2): xác nhận license của TSL 1.2 và NGSL.~~ → **Đã giải quyết, xem D18.**

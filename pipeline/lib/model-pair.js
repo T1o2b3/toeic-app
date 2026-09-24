@@ -53,7 +53,7 @@ export function createModelPair({ env = process.env, makeProvider = createGemini
  *
  * `status`:
  *   - `'ok'`    → dùng `value`;
- *   - `'quota'` → model này cạn hạn mức NGÀY, đã tự đổi model, lô này làm lại;
+ *   - `'quota'` → model này cạn hạn mức NGÀY (hoặc đã bị gỡ — 404), đã tự đổi model, lô này làm lại;
  *   - `'error'` → lỗi khác (mạng, JSON hỏng); mỗi pipeline tự quyết dừng hay bỏ lô.
  *
  * @param {object} config
@@ -71,8 +71,11 @@ export async function aiStep({ pair, role, provider, run, parse = (text) => text
   try {
     return { status: 'ok', value: parse(await withRetry(run, retry)) };
   } catch (error) {
-    if (isDailyQuotaError(error)) {
-      log.log(`${provider.model} hết hạn mức ngày → đổi model ${label.job}`);
+    // Model bị Google gỡ khỏi API (404 — đã xảy ra với gemini-2.5-flash, D19) cũng đổi model như hết hạn mức:
+    // một cái tên cũ trong danh sách không được làm đứng cả lần chạy tự động (D71).
+    const gone = error?.status === 404;
+    if (gone || isDailyQuotaError(error)) {
+      log.log(`${provider.model} ${gone ? 'không còn trên API (404)' : 'hết hạn mức ngày'} → đổi model ${label.job}`);
       pair.rotate(role);
       return { status: 'quota', error };
     }
