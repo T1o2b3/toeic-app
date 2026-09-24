@@ -123,3 +123,37 @@ describe('dispose', () => {
     expect(revoke).toHaveBeenCalledTimes(2);
   });
 });
+
+describe('mở khoá phần tử Audio trong cú chạm (D67)', () => {
+  it('unlock phát NGAY (đồng bộ) một tiếng lặng trên chính phần tử sẽ phát bài nghe', async () => {
+    const { audio, log } = fakeAudio();
+    audio.paused = true;
+    const made = vi.fn(() => audio);
+    const player = createPlayer({ makeAudio: made, fetchImpl: okFetch(), toUrl: (b) => `blob:${b.src}`, wait: async () => {} });
+    player.unlock();
+    expect(log.plays).toBe(1);                              // chưa có await nào — còn trong thao tác chạm
+    expect(log.srcs[0]).toMatch(/^data:audio\/wav;base64,/);
+    await player.play(steps);                               // bài nghe phát trên CÙNG phần tử đã mở khoá
+    expect(made).toHaveBeenCalledTimes(1);
+    expect(log.srcs.slice(1)).toEqual(['blob:/audio/q.mp3', 'blob:/audio/a.mp3']);
+  });
+
+  it('đang phát dở thì unlock không đụng vào — đổi nguồn lúc đó sẽ cắt ngang đoạn đang nghe', () => {
+    const { audio, log } = fakeAudio();
+    audio.paused = false;
+    const player = createPlayer({ makeAudio: () => audio, fetchImpl: okFetch() });
+    player.unlock();
+    expect(log.plays).toBe(0);
+    expect(log.srcs).toEqual([]);
+  });
+
+  it('trình duyệt từ chối tiếng lặng cũng không thành lỗi "Uncaught"', async () => {
+    const { audio } = fakeAudio();
+    audio.paused = true;
+    audio.play = () => Promise.reject(new Error('NotAllowedError'));
+    const player = createPlayer({ makeAudio: () => audio, fetchImpl: okFetch() });
+    expect(() => player.unlock()).not.toThrow();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+  });
+});
+

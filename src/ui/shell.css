@@ -136,7 +136,16 @@ button.pal.current { outline: 2px solid var(--fg); outline-offset: 1px; }
 button.pal.flagged { border-color: var(--hard); border-width: 2px; }
 .flag-btn { font-size: 0.8rem; margin: 0.2rem 0; }
 .flag-btn.on { color: var(--hard); font-weight: 700; }
-.advance-note { margin-top: 0.6rem; color: var(--muted); font-size: 0.85rem; text-align: center; }
+.countdown-note { margin-top: 0.6rem; color: var(--muted); font-size: 0.85rem; text-align: center; }
+/* Phần Nghe: danh sách câu chỉ để xem (băng quyết định nhịp) — không làm mờ như nút bị khoá thường (D67). */
+button.pal:disabled { opacity: 1; }
+/* Chữ in trên đề (D67): hướng dẫn đầu Part và dòng "Questions … refer to the following …" */
+.card.directions { font-size: 0.9rem; border-color: var(--accent); margin-bottom: 0.75rem; }
+.card.directions p { margin: 0.25rem 0 0; }
+.card.directions .countdown-note { text-align: left; font-weight: 600; color: var(--accent); }
+.set-intro { font-size: 0.85rem; font-style: italic; color: var(--muted); margin: 0 0 0.5rem; }
+/* Như phòng thi: trong lúc làm bài ẩn menu ở mọi khổ màn hình — bấm nhầm là bỏ bài đang làm (D67). */
+body.exam-focus .tabbar { display: none; }
 .confirm { margin-top: 1rem; }
 .wrong-item { padding: 0.7rem 0; border-bottom: 1px solid var(--viz-grid); }
 .rev { font-size: 0.85rem; padding: 0.1rem 0; color: var(--fg); }
@@ -180,6 +189,7 @@ button.pal.flagged { border-color: var(--hard); border-width: 2px; }
      Nới bề ngang từ 34rem (khổ điện thoại) lên 44rem: màn rộng mà cột chữ vẫn hẹp thì thừa chỗ vô ích,
      nhưng không nới quá vì dòng chữ dài hơn ~90 ký tự là khó đọc. */
   body { padding-left: var(--nav-width); }
+  body.exam-focus { padding-left: 0; }
   #app { max-width: 44rem; }
   body.has-tabbar #app { padding-bottom: 2.5rem; }
 }

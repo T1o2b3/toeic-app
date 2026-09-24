@@ -631,6 +631,31 @@ sau 1-5-10 phút… thay vì chỉ là cho chọn nhớ hay quên thì bỏ hẳ
   (như mọi thẻ); vì thế Ôn tập trước đây không có cụm nào — Huy chưa từng phân loại cụm.
 - Bảng tiến độ ở Tổng quan vẫn đếm TỪ trên thang "/ N từ" (không tính cụm).
 
+**D67. Thi thử: phần Nghe chạy như BĂNG đề thật; đề in hướng dẫn + dòng giới thiệu bộ; ẩn menu khi thi.** (Huy,
+2026-09-24: "phần làm đề thi đủ vẫn chưa giống đề thi thật, vẫn chưa tự động phát audio".)
+- **Kiểm trước:** chạy thật trên Chromium — bấm "Đề đủ" thì 0 lần phát; câu đầu tiên phải tự bấm "▶ Nghe", tự bấm
+  "Tiếp →" thì câu sau cũng không phát. Bản M21 cũ chỉ tự chạy SAU khi đã bấm nghe câu đầu và không bấm gì khác.
+- **Băng tự chạy:** cú bấm chọn đề là thao tác chạm duy nhất → `unlock()` phát một tiếng lặng 10 ms ngay trong cú
+  bấm để mở khoá phần tử Audio (iPhone), rồi băng tự chạy: đầu mỗi Part chờ 10 giây như lúc băng đọc hướng dẫn (đủ lướt
+  trước câu hỏi Part 3/4, có ▶ để nghe ngay) → phát → khoảng trả lời (mốc cũ ở `pace.js`: 5 giây/câu) → câu sau.
+  Hết câu cuối phần Nghe thì TỰ sang phần Đọc (chế độ chỉ Nghe thì tự nộp) — như đề thật hết băng là chuyển.
+- **Phần Nghe không có Trước/Tiếp:** phím ←/→ không tác dụng, danh sách câu chỉ để xem; vẫn chọn/đổi đáp án câu đang
+  hiện. Bỏ hộp "sang phần Đọc?" (không còn đường tự chuyển phần). Tốc độ trong thi thử luôn 1× (tốc độ chậm của màn
+  luyện nghe trước đây mang sang cả phòng thi).
+- **Không bao giờ kẹt:** băng đứng mà không còn gì để phát (lỗi phát, tải lại trang sau khi đã nghe) thì hiện nút
+  "Tiếp tục →"; chưa nghe thì nút ▶ mở lại. Cú bấm nào cũng mở khoá âm thanh lại.
+- **Chữ in trên đề** (`logic/exam-directions.js`): khối "Part N · Directions" đầu mỗi Part và dòng "Questions 147–148
+  refer to the following e-mail." trên mỗi bộ, bằng tiếng Anh như đề thật. Lời hướng dẫn app TỰ VIẾT LẠI ý, không
+  chép nguyên văn ETS (ràng buộc #7). Loại văn bản suy từ nhãn tự do của nội dung (`genreOf`), không nhận ra thì "text".
+- **Ẩn cột menu trong lúc thi** (lớp `exam-focus` trên body): như phòng thi toàn màn hình, và bấm nhầm menu là
+  rời màn = bỏ luôn bài đang làm.
+- **Sửa kèm — tải lại trang là mất bài:** D63 ghi "làm dở cùng máy thì đã có" nhưng thực tế CHƯA BAO GIỜ chạy: lúc mở
+  app router coi màn đầu là "đổi màn" và gọi `resetExam()` — hàm này xoá bản lưu trước khi màn thi kịp khôi phục. Nay
+  lần vẽ đầu tiên không dọn gì (`app.js`). Test mới tái hiện lỗi (đỏ trên code cũ).
+- **Còn khác đề thật (chưa làm, cần Huy chốt):** (1) băng thật ĐỌC câu hỏi Part 3/4 và cho 8 giây mỗi câu — app không có
+  tiếng đọc câu hỏi, khoảng trả lời là 5 giây × số câu sau hội thoại; muốn có thì pipeline sinh thêm MP3 câu hỏi bằng
+  edge-tts (miễn phí, chạy trên máy Huy). (2) Part 1 (6 câu tả tranh) vẫn không có.
+
 ## Câu hỏi còn mở
 - ~~Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng?~~ → **Đã giải quyết, xem D35** (chung repo, xét lại khi ~100 MB).
 - ~~Q2 (trước M2): xác nhận license của TSL 1.2 và NGSL.~~ → **Đã giải quyết, xem D18.**

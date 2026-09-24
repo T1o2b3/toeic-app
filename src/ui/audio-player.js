@@ -9,7 +9,12 @@
  *    không còn trong thao tác chạm và chặn.
  *  - Phát từ blob thay vì từ URL: tránh hẳn request dạng Range (Safari đòi, cache offline không lưu được 206),
  *    và fetch trọn file là 200 nên service worker lưu được để mở offline vẫn nghe.
+ *  - `unlock()`: phát một tiếng lặng NGAY trong thao tác chạm khi chưa có gì để phát (bấm "Đề đủ" — đoạn nghe
+ *    đầu tiên còn chưa tải). Phần tử đã được mở khoá thì các lần phát sau từ hẹn giờ cũng được phép (D67).
  */
+
+/** 10 mili giây im lặng (WAV 8 kHz) — chỉ để mở khoá phần tử Audio, không ai nghe thấy. */
+const SILENCE = 'data:audio/wav;base64,UklGRnQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YVAAAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgA==';
 
 /**
  * @param {object} [options]
@@ -99,6 +104,17 @@ export function createPlayer({
         await playClip(url, rate);
       }
       return mine === token ? 'done' : 'stopped';
+    },
+
+    /**
+     * Mở khoá phần tử Audio: GỌI ĐỒNG BỘ trong thao tác chạm. Đang phát dở thì thôi (đã mở khoá rồi, và đổi
+     * nguồn lúc này sẽ cắt ngang đoạn đang nghe).
+     */
+    unlock() {
+      if (!audio.paused) return;
+      audio.src = SILENCE;
+      const started = audio.play();
+      if (started?.catch) started.catch(() => {}); // bị lần phát thật chen ngang là bình thường
     },
 
     /** Ngắt mọi thứ đang phát. */

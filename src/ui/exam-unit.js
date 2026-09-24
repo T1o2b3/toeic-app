@@ -7,13 +7,24 @@
  */
 import { el } from './dom.js';
 import { splitBlanks } from '../logic/part5.js';
+import { setIntro } from '../logic/exam-directions.js';
 import { optionList, splitPane, questionLabel } from './blocks.js';
 
 const LETTERS4 = ['A', 'B', 'C', 'D'];
 const LETTERS3 = ['A', 'B', 'C'];
 
-/** Dòng đếm ngược khoảng lặng sau đoạn nghe — exam-screen cập nhật chữ tại chỗ mỗi giây. */
-export const advanceText = (seconds) => `Tự sang câu tiếp sau ${Math.max(0, seconds)} giây`;
+const COUNTDOWN_TEXT = Object.freeze({
+  play: (s) => `Băng phát sau ${s} giây — bấm ▶ để nghe ngay`,
+  next: (s) => `Tự sang câu tiếp sau ${s} giây`,
+  end: (s) => `Hết phần Nghe sau ${s} giây`,
+});
+
+/**
+ * Dòng đếm ngược của băng (D67) — exam-screen cập nhật chữ tại chỗ mỗi giây.
+ * @param {'play'|'next'|'end'} kind - chờ hết hướng dẫn đầu Part / hết khoảng trả lời / hết câu cuối phần Nghe
+ * @param {number} seconds
+ */
+export const countdownText = (kind, seconds) => COUNTDOWN_TEXT[kind](Math.max(0, seconds));
 
 /**
  * Nút đánh dấu "chưa chắc, quay lại sau" cho một câu phần Đọc (M21). `ctx.flags` null = đơn vị không đánh dấu được.
@@ -43,7 +54,9 @@ function renderPlay(ctx, label) {
       el('small', { text: done ? 'đề thật không cho nghe lại' : 'phát MỘT lần duy nhất, không tua lại' }),
     ]),
     ctx.error ? el('div', { class: 'warn', text: ctx.error }) : '',
-    ctx.advanceIn > 0 ? el('div', { class: 'advance-note', text: advanceText(ctx.advanceIn) }) : '',
+    // Đếm ngược chờ HƯỚNG DẪN nằm ở khối Directions; ở đây chỉ đếm khoảng trả lời sau khi nghe.
+    ctx.countdown && ctx.countdown.kind !== 'play'
+      ? el('div', { class: 'countdown-note', text: countdownText(ctx.countdown.kind, ctx.countdown.seconds) }) : '',
   ]);
 }
 
@@ -99,12 +112,17 @@ export function renderUnit(unit, ctx, numbers = new Map()) {
   }
 
   const numberList = unit.questions.map((q) => numberOf(q));
-  const material = part === 'part3' || part === 'part4'
-    ? [renderPlay(ctx, 'Nghe đoạn này')]
-    : item.passages.map((passage) => el('div', { class: 'card passage' }, [
-        item.passages.length > 1 ? el('div', { class: 'gaps-title', text: passage.label }) : '',
-        el('div', { class: 'stem' }, renderBlanks(passage.text, part === 'part6' ? numberList : [])),
-      ]));
+  // "Questions 147–148 refer to the following e-mail." — dòng đề thật in trước mỗi bộ (D67).
+  const intro = setIntro(unit, numberList);
+  const material = [
+    intro ? el('p', { class: 'set-intro', lang: 'en', text: intro }) : '',
+    ...(part === 'part3' || part === 'part4'
+      ? [renderPlay(ctx, 'Nghe đoạn này')]
+      : item.passages.map((passage) => el('div', { class: 'card passage' }, [
+          item.passages.length > 1 ? el('div', { class: 'gaps-title', text: passage.label }) : '',
+          el('div', { class: 'stem' }, renderBlanks(passage.text, part === 'part6' ? numberList : [])),
+        ]))),
+  ];
 
   return splitPane(material, unit.questions.map((question, i) => {
     // Highlight cho Part 3, 4: Mapping từ clip key sang option.

@@ -31,7 +31,7 @@ export function renderSetup(banks, onStart) {
   return el('div', {}, [
     el('div', { class: 'topbar' }, [el('button', { class: 'link', text: '← Bài thi', onClick: () => goTo('/exams') })]),
     el('h1', { text: 'Thi thử' }),
-    el('p', { class: 'subtitle', text: 'Tính giờ, không xem đáp án cho tới khi nộp. Đề đủ ~194 câu (bỏ 6 câu Part 1 cần ảnh): phần Nghe 45 phút, xong mới sang phần Đọc 75 phút — sang rồi không quay lại được, đúng như đề thật.' }),
+    el('p', { class: 'subtitle', text: 'Tính giờ, không xem đáp án cho tới khi nộp. Đề đủ ~194 câu (bỏ 6 câu Part 1 cần ảnh). Phần Nghe chạy như băng thật: bấm chọn đề là băng tự phát, nghe xong tự sang câu sau, hết băng thì sang phần Đọc 75 phút — không quay lại được.' }),
     card('full'),
     el('div', { class: 'gaps-title', text: 'Theo kỹ năng' }),
     card('listening'), card('reading'),

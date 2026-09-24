@@ -92,12 +92,16 @@ export function mountApp(root, store) {
     heading?.focus({ preventScroll: true });
   };
 
+  let booted = false;
   startRouter((route) => {
     const changed = route.name !== current.name;
-    if (changed) {
+    // Lần vẽ ĐẦU TIÊN (mở app / tải lại trang) không phải "rời màn": chưa có gì để dọn, và dọn lúc này là xoá
+    // luôn bài thi làm dở mà màn thi sắp khôi phục (resetExam xoá bản lưu) — tải lại giữa bài là mất trắng.
+    if (changed && booted) {
       resetTriage(); resetReview(); resetQuiz(); resetSync(); resetWords(); resetPractice(); resetListen(); resetDictation(); resetLookup(); resetSets(); resetExam(); resetCollocations();
     }
     current = route;
+    booted = true;
     if (!changed) { updateTabBar(nav, current.name); draw(); } // cả lần mở app đầu tiên (màn chính)
     // Trang đang ẩn hoặc chuyển màn dồn dập thì trình duyệt BỎ hiệu ứng (vẫn đổi màn) và từ chối `ready`
     // bằng InvalidStateError — không phải lỗi, chỉ cần đừng để nó thành "Uncaught" trong console.
