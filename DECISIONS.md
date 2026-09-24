@@ -656,6 +656,15 @@ sau 1-5-10 phút… thay vì chỉ là cho chọn nhớ hay quên thì bỏ hẳ
   tiếng đọc câu hỏi, khoảng trả lời là 5 giây × số câu sau hội thoại; muốn có thì pipeline sinh thêm MP3 câu hỏi bằng
   edge-tts (miễn phí, chạy trên máy Huy). (2) Part 1 (6 câu tả tranh) vẫn không có.
 
+**D68. Thêm `wrangler.jsonc` vào repo: khai báo thư mục `dist` cho mọi lần deploy.** (Claude tự quyết 2026-09-24 —
+Huy giao toàn quyền quyết định.) PR đầu tiên của repo lộ ra: Cloudflare deploy nhánh phụ bằng lệnh mặc định
+`wrangler versions upload`, mà repo không có file cấu hình nào → lỗi ngay "Missing entry-point … or to assets
+directory" (đã tái hiện bằng wrangler 4.137). Nhánh chính vẫn chạy được, chắc nhờ lệnh deploy trong dashboard có
+khai báo thư mục. Chọn đưa cấu hình vào repo thay vì sửa dashboard: làm được mà không cần Huy vào dashboard, được kiểm
+bằng chính bản xem trước của nhánh phụ trước khi tới nhánh chính, và cấu hình nằm trong git. Chỉ có tên Worker
+(`toeic-app`, khớp tên trên Cloudflare), ngày tương thích và `assets.directory` — app là trang tĩnh, không có mã Worker,
+điều hướng bằng hash nên không cần trang 404 kiểu SPA.
+
 ## Câu hỏi còn mở
 - ~~Q1 (Giai đoạn 2): audio để chung repo hay repo/bucket riêng?~~ → **Đã giải quyết, xem D35** (chung repo, xét lại khi ~100 MB).
 - ~~Q2 (trước M2): xác nhận license của TSL 1.2 và NGSL.~~ → **Đã giải quyết, xem D18.**

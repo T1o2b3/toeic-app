@@ -1,0 +1,11 @@
+// Cấu hình deploy Cloudflare (D68). App là trang tĩnh: chỉ upload thư mục `dist` do `npm run build` tạo ra,
+// không có mã Worker. Có file này thì cả lệnh deploy nhánh chính lẫn lệnh `wrangler versions upload` của nhánh phụ
+// đều biết lấy thư mục nào — trước đây nhánh phụ luôn lỗi "Missing entry-point … or to assets directory".
+// Điều hướng dùng hash (#/exam) nên không cần cấu hình trang 404 kiểu SPA.
+{
+  "name": "toeic-app",
+  "compatibility_date": "2026-09-20",
+  "assets": {
+    "directory": "./dist"
+  }
+}
