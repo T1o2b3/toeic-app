@@ -195,8 +195,10 @@ button.grade kbd {
 
 .word-detail-panel { 
   background: var(--surface); border: 1px solid var(--border); border-radius: 1rem; 
-  padding: 1.5rem; height: fit-content; sticky: top 1.5rem; 
+  padding: 1.5rem; height: fit-content;
 }
+/* Chỉ màn rộng: dưới 700px panel là lớp phủ toàn màn (position: fixed ở media query phía trên). */
+@media (min-width: 701px) { .word-detail-panel { position: sticky; top: 1.5rem; } }
 .detail-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem; }
 .detail-main h2 { margin: 0; font-size: 1.6rem; }
 .detail-meta { display: flex; gap: 0.5rem; align-items: center; }
