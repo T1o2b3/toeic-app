@@ -93,6 +93,8 @@ GitHub tự chạy bằng Node 24, không ảnh hưởng.
 - **Pipeline tự chạy mỗi ngày 15:37 VN** — không cần làm gì. Xem kết quả ở tab Actions hoặc
   https://github.com/huybndc/toeic-app/actions/workflows/auto-content.yml (email khi đỏ).
   **Không chạy pipeline Gemini trên Mac nữa** (hai nơi cùng cấp id mới cho hai câu khác nhau — D70); nhớ `git pull` đầu phiên.
+- **D71 (Huy hỏi đổi model khi hết hạn mức — đã có sẵn):** thêm `gemini-3.8-flash`, `gemini-flash-latest` vào vòng xoay (model
+  mạnh trước lite) và 404 thì đổi model thay vì dừng. Lần chạy tới xem log dòng "đổi model" để biết hai tên này còn dùng được.
 - Nếu Part 2 / Part 4 vài ngày liền vẫn +0 khi đã có hạn mức mới: xem log — có thể prompt hợp với model mạnh, model lite
   không đạt kiểm định.
 - **Huy:** sau deploy (đối chiếu số hiệu bản build), thử "Đề đủ" trên **iPhone** — bấm chọn đề xong KHÔNG chạm gì nữa,

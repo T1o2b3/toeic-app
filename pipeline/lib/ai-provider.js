@@ -130,10 +130,15 @@ async function readApiError(response, model) {
 /**
  * Model mặc định, thử theo thứ tự. Free tier tính hạn mức RIÊNG cho từng model
  * và rất nhỏ (20 request/ngày với model đầu bảng), nên hết model này thì chuyển model khác.
+ * Model MẠNH đứng trước (D71): bản nháp của model lite phần lớn trượt kiểm định (lần chạy tự động đầu tiên: Part 2,
+ * Part 4 được +0), nên vắt hết hạn mức model mạnh trước rồi mới lùi xuống lite. Tên nào bị Google gỡ (404) thì
+ * pipeline tự bỏ qua (model-pair.js) — danh sách cũ không làm đứng pipeline.
  * Đổi danh sách bằng biến môi trường GEMINI_MODELS (ngăn cách bằng dấu phẩy).
  */
 export const DEFAULT_GEMINI_MODELS = Object.freeze([
   'gemini-3.5-flash',
+  'gemini-3.8-flash',
+  'gemini-flash-latest',
   'gemini-flash-lite-latest',
   'gemini-3.1-flash-lite',
 ]);
